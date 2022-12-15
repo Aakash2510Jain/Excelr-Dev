@@ -1,0 +1,198 @@
+<template>
+  
+    <lightning-quick-action-panel header="Initiate Payment">
+        <template if:true={ShowForm}>
+          <div>
+            <div class="slds-grid slds-gutters">
+              
+                <div class="slds-col" >
+                  <lightning-record-edit-form object-api-name="OpportunityLineItem" data-id="Products" id="createOpportunityLineItemForm">
+                    <lightning-input-field field-name="Product2Id"   onchange={HandleProductQuantityInput} value={ProductValue}>
+                    </lightning-input-field>
+                  </lightning-record-edit-form>
+                </div>
+                <div class="slds-col">
+                  <lightning-input type="Number" placeholder="Quantity" data-id="Quantity" label="Quantity" onchange={HandleProductQuantityInput}  value={QuantityValue}></lightning-input>
+                </div>
+              </div>
+              <br/>
+              <template if:true={Amount}>
+                <p>Amount:&nbsp;<b>{Amount}</b></p>
+              </template>
+          </div>
+       
+        </template>
+      
+
+        <template if:true={ShowPaymentCard}>
+          <div>
+            <div class="slds-grid slds-gutters" style="margin-bottom:150px;">
+              <div  class="slds-col " >
+                <p style="font-weight:bold">
+                  Select Your Payment Type
+                </p>
+                <lightning-combobox 
+                  label=""
+                  name="Payment"
+                  value={PaymentType}
+                  placeholder="Select Your Payment Type"
+                  options={Paymentoptions}
+                  onchange={HandlePaymentType} ></lightning-combobox>
+              </div>
+            
+              <!-- <div class="slds-col card" style="margin-right: 10px;display:flex;justify-content: center;align-items: center ;"  onclick={HandleRazorPay} aria-disabled={DisableRozorPay}>
+                      <div class="container" style="text-align: center;">
+                        <img src={RazorPayImage} alt="Razor Pay" style="display:flex;justify-content: center;align-items: center ;" >
+                        <h3 style="font-size: 20px;margin-top: 20px;"><b>Pay By RazorPay</b></h3>
+                      </div>
+              </div>
+              <div class="slds-col card" style="display:flex;justify-content: center;align-items: center ;" onclick={HandleCCAvenuePay} >
+                      <div class="container" style="text-align: center;">
+                        <img src={CcAvenueImage} alt="Razor Pay">
+                        <h3 style="font-size: 20px;margin-top: 20px;"><b>Pay By CC Avenue</b></h3> 
+                      </div>
+              </div> -->
+            </div>
+          </div>
+        </template>
+
+        <template if:true={ShowLoanOption}>
+          <div>
+            <div style="display:flex;justify-content: center;align-items: center ;">
+              <lightning-radio-group name="radioGroup"
+                            label="Select Loan Type"
+                            options={Loanoptions}
+                            value={Loanvalue}
+                            type="radio"
+                            onchange={HandleRadioButton}></lightning-radio-group>
+            </div>
+          </div>
+        </template>
+
+        <template if:true={ShowFullLoanOption}>
+          <div>
+            <template if:true={Amount}>
+              <p>Original Price:&nbsp;<b>{originalPrice}</b></p>
+              <br/>
+              <p>Price Including GST:&nbsp;<b>{priceIncludingGst}</b></p>
+            </template>
+            <br/>
+            <div class="slds-grid slds-wrap" style="margin-bottom:200px;">
+              <div class="slds-col slds-size_6-of-12" >
+                <p style="font-weight:bold">
+                  Select Your NBFC Partner
+                </p>
+                <lightning-combobox 
+                  label=""
+                  name="NBFCPartner"
+                  value={FullLoanNBFCPartnervalue}
+                  placeholder="Select Your NBFCPartner"
+                  options={options}
+                  onchange={HandleFullLoanInputNBFCPartner} ></lightning-combobox>
+              </div>
+              <div class="slds-col slds-size_6-of-12" >
+                  <p style="font-weight:bold">
+                    Tenure
+                  </p>
+                  <lightning-combobox 
+                  label=""
+                  name="Tenure"
+                  value={FullLoanTenureValue}
+                  placeholder="Select Your Tenure"
+                  options={TenureOptions}
+                  onchange={HandleFullLoanInput} 
+                  style="margin-left:10px ;"></lightning-combobox>
+                  <!-- <lightning-input type="text" placeholder="Enter Your Tenure"  name="Tenure" value={FullLoanTenureValue} onchange={HandleFullLoanInput} style="margin-left:10px ;"></lightning-input> -->
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <template if:true={ShowPartialLoanOption}>
+          <div>
+            <template if:true={Amount}>
+              <p>Original Price:&nbsp;<b>{originalPrice}</b></p>
+              <br/>
+              <p>Price Including GST:&nbsp;<b>{priceIncludingGst}</b></p>
+            </template>
+            <br/>
+            <div class="slds-grid slds-wrap" style="margin-bottom: 200px;">
+              <div class="slds-col slds-size_6-of-12" >
+                <p style="font-weight:bold">
+                  NBFCPartner 
+                </p>
+                <lightning-combobox
+                label=""
+                name="NBFCPartner"
+                value={PartialLoanNBFCPartnervalue}
+                placeholder="Select Your NBFCPartner"
+                options={options}
+                onchange={HandlePartialLoanInputNBFCPartner} ></lightning-combobox>
+              </div>
+              <div class="slds-col slds-size_6-of-12"  >
+                <p style="font-weight:bold">
+                  Tenure
+                </p>
+                <lightning-combobox
+                label=""
+                name="Tenure"
+                value={PartialLoanTenureValue}
+                placeholder="Select Your Tenure"
+                options={PartialTenureoptions}
+                onchange={HandlePartialLoanInput} 
+                style="margin-left:10px ;"></lightning-combobox>
+                <!-- <lightning-input type="text" placeholder="Enter Your Tenure" label="" name="Tenure" onchange={HandlePartialLoanInput} value={PartialLoanTenureValue} style="margin-left:10px;"></lightning-input> -->
+              </div>
+            </div>
+            <div class="slds-grid slds-wrap" >
+              <div class="slds-col slds-size_6-of-12" >
+                <p style="font-weight:bold">
+                  UpfrontPayment
+                </p>
+                <lightning-input type="Number" placeholder="Enter Your Upfront payment" label="" name="Upfrontpayment" value={PartialLoanUpfrontpaymentvalue} onchange={HandlePartialLoanInputUpfront} style="margin-right:10px ;"></lightning-input>
+              </div>
+              <div class="slds-col slds-size_6-of-12" >
+                <p style="font-weight:bold">
+                  LoanAmount
+                </p>
+                <lightning-input type="Number" placeholder="Loan Amount" name="LoanAmount" label= "" value={loanAmount} disabled style="font-weight:bold"></lightning-input>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <div slot="footer">
+
+          <template if:true={ShowFormButton}>
+            <lightning-button type="Sumbit" variant="Brand" label="Loan Needed" name="LoanNeeded" onclick={HandleLoanNeed} disabled={HandleButtonDisable} ></lightning-button>
+            <lightning-button type="Sumbit" variant="Brand" label="Loan Not Needed" name="LoanNotNeed" onclick={HandleLoanNotNeed}  disabled={HandleButtonDisable} style="padding-left:5px;" ></lightning-button>
+          </template>
+
+          <template if:true={PaymentSectionButton}>
+            <lightning-button type="Sumbit" variant="Brand" label="Previous" name="PaymentSection" onclick={HandlePrevious}  ></lightning-button> 
+          </template>
+        
+          <template if:true={FullLoanButton}>
+            <lightning-button type="Sumbit" variant="Brand" label="Previous" name="FullSection" onclick={HandlePrevious}  ></lightning-button> 
+            <lightning-button type="Sumbit" variant="Brand" label="Save" onclick={HandleSave} disabled={DisableSave} style="padding-left:5px;" ></lightning-button>
+          </template>
+
+          <template if:true={PartialLoanButton}>
+            <lightning-button type="Sumbit" variant="Brand" label="Previous" name="PartialSection" onclick={HandlePrevious}  ></lightning-button> 
+            <lightning-button type="Sumbit" variant="Brand" label="Next" onclick={HandleNext} disabled={DisableNext} style="padding-left:5px;" ></lightning-button>
+          </template>
+        </div>
+
+
+        <template if:true={LoadSpinner}>
+          <lightning-card style="height: 100%;width: 100%;">
+            <lightning-card>
+                <div align="center">
+                    <div class="loader"></div>
+                    Please wait! Creating Invoice.....
+                </div>
+            </lightning-card>
+        </lightning-card>
+        </template>
+    </lightning-quick-action-panel>
+</template>

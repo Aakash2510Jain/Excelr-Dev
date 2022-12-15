@@ -1,0 +1,34 @@
+<apex:page controller="CCAvenueCatchResponse">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script src="angular-cdn-src.min.js"></script>
+    
+    <script>
+        
+        var App = angular.module('myApp', []);
+        App.controller('myctrl', function ($scope,$rootScope) {
+            debugger;
+            $scope.respUrl = document.URL;
+
+            console.log('URL----',$scope.respUrl);
+            $scope.recordId = getParameters('order_id');
+            $scope.status = getParameters('order_status');
+
+            updateRecord();
+            function updateRecord(){
+                CCAvenueCatchResponse.updatePaymentStatus($scope.recordId,$scope.status,function(res,evt){
+                    console.log('m Updated');
+                })
+            }
+
+            function getParameters(param){
+                var url = new URL($scope.respUrl);
+                return url.searchParams.get(param);
+            }
+        })
+    </script>
+
+    <body ng-app="myApp" ng-controller="myctrl">
+
+    </body>
+</apex:page>

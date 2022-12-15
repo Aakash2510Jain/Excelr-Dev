@@ -1,0 +1,251 @@
+<apex:page readOnly="true" controller="TaxInvoiceHelper" applyHtmlTag="false" sidebar="false" showHeader="false" cache="true" renderAs="advanced_pdf" docType="html-5.0">
+    <html>
+        <head>
+            <style type="text/css">
+            @page {
+            padding-left: 5px;    
+            padding-right: 5px;      
+            }
+            th {  
+            font-weight: bold;
+            text-align: center;
+            background-color: #92d5f0;
+            color: black;
+            padding: 8px;
+            }
+            td {    
+            font-size: 15px;
+            text-align: left;
+            padding: 8px;
+            }
+            table{
+            border-collapse: collapse;
+            }
+            table, th, td {
+            border: 1px solid black;
+            }
+            </style>
+        </head>
+        
+        <body>
+            <table style="width:100%">
+                <tr>
+                    <td style="width:70%;text-align: center;border-right: none;">
+                        <b>
+                            TAX INVOICE
+                        </b>
+                    </td>
+                    <td style="width:30%;">
+                        <img src="{!$Resource.ExcelRLogo}" width="180px" height="50px" align="right"/>
+                    </td>
+                </tr>
+            </table>
+            <table style="width:100%">
+                
+                <tr>
+                    <td>
+                        <center><b>{!companyDetails.Name__c}</b></center>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <center><b>Address: {!companyDetails.Address__c}</b></center>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <center><b>CIN: {!companyDetails.CIN__c}</b></center>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <center><b>GSTIN: {!companyDetails.GSTIN__c}</b></center>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <center><b>PAN: {!companyDetails.PAN__c}</b></center>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <center><b>Phone Number.: {!companyDetails.Phone__c}</b></center>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <center><b>Email Address: {!companyDetails.Email__c}</b></center>
+                    </td>
+                </tr>
+                
+                
+            </table>
+            <table style="width:100%">
+                <tr>
+                    <td>Invoice No. &nbsp;&nbsp;&nbsp;&nbsp; {!invoiceRecord.Name}</td>
+                    <td>State Name &nbsp;&nbsp;&nbsp;&nbsp; {!oppDetails.Account.BillingState}</td>
+                </tr> 
+                <tr>
+                    <td>Invoice Date &nbsp;&nbsp;&nbsp;&nbsp; 
+                        <apex:outputText value="{0,date,dd/MM/yyyy}"> <apex:param value="{!invoiceRecord.Initiated_Date__c}" /> </apex:outputText>
+                    </td>
+                    <td>State Code &nbsp;&nbsp;&nbsp;&nbsp; {!oppDetails.Account.BillingPostalCode}</td>
+                </tr>
+            </table>
+            
+            <table style="width:100%">
+                <tr>
+                    <td style="text-align:center">
+                        <b>Details of Service Receiver</b>
+                    </td>  
+                </tr>
+            </table>
+            <table style="width:100%">
+                <tr>
+                    <td style="width:20%">Name</td>
+                    <td>{!oppDetails.Account.Name}</td>
+                </tr>
+                
+                <tr>
+                    <td>Address</td>
+                    <td>{!oppDetails.Account.BillingStreet} {!oppDetails.Account.BillingCity} {!oppDetails.Account.BillingState} {!oppDetails.Account.BillingPostalCode}</td>
+                </tr>
+                
+                <tr>
+                    <td>GSTIN</td>
+                    <td> {!oppDetails.Account.Name}</td>
+                </tr>
+                <tr>
+                    <td>State Name</td>
+                    <td>{!oppDetails.Account.BillingState}</td>
+                </tr>
+                
+                <tr>
+                    <td>State Code</td>
+                    <td>{!oppDetails.Account.ShippingPostalCode}</td>
+                </tr>
+                
+                <tr>
+                    <td>Phone Number</td>
+                    <td>{!oppDetails.Account.Phone}</td>
+                </tr>
+                
+                <tr>
+                    <td>Email Address</td>
+                    <td>{!oppDetails.Account.Email__c}</td>
+                </tr>                
+            </table>
+            
+            <table style="width:100%">
+                <tr>
+                    <td style="width:10%"><b>S.No.</b></td>
+                    <td><b>Descriptions of Service</b></td>
+                    <td><b>Amount (INR)</b></td>
+                </tr>
+                
+                <tr>
+                    <td>1</td>
+                    <td>{!oppDetails.OpportunityLineItems[0].Name}</td>
+                    <td>{!oppDetails.OpportunityLineItems[0].TotalPrice}</td>
+                </tr>
+                
+               
+                <tr>
+                    <td colspan="2">Sub-Total</td>
+                    <td>{!oppDetails.Amount}</td>
+                </tr>
+            </table>
+            
+            <table style="width:100%">
+                <tr>
+                    <td style="width:40.01%">Total GST Payable in Words (INR)</td>
+                    <td>TAX</td>
+                    <td >Total Amount Before Tax</td>
+                </tr>
+                
+                <tr>
+                    <td></td>
+                    <td>Add CGST 9%:</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>Total Invoice Amount in Words (INR)</td>
+                    <td>Add SGST 9%:</td>
+                </tr>
+                
+                <tr>
+                    <td></td>
+                    <td>Add IGST 18%:</td>
+                    <td>₹0</td>
+                </tr>
+            </table>
+            
+            <table style="width:100%">
+                
+                <tr>
+                    <td style="width:23.22%">Place of Supply</td>
+                    <td style="width:23.22%">{!oppDetails.Account.ShippingState}</td>
+                    <td style="width:21.5%">Total Tax Amount GST 18%:</td>
+                    <td>₹0</td>
+                </tr>
+                
+                <tr>
+                    <td style="width:23.22%">SAC Code</td>
+                    <td style="width:23.22%">{!companyDetails.SAC__c}</td>
+                    <td style="width:21.5%">Total Amount After Tax:</td>
+                    <td>{!oppDetails.Amount}</td>
+                </tr>
+                
+            </table>
+            
+            <table style="width:100%">
+                <tr>
+                    <td style="width:46.44%">Declaration: We declare that this invoice shows the actual price of the goods/services described and that all particulars are true and correct.</td>
+                    <td style="width:28%">GST Payable on Reverse Charge:</td>
+                    <td style="width:30%">NO</td>
+                </tr>
+                
+                <tr>
+                    <td style="width:40%">
+                        Terms  Conditions: 
+                        <br/>
+                        (I) E and O E. Authorised
+                        <br/>
+                        (II) All Disputes Subject to Karnataka Jurisdiction Only
+                    </td>
+                    <td style="width:0%">
+                    </td>
+                    <td style="width:60%" >
+                        <p style="float: right;">
+                            {!oppDetails.Account.Name}
+                            <br/>
+                            -sd-
+                            <br/>
+                            Authorised
+                            <br/>
+                            Signator
+                        </p>
+                    </td>
+                    
+                </tr>
+            </table>
+            
+            <table style="width:100%">
+                <tr>
+                    <td><center>This is a computer generated document requires no signature or stamp</center></td>
+                </tr>
+                
+                <tr>
+                    <td><center>Regd. Office: B-55, Sector 2, NOIDA, UP - 201301</center></td>
+                </tr> 
+            </table>
+        </body>
+    </html>
+</apex:page>

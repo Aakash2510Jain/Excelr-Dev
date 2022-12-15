@@ -1,0 +1,22 @@
+<apex:page >
+    <apex:includeLightning />
+    <apex:includeScript value="/lightning/lightning.out.js" />
+    <div id="lightningapp" />
+    <script>
+    debugger;
+    //var PhoneNumb = "{!$CurrentPage.parameters.id}";
+    var agentrecordId = "{!$CurrentPage.parameters.id}";
+    
+    $Lightning.use("c:WalkInFormToExposeOnSiteAPP", function () {
+        $Lightning.createComponent("c:waklInLead",
+                                   {'agentrecid' : agentrecordId},
+                                   "lightningapp",
+                                   function (cmp) {
+                                       console.log("Customer Detail is loaded in Vf page");
+                                   }
+                                  );
+    });
+
+    //"recordId" :"{!$CurrentPage.parameters.id}"
+    </script>
+</apex:page>

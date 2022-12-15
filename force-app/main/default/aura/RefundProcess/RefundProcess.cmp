@@ -1,0 +1,11 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" 
+                access="global" controller= "RefundProcessHelper">
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="recordId" type="string" default=""/>   
+    
+    <p class="slds-align_absolute-center">
+        <b style="color:green;">
+            Refund Process Initiated..... 
+        </b>
+    </p>
+</aura:component>

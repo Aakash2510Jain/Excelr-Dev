@@ -1,0 +1,54 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:appHostable,force:lightningQuickActionWithoutHeader,force:hasREcordId" controller="CreatePaymentOnOppHelper" >
+    <aura:attribute name="paymentMode" type="boolean" default="false"/>
+    <aura:attribute name="loanType" type="boolean" default="false"/>
+    <aura:attribute name="partialLoanDetail" type="boolean" default="false"/>
+    <aura:attribute name="paymentType" type="boolean" default="false" />
+    <aura:attribute name="reloadForm" type="boolean" default="true" />
+    <aura:attribute name="recordId" type="string" default="" />
+    <aura:attribute name="oppId" type="string" default="" />
+
+    <div class="slds-m-around_xx-large">
+        <lightning:recordEditForm objectApiName="Opportunity" 
+                                  aura:id="accForm" 
+                                  recordId = "{!v.recordId}"
+                                  onload="{!c.handleOnLoad}"
+                                  onsubmit="{!c.handleOnSubmit}"
+                                  onsuccess="{!c.handleOnSuccess}"
+                                  onerror="{!c.handleOnError}">
+            <lightning:messages />
+            
+            <aura:if isTrue="{!v.reloadForm}">
+                <b><h1 style="text-align: center;">Capture Payment Details</h1></b>
+                
+                <lightning:inputField onchange="{!c.onChangeOfSeekLoan}" fieldName="Seek_Loan__c" /> 
+            <aura:if isTrue="{!v.paymentType}">
+                <lightning:inputField onchange="{!c.onPaymentTypeChange}" fieldName="Payment_Type__c" />
+            </aura:if>
+                <aura:if isTrue="{!v.loanType}">
+                    <lightning:inputField fieldName="Loan_Type__c" onchange="{!c.onLoanTypeChange}"/>
+                </aura:if>
+                
+                <aura:if isTrue="{!v.partialLoanDetail}">
+                    <lightning:inputField fieldName="Upfront_Amount__c"/>
+                    <lightning:inputField fieldName="Loan_Amount__c" onchange="{!c.onLoanAmountChange}"/>
+                    <lightning:inputField fieldName="Loan_Tenure__c" />
+                </aura:if>
+                
+                <aura:if isTrue="{!v.paymentMode}">
+                    <lightning:inputField fieldName="Payment_Mode__c" />
+                </aura:if>
+                
+                <aura:set attribute="else">
+                    Saving...
+                </aura:set>
+            </aura:if>
+            <br/><br/>
+            
+            <div class="slds-align_absolute-center" >
+                <lightning:button variant="brand" type="submit" name="save" label="Save" />
+            </div>
+        </lightning:recordEditForm>
+        
+    </div>
+    <!--Component End-->
+</aura:component>

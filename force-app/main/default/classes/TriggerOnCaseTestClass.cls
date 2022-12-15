@@ -1,0 +1,84 @@
+@isTest
+public   class TriggerOnCaseTestClass {
+    //CaseTriggerHeper clas = new CaseTriggerHeper();
+    public static testMethod void upsertcaseRec() {
+        
+        List<Case> caseLIst = new List<Case>();
+        
+        Case caseRec = new Case();
+        caseRec.Approval_Status__c = 'Approved';
+        caseRec.Status = 'On Hold';
+        caseRec.Origin = 'Email';
+        caseLIst.add(caseRec);
+        insert caseLIst;
+        
+        
+        Case caseRec1 = new Case();
+        caseRec1.Approval_Status__c = 'Approved';
+        caseRec1.Status = 'On Hold';
+        caseRec1.Origin = 'Email';
+        insert caseRec1;
+        
+        map<id,Case> mapCase = new map<id,Case>();
+        mapCase.put(caseRec1.id,caseRec1);
+        
+        Profile p = [Select Id from Profile where Name = 'System Administrator'];
+        User user1 = new User();
+        user1.Username = 'us1@test.com';
+        user1.Email = 'us1@test.com';
+        user1.LastName = 'LastName1';
+        user1.FirstName = 'FirstName1';
+        user1.Alias ='u1';
+        user1.CommunityNickname ='use1';
+        user1.ProfileId =p.id;
+        user1.EmailEncodingKey='UTF-8';
+        user1.LanguageLocaleKey='en_US';
+        user1.LocaleSidKey='en_US';
+        user1.TimeZoneSidKey='America/Los_Angeles';
+        user1.Country = 'US';
+        user1.Title = 'Territory Manager';
+        insert user1;
+        
+        User user2 = new User();
+        user2.Username = 'us2@test.com';
+        user2.Email = 'us2@test.com';
+        user2.LastName = 'LastName';
+        user2.FirstName = 'FirstName2';
+        user2.Alias ='u2';
+        user2.CommunityNickname ='use2';
+        user2.ProfileId =p.id;
+        user2.ManagerId = user1.id;
+        user2.EmailEncodingKey='UTF-8';
+        user2.LanguageLocaleKey='en_US';
+        user2.LocaleSidKey='en_US';
+        user2.TimeZoneSidKey='America/Los_Angeles';
+        user2.Country = 'US';
+        user2.Title = 'Field Service Manager';
+        insert user2;
+        
+        string userId = user1.Id;
+        Account acclist = [Select id,Name From Account Where Id=: userId];
+        Account acc = new Account();
+        acc.Name = 'Manager';
+        acc.OwnerId = userId ;
+        insert acc;
+        
+        list<Refund__c> refunReclist = new list<Refund__C>{[Select id,Name,Account__c from Refund__c where Account__c =: acc.id]};        
+            Refund__c refundRec = new Refund__c();
+        refundRec.Account__c = acc.id;
+        insert refundRec;
+        
+        list<Bank_Details__c> bdlist = new list<Bank_Details__c>{[Select id,Name,Account__c  From Bank_Details__c where Account__c =:acc.id]};
+            Bank_Details__c bdRec = new Bank_Details__c();
+        bdRec.Account__c = acc.id;
+        insert bdRec;
+        
+        
+        
+        
+        /* test.startTest();
+CaseTriggerHeper.onAfterInsert(caseLIst,mapCase);
+test.stopTest();*/
+        
+    }
+}

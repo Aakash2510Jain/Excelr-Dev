@@ -1,0 +1,48 @@
+<template>
+    <article class="slds-card">
+        <div class="slds-card__header slds-grid">
+          <header class="slds-media slds-media_center slds-has-flexi-truncate">
+            <div class="slds-media__figure">
+                    <lightning-icon icon-name="action:log_event"></lightning-icon>
+                <span class="slds-assistive-text">User tracking</span>
+            </div>
+            <div class="slds-media__body">
+              <h2 class="slds-card__header-title">
+                  <span>User tracking</span>
+              </h2>
+            </div>
+          </header>
+        </div>
+        <div class="slds-card__body slds-card__body_inner">
+            <button class="slds-button slds-button_neutral" onclick={checkin} disabled={disableCheckin}>CheckIn</button>
+            <button class="slds-button slds-button_neutral" onclick={checkoutPopupHandler} disabled={disableCheckout}>Checkout</button>
+            <button class="slds-button slds-button_neutral" onclick={breakStart} disabled={disableBreak}>{breakStatus}</button>
+        </div>
+        
+      </article>
+
+      <template if:true={showCheckoutPopup}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+          class="slds-modal slds-fade-in-open">
+          <div class="slds-modal__container">
+            <div class="slds-modal__header">Enter username</div>
+            <div class="slds-modal__content slds-p-around_medium modalBody" id="modal-content-id-1">
+              <template if:true={showCheckoutSpinner}>
+                <lightning-spinner alternative-text="Loading"></lightning-spinner>
+              </template>
+                <lightning-input type="text" label="Enter username" value={usernameChoosed} onchange={userNameHandler} placeholder="enter username"></lightning-input>
+            </div>
+            <div class="slds-modal__footer">
+              <lightning-button variant="destructive" label="Checkout" title="Checkout" icon-name="utility:logout"
+                icon-position="left" class="slds-m-left_x-small slds-m-right_medium"
+                onclick={checkout} ></lightning-button>
+        
+              <button class="slds-button slds-button_neutral" aria-label="Cancel and close"
+                onclick={dismissCheckoutPopupHanlder}>Cancel</button>
+            </div>
+          </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+      </template>
+    
+  </template>
