@@ -1,32 +1,36 @@
 <template>
-    <div class="slds-grid slds-gutters">
-        <div class="slds-col">
-            <img 
-            src={imageurl} 
-            alt="User Image" 
-            height="250px" 
-            width="250px"/>
-          
-        </div>
-        <div class="slds-col" style="font-size:25px">
-            <div style="padding-left: 100px; padding-top: 20px;">
-                Fill ReFund Form
+    <lightning-modal-header>
+        <div class="slds-grid slds-gutters">
+
+            <div class="slds-col slds-float_left">
+                <img 
+                src={imageurl} 
+                alt="User Image" 
+                height="250px" 
+                width="250px" class="slds-float_left"/>
+              
             </div>
-          
-        </div>
-        <div class="slds-col">
-          
-        </div>
-      </div>
+            <div class="slds-col" style="font-size:25px">
+                <div style="padding-left: 80px; padding-top: 20px;" class="slds-float_left">
+                    Fill ReFund Form
+                </div>
+              
+            </div>
+            <div class="slds-col">
+              
+            </div>
+          </div>
+    </lightning-modal-header>
+    
     <div>
         <lightning-card>
             <div class="slds-align_absolute-center">
                 <div class="slds-size_2-of-6"> 
-                    <lightning-input label="Enter Account Number"  onchange={AccountHandler} style="margin-top:8px;" value={bankAccountNumer} oncontextmenu={handleContext} ></lightning-input>
+                    <lightning-input label="Enter Bank Account Number"  onchange={AccountHandler} style="margin-top:8px;" value={bankAccountNumer} oncontextmenu={handleContext} ></lightning-input>
                     <template if:true={notMatch}>
                         <h1 style="color: red;">Account Number Does Not Match</h1>
                     </template>
-                    <lightning-input label="Confirm Account Number"  onchange={ConAccountHandler} style="margin-top:8px;" value={ConfirmbankAccountNumer} type="number" name="confirmBank" oncontextmenu={handleContext} onpaste={handlePaste}></lightning-input>
+                    <lightning-input label="Confirm Banl Account Number"  onchange={ConAccountHandler} style="margin-top:8px;" value={ConfirmbankAccountNumer} type="number" name="confirmBank" oncontextmenu={handleContext} onpaste={handlePaste}></lightning-input>
                     <lightning-input label="Bank Name"  onchange={bankNameHandler} style="margin-top:8px;" value={bankName}></lightning-input>
                     <lightning-input label="IFSC CODE"  onchange={ifseHandler} style="margin-top:8px;" value={ifseCode}></lightning-input>
                     <lightning-input label="Email"  onchange={emailHandler} style="margin-top:8px;" value={Email}></lightning-input>
@@ -34,11 +38,19 @@
                     <lightning-input label="Phone" max-length="10" onchange={phoneHandler} style="margin-top:8px;" value={Phone}></lightning-input>
                 </div>   
             </div>
-            <div class="slds-size_2-of-6 slds-align_absolute-center"> 
+            <br/>
+            
+            <!-- div class="slds-size_2-of-6 slds-align_absolute-center" slot="footer"> 
                 <lightning-button title="Save" label="Submit" onclick={savebankDetailBTN}   variant="brand" style="margin-top:8px ;"></lightning-button>
-            </div> 
+            </div --> 
         </lightning-card>
     </div>
+    <lightning-modal-footer class="my-modal-footer">
+        <div class=" slds-align_absolute-center">
+            <lightning-button title="Save" label="Submit" onclick={savebankDetailBTN}   variant="brand" style="margin-top:8px ;"></lightning-button>
+        </div>
+        
+    </lightning-modal-footer>
     
    
 </template>

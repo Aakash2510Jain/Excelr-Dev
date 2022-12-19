@@ -7,6 +7,7 @@ import EmailIsm from '@salesforce/apex/walkInLeadLWCcontroller.EmailIsm';
 import getMember from '@salesforce/apex/walkInLeadLWCcontroller.getMember';
 import getPuckistOflead from '@salesforce/apex/walkInLeadLWCcontroller.getPuckistOflead';
 import createLead from '@salesforce/apex/walkInLeadLWCcontroller.createLead';
+import createApplication from '@salesforce/apex/walkInLeadLWCcontroller.CreateApplication';
 import FirstName from '@salesforce/schema/Lead.FirstName';
 import LastName from '@salesforce/schema/Lead.LastName';
 import Email from '@salesforce/schema/Lead.Email';
@@ -54,15 +55,26 @@ import CID__c from '@salesforce/schema/Lead.CID__c';
 import Campaign__c from '@salesforce/schema/Lead.Campaign__c';
 import Name from '@salesforce/schema/Lead.Name';
 
+import QueryPastLeads from '@salesforce/apex/walkInLeadLWCcontroller.QueryPastLeads';
 import LightningAlert from 'lightning/alert';
 import LightningConfirm from "lightning/confirm";
 
 
 
-const columns = [{ label: 'Name', fieldName: 'Name' },
+const applicationcolumns = [{ label: 'Name', fieldName: 'Name' },
 { label: 'Course', fieldName: 'Course__c' },
-{ label: 'Apply Date', fieldName: 'Applied_Date_Time__c' },
+{ label: 'Apply Date', fieldName: 'Applied_Date_Time__c', type: 'date', typeAttributes: { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true } },
 { label: 'LID', fieldName: 'LID__c' },]
+
+const LeadListcolumns = [{ label: 'Name', fieldName: 'Name' },
+{ label: 'Course', fieldName: 'Course__c' },
+{ label: 'Email', fieldName: 'Email' },
+{ label: 'Phone', fieldName: 'Phone' },
+{ label: 'Owner', fieldName: 'OwnerName' },
+{ label: 'Product', fieldName: 'ProductName' },
+{ label: 'Status', fieldName: 'Status' },
+{ label: 'Total Call', fieldName: 'Total_Calls__c' },
+{ label: 'Total Connected Call', fieldName: 'Total_Connected_Call__c' },]
 
 
 export default class WaklInLead extends LightningElement {
@@ -73,6 +85,7 @@ export default class WaklInLead extends LightningElement {
     @track ismBTNdisAble = true;
     @track courssweList = [];
     @track CourceLead;
+    @track courseforApp;
     @api recordId;
     @track newBTNdisAble = false;
     @track ISM_Name = ISM_Name__c;
@@ -143,7 +156,14 @@ export default class WaklInLead extends LightningElement {
     @track showFromOrEmpty = false;
 
     @track dataForApp;
-    @track columns = columns;
+    @track Leaddata = [];
+    @track showPastLeads = false;
+    @track showSearchDetails = true;
+    @track LeadrecordsNotFound = false;
+    @track LeadrecordsFound = false;
+
+    @track showapplicationMOdal = false;
+    @track appbtndisAble = true;
 
     connectedCallback() {
         //defined a varibale
@@ -191,10 +211,21 @@ export default class WaklInLead extends LightningElement {
         debugger;
         if (data) {
             this.dataForApp = data;
-            console.log(data);
-
             console.log(this.dataForApp);
+            this.columns = applicationcolumns;
+            if (Array.isArray(this.dataForApp.data)) {
+                if (this.dataForApp.data.length > 0) {
+                    this.appbtndisAble = true;
+                }
+                else if(this.dataForApp.data.length == 0) {
+                    this.appbtndisAble = false;
+                }
+            }
         }
+        // else{
+        //     this.appbtndisAble = false;
+
+        // }
         if (error) {
             this.ifdataNotFound = true;
 
@@ -271,7 +302,6 @@ export default class WaklInLead extends LightningElement {
         this.gruoMemberId = this.groupMemList.find(item => item.Group_Member__c == selectedValue).Id;
         //this.groupMemList[this.ismeId];
     }
-
     courceHandler(event) {
         debugger;
         let selectedCource = event.detail.value;
@@ -284,21 +314,11 @@ export default class WaklInLead extends LightningElement {
             .then(result => {
                 debugger;
                 this.ismBTNdisAble = true;
-                // this.dispatchEvent(
-                //     new ShowToastEvent({
-                //         title: 'Success',
-                //         message: 'Email Sent',
-                //         variant: 'success'
-                //     })
-                // );
                 this.handleConfirm('Email sent successfully');
-                //alert('Email sent successfully');
 
             })
             .catch(error => {
                 this.handleAlert('Email not sent');
-                //alert('Email not sent');
-
             })
     }
 
@@ -384,25 +404,11 @@ export default class WaklInLead extends LightningElement {
                     this.handleConfirm('Lead Created Successfully');
                     console.log(data)
                     alert('Lead Record created successfully');
-                    // this.dispatchEvent(
-                    //     new ShowToastEvent({
-                    //         title: 'Success',
-                    //         message: 'records created',
-                    //         variant: 'success'
-                    //     })
-                    // );
                     this.handleCancel();
 
                 })
                 .catch(error => {
                     this.handleAlert('Error updating or reloading records');
-                    // this.dispatchEvent(
-                    //     new ShowToastEvent({
-                    //         title: 'Error updating or reloading records',
-                    //         message: error.body.message,
-                    //         variant: 'error'
-                    //     })
-                    // );
 
                 })
         }
@@ -416,7 +422,7 @@ export default class WaklInLead extends LightningElement {
         const result = await LightningConfirm.open({
             message: message,
             theme: "success",
-            label: "Confirm Header"
+            label: "Success"
         });
         console.log("🚀 ~ result", result);
     }
@@ -430,13 +436,95 @@ export default class WaklInLead extends LightningElement {
         await LightningAlert.open({
             message: message,
             theme: "error",
-            label: "Alert Header"
+            label: "Alert"
         }).then(() => {
             console.log("###Alert Closed");
         });
     }
 
 
+    ShowPastLeadPage() {
+        debugger;
+        QueryPastLeads({ ExcelRagentid: this.agentrecid })
+            .then(data => {
+                debugger;
 
+                console.log('ertygutr54----', data);
+                this.showPastLeads = true;
+                this.showSearchDetails = false;
+                this.columns = LeadListcolumns;
+
+                if (data.length > 0) {
+                    this.Leaddata = data;
+
+                    // this.Leaddata = data.map(row=>{
+                    //     return{...row, OwnerName: row.Owner.Name,
+                    //         //if (Product__r) {
+                    //             ProductName:row.Product__r.Name
+
+                    //         //}
+                    //     }
+                    // })
+                    this.error = undefined;
+                    this.LeadrecordsFound = true;
+                    //this.Leaddata = tempRecords;
+
+                }
+                else {
+                    this.LeadrecordsNotFound = true;
+                }
+
+            })
+            .catch(error => {
+                this.handleAlert('Error updating or reloading records');
+
+            })
+    }
+
+    ShowSearchpage() {
+        debugger;
+        this.showPastLeads = false;
+        this.showSearchDetails = true;
+        this.columns = applicationcolumns;
+    }
+
+    showpplicationForm() {
+
+    }
+
+    createapplicationForm() {
+        debugger;
+
+        createApplication({ Course: this.courseforApp, LeadId: this.recordId })
+            .then(data => {
+                debugger;
+                this.showapplicationMOdal = false;
+                this.handleConfirm('Appication Created Successfully');
+                this.appbtndisAble = true;
+
+            })
+            .catch(error => {
+                this.handleAlert('Error updating or reloading records');
+
+            })
+
+    }
+
+
+
+    courseforapphandler(event) {
+        let selectecourse = event.detail.value;
+        this.courseforApp = selectecourse;
+    }
+
+    showpplicationForm() {
+        debugger;
+        this.showapplicationMOdal = true;
+    }
+
+    handleappCancel() {
+        debugger;
+        this.showapplicationMOdal = false;
+    }
 
 }

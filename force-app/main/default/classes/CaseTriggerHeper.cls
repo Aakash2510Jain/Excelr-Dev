@@ -35,7 +35,7 @@ public class CaseTriggerHeper {
             List<Refund__c> refundListToBeInserted = new List<Refund__c>();
             List<Account> accListToBeInserted = new List<Account>();
             List<Bank_Details__c> bnkDetListToBeInserted = new List<Bank_Details__c>();
-            Map<Id,Case> freshCaseMap = new Map<Id,Case>([SELECT Id, Owner.UserRoleId, Account.OwnerId, Account.Owner.ManagerId, Account.Owner.Name, Account.Email__c,Approval_Status__c,
+            Map<Id,Case> freshCaseMap = new Map<Id,Case>([SELECT Id, Owner.UserRoleId, Account.OwnerId, Account.Owner.ManagerId, Account.Owner.Name, Account.Email__c,
                                                           Account.Owner.Email, Account.Owner.Manager.Email, Account.Owner.Manager.Name, Account.Owner.UserRoleId, Account.Name, AccountId
                                                           FROM Case WHERE Id IN:oldCaseMap.keySet()]);
             List<ProcessInstance> recordUnderApprovalList = [Select ID, Status,TargetObjectID, TargetObject.Name From ProcessInstance Where Status =: Constants.PENDING AND TargetObjectID IN :oldCaseMap.keySet()];
@@ -92,7 +92,7 @@ public class CaseTriggerHeper {
                         system.debug('oppOwnersRoleId :: ' + oppOwnersRoleId);
                         Id BHId = approvalBHWrapper.smToManagerMap.containsKey(oppOwnersRoleId) && approvalBHWrapper.managerRoleToUserIdMap.containsKey(approvalBHWrapper.smToManagerMap.get(oppOwnersRoleId)) ? approvalBHWrapper.managerRoleToUserIdMap.get(approvalBHWrapper.smToManagerMap.get(oppOwnersRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
                         system.debug('BHId :: ' + BHId);
-                        if(BHId!= null){
+                        if(BHId!= null){ 
                             createTask('L3 Severity Case assigned!', BHId, csRec.AccountId);
                             
                             String bhEmail = [SELECT Id, Email FROM User WHERE Id =: BHId].Email;

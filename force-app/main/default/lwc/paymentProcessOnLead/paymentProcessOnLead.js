@@ -17,8 +17,8 @@ import CreateInvoice from '@salesforce/apex/PaymentProcessOnLeadController.Creat
 
 
 export default class PaymentProcessOnLead extends LightningElement {
-    RazorPayImage=staticimage;
-    CcAvenueImage=CcStatic;
+    // RazorPayImage=staticimage;
+    // CcAvenueImage=CcStatic;
 
    //Here Getting The Payment Types
     Picklistvalue=[];
@@ -51,7 +51,7 @@ export default class PaymentProcessOnLead extends LightningElement {
         debugger;
         this.PaymentType=event.detail.value;
 
-        if(this.PaymentType=='Razor Pay'){
+        if(this.PaymentType=='razorpay'){
             this.HandleRazorPay();
         }
         else if(this.PaymentType=='CC Avenue'){
@@ -206,7 +206,7 @@ export default class PaymentProcessOnLead extends LightningElement {
          .then(result=>{
               
             this.priceIncludingGst=result;
-            console.log('priceIncludingGst=',this.priceIncludingGst);
+            console.log('priceIncludingGst=',this.priceIncludingGst); 
          })
          .catch(error=>{
               console.log('error',error);
@@ -467,7 +467,7 @@ export default class PaymentProcessOnLead extends LightningElement {
         //this.FullLoanButton=true;
        
         
-        if(this.Loanvalue=='Full Loan'){
+        if(this.Loanvalue=='100% Loan'){
             this.ShowFullLoanOption=true;
             this.FullLoanButton=true;
 
@@ -488,7 +488,7 @@ export default class PaymentProcessOnLead extends LightningElement {
 
     get Loanoptions(){
         return [
-            { label: 'Full Loan', value: 'Full Loan' },
+            { label: '100% Loan', value: '100% Loan' },
             { label: 'Partial Loan', value: 'Partial Loan' },
         ];
     }
@@ -496,7 +496,7 @@ export default class PaymentProcessOnLead extends LightningElement {
     HandleRadioButton(event){
         this.Loanvalue=event.detail.value;
 
-        if(this.Loanvalue=='Full Loan'){
+        if(this.Loanvalue=='100% Loan'){
             this.ShowFullLoanOption=true;
                         
              this.FullLoanButton=true;

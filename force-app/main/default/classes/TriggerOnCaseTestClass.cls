@@ -6,7 +6,7 @@ public   class TriggerOnCaseTestClass {
         List<Case> caseLIst = new List<Case>();
         
         Case caseRec = new Case();
-        caseRec.Approval_Status__c = 'Approved';
+        //caseRec.Approval_Status__c = 'Approved';
         caseRec.Status = 'On Hold';
         caseRec.Origin = 'Email';
         caseLIst.add(caseRec);
@@ -14,7 +14,7 @@ public   class TriggerOnCaseTestClass {
         
         
         Case caseRec1 = new Case();
-        caseRec1.Approval_Status__c = 'Approved';
+        //caseRec1.Approval_Status__c = 'Approved';
         caseRec1.Status = 'On Hold';
         caseRec1.Origin = 'Email';
         insert caseRec1;
@@ -36,6 +36,11 @@ public   class TriggerOnCaseTestClass {
         user1.LocaleSidKey='en_US';
         user1.TimeZoneSidKey='America/Los_Angeles';
         user1.Country = 'US';
+        user1.Working_Days__c = 'Tuesday';
+            user1.Working_Start_Time__c =  Time.newInstance(1, 2, 3, 4);
+            user1.Working_End_Time__c =  Time.newInstance(1, 2, 3, 5);
+            user1.Start_Date__c = system.today();
+            user1.End_Date__c = system.today();
         user1.Title = 'Territory Manager';
         insert user1;
         
@@ -54,6 +59,11 @@ public   class TriggerOnCaseTestClass {
         user2.TimeZoneSidKey='America/Los_Angeles';
         user2.Country = 'US';
         user2.Title = 'Field Service Manager';
+         user2.Working_Days__c = 'Tuesday';
+            user2.Working_Start_Time__c =  Time.newInstance(1, 2, 3, 4);
+            user2.Working_End_Time__c =  Time.newInstance(1, 2, 3, 5);
+            user2.Start_Date__c = system.today();
+            user2.End_Date__c = system.today();
         insert user2;
         
         string userId = user1.Id;

@@ -39,30 +39,43 @@ global without sharing class TaxInvoiceHelper{
 
         try{
             String reciepientEmail;
+            string userId = [Select Id
+                             from User
+                             where Name = 'RazorPayWebHookAPI Site Guest User'].Id;
             PageReference pdfPage;
-            if ([Select id, Profile.UserLicense.Name
-                 from User
-                 where Id = :UserInfo.getUserId()].Profile.UserLicense.Name == 'Guest User License'){
-                //site
-                pdfPage = new PageReference(Label.Site_URL);
+            Blob pdfBlob;
+            system.debug('UserInfo.getUserId()-->'+UserInfo.getUserId());
+            
+            if (UserInfo.getUserId() == userId){
+                system.debug('Site User');
+
+                Invoice_Attachment__e invAtt = new Invoice_Attachment__e();
+                invAtt.Invoice__c = recordId;
+                Database.SaveResult results = EventBus.publish(invAtt);
+                if (results.isSuccess()){
+                    System.debug('Successfully published event.');
+                } else{
+                    for (Database.Error err : results.getErrors()){
+                        System.debug('Error returned: ' + err.getStatusCode() + 
+                             ' - ' + err.getMessage());
+                    }
+                }
             } else{
+                system.debug('Internal User');
                 //internal user
                 pdfPage = Page.TaxInvoice;
-            }
+                pdfPage.getParameters().put('id', recordId);
+                pdfBlob = pdfPage.getContent();
 
-            pdfPage.getParameters().put('id', recordId);
-            system.debug('recordId-->' + recordId);
-            Blob pdfBlob;
-            pdfBlob = pdfPage.getContent();
-
-            Attachment attach = new Attachment(parentId = recordId, Name = 'TaxInvoice.pdf', body = pdfBlob);
-            insert attach;
-            reciepientEmail = [Select Opportunity__r.Account.Email__c
-                               From Invoice__c
-                               where Id = :recordId].Opportunity__r.Account.Email__c;
-            system.debug('reciepientEmail :: ' + reciepientEmail);
-            if (!string.isBlank(reciepientEmail)){
-                EmailIUtility.sendEmailForPaymentSuccess(reciepientEmail, 'Razor Pay Success Status Opportunity', 'Opportunity', recordId);
+                Attachment attach = new Attachment(parentId = recordId, Name = 'PaymentReceipt.pdf', body = pdfBlob);
+                insert attach;
+                reciepientEmail = [Select LeadInvoice__r.Email
+                                   From Invoice__c
+                                   where Id = :recordId].LeadInvoice__r.Email;
+                system.debug('reciepientEmail :: ' + reciepientEmail);
+                if (!string.isBlank(reciepientEmail)){
+                    EmailIUtility.sendEmailForPaymentSuccess(reciepientEmail, 'Razor Pay Success Status Opportunity', 'Opportunity', recordId);
+                }
             }
 
         } catch (exception ex){

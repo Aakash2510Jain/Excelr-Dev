@@ -30,24 +30,12 @@ export default class BankDetails extends LightningElement {
         this.ConfirmbankAccountNumer = confirAccNum;
         if (this.ConfirmbankAccountNumer != this.bankAccountNumer) {
             this.notMatch = true;
-
-            // let acunner = this.template.querySelector('lightning-input');
-            // this.bankAccountNumer = acunner;
-            // if(!this.ConfirmbankAccountNumer){
-            //     confirmBank.setCustomValidity(' please enter correct password');
-            // }else{
-            //     this.ConfirmbankAccountNumer.setCustomValidity('please enter correct');
-            // }
-            // this.ConfirmbankAccountNumer.reportValidity('please entire ');
         }
         else {
             this.notMatch = false;
             this.readOnly = true;
             this.AcNumberTypr = "password"
         }
-
-
-
     }
     ifseHandler(Event) {
         debugger;
@@ -69,11 +57,6 @@ export default class BankDetails extends LightningElement {
         let bankname = Event.target.value;
         this.bankName = bankname;
     }
-    //    nameHandler(Event){
-    //     debugger;
-    //     let NameD=Event.target.value;
-    //     this.Name=NameD;
-    //    }
 
     savebankDetailBTN() {
 
@@ -84,13 +67,6 @@ export default class BankDetails extends LightningElement {
             .then(result => {
                 debugger;
                 this.handleConfirm();
-                // this.dispatchEvent(
-                //     new ShowToastEvent({
-                //         title: 'Success',
-                //         message: 'records created',
-                //         variant: 'success'
-                //     })
-                // );
                 this.ConfirmbankAccountNumer = '';
                 this.bankName = '';
                 this.ifseCode = '';
@@ -101,14 +77,6 @@ export default class BankDetails extends LightningElement {
             })
             .catch(error => {
                 this.handleAlert();
-                // this.dispatchEvent(
-                //     new ShowToastEvent({
-                //         title: 'Error updating or reloading records',
-                //         message: 'error not getting created',
-                //         variant: 'error'
-                //     })
-                // );
-                // console.log(`hii there im getting error from save bd`);
             })
 
         }else{
@@ -142,7 +110,7 @@ export default class BankDetails extends LightningElement {
         const result = await LightningConfirm.open({
             message: "Refund Form submitted Successfully",
             theme: "success",
-            label: "Confirm Header"
+            label: "Success"
         });
         console.log("🚀 ~ result", result);
     }
@@ -151,7 +119,7 @@ export default class BankDetails extends LightningElement {
         await LightningAlert.open({
           message: "Error in Submission of Refund Form. Please try after Sometime",
           theme: "error",
-          label: "Alert Header"
+          label: "Alert"
         }).then(() => {
           console.log("###Alert Closed");
         });

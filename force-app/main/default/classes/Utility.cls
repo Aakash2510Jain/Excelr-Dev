@@ -206,6 +206,7 @@ public without sharing class Utility{
                     integer i = 0;
                     for (Invoice__c invoiceRec : invoiceListAttachedToLead){
                         Invoice__c invoiceRecToUpdate = new Invoice__c();
+                        invoiceRecToUpdate.Id = invoiceRec.Id;		
                         if (i == 0){
                             invoiceRecToUpdate.Opportunity__c = covertedAccRec.Opportunities[0].Id;
                             invoiceRecToUpdate.Status__c = 'Realized';

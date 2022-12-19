@@ -64,7 +64,7 @@ public without sharing class UserTracking{
             if (userTracking.isEmpty()){
                 list<Course_Interested_And_Group_Name__mdt> groupNameSourceIntent = [select id, Group_Name__c, Source_Intent__c
                                                                                      from Course_Interested_And_Group_Name__mdt];
-                
+               
                 if (!groupNameSourceIntent.isEmpty()){
                     for (Course_Interested_And_Group_Name__mdt signMeta : groupNameSourceIntent){
                         mapofGroupNameBySourceIntent.put(signMeta.Group_Name__c, signMeta.Source_Intent__c);

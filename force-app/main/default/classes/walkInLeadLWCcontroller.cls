@@ -65,6 +65,33 @@ public without sharing class walkInLeadLWCcontroller{
         return leadRec;
     }
 
+    @AuraEnabled
+    public static Application__c CreateApplication(string Course, string LeadId ){
+        System.debug('Course =====> ' + Course);
+        //System.debug('Course =====> ' + userId);
+        System.debug('Course =====> ' + LeadId);
+        List<Lead> leadlist = new List<Lead>();
+        try {
+            if (LeadId != null) {
+                leadlist = [Select id, ownerId from Lead Where Id =: LeadId];
+            }
+            Application__c app = new Application__c();
+            app.Course__c = course;
+            app.Applied_Date_Time__c = system.now();
+            app.Lead__c = LeadId;
+            if (!leadlist.isEmpty()) {
+                app.OwnerId = leadlist[0].ownerId;
+                
+            }
+            
+            insert app;
+            return app;
+
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
     @auraenabled(cacheable = true)
     public static List<Assignment_Group_Member__c> getMember(){
         List<Assignment_Group_Member__c> GmList = [SELECT Name, Group_Member__c, Group_Member__r.Name, Id
@@ -129,6 +156,23 @@ public without sharing class walkInLeadLWCcontroller{
             return null;
         }
         //return message;
+    }
+
+
+    @AuraEnabled(cacheable = true)
+    public static List<Lead> QueryPastLeads(string ExcelRagentid ){
+        System.debug(' ExcelRagentid =========> ' + ExcelRagentid);
+        try {
+            List<Lead> PastLeadRecords = [SELECT Course__c,Email,ExcelR_Training_User__c,Name,OwnerId,Owner.Name,Phone,Product__c,Product__r.Name,Status,Total_Calls__c,Total_Connected_Call__c 
+                                            FROM Lead 
+                                            Where ExcelR_Training_User__c =: ExcelRagentid ANd isconverted = false Order by createdDate Desc ];
+            System.debug('PastLeadRecords ======> ' + PastLeadRecords);
+
+             return PastLeadRecords;                           
+        } catch (Exception e) {
+
+            throw new AuraHandledException(e.getMessage());
+        }
     }
 
 }

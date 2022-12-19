@@ -1,252 +1,570 @@
 <template>
-    <div class="slds-grid slds-gutters">
-        <div class="slds-col">
-            <img 
-            src={imageurl} 
-            alt="User Image" 
-            height="250px" 
-            width="250px"/>
-          
+    <div class="slds-grid slds-gutters" style="background-color: rgb(157, 217, 239);">
+        <div class="slds-col" >
+            <img src={imageurl} alt="User Image" height="250px" width="250px" />
+
         </div>
-        <div class="slds-col" style="font-size:25px">
-            <div style="padding-left: 100px; padding-top: 20px;">
+        <div class="slds-col" style="font-size:25px;">
+            <div style="padding-left: 100px; padding-top: 20px; font-weight: bold;">
                 Walk-In Lead Form
             </div>
-          
+
         </div>
         <div class="slds-col">
-          
+            <div class="slds-float_right slds-p-right_medium slds-p-top_small" style="font-size: 20px; display: inline-block;">
+                <div class="slds-p-around_medium" style="display: inline-block;">
+                    <a href="javascript:void(0)" onclick={ShowSearchpage}>
+                        <h1>
+                            Search Lead
+                        </h1>
+                        
+                    </a>
+                </div>
+                <div class="slds-p-around_medium" style=" display: inline-block;">
+                    <a href="javascript:void(0)" onclick={ShowPastLeadPage}>
+                        <h1>
+                            My Past Leads
+                        </h1>
+                        
+                    </a>
+                </div>
+                
+            </div>
+            
         </div>
-      </div>
+    </div>
 
-    <div class="slds-m-around_small">
-        <lightning-card > 
-            <div class="slds-align_absolute-center">
-               <div class="slds-size_2-of-6"> 
-                   <lightning-input label="Email Or Phone"  onchange={emailHandler} style="margin-top:8px;"></lightning-input>
-               </div>
-               <div class="slds-size_2-of-6  slds-p-top_x-large"  style="margin-left:8px;" > 
-                   <lightning-button title="Search" label="Search" onclick={serachLeadBTN}></lightning-button>
-                   <lightning-button title="New" label="New" onclick={newhLeadBTN} disabled={newBTNdisAble}  variant="brand" style="margin-left:8px;"></lightning-button>
-                   <lightning-button title="Notify ISM" label="Email ISM" onclick={notifyismBTN}   variant="brand" style="margin-left:8px;" disabled={ismBTNdisAble} ></lightning-button>
-               </div> 
-           </div>
-           <div>
-               <template if:true={showFromOrEmpty}>
-                   <lightning-tabset>
-                       <lightning-tab label="Details">
-                        <template if:true={data}>
-                            <lightning-record-view-form  object-api-name={objectApiName} record-id={recordId}>
-                                <div  style="background-color: rgb(230, 226, 226); border-radius: 25px; margin-right: 10px; margin-left: 10px; font-size:medium; padding-left: 20px;">
-                                   <b>All Details</b> 
-                                </div>
-                                <div class="slds-grid slds-gutters">
-                                    <div class="slds-col" style="margin-left: 7px;">
-                                        <div class="slds-border_bottom">
-                                            <lightning-output-field field-name={Name} style="font-weight: bold;"> </lightning-output-field>
+    <div class="">
+
+        <template if:true={showSearchDetails}>
+            <lightning-card>
+                <div class="slds-align_absolute-center">
+                    <div class="slds-size_2-of-6">
+                        <lightning-input label="Email Or Phone" onchange={emailHandler}
+                            style="margin-top:8px;"></lightning-input>
+                    </div>
+                    <div class="slds-size_2-of-6  slds-p-top_x-large" style="margin-left:8px;">
+                        <lightning-button title="Search" label="Search" onclick={serachLeadBTN}></lightning-button>
+                        <lightning-button title="New" label="New" onclick={newhLeadBTN} disabled={newBTNdisAble}
+                            variant="brand" style="margin-left:8px;"></lightning-button>
+                        <lightning-button title="Notify ISM" label="Email ISM" onclick={notifyismBTN} variant="brand"
+                            style="margin-left:8px;" disabled={ismBTNdisAble}></lightning-button>
+                        <lightning-button title="Create Application"  label="Create Application" onclick={showpplicationForm} variant="brand"
+                            style="margin-left:8px;" disabled={appbtndisAble}></lightning-button>
+                    </div>
+                </div>
+                <div>
+                    <template if:true={showFromOrEmpty}>
+                        <lightning-tabset>
+                            <lightning-tab label="Details">
+                                <template if:true={data}>
+                                    <lightning-record-view-form object-api-name={objectApiName} record-id={recordId} density="comfy">
+                                        <div
+                                            style="background-color: rgb(230, 226, 226); border-radius: 25px; margin-right: 10px; margin-left: 10px; font-size:medium; padding-left: 20px;">
+                                            <b>All Details</b>
                                         </div>
-                                        <div class="slds-border_bottom">
-                                            <lightning-output-field field-name={Campaign} style="font-weight: bold;"> </lightning-output-field>
+                                        <div class="slds-grid slds-gutters">
+                                            <div class="slds-col" style="margin-left: 7px;">
+                                                <lightning-layout multiple-rows="true">
+                                                    
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Name}
+                                                                style="font-weight: bold;">
+                                                            </lightning-output-field>
+                                                        </div>
+                                                        
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Campaign}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+                                                        
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={CID} style="font-weight: bold;">
+                                                            </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Course}
+                                                                style="font-weight: bold;">
+                                                            </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Date_of_Enrollment}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Designation}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+                                                        
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Device}
+                                                                style="font-weight: bold;">
+                                                            </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Do_you}
+                                                                style="font-weight: bold;">
+                                                            </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Email_Conversation}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Enquired_Course}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Form_Source}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Hic} style="font-weight: bold;">
+                                                            </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Is_Email_Invalid__c}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Is_Phone_Invalid}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={OwnerId}
+                                                                style="font-weight: bold;">
+                                                            </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={LeadSource}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Why_This_Course}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Profession}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={statusLead}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Qualification}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Rating}
+                                                                style="font-weight: bold;">
+                                                            </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Reason_For_Dead}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Reason_for_On_Hold}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Refree_Mob_No}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Relevant_Experience}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Source}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Telephonic_Conversation}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Total_Calls}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Total_Call_Duration}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Total_Connected_Call__c}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Total_Conversation_Duration}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Total_Applications_Submitted}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+                                                        
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Total_Emails}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+                                                        
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Whatsapp_Opt_in}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+                                                        
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Year_of_Experience}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+                                                        
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name={Year_of_Graduation}
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+                                                        
+                                                    </lightning-layout-item>
+                                                    
+
+
+                                                </lightning-layout>
+                                            </div>
                                         </div>
-                                        <div class="slds-border_bottom">
-                                            <lightning-output-field field-name={CID} style="font-weight: bold;"> </lightning-output-field>
+                                    </lightning-record-view-form>
+
+                                </template>
+                                <template if:true={ifdataNotFound}>
+                                    <lightning-card>
+                                        <div style=" border-radius: 10px; width:1500px; height:50px; font-size: 25px; margin-top: 25px;"
+                                            class="slds-align_absolute-center slds-notify slds-notify_alert slds-alert_warning"
+                                            role="alert">
+
+                                            No Data Found with Respect to this Email!!!!!
+
                                         </div>
-                                        <div class="slds-border_bottom">
-                                            <lightning-output-field field-name={Course} style="font-weight: bold;"> </lightning-output-field>
+                                    </lightning-card>
+                                </template>
+
+                            </lightning-tab>
+                            <lightning-tab label="Application">
+                                <template if:true={data}>
+                                    <lightning-datatable key-field="id" data={dataForApp.data} show-row-number-column hide-checkbox-column
+                                        columns={columns}>
+                                    </lightning-datatable>
+
+                                </template>
+                                <template if:true={ifdataNotFound}>
+                                    <lightning-card>
+                                        <div style=" border-radius: 10px; width:1500px; height:50px; font-size: 25px; margin-top: 25px;"
+                                            class="slds-align_absolute-center slds-notify slds-notify_alert slds-alert_warning"
+                                            role="alert">
+
+                                            No Data Found with Respect to this Email!!!!!
+
                                         </div>
-                                        <div class="slds-border_bottom">
-                                            <lightning-output-field field-name={Date_of_Enrollment} style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div class="slds-border_bottom">
-                                            <lightning-output-field field-name={Designation} style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div class="slds-border_bottom">
-                                            <lightning-output-field field-name={Device} style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div class="slds-border_bottom">
-                                            <lightning-output-field field-name={Do_you} style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div class="slds-border_bottom">
-                                            <lightning-output-field field-name={Email_Conversation} style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div class="slds-border_bottom">
-                                            <lightning-output-field field-name={Enquired_Course} style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div class="slds-border_bottom">
-                                            <lightning-output-field field-name={Form_Source} style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div class="slds-border_bottom">
-                                            <lightning-output-field field-name={Hic} style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div class="slds-border_bottom">
-                                            <lightning-output-field field-name={Is_Email_Invalid__c} style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div class="slds-border_bottom">
-                                            <lightning-output-field field-name={Is_Phone_Invalid} style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div class="slds-border_bottom">
-                                            <lightning-output-field field-name={OwnerId} style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div class="slds-border_bottom">
-                                            <lightning-output-field field-name={LeadSource} style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div  class="slds-border_bottom">
-                                         <lightning-output-field field-name={Why_This_Course}  style="font-weight: bold;"> </lightning-output-field>
-                                     </div>
-                                     <div class="slds-border_bottom">
-                                         <lightning-output-field field-name={Profession}  style="font-weight: bold;"> </lightning-output-field>
-                                     </div>
+                                    </lightning-card>
+                                </template>
+
+                            </lightning-tab>
+                        </lightning-tabset>
+                    </template>
+
+
+                </div>
+                <template if:true={isShowModal}>
+                    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                        aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                        <div class="slds-modal__container">
+                            <!-- Modal/Popup Box LWC header here -->
+                            <header class="slds-modal__header">
+                                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                                    title="Close" onclick={handleCancel}>
+                                    <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                                        size="small"></lightning-icon>
+                                    <span class="slds-assistive-text">Close</span>
+                                </button>
+                                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Create New
+                                    Lead</h2>
+                            </header>
+                            <!-- Modal/Popup Box LWC body starts here -->
+                            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                <lightning-input label="First Name" onchange={FnameChange}></lightning-input>
+                                <lightning-input label="Last Name" required="true"
+                                    onchange={LnameChange}></lightning-input>
+                                <lightning-input label="Email" required="true" onchange={EmailChange}></lightning-input>
+                                <lightning-input label="Phone" min-length="10" onchange={PhoneChange}
+                                    max-length="10"></lightning-input>
+                                <lightning-combobox name="course" label="Course" value={value}
+                                    placeholder="Select Course" options={courssweList} onchange={courceHandler}>
+                                </lightning-combobox>
+
+                                <c-custom-lookup icon-name="standard:user" s-object-api-name="user" label="Select User"
+                                    onlookupupdate={lookupRecord} placeholder="type here..."></c-custom-lookup>
+                            </div>
+                            <!-- Modal/Popup Box LWC footer starts here -->
+                            <footer class="slds-modal__footer">
+                                <button class="slds-button slds-button_neutral" onclick={handleCancel}>Cancel</button>
+                                <button class="slds-button slds-button_brand" onclick={createNewLead}>Create</button>
+                            </footer>
+                        </div>
+                    </section>
+                    <div class="slds-backdrop slds-backdrop_open"></div>
+                    <!--div class="slds-backdrop slds-backdrop_open"></div -->
+                </template>
+            </lightning-card>
+
+        </template>
+        <template if:true={showPastLeads}>
+            <lightning-card>
+
+                <template if:true={LeadrecordsFound}>
+                    <div class="slds-m-around_medium">
+                        <h3 class="slds-text-heading_medium">
+                            <lightning-icon icon-name="standard:lead" alternative-text="Lead" title="Lead" size="medium"></lightning-icon>
+                             <strong style="color:#270086; font-size:13px; margin-right:15px;"> Past Leads </strong></h3>
+    
+                    </div>
+                        <br/>
+                    <!--lightning-datatable key-field="id" data={Leaddata} show-row-number-column row-number-offset={rowOffset}
+                        hide-checkbox-column columns={columns}>
+                    </lightning-datatable -->
+
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-scrollable" style="table-layout: fixed;">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <div class="slds-truncate">
+                                        <div class="slds-truncate" title="Name">S.No.</div>
                                     </div>
-                                    <div class="slds-col"> 
-                                        <div  class="slds-border_bottom">
-                                            <lightning-output-field field-name={statusLead}  style="font-weight: bold;"> </lightning-output-field>
+                                </th>
+                                <th class="slds-truncate slds-cell-wrap" scope="col">
+                                    <div class="slds-truncate" title="Name">Name</div>
+                                </th>
+                                <th class="slds-truncate slds-cell-wrap" scope="col">
+                                    <div class="slds-truncate" title="Owner">Owner Name</div>
+                                </th>
+                                <th class="slds-truncate slds-cell-wrap" scope="col">
+                                    <div class="slds-truncate" title="Phone">Phone</div>
+                                </th>
+                                <th class="slds-truncate slds-cell-wrap" scope="col">
+                                    <div class="slds-truncate" title="Email">Email</div>
+                                </th>
+                                <th class="slds-truncate slds-cell-wrap" scope="col">
+                                    <div class="slds-truncate" title="Course">Course</div>
+                                </th>
+                                <th class="slds-truncate slds-cell-wrap" scope="col">
+                                    <div class="slds-truncate" title="Product Name">Product Name</div>
+                                </th>
+                                <th class="slds-truncate slds-cell-wrap" scope="col">
+                                    <div class="slds-truncate" title="Status">Status</div>
+                                </th>
+                                <th class="slds-truncate slds-cell-wrap" scope="col">
+                                    <div class="slds-truncate" title="Total Calls">Total Calls</div>
+                                </th>
+                                <th class="slds-truncate slds-cell-wrap" scope="col">
+                                    <div class="slds-truncate" title="Total Connected Call">Total Connected Call</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={Leaddata} for:item="ld" for:index="i">
+                                <tr key={ld.Id}>
+                                    <th class="slds-truncate slds-cell-wrap" scope="col">
+                                        <div>
+                                            {i}
                                         </div>
-                                        <div  class="slds-border_bottom">
-                                            <lightning-output-field field-name={Qualification}  style="font-weight: bold;"> </lightning-output-field>
+                                    </th>
+                                    <th class="slds-truncate slds-cell-wrap" scope="col">
+                                        <div>{ld.Name}</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div>{ld.Owner.Name}</div>
+                                    </th>
+                                    <th class="slds-truncate slds-cell-wrap" scope="col">
+                                        <div>
+                                            <lightning-formatted-phone value={ld.Phone}></lightning-formatted-phone>
                                         </div>
-                                        <div  class="slds-border_bottom">
-                                            <lightning-output-field field-name={Rating}  style="font-weight: bold;"> </lightning-output-field>
+                                    </th>
+                                    <th class="slds-truncate slds-cell-wrap" scope="col">
+                                        <div>
+                                            <lightning-formatted-email value={ld.Email}></lightning-formatted-email>
                                         </div>
-                                        <div  class="slds-border_bottom">
-                                            <lightning-output-field field-name={Reason_For_Dead}  style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div  class="slds-border_bottom">
-                                            <lightning-output-field field-name={Reason_for_On_Hold}  style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div  class="slds-border_bottom">
-                                            <lightning-output-field field-name={Refree_Mob_No}  style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div  class="slds-border_bottom">
-                                            <lightning-output-field field-name={Relevant_Experience}  style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div  class="slds-border_bottom">
-                                            <lightning-output-field field-name={Source__c}  style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div  class="slds-border_bottom">
-                                            <lightning-output-field field-name={Telephonic_Conversation}  style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div  class="slds-border_bottom">
-                                             <lightning-output-field field-name={Total_Calls}  style="font-weight: bold;"> </lightning-output-field>
-                                         </div>
-                                        <div  class="slds-border_bottom">
-                                            <lightning-output-field field-name={Total_Call_Duration}  style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div  class="slds-border_bottom">
-                                            <lightning-output-field field-name={Total_Connected_Call__c}  style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div  class="slds-border_bottom">
-                                            <lightning-output-field field-name={Total_Conversation_Duration}  style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div  class="slds-border_bottom">
-                                         <lightning-output-field field-name={Total_Applications_Submitted}  style="font-weight: bold;"> </lightning-output-field>
-                                     </div>
-                                        <div  class="slds-border_bottom">
-                                            <lightning-output-field field-name={Total_Emails}  style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div  class="slds-border_bottom">
-                                            <lightning-output-field field-name={Whatsapp_Opt_in}  style="font-weight: bold;"> </lightning-output-field>
-                                        </div>
-                                        <div  class="slds-border_bottom">
-                                         <lightning-output-field field-name={Year_of_Experience}  style="font-weight: bold;"> </lightning-output-field>
-                                     </div>
-                                     <div  class="slds-border_bottom">
-                                         <lightning-output-field field-name={Year_of_Graduation}  style="font-weight: bold;"> </lightning-output-field>
-                                     </div>
-                                    </div>  
-                                </div>
-                            </lightning-record-view-form>
+                                    </th>
+                                    <th class="slds-truncate slds-cell-wrap" scope="col">
+                                        <div>{ld.Course__c}</div>
+                                    </th>
+                                    <th class="slds-truncate slds-cell-wrap" scope="col">
+                                        <template if:true={ld.Product__r}>
+                                            <div>{ld.Product__r.Name}</div>
+                                        </template>
+                                        
+                                    </th>
+                                    <th class="slds-truncate slds-cell-wrap" scope="col">
+                                        <div>{ld.Status}</div>
+                                    </th>
+                                    <th class="slds-truncate slds-cell-wrap" scope="col">
+                                        <div>{ld.Total_Calls__c}</div>
+                                    </th>
+                                    <th class="slds-truncate slds-cell-wrap" scope="col">
+                                        <div>{ld.Total_Connected_Call__c}</div>
+                                    </th>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+                <template if:true={LeadrecordsNotFound}>
+                    <lightning-card>
+                        <div style=" border-radius: 10px; width:1500px; height:50px; font-size: 25px; margin-top: 25px;"
+                            class="slds-align_absolute-center slds-notify slds-notify_alert slds-alert_warning"
+                            role="alert">
+    
+                            No Data Found with Respect to this Email!!!!!
+    
+                        </div>
+                    </lightning-card>
+                </template>
 
-                        </template>
-                        <template if:true={ifdataNotFound}>
-                            <lightning-card>
-                                <div style=" border-radius: 10px; width:1500px; height:50px; font-size: 25px; margin-top: 25px;" class="slds-align_absolute-center slds-notify slds-notify_alert slds-alert_warning" role="alert" >
-                                    
-                                    No Data Found with Respect to this Email!!!!!
-                                    
-                                </div>
-                            </lightning-card>
-                           </template>
-                           
-                       </lightning-tab>
-                       <lightning-tab label="Application">
-                        <template if:true={data}>
-                            <lightning-datatable
-                                   key-field="id"
-                                   data={dataForApp.data}
-                                   hide-checkbox-column
-                                   columns={columns}>
-                         </lightning-datatable>
+            </lightning-card>
+            
 
-                        </template> 
-                        <template if:true={ifdataNotFound}>
-                            <lightning-card>
-                                <div style=" border-radius: 10px; width:1500px; height:50px; font-size: 25px; margin-top: 25px;" class="slds-align_absolute-center slds-notify slds-notify_alert slds-alert_warning" role="alert" >
-                                    
-                                    No Data Found with Respect to this Email!!!!!
-                                    
-                                </div>
-                            </lightning-card>
-                           </template>                   
-                           
-                       </lightning-tab>
-                   </lightning-tabset>
-               </template>
-               
-          
-           </div>
-           <template if:true={isShowModal}>
-               <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
-                   <div class="slds-modal__container">
-                       <!-- Modal/Popup Box LWC header here -->
-                       <header class="slds-modal__header">
-                           <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={handleCancel}>
-                               <lightning-icon icon-name="utility:close"
-                                   alternative-text="close"
-                                   variant="inverse"
-                                   size="small" ></lightning-icon>
-                               <span class="slds-assistive-text">Close</span>
-                           </button>
-                           <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Create New Application</h2>
-                       </header>
-                       <!-- Modal/Popup Box LWC body starts here -->
-                       <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
-                           <lightning-input label="First Name"  onchange={FnameChange}></lightning-input>
-                               <lightning-input label="Last Name" required="true" onchange={LnameChange}></lightning-input>
-                               <lightning-input label="Email" required="true" onchange={EmailChange}></lightning-input>
-                               <lightning-input label="Phone" min-length="10" onchange={PhoneChange} max-length="10"></lightning-input>
-                               <lightning-combobox
-                                   name="course"
-                                   label="Course"
-                                   value={value}
-                                   placeholder="Select Course"
-                                   options={courssweList}
-                                   onchange={courceHandler} >
-                               </lightning-combobox>
-                               <!--lightning-combobox
-                                   name="Member"
-                                   label="Member"
-                                   value={value}
-                                   placeholder="Select Member"
-                                   options={objectList}
-                                   onchange={handleChange}>
-                               </lightning-combobox -->
-   
-                               <c-custom-lookup icon-name="standard:user"
-                                               s-object-api-name="user"
-                                               label="Select User"
-                                               onlookupupdate={lookupRecord}
-                                               placeholder="type here..."></c-custom-lookup>
-                       </div>
-                       <!-- Modal/Popup Box LWC footer starts here -->
-                       <footer class="slds-modal__footer">
-                           <button class="slds-button slds-button_neutral" onclick={handleCancel}>Cancel</button>
-                           <button class="slds-button slds-button_brand"  onclick={createNewLead}>Create</button>
-                       </footer>
-                   </div>
-               </section>
-               <div class="slds-backdrop slds-backdrop_open"></div>
-               <!--div class="slds-backdrop slds-backdrop_open"></div -->
-           </template>
-      </lightning-card>
-    </div> 
+        </template>
+
+
+        <template if:true={showapplicationMOdal}>
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!-- Modal/Popup Box LWC header here -->
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                            title="Close" onclick={handleappCancel}>
+                            <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                                size="small"></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 id="modal-heading-02" class="slds-text-heading_medium slds-hyphenate">Create New
+                            Application</h2>
+                    </header>
+                    <!-- Modal/Popup Box LWC body starts here -->
+                    <div class="slds-modal__content slds-p-around_xx-large" id="modal-content-id-2">
+                        
+                        <lightning-combobox name="course" label="Course" value={value}
+                            placeholder="Select Course" options={courssweList} onchange={courseforapphandler}>
+                        </lightning-combobox>
+
+                    </div>
+                    <!-- Modal/Popup Box LWC footer starts here -->
+                    <footer class="slds-modal__footer">
+                        <button class="slds-button slds-button_neutral" onclick={handleappCancel}>Cancel</button>
+                        <button class="slds-button slds-button_brand" onclick={createapplicationForm}>Create</button>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+            <!--div class="slds-backdrop slds-backdrop_open"></div -->
+        </template>
+
+    </div>
 </template>
