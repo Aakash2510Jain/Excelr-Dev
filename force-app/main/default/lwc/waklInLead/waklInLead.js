@@ -58,6 +58,7 @@ import Name from '@salesforce/schema/Lead.Name';
 import QueryPastLeads from '@salesforce/apex/walkInLeadLWCcontroller.QueryPastLeads';
 import LightningAlert from 'lightning/alert';
 import LightningConfirm from "lightning/confirm";
+import { refreshApex } from '@salesforce/apex';
 
 
 
@@ -74,7 +75,11 @@ const LeadListcolumns = [{ label: 'Name', fieldName: 'Name' },
 { label: 'Product', fieldName: 'ProductName' },
 { label: 'Status', fieldName: 'Status' },
 { label: 'Total Call', fieldName: 'Total_Calls__c' },
-{ label: 'Total Connected Call', fieldName: 'Total_Connected_Call__c' },]
+{ label: 'Total Connected Call', fieldName: 'Total_Connected_Call__c' },
+{ label: 'Email', fieldName: 'Email' },
+{ label: 'Phone', fieldName: 'Phone' },
+
+]
 
 
 export default class WaklInLead extends LightningElement {
@@ -121,7 +126,7 @@ export default class WaklInLead extends LightningElement {
     @track Rating = Rating;
     @track Qualification = Qualification__c;
     @track LeadSource = LeadSource;
-    @track OwnerId = OwnerId;
+    @track ISM = OwnerId;
     @track Is_Phone_Invalid = Is_Phone_Invalid__c;
     @track Is_Email_Invalid__c = Is_Email_Invalid__c;
     @track Hic = Hi__c;
@@ -192,12 +197,14 @@ export default class WaklInLead extends LightningElement {
                     console.log(this.data[0].Id)
                     this.ismBTNdisAble = false;
                     this.ifdataNotFound = false;
+                    this.appbtndisAble = false;
                 }
                 if (this.data.length == 0) {
                     this.ifdataNotFound = true;
                     this.newBTNdisAble = false;
                     this.ismBTNdisAble = true;
-                    this.data = false
+                    this.data = false;
+                    this.appbtndisAble = true;
                 }
             })
             .catch(error => {
@@ -215,10 +222,10 @@ export default class WaklInLead extends LightningElement {
             this.columns = applicationcolumns;
             if (Array.isArray(this.dataForApp.data)) {
                 if (this.dataForApp.data.length > 0) {
-                    this.appbtndisAble = true;
+                    //this.appbtndisAble = false;
                 }
                 else if(this.dataForApp.data.length == 0) {
-                    this.appbtndisAble = false;
+                    //this.appbtndisAble = true;
                 }
             }
         }
@@ -492,21 +499,33 @@ export default class WaklInLead extends LightningElement {
 
     }
 
-    createapplicationForm() {
-        debugger;
+    
+    
+    HandleCreateDisable=false;
 
+    createapplicationForm() {
+        this.HandleCreateDisable=true;
+        debugger;
         createApplication({ Course: this.courseforApp, LeadId: this.recordId })
             .then(data => {
                 debugger;
+                
                 this.showapplicationMOdal = false;
+                this.HandleCreateDisable=false;
                 this.handleConfirm('Appication Created Successfully');
                 this.appbtndisAble = true;
-
+                refreshApex(this.dataForApp);
+                
+                
+                
+                
             })
             .catch(error => {
+                this.HandleCreateDisable=false;
                 this.handleAlert('Error updating or reloading records');
-
             })
+
+            
 
     }
 

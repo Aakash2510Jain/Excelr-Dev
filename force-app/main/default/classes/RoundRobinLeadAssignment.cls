@@ -194,7 +194,6 @@ public without sharing class RoundRobinLeadAssignment{
          system.debug('courseName::'+courseName);
          for(Source_Intent_And_Group_Name__mdt signMeta : groupNameSourceIntent){
          sourceIntentByGroupMap.put(signMeta.Source_Intent__c,signMeta.Group_Name__c);
-
          if(signMeta.Source_Intent__c == courseName){
          mapofCouseByGroupName.put(signMeta.Source_Intent__c,signMeta.Group_Name__c);
          }
@@ -212,7 +211,6 @@ public without sharing class RoundRobinLeadAssignment{
                 leadIds.add(ld.Id);
             }
             /*for(Lead ld: leadsInQueue){
-
              if(ld.Category__c != null){
              if(groupNameByLeads.containsKey(sourceIntentByGroupMap.get(ld.Category__c)))
              {

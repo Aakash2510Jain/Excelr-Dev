@@ -20,20 +20,20 @@ global class API_CreateAccount{
                 if (!existingLeadByEmail.isEmpty()){
                     //update Lead course
                     //Insert application
-                    leadRec.Id = existingLeadByEmail[0].Id;
-                    leadRec.Course__c = '';
-                    updateLead(leadRec);
-                    //string appRecId = Utility.createApplicationInstance(existingLeadByEmail[0].Id, '');
+
+                    Utility.createApplicationInstance(existingLeadByEmail[0].Id, newAccount.Course__c);
 
                 } else{
                     //Insert Lead
                     //Insert Application
 
                     leadRec.Email = newAccount.Email__c;
+                    leadRec.Phone = newAccount.Phone;
                     leadRec.LastName = newAccount.Name;
                     leadRec.LeadSource = newAccount.Source__c;
                     leadRec.Form_Source__c = newAccount.Form_Source__c;
-                    leadRec.Company = '--';
+                    leadRec.Enter_UTM_Link__c = newAccount.Enter_UTM_Link__c;
+                    //leadRec.Company = newAccount.Company != null?newAccount.Company :'--';
                     String leadid = insertLead(leadRec);
                     //string appRecId = Utility.createApplicationInstance(existingLeadByEmail[0].Id, '');
 

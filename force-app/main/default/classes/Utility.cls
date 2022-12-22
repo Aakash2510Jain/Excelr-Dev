@@ -1,6 +1,6 @@
 public without sharing class Utility{
     public static List<String> getPicklistValues(String ObjectApi_name, String Field_name){
-
+        
         List<String> lstPickvals = new List<String>();
         Schema.SObjectType targetType = Schema.getGlobalDescribe().get(ObjectApi_name);
         Sobject Object_name = targetType.newSObject();
@@ -8,24 +8,24 @@ public without sharing class Utility{
         Schema.DescribeSObjectResult sobject_describe = sobject_type.getDescribe();
         Map<String, Schema.SObjectField> field_map = sobject_describe.fields.getMap();
         List<Schema.PicklistEntry> pick_list_values = field_map.get(Field_name).getDescribe().getPickListValues();
-
+        
         for (Schema.PicklistEntry a : pick_list_values){
-
+            
             lstPickvals.add(String.ValueOf(a.getLabel()).trim());
         }
         return lstPickvals;
     }
-
+    
     public static List<String> getPicklistValuesWithNone(String ObjectApi_name, String Field_name){
         List<String> pickList = new List<String>{ '--None--' };
-        pickList.addAll(getPicklistValues(objectApi_name, field_name));
+            pickList.addAll(getPicklistValues(objectApi_name, field_name));
         return pickList;
     }
-
+    
     static Map<Id, UserRole> allRolesMap;
     public static ApprovalWrapper getUserQAMap(){
         Map<Id, Id> userRoleToQARoleMap = new Map<Id, Id>();
-
+        
         allRolesMap = allRolesMap == null ? new Map<Id, UserRole>([SELECT Id, ParentRoleId, Name
                                                                    FROM UserRole]) : allRolesMap;
         for (UserRole ur : allRolesMap.values()){
@@ -33,7 +33,7 @@ public without sharing class Utility{
                 userRoleToQARoleMap.put(ur.Id, getQAIdRecursive(allRolesMap, ur));
             }
         }
-
+        
         Map<Id, Id> usrRoleToQAIdMap = new Map<Id, Id>();
         if (!userRoleToQARoleMap.isEmpty()){
             List<User> userList = [SELECT Id, UserRoleId
@@ -46,10 +46,10 @@ public without sharing class Utility{
         }
         return new ApprovalWrapper(userRoleToQARoleMap, usrRoleToQAIdMap);
     }
-
+    
     public static ApprovalWrapper getUserBHMap(){
         Map<Id, Id> userRoleToBHRoleMap = new Map<Id, Id>();
-
+        
         allRolesMap = allRolesMap == null ? new Map<Id, UserRole>([SELECT Id, ParentRoleId, Name
                                                                    FROM UserRole]) : allRolesMap;
         for (UserRole ur : allRolesMap.values()){
@@ -57,7 +57,7 @@ public without sharing class Utility{
                 userRoleToBHRoleMap.put(ur.Id, getBHIdRecursive(allRolesMap, ur));
             }
         }
-
+        
         Map<Id, Id> usrRoleToBHIdMap = new Map<Id, Id>();
         if (!userRoleToBHRoleMap.isEmpty()){
             List<User> userList = [SELECT Id, UserRoleId
@@ -70,7 +70,7 @@ public without sharing class Utility{
         }
         return new ApprovalWrapper(userRoleToBHRoleMap, usrRoleToBHIdMap);
     }
-
+    
     Public static Id getQAIdRecursive(Map<Id, UserRole> userRoleMap, UserRole currentRole){
         if (currentRole.ParentRoleId != null && userRoleMap.get(currentRole.ParentRoleId).Name != null && userRoleMap.get(currentRole.ParentRoleId).Name.containsIgnoreCase('QA')){
             return userRoleMap.get(currentRole.ParentRoleId).Id;
@@ -80,7 +80,7 @@ public without sharing class Utility{
             return null; //TOP Role - CEO.
         }
     }
-
+    
     Public static Id getBHIdRecursive(Map<Id, UserRole> userRoleMap, UserRole currentRole){
         if (currentRole.ParentRoleId != null && userRoleMap.get(currentRole.ParentRoleId).Name != null && userRoleMap.get(currentRole.ParentRoleId).Name.containsIgnoreCase('Business Head')){
             return userRoleMap.get(currentRole.ParentRoleId).Id;
@@ -90,7 +90,7 @@ public without sharing class Utility{
             return null; //TOP Role - CEO.
         }
     }
-
+    
     public class ApprovalWrapper{
         public Map<Id, Id> smToManagerMap;
         public Map<Id, Id> managerRoleToUserIdMap;
@@ -98,18 +98,18 @@ public without sharing class Utility{
             this.smToManagerMap = smToManagerMap;
             this.managerRoleToUserIdMap = managerRoleToUserIdMap;
         }
-
+        
     }
-
+    
     Public Static void CreateInvoice(String recordId){
-
+        
         Invoice__c InvoiceRec = new Invoice__c();
         InvoiceRec.Opportunity__c = recordId;
         InvoiceRec.Status__c = 'Initiated';
-
+        
         insert InvoiceRec;
     }
-
+    
     public static void UTMLinkParams(Lead leadRec){
         try{
             if (leadRec.Enter_UTM_Link__c != null){
@@ -129,9 +129,9 @@ public without sharing class Utility{
                 leadRec.UTM_Type__c = parameters.get('utm_type');
                 leadRec.UTM_Variery__c = parameters.get('utm_variety');
                 leadRec.UTM_Experiment__c = parameters.get('utm_experiment');
-
+                
                 leadRec.GCLID__c = parameters.get('gclid');
-
+                
                 leadRec.Source__c = parameters.get('source');
                 leadRec.Medium__c = parameters.get('medium');
                 leadRec.Campaign__c = parameters.get('campaign');
@@ -145,7 +145,7 @@ public without sharing class Utility{
             HandleBusinessException.captureError('Utility', 'UTMLinkParams', e);
         }
     }
-
+    
     public static void convertLeadAfterPayment(string leadId, Map<String, Object> paymentResponse){
         try{
             Map<String, string> priceBookIdByProductId = new Map<String, String>();
@@ -153,7 +153,7 @@ public without sharing class Utility{
             List<Invoice__c> invoiceListToUpdate = new List<Invoice__c>();
             List<Application__c> applicationsListAttachedToLead = new List<Application__C>();
             List<Application__c> applicationsListToUpdate = new List<Application__C>();
-
+            
             if (paymentResponse.get('captured') == true){
                 //covert lead
                 LeadStatus convertStatus = [SELECT Id, MasterLabel
@@ -168,7 +168,7 @@ public without sharing class Utility{
                     //invoice tag
                     //opp item tag
                     //opportunity to be updated
-                    Lead convertedLeadRec = [Select Id, Payment_initiated_Date_Time__c, Quantity__c, Product__c, Total_Amount__c
+                    Lead convertedLeadRec = [Select Id, Payment_initiated_Date_Time__c,course__c,Quantity__c, Product__c, Total_Amount__c
                                              From Lead
                                              Where Id = :convertedLead.getLeadId()];
                     Account covertedAccRec = [Select Id, (Select Id
@@ -189,12 +189,12 @@ public without sharing class Utility{
                     for (PricebookEntry pbe : priceBookEntryList){
                         priceBookIdByProductId.put(pbe.Product2Id, pbe.Id);
                     }
-
+                    
                     Opportunity oppRec = new Opportunity();
                     oppRec.Id = covertedAccRec.Opportunities[0].Id;
                     oppRec.StageName = 'Closed Won';
                     update oppRec;
-
+                    
                     OpportunityLineItem oppProdRec = new OpportunityLineItem();
                     //oppProdRec.Discount = convertedLeadRec.Discount__c;
                     oppProdRec.OpportunityId = covertedAccRec.Opportunities[0].Id;
@@ -204,36 +204,46 @@ public without sharing class Utility{
                     oppProdRec.PricebookEntryId = priceBookIdByProductId.get(convertedLeadRec.Product__c);
                     insert oppProdRec;
                     integer i = 0;
-                    for (Invoice__c invoiceRec : invoiceListAttachedToLead){
-                        Invoice__c invoiceRecToUpdate = new Invoice__c();
-                        invoiceRecToUpdate.Id = invoiceRec.Id;		
-                        if (i == 0){
-                            invoiceRecToUpdate.Opportunity__c = covertedAccRec.Opportunities[0].Id;
-                            invoiceRecToUpdate.Status__c = 'Realized';
-                            invoiceListToUpdate.add(invoiceRecToUpdate);
-                        } else{
-                            invoiceRecToUpdate.Opportunity__c = covertedAccRec.Opportunities[0].Id;
-                            invoiceListToUpdate.add(invoiceRecToUpdate);
+                    if(!invoiceListAttachedToLead.isEmpty()){
+                        for (Invoice__c invoiceRec : invoiceListAttachedToLead){
+                            Invoice__c invoiceRecToUpdate = new Invoice__c();
+                            invoiceRecToUpdate.Id = invoiceRec.Id;		
+                            if (i == 0){
+                                invoiceRecToUpdate.Opportunity__c = covertedAccRec.Opportunities[0].Id;
+                                invoiceRecToUpdate.Status__c = 'Realized';
+                                invoiceListToUpdate.add(invoiceRecToUpdate);
+                            } else{
+                                invoiceRecToUpdate.Opportunity__c = covertedAccRec.Opportunities[0].Id;
+                                invoiceListToUpdate.add(invoiceRecToUpdate);
+                            }
+                            i++;
                         }
-                        i++;
+                        if (!invoiceListToUpdate.isEmpty()){
+                            update invoiceListToUpdate;
+                        }
                     }
-                    for (Application__c appRec : applicationsListAttachedToLead){
-                        Application__c appRecToUpdate = new Application__c();
-                        appRecToUpdate.Id = appRec.Id;
-                        appRecToUpdate.Account__c = convertedLead.getAccountId();
-                        applicationsListToUpdate.add(appRecToUpdate);
+                    
+                    if(!applicationsListAttachedToLead.isEmpty()){
+                        for (Application__c appRec : applicationsListAttachedToLead){
+                            Application__c appRecToUpdate = new Application__c();
+                            appRecToUpdate.Id = appRec.Id;
+                            if(convertedLeadRec.Course__c == appRec.Course__c)
+                                appRecToUpdate.Status__c = 'Closed Won';
+                            appRecToUpdate.Account__c = convertedLead.getAccountId();
+                            applicationsListToUpdate.add(appRecToUpdate);
+                        }
+                        if (!applicationsListToUpdate.isEmpty()){
+                            update applicationsListToUpdate;
+                        }
                     }
-                    if (!invoiceListToUpdate.isEmpty()){
-                        update invoiceListToUpdate;
-                    }
-                    if (!applicationsListToUpdate.isEmpty()){
-                        update applicationsListToUpdate;
-                    }
+                    
+                    
+                    
                 }
             } else{
                 //update status as failed
-
-
+                
+                
                 List<Invoice__c> invoiceList = [Select Id, Status__c, Opportunity__c
                                                 From Invoice__c
                                                 where LeadInvoice__c = :leadId
@@ -241,14 +251,14 @@ public without sharing class Utility{
                                                 limit 1];
                 invoiceList[0].Status__c = 'Not Realized';
                 update invoiceList;
-
+                
             }
         } catch (exception ex){
             system.debug('Error==>' + ex.getMessage());
             system.debug('Error==>@@' + ex.getLineNumber());
         }
     }
-
+    
     public static string createApplicationInstance(string leadId, string courseName){
         string applicationId = '';
         Application__c appRec = new Application__c();
@@ -258,5 +268,5 @@ public without sharing class Utility{
         applicationId = API_CreateAccount.insertApplication(appRec);
         return applicationId;
     }
-
+    
 }
