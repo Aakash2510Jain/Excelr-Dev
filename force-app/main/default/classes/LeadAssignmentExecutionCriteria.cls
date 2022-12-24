@@ -1,9 +1,9 @@
 public without sharing class LeadAssignmentExecutionCriteria {
     public static boolean handleAfterUpdate = true;
     
-    public static void validateEntryCriteria(list<Lead> newLeadList){
+    public static void validateEntryCriteria(){
         //Getting the Validated Leads : 
-        List<Lead> leadListToBeProcessed = newLeadList;
+        List<Lead> leadListToBeProcessed = [SELECT Address,AdGroup__c,AD_Set_Id__c,AD_Set_Name__c,Assignment_Group__c,Branch__c,Campaign__c,Capture_NBFC_Partner__c,Capture_Tenure__c,Capture_Upfront_payment__c,Channel__c,CID__c,City,City__c,Company,ConvertedAccountId,ConvertedContactId,ConvertedDate,ConvertedOpportunityId,Country,Country__c,Course__c,CreatedById,CreatedDate,Current_Domain__c,Date_of_Enrollment__c,Designation__c,Device__c,Do_you__c,Email,EmailBouncedDate,EmailBouncedReason,Email_Conversation_Done__c,Enquired_Course__c,Enter_UTM_Link__c,ExcelR_Training_User__c,Facebook_Ad_Id__c,Facebook_Ad_Name__c,Facebook_Platform__c,FirstName,Form_Names__c,Form_Source__c,GCLID__c,GeocodeAccuracy,Hi__c,Id,Industry,IsConverted,IsDeleted,ISM_Name__c,ISM__c,IsUnreadByOwner,Is_Email_Invalid__c,Is_Phone_Invalid__c,Jigsaw,JigsawContactId,Keyword__c,Landing_Page_URL__c,LastActivityDate,LastModifiedById,LastModifiedDate,LastName,LastReferencedDate,LastViewedDate,Latitude,LeadSource,Lead_Assigned_Date_TIme__c,Lead_Assigned_Date__c,Lead_Assigned_Time__c,Lead_Create_Date__c,Lead_Gen_Form_Id__c,Lead_Gen_Path__c,Lead_Id__c,LGE__c,Location__c,Longitude,MasterRecordId,Match_Type__c,Medium_v1__c,Medium__c,MiddleName,MobilePhone,Name,Next_follow_up_date_time__c,NumberOfEmployees,OwnerId,Owner_Email__c,Owner_ManagerId__c,Payment_Initiated_Date_Time__c,Payment_Type__c,Phone,PhotoUrl,PostalCode,Prior_Status__c,Product__c,Profession__c,Qualification__c,Quality_of_Lead__c,Quantity__c,Rating,Reason_For_Dead__c,Reason_for_On_Hold__c,Referral_Email__c,Referral_Phone__c,referrer__c,Refree_Mob_No__c,Relevant_Experience__c,Salutation,sfleadcaphfprod__External_Lead_ID__c,Should_be_Converted__c,Source__c,Specialization__c,State,State__c,Status,Street,Suffix,SystemModstamp,Telephonic_Conversation__c,Title,Total_Amount__c,Total_Applications_Submitted__c,Total_Calls__c,Total_Call_Duration__c,Total_Connected_Call__c,Total_Conversation_Duration__c,Total_Course_Interests__c,Total_Emails__c,Transcript__c,Type__c,UTM_AdGroup__c,UTM_Campaign__c,UTM_Channel__c,UTM_Content__c,UTM_Device__c,UTM_Experiment__c,UTM_link__c,UTM_Location__c,UTM_Medium__c,UTM_Source__c,UTM_Term__c,UTM_Type__c,UTM_Variery__c,u_link__c,Visitor_ID__c,Website,Whatsapp_Opt_in__c,Why_This_Course__c,Year_of_Experience__c,Year_of_Graduation__c FROM Lead WHERE OwnerId =: Constants.queueId AND (LeadSource != null or  Course__c != null or Quality_of_Lead__c != null or Quality_of_Lead__c != null or Location__c != null) limit 10000] ; 
         Set<Lead> assignedLead = new Set<Lead>();
         if(leadListToBeProcessed != Null){
             system.debug('leadListToBeProcessed'+leadListToBeProcessed.size());
@@ -44,13 +44,9 @@ public without sharing class LeadAssignmentExecutionCriteria {
             }
         }
         
-        string queueId = [SELECT Id, Type FROM Group WHERE Type = 'Queue' AND Name =: Constants.PRIVATE_LEAD_QUEUE limit 1].Id;
         List<Execution_Criteria__c> AvailableCriterias = [SELECT Enabled__c,Evaluation_Expression_For_Execution__c,Id,Name ,(SELECT Execution_Criteria__c,serial__c,Field_Name__c,Field_Type__c,Matching_Type__c,Matching_Value__c,Related_Object__c,Scorecard_Execution_Criteria_Name__c,Scorecard__c,Sequence__c FROM Execution_Criteria_Entry__r WHERE Execution_Criteria__c != null ORDER BY Sequence__c ASC)FROM Execution_Criteria__c where Enabled__c = true];
         
-        list<lead> queueLeads = [SELECT Address,City,Company,Country,CreatedById,CreatedDate,Email,FirstName,GeocodeAccuracy,HasOptedOutOfEmail,Id,Industry,
-                                 IsConverted,IsDeleted,IsUnreadByOwner,LastActivityDate,LastModifiedById,LastModifiedDate,LastName,LastReferencedDate,
-                                 LastViewedDate,Latitude,LeadSource,MasterRecordId,MobilePhone,Name,NumberOfEmployees,OwnerId,Phone,
-                                 PhotoUrl,PostalCode,Rating,Salutation,State,Status,Street,SystemModstamp,Title,Website FROM Lead where id not in: newLeadsSet and ownerId =: queueId];
+        list<lead> queueLeads = [SELECT Address,AdGroup__c,AD_Set_Id__c,AD_Set_Name__c,Assignment_Group__c,Branch__c,Campaign__c,Capture_NBFC_Partner__c,Capture_Tenure__c,Capture_Upfront_payment__c,Channel__c,CID__c,City,City__c,Company,ConvertedAccountId,ConvertedContactId,ConvertedDate,ConvertedOpportunityId,Country,Country__c,Course__c,CreatedById,CreatedDate,Current_Domain__c,Date_of_Enrollment__c,Designation__c,Device__c,Do_you__c,Email,EmailBouncedDate,EmailBouncedReason,Email_Conversation_Done__c,Enquired_Course__c,Enter_UTM_Link__c,ExcelR_Training_User__c,Facebook_Ad_Id__c,Facebook_Ad_Name__c,Facebook_Platform__c,FirstName,Form_Names__c,Form_Source__c,GCLID__c,GeocodeAccuracy,Hi__c,Id,Industry,IsConverted,IsDeleted,ISM_Name__c,ISM__c,IsUnreadByOwner,Is_Email_Invalid__c,Is_Phone_Invalid__c,Jigsaw,JigsawContactId,Keyword__c,Landing_Page_URL__c,LastActivityDate,LastModifiedById,LastModifiedDate,LastName,LastReferencedDate,LastViewedDate,Latitude,LeadSource,Lead_Assigned_Date_TIme__c,Lead_Assigned_Date__c,Lead_Assigned_Time__c,Lead_Create_Date__c,Lead_Gen_Form_Id__c,Lead_Gen_Path__c,Lead_Id__c,LGE__c,Location__c,Longitude,MasterRecordId,Match_Type__c,Medium_v1__c,Medium__c,MiddleName,MobilePhone,Name,Next_follow_up_date_time__c,NumberOfEmployees,OwnerId,Owner_Email__c,Owner_ManagerId__c,Payment_Initiated_Date_Time__c,Payment_Type__c,Phone,PhotoUrl,PostalCode,Prior_Status__c,Product__c,Profession__c,Qualification__c,Quality_of_Lead__c,Quantity__c,Rating,Reason_For_Dead__c,Reason_for_On_Hold__c,Referral_Email__c,Referral_Phone__c,referrer__c,Refree_Mob_No__c,Relevant_Experience__c,Salutation,sfleadcaphfprod__External_Lead_ID__c,Should_be_Converted__c,Source__c,Specialization__c,State,State__c,Status,Street,Suffix,SystemModstamp,Telephonic_Conversation__c,Title,Total_Amount__c,Total_Applications_Submitted__c,Total_Calls__c,Total_Call_Duration__c,Total_Connected_Call__c,Total_Conversation_Duration__c,Total_Course_Interests__c,Total_Emails__c,Transcript__c,Type__c,UTM_AdGroup__c,UTM_Campaign__c,UTM_Channel__c,UTM_Content__c,UTM_Device__c,UTM_Experiment__c,UTM_link__c,UTM_Location__c,UTM_Medium__c,UTM_Source__c,UTM_Term__c,UTM_Type__c,UTM_Variery__c,u_link__c,Visitor_ID__c,Website,Whatsapp_Opt_in__c,Why_This_Course__c,Year_of_Experience__c,Year_of_Graduation__c FROM Lead where id not in: newLeadsSet and ownerId =: Constants.queueId];
         if(!queueLeads.isEmpty()){
             
             newLeadListTemp.addAll(queueLeads);
@@ -413,20 +409,25 @@ public without sharing class LeadAssignmentExecutionCriteria {
                     leadTemp = BooleanExpressionCalculation.evaluateExpression(Booleanvalues);    
                 }
                 
-                system.debug('leadTemp'+leadTemp);
+                system.debug('leadTemp------->'+leadTemp);
                 system.debug('Number of Matched Criterias '+matchedValues +'The Matched Criterias are :'+matchedCriteriasName);
                 system.debug('matchedValues'+matchedValues);
                 
                 if(leadTemp == true){
+                    system.debug('ld----->'+ld);
+                    system.debug('criteriaName----->'+criteriaName);
                     assignedLead.add(ld);
                     matchedCriterias.add(criteriaName);
-                    /*if(mapofExecutionIdByListLead.containsKey(criteriaNameById.get(criteriaName))){
-                        //mapofExecutionIdByListLead.get(criteriaNameById.get(criteriaName)).add(ld);
+                    if(mapofExecutionIdByListLead.containsKey(criteriaNameById.get(criteriaName))){
+                        mapofExecutionIdByListLead.get(criteriaNameById.get(criteriaName)).add(ld);
                     }else{
                         mapofExecutionIdByListLead.put(criteriaNameById.get(criteriaName),new list<lead>{ld});
-                    }*/ 
+                    } 
                 }
             }
+            system.debug('mapofExecutionIdByListLead---->'+mapofExecutionIdByListLead);
+            system.debug('matchedCriterias-->'+matchedCriterias.size());
+            system.debug('assignedLead-->'+assignedLead);
             if(assignedLead.contains(ld)){
                 system.debug('assignedLead'+assignedLead);   
             }else{
@@ -441,30 +442,27 @@ public without sharing class LeadAssignmentExecutionCriteria {
         
         system.debug('DefaultQueueList-Size :::'+DefaultQueueList.size()+'@@@The List :::::'+DefaultQueueList);
         map<String,List<Lead>> mapofGlobalGroupNameByLeadList = new map<String,List<Lead>>();
-        /*DefaultGroupAssignment__c dgc = [Select id,Name,Group_Id__c from DefaultGroupAssignment__c where name = 'Global Lead Team'][0];
         
-        if(DefaultQueueList.size() > 0 && DefaultQueueList != null){
-            mapofGlobalGroupNameByLeadList.put('Revenue Team',DefaultQueueList);
-        }*/
-        system.debug('mapofExecutionIdByListLead'+mapofExecutionIdByListLead);
-        system.debug('mapofGlobalGroupNameByLeadList'+mapofGlobalGroupNameByLeadList);
+        system.debug('mapofExecutionIdByListLead-------------->'+mapofExecutionIdByListLead);
+        system.debug('mapofGlobalGroupNameByLeadList------------>'+mapofGlobalGroupNameByLeadList);
         getGroupNameByLeads(mapofExecutionIdByListLead,mapofGlobalGroupNameByLeadList);
     }
     
     public static void getGroupNameByLeads(map<string,list<lead>> mapofExecutionIdByLeadList,map<String,List<Lead>> mapofGlobalGroupNameByLeadList){
-        system.debug('mapofExecutionIdByLeadList::'+mapofExecutionIdByLeadList);
-        system.debug('mapofFBGroupNameByLeadList::'+mapofGlobalGroupNameByLeadList);
+        system.debug('mapofExecutionIdByLeadList::--->'+mapofExecutionIdByLeadList);
+        system.debug('mapofFBGroupNameByLeadList::--------->'+mapofGlobalGroupNameByLeadList);
         
         list<Assignment_Group__c> agList = [SELECT id,name,Lead_Assigning_Criteria__c from assignment_group__c where Lead_Assigning_Criteria__c in: mapofExecutionIdByLeadList.keySet()];
         map<string,list<lead>> mapOfGroupNameByListLead = new map<string,list<lead>>();
         
-        
+        system.debug('agList---->'+agList);
         if(!agList.isEmpty()){
             for(assignment_group__c assGroup : agList){
                 mapOfGroupNameByListLead.put(assGroup.name, mapofExecutionIdByLeadList.get(assGroup.Lead_Assigning_Criteria__c));
             }
             list<String> leadIdList = new list<String>();
             map<string,list<String>> mapofGroupnameByLeadIdList = new map<String,list<String>>();
+            system.debug('mapOfGroupNameByListLead-->'+mapOfGroupNameByListLead);
             for(String mapKey : mapOfGroupNameByListLead.keySet()){
                 for(lead ld : mapOfGroupNameByListLead.get(mapKey)){
                     if(mapofGroupnameByLeadIdList.containsKey(mapKey)){
@@ -474,19 +472,21 @@ public without sharing class LeadAssignmentExecutionCriteria {
                     }
                 }
                 Set<string> tempId = new Set<String>(mapofGroupnameByLeadIdList.get(mapKey));
-                RoundRobinLeadAssignment.assignLeadsToBDS(mapKey,tempId, false,false);
+                RoundRobinLeadAssignment.assignLeadsToBDS(mapKey);
             }
         }
         //this is else Part.....
+       /* system.debug('mapofGlobalGroupNameByLeadList-->'+mapofGlobalGroupNameByLeadList);
+            
         if(!mapofGlobalGroupNameByLeadList.isEmpty()){
             set<String> tempId = new set<String>();
             for(string mapKey : mapofGlobalGroupNameByLeadList.keySet()){
                 for(Lead ld : mapofGlobalGroupNameByLeadList.get(mapKey)){
                     tempId.add(ld.id);
                 }
-                RoundRobinLeadAssignment.assignLeadsToBDS(mapKey,tempId, false, false);
+                RoundRobinLeadAssignment.assignLeadsToBDS(mapKey);
             }
-        }
+        }*/
     }
     
     

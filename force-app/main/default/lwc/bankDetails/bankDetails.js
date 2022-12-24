@@ -2,7 +2,6 @@ import { LightningElement, track } from 'lwc';
 import EXCELR_LOGO from '@salesforce/resourceUrl/ExcelRLogo';
 import LightningAlert from 'lightning/alert';
 import LightningConfirm from "lightning/confirm";
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import createBankDetails from '@salesforce/apex/bankDetaklsLwcContrroler.createBankDetails';
 export default class BankDetails extends LightningElement {
 

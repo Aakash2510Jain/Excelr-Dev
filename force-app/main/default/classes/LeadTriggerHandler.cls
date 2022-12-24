@@ -11,7 +11,7 @@ public class LeadTriggerHandler{
         try{
             for (Lead ld : leadList){
                 if (ld.ExcelR_Training_User__c == null){
-                    ld.OwnerId = constant.queueId;
+                    ld.OwnerId = constants.queueId;
                 }
                 if (ld.Enter_UTM_Link__c != null){
                     Utility.UTMLinkParams(ld);
@@ -29,8 +29,8 @@ public class LeadTriggerHandler{
     public void afterInsert(List<Lead> leadList){
         try{
             for (Lead ld : leadList){
-                if (ld.Course__c != null){
-                    RoundRobinLeadAssignment.assignLeadsToBDS(ld.Course__c);
+                if (ld.LeadSource != null || ld.Course__c != null || ld.Quality_of_Lead__c != null || ld.Quality_of_Lead__c != null || ld.Location__c != null ){
+                    LeadAssignmentExecutionCriteria.validateEntryCriteria();
                 }
                 Utility.createApplicationInstance(ld.Id, ld.Course__c);
             }
@@ -58,9 +58,8 @@ public class LeadTriggerHandler{
             system.debug('After Update');
             for (Lead ld : newLeadMap.values()){
                 system.debug('Lead Course' + ld.Course__c);
-                if (ld.Course__c != oldLeadMap.get(ld.Id).Course__c && ld.Course__c != null){
-                    system.debug('Inside Round Robin');
-                    RoundRobinLeadAssignment.assignLeadsToBDS(ld.Course__c);
+                 if (ld.LeadSource != null || ld.Course__c != null || ld.Quality_of_Lead__c != null || ld.Quality_of_Lead__c != null || ld.Location__c != null ){
+                   // LeadAssignmentExecutionCriteria.validateEntryCriteria();
                 }
             }
         } catch (Exception e){

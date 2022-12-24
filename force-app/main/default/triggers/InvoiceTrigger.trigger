@@ -8,5 +8,9 @@ trigger InvoiceTrigger on Invoice__c(after update ){
         if (trigger.isafter && trigger.isUpdate){
             handlerInstance.beforeUpdate(trigger.newMap, trigger.oldMap);
         }
+
+        if (trigger.isInsert && trigger.isBefore) {
+            handlerInstance.sendforApproval(trigger.new);
+        }
     }
 }

@@ -181,9 +181,9 @@ public without sharing class RoundRobinLeadAssignment{
                           FROM Group
                           WHERE Type = 'Queue' AND Name = 'Excelr Default Queue'
                           limit 1].Id;
-        string groupName = [Select Name__c
-                                From Assignment_Group__c where Name__c =: courseName
-                                limit 1].Name__c;
+        string groupName = [Select Name
+                                From Assignment_Group__c where Name =: courseName
+                                limit 1].Name;
         List<Lead> leadsInQueue = [SELECT ID,  OWNERID, Lead_Assigned_Date__c, Lead_Assigned_Time__c, Status,Email
                                    FROM Lead
                                    WHERE Ownerid = :queueId and (status != 'Junk' AND Status != 'Converted') limit 50000];
@@ -235,17 +235,17 @@ public without sharing class RoundRobinLeadAssignment{
                                from Assignment_Group__c];
         List<Assignment_Group_Member__c> listOfExistingQueueMembers = new List<Assignment_Group_Member__c>();
         system.debug('assignmentGroupName-->'+assignmentGroupName);
-        listOfExistingQueueMembers = [select id, name, Out_Of_Office__c, Assignment_Group__c, Assignment_Group__r.name__c, Assignment_Id__c, Leave_End_Date__c, Leave_Start_Date__c, Group_Member__c, Group_Member__r.Id
+        listOfExistingQueueMembers = [select id, name, Out_Of_Office__c, Assignment_Group__c, Assignment_Group__r.name__c,Assignment_Group__r.name, Assignment_Id__c, Leave_End_Date__c, Leave_Start_Date__c, Group_Member__c, Group_Member__r.Id
                                       from Assignment_Group_Member__c
-                                      where Assignment_Group__r.name__c = :assignmentGroupName];
+                                      where Assignment_Group__r.name = :assignmentGroupName];
         Set<Id> existingQueueMembersQueueId = new Set<Id>();
 
         if (!listOfExistingQueueMembers.isEmpty()){
             for (Assignment_Group_Member__c agm : listOfExistingQueueMembers){
-                if (customQueueNameToListOfUserId.containsKey(agm.Assignment_Group__r.name__c)){
-                    customQueueNameToListOfUserId.get(agm.Assignment_Group__r.name__c).add(agm.Group_Member__r.Id);
+                if (customQueueNameToListOfUserId.containsKey(agm.Assignment_Group__r.name)){
+                    customQueueNameToListOfUserId.get(agm.Assignment_Group__r.name).add(agm.Group_Member__r.Id);
                 } else{
-                    customQueueNameToListOfUserId.put(agm.Assignment_Group__r.name__c, new list<string>{ agm.Group_Member__r.Id });
+                    customQueueNameToListOfUserId.put(agm.Assignment_Group__r.name, new list<string>{ agm.Group_Member__r.Id });
                 }
             }
         }
@@ -259,7 +259,7 @@ public without sharing class RoundRobinLeadAssignment{
         List<Assignment_Group_Member__c> agentAvailablity = new List<Assignment_Group_Member__c>();
         agentAvailablity = [select id, Out_Of_Office__c, Group_Member__r.Id, Assignment_Group__r.name, Assignment_Group__r.name__c
                             from Assignment_Group_Member__c
-                            where Assignment_Group__r.name__c = :assignmentGroupName and Out_Of_Office__c = false];
+                            where Assignment_Group__r.name = :assignmentGroupName and Out_Of_Office__c = false];
         system.debug('agentAvailablity::' + agentAvailablity);
         for (Assignment_Group_Member__c Aa : agentAvailablity){
             userIdToUserAvailablityMap.put(aa.Group_Member__r.Id, true);
@@ -273,11 +273,11 @@ public without sharing class RoundRobinLeadAssignment{
         list<Assignment_Group_Member__c> agmList = new list<Assignment_Group_Member__c>();
         agmList = [select id, Assignment_Group__r.name,Assignment_Group__r.name__c, Assignment_Id__c, Group_Member__r.Id
                    from Assignment_Group_Member__c
-                   where Assignment_Group__r.name__c = :groupName];
+                   where Assignment_Group__r.name = :groupName];
 
         if (!agmList.isEmpty()){
             for (Assignment_Group_Member__c agm : agmList){
-                String qName = agm.Assignment_Group__r.name__c;
+                String qName = agm.Assignment_Group__r.name;
                 String qMember = agm.Group_Member__r.Id;
                 if (!string.isBlank(qName) && !String.isBlank(qMember)){
                     String qNameAndQmamber = qName + qMember;
@@ -295,11 +295,11 @@ public without sharing class RoundRobinLeadAssignment{
         list<Assignment_Group_Member__c> agmList = new list<Assignment_Group_Member__c>();
         agmList = [select id, Assignment_Group__r.name, Assignment_Id__c, Assignment_Group__r.name__c,Group_Member__r.Id, Out_Of_Office__c
                    from Assignment_Group_Member__c
-                   where Assignment_Group__r.name__c = :groupName and Out_Of_Office__c = false];
+                   where Assignment_Group__r.name = :groupName and Out_Of_Office__c = false];
         system.debug('agmList::' + agmList);
         if (!agmList.isEmpty()){
             for (Assignment_Group_Member__c agm : agmList){
-                String qName = agm.Assignment_Group__r.name__c;
+                String qName = agm.Assignment_Group__r.name;
                 String qMember = string.valueOf(agm.Assignment_Id__c);
                 system.debug('qName::' + qName);
                 system.debug('qMember::' + qMember);
