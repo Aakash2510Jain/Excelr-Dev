@@ -16,20 +16,21 @@ public without sharing class EmailIUtility{
                                 limit 1];
             List<Messaging.SingleEmailMessage> mails = new List<Messaging.SingleEmailMessage>();
             system.debug('mails' + mails);
-            if (objName == 'Opportunity'){
+            if ( objName == 'Opportunity' ){
                 invoiceDetails = [Select Id, Opportunity__r.Account.Name, Opportunity__r.Account.Email__c, Amount__c, Opportunity__r.Amount
                                   FROM Invoice__c
                                   Where Id = :invoiceId
                                   limit 1];
-            } else if (objName == 'Lead'){
+            }
+            else if ( objName == 'Lead' ){
                 leadList = [SELECT Id, Name, Email, Total_Amount__c
                             FROM Lead
                             WHERE Id = :invoiceId];
             }
-            if (!String.isBlank(email)){
+            if ( !String.isBlank(email) ){
                 // Step 1
-                Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-                Messaging.EmailFileAttachment efa = new Messaging.EmailFileAttachment();
+                Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage(  );
+                Messaging.EmailFileAttachment efa = new Messaging.EmailFileAttachment(  );
                 efa.setFileName(files.Name);
                 efa.setBody(files.Body);
                 efa.setContentType(files.ContentType);
@@ -44,11 +45,11 @@ public without sharing class EmailIUtility{
                 String htmlBody = et.HtmlValue;
                 htmlBody = htmlBody.replace('{!User.Name}', userinfo.getName());
 
-                if (htmlBody.contains('{!Account.Name}')){
+                if ( htmlBody.contains('{!Account.Name}') ){
                     htmlBody = htmlBody.replace('{!Account.Name}', invoiceDetails[0].Opportunity__r.Account.Name);
                 }
 
-                if (htmlBody.contains('{!Opportunity.Amount}')){
+                if ( htmlBody.contains('{!Opportunity.Amount}') ){
                     htmlBody = htmlBody.replace('{!Opportunity.Amount}', String.ValueOf(invoiceDetails[0].Opportunity__r.Amount) != null ? String.ValueOf(invoiceDetails[0].Opportunity__r.Amount) : '');
                 }
                 mail.setSubject(subject);
@@ -58,8 +59,55 @@ public without sharing class EmailIUtility{
                 system.debug('mails :: ' + mails);
             }
             Messaging.sendEmail(mails);
-        } catch (Exception e){
+        }
+        catch ( Exception e ){
             System.debug('Error Line==>' + e.getLineNumber() + 'Error Message==>' + e.getMessage());
+        }
+    }
+
+    public static void SendReferralFormToReferrar(Map<String, String> ReferrarNameWithEmail){
+
+        System.debug('ReferrarNameWithEmail ====> ' + ReferrarNameWithEmail);
+        try{
+            if ( !ReferrarNameWithEmail.isEmpty() ){
+                EmailTemplate BankDetailsEmailTemp = [Select id, Name, DeveloperName, Subject, Body, HtmlValue
+                                                      from EmailTemplate
+                                                      where name = 'Bank Detail Link Send To Referrar'];
+
+                List<Messaging.SingleEmailMessage> mails = new List<Messaging.SingleEmailMessage>();
+                //List<String> allrecipients = new List<String>();
+                for ( string Email : ReferrarNameWithEmail.keySet() ){
+                    Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage(  );
+                    List<String> recipients = new List<String>();
+                    recipients.add(Email);
+                    System.debug('recipients ====> ' + recipients);
+                    mail.setToAddresses(recipients);
+                    mail.setReplyTo('Excelr@info.com');
+                    mail.setSenderDisplayName('Excelr');
+                    String subject = BankDetailsEmailTemp.Subject;
+                    String htmlBody = BankDetailsEmailTemp.HtmlValue;
+                    System.debug('htmlBody ====> ' + htmlBody);
+                    System.debug('referrar Name ===>' + ReferrarNameWithEmail.get(Email));
+
+                    if ( htmlBody.contains('{!Invoice__c.Referral_Name__c}') ){
+                        htmlBody = htmlBody.replace('{!Invoice__c.Referral_Name__c}',ReferrarNameWithEmail.get(Email));
+                    }
+                    mail.setSubject(subject);
+                    mail.setHtmlBody(htmlBody);
+                    mails.add(mail);
+                    System.debug('mails =====> ' + mails);
+                }
+
+                if (!mails.isEmpty()) {
+                    Messaging.sendEmail(mails);
+                }
+
+
+            }
+
+        }
+        catch ( Exception e ){
+
         }
     }
 

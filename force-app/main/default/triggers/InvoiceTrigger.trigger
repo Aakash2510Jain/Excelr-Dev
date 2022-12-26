@@ -1,4 +1,4 @@
-trigger InvoiceTrigger on Invoice__c(after update ){
+trigger InvoiceTrigger on Invoice__c(after update, before insert ){
     SObject_Trigger_Control__mdt triggerConfig = SObject_Trigger_Control__mdt.getInstance('Invoice');
     system.debug('triggerConfig:: ' + triggerConfig);
 
@@ -11,6 +11,9 @@ trigger InvoiceTrigger on Invoice__c(after update ){
 
         if (trigger.isInsert && trigger.isBefore) {
             handlerInstance.sendforApproval(trigger.new);
+        }
+        if (trigger.isAfter && trigger.isUpdate) {
+            handlerInstance.sendReferralFormViaEmail(trigger.oldMap, trigger.newMap);
         }
     }
 }

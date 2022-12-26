@@ -95,7 +95,7 @@
                             $scope.$apply();
                             
                             //var urlString = 'https://excelr2--dev--c.sandbox.vf.force.com/apex/walkInLeadPage'+'?id='+ result;
-                            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage'+'?id='+ result;
+                            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/ParentFormLwcPage'+'?id='+ result.Id + '&departments=' + result.Departments__c;
                             window.location.replace(urlString);
                             debugger;
                             

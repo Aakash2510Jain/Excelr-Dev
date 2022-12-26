@@ -134,7 +134,7 @@ public without sharing class walkInLeadLWCcontroller{
         string message = '';
         try{
             Lead leadRec = new Lead();
-            leadRec = [SELECT Name, Owner.email,Owner.Name,Email,Phone,Course__c
+            leadRec = [SELECT Name, Owner.email
                        FROM Lead
                        WHERE Owner.Email = :ownerMail AND Id = :LiD
                        limit 1];
@@ -143,31 +143,11 @@ public without sharing class walkInLeadLWCcontroller{
                                 from EmailTemplate
                                 where name ='Notify ISM'];
             
-                 String htmlBody = et.HtmlValue;
-                 system.debug('htmlBody='+htmlBody);
-            
-                   if (htmlBody.contains('{!Lead.OwnerFullName}')){
-                    htmlBody = htmlBody.replace('{!Lead.OwnerFullName}', leadRec.Owner.Name);
-                   }
-                    if (htmlBody.contains('{!Lead.Name}')){
-                    htmlBody = htmlBody.replace('{!Lead.Name}', leadRec.Name);
-                   }
-                    if (htmlBody.contains('{!Lead.Email}')){
-                    htmlBody = htmlBody.replace('{!Lead.Email}', leadRec.Email);
-                   }
-                    if (htmlBody.contains('{!Lead.Phone}')){
-                    htmlBody = htmlBody.replace('{!Lead.Phone}', leadRec.Phone);
-                   }
-                    if (htmlBody.contains('{!Lead.Course__c}')){
-                    htmlBody = htmlBody.replace('{!Lead.Course__c}', leadRec.Course__c);
-                   }
-                
-            
             if ( leadRec != null && leadRec.Owner.email != null ){
                 Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage(  );
                 String[] toAddresses = new String[]{ ownerMail };
                 mail.setSubject('Lead assignment ');
-                mail.setHtmlBody(htmlBody);
+                mail.setPlainTextBody('Lead has been assign to you..!');
                 mail.setToAddresses(toAddresses);
                 Messaging.sendEmail(new Messaging.SingleEmailMessage[]{ mail });
                 message = 'Success';

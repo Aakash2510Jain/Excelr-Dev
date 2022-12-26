@@ -57,7 +57,7 @@ public class InvoiceTriggerHelper{
                         inv.addError(Constants.UNDER_APPROVAL_PROCESS_ERR_MSG);
                     }
                     if ( !underApprovalCaseSet.contains(inv.Id) ){
-                        SendforApprovalProcess(inv.Id, financeUserId);
+                        SendforApprovalProcess(inv.Id, '005N000000CSOuaIAH');
                     }
 
                     task tsk = new Task();
@@ -107,34 +107,24 @@ public class InvoiceTriggerHelper{
 
     public void sendReferralFormViaEmail(map<id, Invoice__c> InvoiceOldMap, map<id, Invoice__c> InvoiceNewMap){
 
-        set<String> EmailList = new Set<string>();
+        set<String> ReferrarEmailList = new Set<string>();
+        map<String, String> ReferrarNameWithEmail = new Map<String,String>();
 
         try{
             if ( !InvoiceNewMap.isEmpty() ){
                 for ( Invoice__c invRec : InvoiceNewMap.values() ){
-                    if ( invRec.Approval_Status__c != null && invRec.Approval_Status__c != InvoiceOldMap.get(invRec.id).Approval_Status__c && invRec.Approval_Status__c == 'Approved' ){
-
-                        // list<String> EmialAddresses = new list<String>();
-                        // EmialAddresses.add(acc.contacts[0].email);
-                        // mail.setToAddresses(EmialAddresses);
-                        // mail.setSubject('Upload Document');
-
-                        // String body = 'Dear ' + acc.Contacts[0].Name + ', ' + '<br/><br/>';
-                        // body += 'Please ' + '<br/>';
-                        // body += '<a href=https://sales-production--fsldemo--c.sandbox.vf.force.com/apex/AccountSummary?id=' + accid + '>Upload Document.</a>' + +'<br/>';
-                        // body += 'Thank You';
-                        // mail.setHtmlBody(body);
-
-                        // mailList.add(mail);
-                        // if ( !mailList.isEmpty() ){
-                        //     Messaging.sendEmail(mailList);
-
-                        // }
+                    if ( invRec.Approval_Status__c != null && invRec.Approval_Status__c != InvoiceOldMap.get(invRec.id).Approval_Status__c && invRec.Approval_Status__c == 'Approved' && invRec.Referrer_Email__c != null && invRec.Referral_Name__c != null){
+                        ReferrarEmailList.add(invRec.Referrer_Email__c);
+                        ReferrarNameWithEmail.put(invRec.Referrer_Email__c, invRec.Referral_Name__c);
                     }
                 }
 
-            }
+                if (!ReferrarNameWithEmail.isEmpty()) {
+                    //https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/CaptureBankDetails
+                    EmailIUtility.SendReferralFormToReferrar(ReferrarNameWithEmail);
+                }
 
+            }
         }
         catch ( Exception e ){
 
