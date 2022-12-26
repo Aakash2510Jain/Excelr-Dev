@@ -4,12 +4,13 @@
     <div id="lightningapp" />
     <script>
     debugger;
-    //var PhoneNumb = "{!$CurrentPage.parameters.id}";
+    var Departments = "{!$CurrentPage.parameters.departments}";
     var agentrecordId = "{!$CurrentPage.parameters.id}";
     
     $Lightning.use("c:WalkInFormToExposeOnSiteAPP", function () {
         $Lightning.createComponent("c:waklInLead",
-                                   {'agentrecid' : agentrecordId},
+                                   {'agentrecid' : agentrecordId,
+                                   'DepartmentListstring' : Departments},
                                    "lightningapp",
                                    function (cmp) {
                                        console.log("Customer Detail is loaded in Vf page");

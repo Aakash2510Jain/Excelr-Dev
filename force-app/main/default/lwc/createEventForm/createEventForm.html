@@ -1,0 +1,90 @@
+<template>
+    <div style="background-color: white;height: 100vh;margin-left: 25%;margin-right: 25%;">
+        <div style="display: flex;justify-content: space-between;margin-top: 3%;">
+            <lightning-button variant="neutral" label="Back" title="Back" onclick={backHandler} style="--slds-c-button-radius-border:20px;color: rgb(0,105,255);border-width: 1px;
+            --slds-c-button-neutral-color-border:rgb(0,105,255);" class="slds-m-left_x-small"></lightning-button>
+            <h1 style="font-size: 21px;">Add One-on-One Event Type</h1>
+            <div></div>
+        </div>
+
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading"></lightning-spinner>
+        </template>
+        <template if:false={isLoading}>
+            <div style="margin-top: 2%;">
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col">
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label" for="text-input-id-47">
+                              <abbr class="slds-required" title="required">* </abbr>Event Name</label>
+                            <div class="slds-form-element__control">
+                              <input type="text" id="text-input-id-47" name="Name" placeholder="Event Name" required="" class="slds-input" onchange={inputHandler}/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-col">
+                        <lightning-combobox 
+                            name="Slot_Duration__c"
+                            label="Slot Duration"
+                            value={eventForm.Slot_Duration__c}
+                            placeholder="Select Slot Duration" options={fieldValues.Slot_Duration__c}
+                            onchange={inputHandler}
+                            >
+                        </lightning-combobox>
+    
+                    </div>
+                </div>
+        
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col">
+                        <lightning-combobox 
+                            name="Before_Gap__c"
+                            label="Before Gap"
+                            value={eventForm.Before_Gap__c}
+                            placeholder="Select Before Gap" options={fieldValues.Before_Gap__c}
+                            onchange={inputHandler}
+                            >
+                        </lightning-combobox>
+                    </div>
+                    <div class="slds-col">
+                        <lightning-combobox 
+                            name="After_Gap__c"
+                            label="After Gap"
+                            value={eventForm.After_Gap__c}
+                            placeholder="Select After Gap" options={fieldValues.After_Gap__c}
+                            onchange={inputHandler}
+                            >
+                        </lightning-combobox>
+                    </div>
+                </div>
+        
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col">
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label" for="text-input-id-47">
+                              <abbr class="slds-required" title="required">* </abbr>Start Time</label>
+                            <div class="slds-form-element__control">
+                              <input type="time" id="text-input-id-48" name="Start_Time__c" placeholder="Start Time" required="" class="slds-input" onchange={inputHandler}/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-col">
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label" for="text-input-id-47">
+                              <abbr class="slds-required" title="required">* </abbr>End Time</label>
+                            <div class="slds-form-element__control">
+                              <input type="time" id="text-input-id-49" name="End_Time__c" placeholder="End Time" required="" class="slds-input" onchange={inputHandler}/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <div style="display: flex; justify-content: end;margin-top: 2%;">
+            <lightning-button variant="neutral" label="Back" title="Back" onclick={backHandler} style="--slds-c-button-radius-border:20px;color: rgb(0,105,255);border-width: 1px;
+            --slds-c-button-neutral-color-border:rgb(0,105,255);" class="slds-m-left_x-small"></lightning-button>
+            <lightning-button variant="brand" label="Create event" title="Create event" onclick={createNewEvent} style="--slds-c-button-radius-border:20px;color: rgb(0,105,255);border-width: 1px;
+            --slds-c-button-neutral-color-border:rgb(0,105,255);" class="slds-m-left_x-small"></lightning-button>
+        </div>
+    </div>
+</template>

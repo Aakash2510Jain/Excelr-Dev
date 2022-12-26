@@ -1,0 +1,19 @@
+<apex:page >
+    <apex:includeLightning />
+    <apex:includeScript value="/lightning/lightning.out.js" />
+    <div id="lightningapp" />
+    <script>
+    debugger;
+    
+    $Lightning.use("c:ReferralFormToExposeOnSiteApp", function () {
+        $Lightning.createComponent("c:referralForm",
+                                   {},
+                                   "lightningapp",
+                                   function (cmp) {
+                                       console.log("Customer Detail is loaded in Vf page");
+                                   }
+                                  );
+    });
+
+    </script>
+</apex:page>

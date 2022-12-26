@@ -1,0 +1,16 @@
+<apex:page showHeader="false" standardStylesheets="false" >
+      <apex:includeLightning />
+    <div id="dataTable" />
+    <script>
+        $Lightning.use("c:UserCalenderApp", function() {
+            $Lightning.createComponent(
+                "c:userCalendar",
+                {msg: "Event Calender View LWC."},
+                "dataTable",
+                function(cmp) {
+                    console.log('LWC Component Created.');
+                }
+            );
+        });
+    </script>
+</apex:page>

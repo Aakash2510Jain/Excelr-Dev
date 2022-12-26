@@ -29,6 +29,18 @@
 
                     </a>
                 </div>
+                <div class="slds-p-around_medium" style=" display: inline-block;">
+                    <lightning-button-menu alternative-text="Show menu" variant="border-filled"
+                        onselect={handleOnselect} label="Select Form">
+                        <template for:each={mapData} for:item="currentItem" for:index="index">
+                            <lightning-menu-item label={currentItem.label} value={currentItem.value} key={currentItem.value} onselect={handleOnselect}>
+                            </lightning-menu-item>
+
+                        </template>
+
+                    </lightning-button-menu>
+
+                </div>
 
             </div>
 
@@ -381,7 +393,7 @@
                 <template if:true={isShowModal}>
                     <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
                         aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
-                        <div class="slds-modal__container" >
+                        <div class="slds-modal__container">
                             <!-- Modal/Popup Box LWC header here -->
                             <header class="slds-modal__header">
                                 <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
@@ -394,7 +406,7 @@
                                     Lead</h2>
                             </header>
                             <!-- Modal/Popup Box LWC body starts here -->
-                            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" >
+                            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
                                 <lightning-input label="First Name" onchange={FnameChange}></lightning-input>
                                 <lightning-input label="Last Name" required="true"
                                     onchange={LnameChange}></lightning-input>
@@ -557,7 +569,8 @@
                             Application</h2>
                     </header>
                     <!-- Modal/Popup Box LWC body starts here -->
-                    <div class="slds-modal__content slds-p-around_xx-large" id="modal-content-id-2" style="height:28rem">
+                    <div class="slds-modal__content slds-p-around_xx-large" id="modal-content-id-2"
+                        style="height:28rem">
 
                         <lightning-combobox name="course" label="Course" value={value} placeholder="Select Course"
                             options={courssweList} onchange={courseforapphandler}>
@@ -567,7 +580,8 @@
                     <!-- Modal/Popup Box LWC footer starts here -->
                     <footer class="slds-modal__footer">
                         <button class="slds-button slds-button_neutral" onclick={handleappCancel}>Cancel</button>
-                        <button class="slds-button slds-button_brand" onclick={createapplicationForm} disabled={HandleCreateDisable}>Create</button>
+                        <button class="slds-button slds-button_brand" onclick={createapplicationForm}
+                            disabled={HandleCreateDisable}>Create</button>
                     </footer>
                 </div>
             </section>

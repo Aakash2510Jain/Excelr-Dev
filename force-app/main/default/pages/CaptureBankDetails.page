@@ -1,0 +1,18 @@
+<apex:page showHeader="false" sidebar="false">
+    <apex:includeLightning />
+    <apex:includeScript value="/lightning/lightning.out.js" />
+    <div id="lightningapp" />
+    <script>
+    debugger;
+    
+    $Lightning.use("c:bankDetailsAppForSite", function () {
+        $Lightning.createComponent("c:bankDetails",
+                                   { },
+                                   "lightningapp",
+                                   function (cmp) {
+                                       console.log("Refund Form is loaded in Vf page");
+                                   }
+                                  );
+    });
+    </script>
+</apex:page>

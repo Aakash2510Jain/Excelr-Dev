@@ -1,0 +1,17 @@
+<template>
+    <lightning-card title="">
+        <lightning-accordion allow-multiple-sections-open
+        onsectiontoggle={handleSectionToggle}
+        
+        class="example-accordion"   
+        >
+  <lightning-accordion-section name="A" label="Course's Applied For">
+            <lightning-datatable
+                 key-field="id"
+                 data={data}
+                 columns={columns}>
+            </lightning-datatable>
+    </lightning-accordion-section>
+    </lightning-accordion>
+    </lightning-card>
+</template>

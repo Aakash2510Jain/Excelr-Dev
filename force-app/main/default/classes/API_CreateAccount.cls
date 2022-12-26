@@ -45,7 +45,22 @@ global class API_CreateAccount{
                         leadRec.LeadSource = newAccount.Source__c;
                         leadRec.Form_Source__c = newAccount.Form_Source__c;
                         leadRec.Enter_UTM_Link__c = newAccount.Enter_UTM_Link__c;
-                        //leadRec.Company = newAccount.Company != null?newAccount.Company :'--';
+                       
+                        leadRec.Course__c = newAccount.Course__c;
+                        leadRec.City__c = newAccount.City__c;
+                        leadRec.Form_Names__c = newAccount.Form_Names__c;                        
+                        leadRec.UTM_Campaign__c = newAccount.UTM_Campaign__c;
+                        leadRec.UTM_Device__c = newAccount.UTM_Device__c;
+                        leadRec.UTM_AdGroup__c = newAccount.UTM_AdGroup__c;
+                        leadRec.UTM_Term__c = newAccount.UTM_Term__c;
+                        leadRec.UTM_Channel__c = newAccount.UTM_Channel__c;
+                        leadRec.UTM_Type__c = newAccount.UTM_Type__c;
+                        leadRec.UTM_Location__c = newAccount.Location_UTM__c;
+                        leadRec.UTM_Variety__c = newAccount.UTM_Variety__c;
+                        leadRec.UTM_Experiment__c = newAccount.UTM_Experiment__c;
+                        leadRec.UTM_Medium__c = newAccount.UTM_Medium__c;
+                        leadRec.Type_of_Course__c = newAccount.Type_of_Course__c;
+
                         String leadid = insertLead(leadRec);
                         //string appRecId = Utility.createApplicationInstance(existingLeadByEmail[0].Id, '');
                     }

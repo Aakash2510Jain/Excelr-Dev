@@ -118,7 +118,7 @@ public without sharing class Utility{
                 Map<String, String> parameters = pageReference.getParameters();
                 system.debug('utm_source ::' + parameters.get('utm_channel'));
                 leadRec.UTM_Source__c = parameters.get('utm_source');
-                leadRec.UTM_Medium__c = parameters.get('utm_medium');
+                //leadRec.UTM_Medium__c = parameters.get('utm_medium');
                 leadRec.UTM_Term__c = parameters.get('utm_term');
                 leadRec.UTM_Content__c = parameters.get('utm_content');
                 leadRec.UTM_Device__c = parameters.get('utm_device');
@@ -126,8 +126,8 @@ public without sharing class Utility{
                 leadRec.UTM_AdGroup__c = parameters.get('utm_adgroup');
                 leadRec.UTM_Location__c = parameters.get('utm_location');
                 leadRec.UTM_Channel__c = parameters.get('utm_channel');
-                leadRec.UTM_Type__c = parameters.get('utm_type');
-                leadRec.UTM_Variery__c = parameters.get('utm_variety');
+                //leadRec.UTM_Type__c = parameters.get('utm_type');
+                leadRec.UTM_Variety__c = parameters.get('utm_variety');
                 leadRec.UTM_Experiment__c = parameters.get('utm_experiment');
 
                 leadRec.GCLID__c = parameters.get('gclid');

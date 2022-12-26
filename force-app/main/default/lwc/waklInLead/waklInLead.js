@@ -158,6 +158,9 @@ export default class WaklInLead extends LightningElement {
     @track data;
     @api selectedrecordDetails;
     @api agentrecid;
+    @api DepartmentListstring;
+    @track DepartmentList = [];
+    @track mapData = [];
     @track showFromOrEmpty = false;
 
     @track dataForApp;
@@ -173,7 +176,15 @@ export default class WaklInLead extends LightningElement {
     connectedCallback() {
         //defined a varibale
         this.handlecourseList();
+        this.convertStringtoList();
 
+    }
+
+    convertStringtoList(){
+        this.DepartmentList = this.DepartmentListstring.split(';');
+        for (var key in this.DepartmentList) {
+            this.mapData.push({ label: this.DepartmentList[key], value: this.DepartmentList[key] }); //Here we are creating the array to show on UI.
+        }
     }
     emailHandler(Event) {
         debugger;
@@ -544,6 +555,27 @@ export default class WaklInLead extends LightningElement {
     handleappCancel() {
         debugger;
         this.showapplicationMOdal = false;
+    }
+
+    handleOnselect(event) {
+        debugger;
+        var selectedVal = event.detail.value;
+        //var selectedVal = event.currentTarget.dataset.id;
+        if (selectedVal == 'Walk-In') {
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            window.open(urlString, "_self");
+            
+        }
+        if (selectedVal == 'Voice') {
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            window.open(urlString, "_self");
+            
+        }
+        if (selectedVal == 'Generic') {
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            window.open(urlString, "_self");
+            
+        }
     }
 
 }

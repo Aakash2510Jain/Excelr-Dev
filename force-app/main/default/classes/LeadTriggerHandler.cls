@@ -14,7 +14,7 @@ public class LeadTriggerHandler{
                     ld.OwnerId = constants.queueId;
                 }
                 if (ld.Enter_UTM_Link__c != null){
-                    Utility.UTMLinkParams(ld);
+                    //Utility.UTMLinkParams(ld);
                 }
                 if (string.isEmpty(ld.Company) || string.isBlank(ld.Company)){
                     ld.Company = 'NA';
@@ -44,7 +44,7 @@ public class LeadTriggerHandler{
         try{
             for (Lead ld : newLeadMap.values()){
                 if (ld.Enter_UTM_Link__c != null && ld.Enter_UTM_Link__c != oldLeadMap.get(ld.Id).Enter_UTM_Link__c){
-                    Utility.UTMLinkParams(ld);
+                    //Utility.UTMLinkParams(ld);
                 }
             }
         } catch (Exception e){

@@ -1,0 +1,84 @@
+<template>
+
+    <div class="slds-tabs_default" style="background-color: white;height: 100vh;padding: 1%;">
+        <ul class="slds-tabs_default__nav" role="tablist">
+            <li class={firstTabClass} title="Item One" role="presentation" data-name="first" onclick={tabSwitchHandler}>
+                <a class="slds-tabs_default__link" href="#" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-default-1" id="tab-default-1__item">Event Types</a>
+            </li>
+            <li class={secTabClass} title="Item Two" role="presentation" data-name="second" onclick={tabSwitchHandler}>
+                <a class="slds-tabs_default__link" href="#" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item">Scheduled Events</a>
+            </li>
+        </ul>
+
+        <template if:true={isFirstTabActive}>
+            <template if:true={calUserInfo}>
+                <template if:false={showCreateEvent}>
+                    <div style="margin-left: 25%;margin-right: 25%;">
+                        <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left" style="width: 40%;">
+                            <lightning-icon size="x-small" class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default"
+                                icon-name="utility:search" style="margin-top: 1px;"></lightning-icon>
+                            <lightning-input type="text" id="text-input-id-2" placeholder="Filter" onchange={searchHanlder}>
+                            </lightning-input>
+                        </div>
+            
+                        <div style="display: flex; justify-content: space-between; margin-top: 2%; width: 100%;">
+                            <div style="display: flex;">
+                                <div id="profile" style="display:flex; align-items: center;justify-content: center;width: 40px; height:40px; border-radius: 50%; background-color: rgb(211, 211, 211);">
+                                    <h1 style="font-size: 17px;">{initials}</h1>
+                                </div>
+                                <div style="margin-left: 15px;">
+                                    <h1>{calUserInfo.user.Name}</h1>
+                                    <a href={calUserInfo.user.My_Calendar__c} style="cursor: pointer;color: rgb(0,105,255);" target="_blank">{calUserInfo.user.My_Calendar__c}</a>
+                                </div>
+                            </div>
+                            <div class="slds-float_right" style="margin-top: 3px;">
+                                <lightning-button variant="brand" label="Create Event" title="Create Event"
+                                data-id="allocat" onclick={showCreateEventHandler} style="--slds-c-button-radius-border:20px;
+                                --slds-c-button-brand-color-background:rgb(0,105,255);" class="slds-m-left_x-small" icon-name="utility:add">
+                            </lightning-button>
+                            </div>
+                        </div>
+                        <hr/>
+                    </div>
+                    <div class="slds-grid slds-wrap" style="margin-left: 25%;margin-right: 24%;">
+                        <template for:each={calUserInfo.events} for:item="ev">
+                            <div key={ev.Id} class="card slds-size_1-of-3 slds-m-around_x-small">
+                                <div style="border-top: 7px solid red;border-radius: 5px;">
+                                    <div style="display: flex;justify-content: space-between;padding: 10px;align-items: center;">
+                                        <lightning-input type="checkbox" name="input1"></lightning-input>
+                                        <div>
+                                            <lightning-button-menu alternative-text="Show menu" icon-name="utility:settings" style="border-style: none !important;">
+                                                <lightning-menu-item value="MenuItemOne" label="Menu Item One"></lightning-menu-item>
+                                                <lightning-menu-item value="MenuItemTwo" label="Menu Item Two"></lightning-menu-item>
+                                                <lightning-menu-item value="MenuItemThree" label="Menu Item Three"></lightning-menu-item>
+                                                <lightning-menu-item value="MenuItemFour" label="Menu Item Four"></lightning-menu-item>
+                                            </lightning-button-menu>
+                                        </div>
+                                    </div>
+            
+                                    <h1 style="font-size: 18px;margin-left: 10px;">{ev.Name}</h1>
+                                    <p style="font-size: 15px;margin-left: 10px;">{ev.Slot_Duration__c} mins, One-on-One</p>
+                                    <hr />
+                                    <div class="container">
+                                        <div style="display: flex;cursor: pointer;" onclick={copy} data-id={ev.Calendar_Link__c}>
+                                            <lightning-icon icon-name="utility:copy" size="x-small" style="--sds-c-icon-color-foreground: rgb(0,105,255);color: rgb(0,105,255);"></lightning-icon>
+                                            <p style="color: rgb(0,105,255);">Copy Link</p> 
+                                        </div>
+                                        <lightning-button variant="neutral" label="Share" title="Share" onclick={copy} data-id={ev.Calendar_Link__c} style="--slds-c-button-radius-border:20px;color: rgb(0,105,255);border-width: 1px;
+                                        --slds-c-button-neutral-color-border:rgb(0,105,255);" class="slds-m-left_x-small"></lightning-button>
+                                    </div>
+                                </div>
+                            </div> 
+                        </template>
+                   </div>
+                </template>
+            </template>
+            <template if:true={showCreateEvent}>
+                <c-create-event-form onrefresh={refreshPage} onclose={hideCreateEventHandler}></c-create-event-form>
+            </template>
+        </template>
+        <template if:false={isFirstTabActive}>
+            Pending
+        </template>
+    </div>
+</template>

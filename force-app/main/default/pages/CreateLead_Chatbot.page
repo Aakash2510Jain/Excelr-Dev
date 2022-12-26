@@ -1,0 +1,223 @@
+<apex:page showHeader="false" sidebar="false" controller="CreateLeadChatbot_Controller">
+    <apex:slds /> 
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js">
+    </script>
+    <div  ng-app="createLeadApp" ng-controller="createLeadCtrl" style="background-color:#e6f7ff;">
+       <mat-card>
+           <mat-card-header>
+           <apex:image url="{!$Resource.ExcelRLogo}" width="200" height="1200"/>
+               <br/>
+               <h3 style="text-align:left;font-size:25px;font-weight:bold;margin-left:880px;text-transform: uppercase;"> Create Lead</h3>
+               
+           </mat-card-header>
+  <mat-card-content>
+          
+            <article class="slds-card slds-p-top_none" style="background-color:#b3e6ff;">
+                <div class="slds-m-vertical_large">
+                    
+                    <div class="slds-card__body slds-card__body_inner">
+                        <div >
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-47">
+                                    First Name</label>
+                                <div class="slds-form-element__control">
+                                    <input type="text" id="text-input-id-47" placeholder="First Name…" required="" ng-model="leadDetails.FirstName" class="slds-input" />
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-m-top_large">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-47">
+                                    Last Name</label>
+                                <div class="slds-form-element__control">
+                                    <input type="text" id="text-input-id-47" placeholder="Last Name…" ng-model="leadDetails.LastName" class="slds-input" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-m-top_large">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-47">
+                                    Email</label>
+                                <div class="slds-form-element__control">
+                                    <input type="text" id="text-input-id-47" placeholder="Email…" ng-model="leadDetails.Email" class="slds-input" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-m-top_large">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-47">
+                                    Phone</label>
+                                <div class="slds-form-element__control">
+                                    <input type="text" id="text-input-id-47" placeholder="Phone…" ng-model="leadDetails.Phone" class="slds-input" />
+                                </div>
+                            </div>
+                        </div>
+                         <div class="slds-m-top_large">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-47">
+                                    City</label>
+                                <div class="slds-form-element__control">
+                                    <!--input type="text" id="text-input-id-47" placeholder="City…" ng-model="leadDetails.City__c" ng-change="myFunc()" class="slds-input" /-->
+                                    <select ng-model="leadDetails.City__c" style="width: 100%;" ng-change="myFunc()" ng-options="item for item in listCityNew"></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-m-top_large">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-47">
+                                    Course</label>
+                                <div class="slds-form-element__control">
+									<select ng-model="leadDetails.Course__c" style="width: 100%;">
+                                                            <option ng-repeat="staff in coursePickValues">{{staff}}</option>
+                                                        </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-m-top_large">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-47">
+                                    State</label>
+                                <div class="slds-form-element__control">
+                                    <input type="text" id="text-input-id-47" placeholder="State…" ng-model="leadDetails.State__c" class="slds-input" />
+                                </div>
+                            </div>
+                            
+                            <div class="slds-m-top_large">
+                                <div class="slds-form-element">
+                                    <label class="slds-form-element__label" for="text-input-id-47">
+                                        Country</label>
+                                    <div class="slds-form-element__control">
+                                        <input type="text" id="text-input-id-47" placeholder="Country…" ng-model="leadDetails.Country__c" class="slds-input" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-m-top_large">
+                                <div class="slds-form-element">
+                                    <label class="slds-form-element__label" for="text-input-id-47">
+                                        Visitor Id</label>
+                                    <div class="slds-form-element__control">
+                                        <input type="text" id="text-input-id-47" placeholder="Visitor Id…" ng-model="leadDetails.Visitor_ID__c" class="slds-input" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-m-top_large">
+                                <div class="slds-form-element">
+                                    <label class="slds-form-element__label" for="text-input-id-47">
+                                        Transcript</label>
+                                    <div class="slds-form-element__control">
+                                        <input type="text" id="text-input-id-47" placeholder="Transcript…" ng-model="leadDetails.Transcript__c" class="slds-input" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-m-top_large">
+                                <div class="slds-form-element">
+                                    <label class="slds-form-element__label" for="text-input-id-47">
+                                        Landing Page URL</label>
+                                    <div class="slds-form-element__control">
+                                        <input type="text" id="text-input-id-47" placeholder="Landing Page URL…" ng-model="leadDetails.Landing_Page_URL__c" class="slds-input" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-m-top_large">
+                                <div class="slds-form-element">
+                                    <label class="slds-form-element__label" for="text-input-id-47">
+                                        LGE</label>
+                                    <div class="slds-form-element__control">
+                                        <input type="text" id="text-input-id-47" placeholder="LGE…" ng-model="leadDetails.LGE__c" class="slds-input" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <footer class="slds-card__footer">
+                            <button class="slds-button slds-button_brand" ng-click="saveLead()">Submit</button>
+                            
+                        </footer>
+                    </div>
+                </div>
+                </article>
+                
+                
+                
+          
+           </mat-card-content>
+</mat-card>
+
+        
+           
+        </div>
+    
+  
+        <script>
+        var coursePickValues = JSON.parse('{!coursePickValues}');
+         
+    
+        var app = angular.module('createLeadApp', []);
+        app.controller('createLeadCtrl', function($scope) {
+            debugger;
+            $scope.city = [];
+            $scope.ListCity = [];
+            $scope.listCityNew = [];
+            $scope.leadDetails = {"FirstName":"","LastName":"","Email":"","Phone":"","City__c":"","Course__c":"","State__c":"","Country__c":"","Visitor_ID__c":"","Transcript__c":"","Landing_Page_URL__c":"","LGE__c":""};
+            $scope.coursePickValues = coursePickValues;
+            
+            
+            $scope.myFunc = function(){
+                debugger;
+                CreateLeadChatbot_Controller.getStateCustomSetting($scope.leadDetails.City__c,function(result,event){
+                    debugger;
+                    if(event.status && result){
+                        let keys = Object.keys(result);
+                        keys; 
+                        let values = Object.values(result);
+                       
+                        debugger;
+                         $scope.returnVal = result;
+                         $scope.leadDetails.State__c = keys;
+                        $scope.leadDetails.Country__c = values;
+                        
+                    }
+                    $scope.$apply();
+                    
+                })
+            }
+            
+            $scope.init=function(){
+                debugger;
+            console.log("entered");
+            data={};
+            debugger;
+                CreateLeadChatbot_Controller.getAllCities(function(result,event){
+                if(event.status && result){
+                    
+                    debugger;
+                    $scope.listCityNew = result.sort();
+                }
+                    $scope.$apply();
+                })
+        }
+       //simple call init function on controller
+       $scope.init();
+            
+          
+            
+            $scope.saveLead = function(){
+                debugger;
+                CreateLeadChatbot_Controller.saveLeadDetails($scope.leadDetails,function(result,event){
+                    if(event.status && result != null){
+                                                swal({
+                            title: "Submitted",
+                            text: "Lead Created",
+                            icon: "success"
+                        });
+                    }
+                    $scope.$apply();
+                },{escape:false})
+            }
+            
+            
+        });
+        </script>
+        
+    </apex:page>

@@ -1,0 +1,175 @@
+<template>
+    <div class="container">
+        <div class="maincard">
+            <div class="leftsection">
+                
+                <template if:true={result}>
+                    <h1 class="leftheader">{result.cdetails.Owner.Name}</h1>
+                    <h1 class="eventname">{result.cdetails.Name}</h1>
+                    <div class="eventsection slds-m-top_medium">
+                        <lightning-icon icon-name="utility:clock" size="small"></lightning-icon>
+                        <h1 style="margin-left: 10px;color: rgb(97, 97, 97);font-weight: 500;font-size: 16px;">{result.cdetails.Slot_Duration__c} Min</h1>
+                    </div>
+                </template>
+                
+                <div class="eventsection slds-m-top_medium">
+                    <lightning-icon icon-name="utility:video" size="small"></lightning-icon>
+                    <h1 style="margin-left: 10px;color: rgb(97, 97, 97);font-weight: 500;font-size: 16px;">Web conferencing details provided upon confirmation.</h1>
+                </div>
+            </div>
+            <div class="rightsection" style="border-left: 0.2px solid rgb(209, 209, 209);">
+                <h1 class="rightheader">Select a Date & Time</h1>
+
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col slds-size_2-of-3">
+                        <div class="slds-m-top_x-large" style="display: flex; justify-content: space-between;">
+                            <h1 style="font-weight: 500; font-size: 15px; margin-top: 12px;">{sMonth} {sYear}</h1>
+                            <div style="display: flex;">
+                                <div class="lraction" onclick={calendarBackNextAction} data-action="left">
+                                    <lightning-icon icon-name="utility:chevronleft" size="xx-small" style="color: rgb(0, 105, 255);" class="my-icon"></lightning-icon>
+                                </div>
+                                <div class="lraction" onclick={calendarBackNextAction} data-action="right">
+                                    <lightning-icon icon-name="utility:chevronright" size="xx-small" style="color: rgb(0, 105, 255);" class="my-icon"></lightning-icon>
+                                </div>
+                            </div>
+                        </div>
+                        <table class="slds-m-top_medium" style="width: 100%;">
+                            <thead>
+                                <tr style="display: flex;justify-content: space-between;margin-right: 15px;margin-bottom: 20px;">
+                                    <th>MON</th>
+                                    <th>TUE</th>
+                                    <th>WED</th>
+                                    <th>THU</th>
+                                    <th>FRI</th>
+                                    <th>SAT</th>
+                                    <th>SUN</th>
+                                </tr>
+                            </thead>
+                            <tbody class="slds-m-top_x-large">
+                                <template if:true={selectedMonth.weeks}>
+                                    <template for:each={selectedMonth.weeks} for:item="week" for:index="index">
+                                        <tr key={week.week} style="display: flex;justify-content: space-between;">
+                                            <template for:each={week.days} for:item="day">
+                                                <template if:true={day.hide}>
+                                                    <td class="daydisable" key={day.hide}></td>
+                                                </template>
+                                                <template if:false={day.hide}>
+                                                    <template if:true={day.selected}>
+                                                        <td class="daySelected" key={day.date} data-id={day.date} data-week={week.week}>{day.date}</td>
+                                                    </template>
+                                                    <template if:false={day.selected}>
+        
+                                                        <template if:true={day.enabled}>
+                                                            <td class="day" key={day.date} data-id={day.date} data-week={week.week} onclick={dayClick}>{day.date}</td>
+                                                        </template>
+        
+                                                        <template if:false={day.enabled}>
+                                                            <td class="daydisabled" key={day.date} data-id={day.date} data-week={week.week}>{day.date}</td>
+                                                        </template>
+                                                    </template>
+                                                </template>
+                                            </template>
+                                        </tr>
+                                    </template>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                   
+                    <template if:true={showTime}>
+                        <div class="slds-col slds-size_1-of-3">
+                            <h2 class="rightSelectedDay">{selectedDate}</h2>
+                            <template for:each={selectedTimes} for:item="item" for:index="index">
+                                <template if:true={item.disabled}>
+                                    <div key={item.lvalue} data-index={index} class="disabledTimeDiv">
+                                        <lightning-formatted-date-time value={item.lvalue} hour="2-digit" minute="2-digit"  hour12="false" time-zone="UTC">
+                                        </lightning-formatted-date-time>
+                                    </div>
+                                </template>
+                                <template if:false={item.disabled}>
+                                    <div key={item.lvalue} data-index={index} class="selectTimeDiv" onclick={showScheduleModal}>
+                                        <lightning-formatted-date-time value={item.lvalue} hour="2-digit" minute="2-digit"  hour12="false" time-zone="UTC">
+                                        </lightning-formatted-date-time>
+                                    </div>
+                                </template>
+                            </template>
+                        </div>
+                    </template>
+
+                    
+                  </div>
+
+               
+            </div>
+        </div>
+    </div>
+
+    <template if:true={showScheduleEvent}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_medium" aria-modal="true">
+            <div class="slds-modal__container">
+    
+                <div class="slds-modal__header">
+                    <h1 class="slds-modal__title slds-hyphenate">Enter details</h1>
+                </div>
+                <div class="slds-modal__content  modalBody">
+                    <template if:true={showLoader}>
+                        <lightning-spinner alternative-text="Loading"></lightning-spinner>
+                    </template>
+                    
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col slds-size_1-of-3">
+                            <div class="slds-p-around_medium">
+                                <h1 class="leftheader">{result.cdetails.Owner.Name}</h1>
+                                <h1 class="eventname_modal">{result.cdetails.Name}</h1>
+                                <div class="eventsection slds-m-top_medium">
+                                    <lightning-icon icon-name="utility:clock" size="small"></lightning-icon>
+                                    <h1 style="margin-left: 10px;color: rgb(97, 97, 97);font-weight: 500;font-size: 16px;">{result.cdetails.Slot_Duration__c} Min</h1>
+                                </div>
+                                <div class="eventsection slds-m-top_medium">
+                                    <lightning-icon icon-name="utility:video" size="small"></lightning-icon>
+                                    <h1 style="margin-left: 10px;color: rgb(97, 97, 97);font-weight: 500;font-size: 16px;">Web conferencing details provided upon confirmation.</h1>
+                                </div>
+                                <div class="eventsection slds-m-top_medium">
+                                    <lightning-icon icon-name="utility:event" size="small"></lightning-icon>
+                                    <h1 style="margin-left: 10px;color: rgb(97, 97, 97);font-weight: 500;font-size: 16px;">
+                                        <lightning-formatted-date-time value={selectedTime} hour="2-digit" minute="2-digit"  hour12="false" time-zone="UTC">
+                                        </lightning-formatted-date-time>
+                                         - 
+                                         <lightning-formatted-date-time value={selectedEndTime} hour="2-digit" minute="2-digit"  hour12="false" time-zone="UTC">
+                                        </lightning-formatted-date-time>
+                                        ,
+                                        {selectedDate}
+                                    </h1>
+                                </div>
+                                <div class="eventsection slds-m-top_medium">
+                                    <lightning-icon icon-name="utility:world" size="small"></lightning-icon>
+                                    <h1 style="margin-left: 10px;color: rgb(97, 97, 97);font-weight: 500;font-size: 16px;">India Standard Time</h1>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_2-of-3" style="border-left: 0.2px solid rgb(209, 209, 209);">
+                            <div class="slds-p-around_medium">
+                                <lightning-input type="text" label="Name *" name="Name" onchange={inputChangeHandler}></lightning-input>
+                                <lightning-input type="email" name="Email__c" label="Email *" onchange={inputChangeHandler}></lightning-input>
+                                <!-- <lightning-textarea name="input1" label="Guest Email(s)" ></lightning-textarea>
+                                <h1>Notify up to 10 additional guests of the scheduled event.</h1> -->
+
+                                <lightning-textarea name="Meeting_Description__c" label="Please share anything that will help prepare for our meeting. " onchange={inputChangeHandler}></lightning-textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-modal__footer">
+
+                    <lightning-button style="width: auto; margin-right: 5px;" variant="brand" label="Schedule Event"
+                        title="Schedule Event" onclick={scheduleEvent} class="slds-m-left_x-small"
+                        icon-name="utility:event">
+                    </lightning-button>
+
+                    <lightning-button label="Cancel" title="Cancel" onclick={closeScheModal} class="slds-m-left_x-small"></lightning-button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

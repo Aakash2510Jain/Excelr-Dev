@@ -1,0 +1,69 @@
+<template>
+
+    <div class="slds-grid slds-gutters" style="background-color: rgb(157, 217, 239);">
+        <div class="slds-col">
+            <img src={imageurl} alt="User Image" height="250px" width="250px" />
+
+        </div>
+        <div class="slds-col" style="font-size:25px;">
+            <div style="padding-left: 100px; padding-top: 20px; font-weight: bold;">
+                Referral Form
+            </div>
+
+        </div>
+        <div class="slds-col">
+            <div class="slds-float_right slds-p-right_medium slds-p-top_small"
+                style="font-size: 20px; display: inline-block;">
+                <div class="slds-p-around_medium" style="display: inline-block;">
+                    <!--a href="javascript:void(0)" onclick={ShowSearchpage}>
+                        <h1>
+                            Search Lead
+                        </h1>
+
+                    </a -->
+                </div>
+                <div class="slds-p-around_medium" style=" display: inline-block;">
+                    <!-- a href="javascript:void(0)" onclick={ShowPastLeadPage}>
+                        <h1>
+                            My Past Leads
+                        </h1>
+
+                    </a -->
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div>
+        <lightning-card>
+            <div class="slds-align_absolute-center">
+                <div class="slds-size_2-of-6"> 
+                    <lightning-input name="FN" label="First Name"  required ="true" onchange={ReferralFormInputHandler} style="margin-top:8px;" value={FirstName} type="text" ></lightning-input>
+                    <lightning-input  name="LN" label="Last Name" required ="true" onchange={ReferralFormInputHandler} style="margin-top:8px;" value={Lastname}></lightning-input>
+                    <lightning-input name="EM" label="Email" required ="true" onchange={ReferralFormInputHandler} style="margin-top:8px;" value={Email}></lightning-input>
+                    <lightning-input  name="PH" label="Phone" required ="true" onchange={ReferralFormInputHandler} style="margin-top:8px;" value={Phone}></lightning-input>
+                    <lightning-input  name="REFEM" label="ReferralEmail" required ="true" onchange={ReferralFormInputHandler} style="margin-top:8px;" value={ReferralEmail}></lightning-input>
+                    <lightning-input  name="REFPH" label="ReferralPhone" required ="true" onchange={ReferralFormInputHandler} style="margin-top:8px;" value={ReferralPhone}></lightning-input>
+
+                    <template if:true={CoursePicklistValues.data}>
+                        <lightning-combobox name="CR" label="Course" value={Coursevalue} placeholder="select"
+                            options={CoursePicklistValues.data.values} onchange={ReferralFormInputHandler}>
+                        </lightning-combobox>
+                    </template>
+                </div>   
+            </div>
+            <br/>
+            
+        </lightning-card>
+    </div>
+
+    <lightning-modal-footer class="my-modal-footer">
+        <div class=" slds-align_absolute-center">
+            <lightning-button title="Save" label="Submit" onclick={SaveReferralFormDetails}   variant="brand" style="margin-top:8px ;"></lightning-button>
+        </div>
+        
+    </lightning-modal-footer>
+    
+</template>

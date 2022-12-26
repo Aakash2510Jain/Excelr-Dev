@@ -1,0 +1,149 @@
+<apex:page standardController="Invoice__c" extensions="RetailInvoiceHelper" renderAs="pdf" setup="false" sidebar="false" showHeader="false">
+    <apex:stylesheet value="{!$Resource.CSSHelper}"/>
+    <h1>
+        <center><b>Tax Invoice </b> </center>
+    </h1> 
+    <div >
+        
+        <table border="1" style="width: 100%;">
+            <tr>
+                <td colspan="2">
+                    <div style="float:right;margin-right:10px;">
+                        <b>{!getcustomData.Name}<br/></b>
+                        {!getcustomData.Address__c}<br/>
+                        {!getcustomData.City__c} {!getcustomData.Pin_Code__c}<br/>
+                        GSTIN/UIN:{!getcustomData.GSTIN__c}<br/>
+                        State Name: {!getcustomData.State_Name__c}, Code:{!getcustomData.State_Code__c}<br/>
+                        E-Mail:{!getcustomData.EMail__c}
+                    </div> 
+                    <div style="float:left;">
+                        <apex:image url="{!$Resource.ExcelRLogo}" width="100" height="120"/>
+                    </div> 
+                </td>                
+                <td style="text-align: center;">Invoice No.<br/>
+                    <b> {!getinvoiceData.Name}</b></td>
+                
+                <td style="text-align: center;">Dated<br/>
+                    <b> <apex:outputText value="{0,date,dd'-'MMM'-'yy}">
+                        <apex:param value="{!getinvoiceData.Initiated_Date__c}" /> 
+                        </apex:outputText></b>
+                </td>   
+                
+            </tr>             
+            <tr>
+                <td colspan="2"> Consignee(Ship to)<br/>
+                    <b> Other Debtors</b><br/>
+                    State Name   :Karnataka,Code:29</td>
+                <td style="text-align: center;">Delivery Note <br/>
+                    {!getinvoiceData.Delivery_Note__c} </td>
+                <td style="text-align: center;">Mode/Terms of Payment<br/>
+                    {!getinvoiceData.Mode_Terms_of_Payment__c}</td>      
+            </tr>
+            <tr>
+                <td colspan="2" >
+                    <div style="float:bottom;margin-bottom:50px;">
+                        Buyer(Bill to)<br/>
+                        <b>{!getAccData.Name}</b><br/>
+                        {!getAccData.Email__c}<br/>
+                        {!getAccData.ShippingState}<br/>
+                        State Name:    {!getAccData.ShippingState},Code: {!getAccData.ShippingPostalCode}
+                    </div> 
+                </td> 
+                
+                <td style="text-align: center;">Reference No.  &amp; Date.<br/>
+                    {!getinvoiceData.Reference_No__c}</td>
+                <td style="text-align: center;">Other References <br/>
+                    {!getinvoiceData.Other_References__c}</td></tr>
+            
+        </table>                   
+        <table border="2" style="width: 100%;">
+            <tr>
+                <td>SI No.</td>
+                <td style="text-align: center;">Particulars</td>
+                <td style="text-align: center;">HSN/SAC</td>
+                <td style="text-align: center;">Quantity</td>
+                <td style="text-align: center;">Rate</td>
+                <td style="text-align: center;">Percent</td>
+                <td style="text-align: center;">Amount</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td style="text-align: center;"><b> Consulting Fee-Blr</b><br/>
+                    {!getOLIData.Name}<br/>
+                    <b>{!getcustomData.Central_GST__c}</b><br/>
+                    <b>{!getcustomData.State_GST__c}</b></td>
+                <td style="text-align: center;"><b>{!getcustomData.HSN_SAC__c} </b></td>
+                <td style="text-align: center;">{!getOLIData.Quantity}<br/> </td>
+                <td style="text-align: center;"><br/><br/> {!getcustomData.Rate__c} <br/> {!getcustomData.Rate__c}</td>
+                <td style="text-align: center;"><br/><br/> % <br/> % </td>
+                <td><b>{!getOLIData.TotalPrice} <br/><br/>{!PercentageTotal}<br/>{!PercentageTotal}</b></td> </tr> 
+            <tr><td> </td>
+                <td style="text-align: right;">Total </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td> 
+                <td><b>{!TotalAmountWithPercentage}</b></td> </tr> 
+            <table border="2" style="width: 100%;">  
+                <td>
+                    <h4>
+                        <apex:outputText escape="false"><p style="">Amount Chargeable(in words) &nbsp;&nbsp;&nbsp;  E. &amp; O.E.</p>  </apex:outputText>
+                    </h4>
+                    
+                    <b  style="font-size: 13px;">INR {!AmountTotalAmountWithPercentageInWords}</b></td> 
+            </table> 
+            
+        </table>                   
+        <table border="2" style="width: 100%;">            
+            <tr> 
+                <td style="text-align: center;">HSN/SAC</td>
+                <td style="text-align: center;">Taxable Value</td>
+                <td colspan="2" style="text-align: center;">Central tax</td>  
+                <td  colspan="2" style="text-align: center;">State Tax</td>              
+                <td style="text-align: center;">Total Tax Amount</td>               
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td style="text-align: center;">Rate</td>
+                <td style="text-align: center;">Amount</td>
+                <td style="text-align: center;">Rate</td>
+                <td style="text-align: center;">Amount</td>
+                <td></td>
+            </tr>
+            <tr> 
+                <td >{!getcustomData.HSN_SAC__c}</td>
+                <td style="text-align: center;">{!getOLIData.TotalPrice}</td>
+                <td style="text-align: center;">{!getcustomData.Rate__c}</td>
+                <td style="text-align: center;">{!PercentageTotal}</td>
+                <td style="text-align: center;">{!getcustomData.Rate__c}</td>
+                <td style="text-align: center;">{!PercentageTotal}</td>
+                <td style="text-align: center;">{!TotalTaXAmount}</td>
+            </tr>
+            <tr> 
+                <td style="text-align: right;"><b>Total</b></td>
+                <td style="text-align: center;"><b>{!getOLIData.TotalPrice}</b></td>
+                <td></td>
+                <td style="text-align: center;"><b>{!PercentageTotal}</b></td>
+                <td></td>
+                <td style="text-align: center;"><b>{!PercentageTotal}</b></td>
+                <td style="text-align: center;"><b>{!TotalTaXAmount}</b></td>  </tr>   
+        </table>
+        <table border="2" style="width: 100%;">
+            <tr><td> Tax amount(in words):  <b>INR Three Thousand Eight Hundred Thirteen and Fifty Six paise Only</b><br/>
+                Remarks:<br/>
+                invoice raised to {!getAccData.Name}<br/>
+                {!getAccData.Email__c} <br/>
+                <div style="float:right;margin-right:-1.5px;margin-bottom:-1.5px;padding-top:5px;padding-left:5px;padding-bottom:5px;padding-right:5px; border-style: solid;border-width:1px; !important">
+                    <b>for {!getcustomData.Name}<br/><br/></b>
+                    Authorised Signatory
+                </div>
+                
+                </td>
+                
+            </tr>
+            
+        </table>           
+        
+    </div>  
+</apex:page>
