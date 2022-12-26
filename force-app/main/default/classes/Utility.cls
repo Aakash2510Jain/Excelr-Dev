@@ -134,7 +134,7 @@ public without sharing class Utility{
 
                 leadRec.Source__c = parameters.get('source');
                 leadRec.Medium__c = parameters.get('medium');
-                leadRec.Campaign__c = parameters.get('campaign');
+              //  leadRec.Campaign__c = parameters.get('campaign');
                 leadRec.AdGroup__c = parameters.get('adgroup');
                 leadRec.Keyword__c = parameters.get('keyword');
                 leadRec.Device__c = parameters.get('device');
