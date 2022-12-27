@@ -1,30 +1,85 @@
 @IsTest
 public class ServiceTestClass {
-
-    @IsTest static void testAPICreateAccount(){
-        Account accRec = UtilityClassForTestClass.insertAccRec('Akash','shubhma@gmail.com','2345678','Corporate','Webinar','sadsfdg','Core Python Training');
-        insert accRec;  
-        Lead leadRec = UtilityClassForTestClass.insertLead('Akash','jain ','shubhma@gmail.com','2345678','Corporate','Webinar','sadsfdg','Core Python Training');
-        insert leadRec; 
+    
+    @IsTest static void test_API_CreateAccount(){
         
-        Opportunity oppRec = UtilityClassForTestClass.insertOpp('Akash','26/12/2022','Proposal',accRec.id);
-        update oppRec;
-        
-         API_CreateAccount reqst = new API_CreateAccount();
-          String JsonMsg = JSON.serialize(reqst);
-         test.startTest();
-        RestRequest request 	= new RestRequest();
-       // RestResponse res        = new RestResponse();
-        request.requestUri 		= '/services/apexrest/DemoUrl';
-       // request.addParameter('id', recordId);
-        request.requestBody = Blob.valueOf(JsonMsg);
-        request.httpMethod 		= 'POST';
-        RestContext.request 	= request;
-        //RestContext.response    = res;
+        RestRequest request 				=	new RestRequest();
+        RestResponse res 					= 	new RestResponse();
+        request.requestUri 					= 	'https://excelr2--dev.sandbox.my.salesforce.com/services/apexrest/create_Account';
+        request.httpMethod 					= 	'POST';
+        request.requestBody 				= 	Blob.valueOf('{"Name": "Aakash Jain",    "Phone": "9560635420",    "Email__c": "aakash.123jain@gmail.com ",    "Course__c": "Data Science",    "Type_of_Course__c": "combo",    "City__c": "Delhi",    "Form_Names__c": "Live Virtual",    "Source__c": "Youtube",    "UTM_Medium__c": "Direct",    "UTM_Campaign__c": "Campaign Name",    "UTM_Device__c": "Device Name",    "UTM_AdGroup__c": "Ad Group",    "UTM_Term__c": "Term",    "UTM_Channel__c": "Channel",    "UTM_Type__c": "RMKT",    "Location_UTM__c": "Location",    "UTM_Variety__c": "Variety",    "UTM_Experiment__c": "Experiment",    "Enter_UTM_Link__c": "Link"}');
+        RestContext.request 				= 	request;
+        RestContext.response				= 	res;
         API_CreateAccount.doPost();
-        API_CreateAccount.insertLead(leadRec);
-        API_CreateAccount.updateLead(leadRec);
-        test.stopTest();
-    }    
-
+        API_CreateAccount.insertLead(null);
+        API_CreateAccount.updateLead(null);
+        API_CreateAccount.insertApplication(null);
+    }  
+    @IsTest static void test_API_CreateAccount_V1(){
+        
+        RestRequest request 				=	new RestRequest();
+        RestResponse res 					= 	new RestResponse();
+        request.requestUri 					= 	'https://excelr2--dev.sandbox.my.salesforce.com/services/apexrest/create_Account';
+        request.httpMethod 					= 	'POST';
+        request.requestBody 				= 	Blob.valueOf('');
+        RestContext.request 				= 	request;
+        RestContext.response				= 	res;
+        API_CreateAccount.doPost();
+    }  
+    @IsTest static void test_API_CreateLead(){
+        
+        RestRequest request 				=	new RestRequest();
+        RestResponse res 					= 	new RestResponse();
+        request.requestUri 					= 	'https://excelr2--dev.sandbox.my.salesforce.com/services/apexrest/create_lead';
+        request.httpMethod 					= 	'POST';
+        request.requestBody 				= 	Blob.valueOf('{"Name": "Aakash Jain",    "Phone": "9560635420",    "Email__c": "aakash.123jain@gmail.com ",    "Course__c": "Data Science",    "Type_of_Course__c": "combo",    "City__c": "Delhi",    "Form_Names__c": "Live Virtual",    "Source__c": "Youtube",    "UTM_Medium__c": "Direct",    "UTM_Campaign__c": "Campaign Name",    "UTM_Device__c": "Device Name",    "UTM_AdGroup__c": "Ad Group",    "UTM_Term__c": "Term",    "UTM_Channel__c": "Channel",    "UTM_Type__c": "RMKT",    "Location_UTM__c": "Location",    "UTM_Variety__c": "Variety",    "UTM_Experiment__c": "Experiment",    "Enter_UTM_Link__c": "Link"}');
+        RestContext.request 				= 	request;
+        RestContext.response				= 	res;
+        API_CreateLead.doPost();
+      //  API_CreateLead.insertLead(null);
+         
+     }
+    @IsTest static void test_API_CreateLead_V1(){
+        
+        RestRequest request 				=	new RestRequest();
+        RestResponse res 					= 	new RestResponse();
+        request.requestUri 					= 	'https://excelr2--dev.sandbox.my.salesforce.com/services/apexrest/create_Account';
+        request.httpMethod 					= 	'POST';
+        request.requestBody 				= 	Blob.valueOf('');
+        RestContext.request 				= 	request;
+        RestContext.response				= 	res;
+        API_CreateLead.doPost();
+    } 
+    
+    @IsTest static Application__c test_AppWithLead()  {
+        Application__c appRec = new Application__c();
+         appRec.Course__c = 'Core Python Training';
+        Datetime myDate = Datetime.newInstance(2008, 12, 1, 12, 30, 2);
+         Lead ld = new Lead(LastName ='Akash');
+        insert ld;
+        appRec.Applied_Date_Time__c = myDate ;  
+        appRec.Lead__c = ld.id;
+        insert appRec;
+        string appId = apprec.id;
+        AppWithLead var = new AppWithLead();
+        AppWithLead.fetchApp(appId);
+        return apprec;
+     }  
+ 
+    @IsTest static void test_BatchForOverdueTasks(){
+        Contact conRec = new Contact(LastName='Jain');
+        insert conRec;
+        list<Task> tasklist = new list<TasK>();
+        Task taskRec = new Task(WhoId =conRec.id);
+        tasklist.add(taskRec);
+        insert tasklist;
+        
+         
+        Case caseRec  = new Case();
+        caseRec.Subject = 'Define Severity on Case Number 00001054';
+        caseRec.Lead__c = taskRec.WhoId;
+        insert caseRec;
+        BatchForOverdueTasks batchInstance =  new BatchForOverdueTasks();
+        database.executeBatch(batchInstance);
+    }
 }

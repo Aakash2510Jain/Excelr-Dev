@@ -27,7 +27,7 @@ public class GenericLeadLWCcontroller {
     }
 
     @auraenabled
-    public static lead createLead(String firstname, string Lastname, string email, string phone, string ownerId, string agmId, string Course,  string agentid,string city,string state,string country,string source,string medium,string LGE,string VisitorId,string Transcript){
+    public static lead createLead(String firstname, string Lastname, string email, string phone, string ownerId, string agmId, string Course,  string agentid,string city,string state,string country,string source,string medium,string VisitorId,string Transcript,string leadGenPath){
        // System.debug('userId ====> ' + userId);
         System.debug('agentid ====> ' + agentid);
         lead leadRec = new lead();
@@ -51,11 +51,15 @@ public class GenericLeadLWCcontroller {
             leadRec.City__c=city;
             leadRec.State__c=state;
             leadRec.Country__c=country;
-            leadRec.Source__c=source;
-            leadRec.Medium__c=medium;
-            leadRec.LGE__c=LGE;
+            leadRec.LeadSource=source;
+            leadRec.UTM_Medium__c=medium;
+            //leadRec.LGE__c=LGE;
             leadRec.Visitor_ID__c=VisitorId;
             leadRec.Transcript__c=Transcript;
+            leadRec.Lead_Gen_Path__c=leadGenPath;
+            
+
+
             //leadRec.Landing_Page_URL__c=LandingPageURL;
             if ( !existingTrainingUser.isEmpty() ){
                 leadRec.ExcelR_Training_User__c = existingTrainingUser[0].id;

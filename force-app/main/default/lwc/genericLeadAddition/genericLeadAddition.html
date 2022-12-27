@@ -71,6 +71,7 @@
                     <template if:true={showFromOrEmpty}>
                         <lightning-tabset>
                             <lightning-tab label="Details">
+                                
                                 <template if:true={data}>
                                     <lightning-record-view-form object-api-name={objectApiName} record-id={recordId}
                                         density="comfy">
@@ -84,7 +85,7 @@
 
                                                     <lightning-layout-item padding="around-small" size="6">
                                                         <div class="slds-border_bottom">
-                                                            <lightning-output-field field-name={Name}
+                                                            <lightning-output-field field-name="Name"
                                                                 style="font-weight: bold;">
                                                             </lightning-output-field>
                                                         </div>
@@ -278,7 +279,7 @@
 
                                                     <lightning-layout-item padding="around-small" size="6">
                                                         <div class="slds-border_bottom">
-                                                            <lightning-output-field field-name={CID}
+                                                            <lightning-output-field field-name="CID__c"
                                                                 style="font-weight: bold;">
                                                             </lightning-output-field>
                                                         </div>
@@ -286,7 +287,7 @@
                                                     </lightning-layout-item>
                                                     <lightning-layout-item padding="around-small" size="6">
                                                         <div class="slds-border_bottom">
-                                                            <lightning-output-field field-name={Course}
+                                                            <lightning-output-field field-name="Course__c"
                                                                 style="font-weight: bold;">
                                                             </lightning-output-field>
                                                         </div>
@@ -297,7 +298,7 @@
 
                                                     <lightning-layout-item padding="around-small" size="6">
                                                         <div class="slds-border_bottom">
-                                                            <lightning-output-field field-name={ISM}
+                                                            <lightning-output-field field-name="OwnerId"
                                                                 style="font-weight: bold;">
                                                             </lightning-output-field>
                                                         </div>
@@ -305,7 +306,7 @@
                                                     </lightning-layout-item>
                                                     <lightning-layout-item padding="around-small" size="6">
                                                         <div class="slds-border_bottom">
-                                                            <lightning-output-field field-name={LeadSource}
+                                                            <lightning-output-field field-name="LeadSource"
                                                                 style="font-weight: bold;">
                                                             </lightning-output-field>
                                                         </div>
@@ -314,7 +315,7 @@
 
                                                     <lightning-layout-item padding="around-small" size="6">
                                                         <div class="slds-border_bottom">
-                                                            <lightning-output-field field-name={statusLead}
+                                                            <lightning-output-field field-name="Status"
                                                                 style="font-weight: bold;"> </lightning-output-field>
                                                         </div>
 
@@ -322,14 +323,14 @@
 
                                                     <lightning-layout-item padding="around-small" size="6">
                                                         <div class="slds-border_bottom">
-                                                            <lightning-output-field field-name={Source}
+                                                            <lightning-output-field field-name="Source__c"
                                                                 style="font-weight: bold;"> </lightning-output-field>
                                                         </div>
 
                                                     </lightning-layout-item>
                                                     <lightning-layout-item padding="around-small" size="6">
                                                         <div class="slds-border_bottom">
-                                                            <lightning-output-field field-name={Phone}
+                                                            <lightning-output-field field-name="Phone"
                                                                 style="font-weight: bold;"> </lightning-output-field>
                                                         </div>
 
@@ -337,15 +338,11 @@
 
                                                     <lightning-layout-item padding="around-small" size="6">
                                                         <div class="slds-border_bottom">
-                                                            <lightning-output-field field-name={Email}
+                                                            <lightning-output-field field-name="Email"
                                                                 style="font-weight: bold;"> </lightning-output-field>
                                                         </div>
 
                                                     </lightning-layout-item>
-
-
-
-
                                                 </lightning-layout>
                                             </div>
                                         </div>
@@ -358,7 +355,7 @@
                                             class="slds-align_absolute-center slds-notify slds-notify_alert slds-alert_warning"
                                             role="alert">
 
-                                            No Data Found with Respect to this Email!!!!!
+                                            No Data Found with Respect to this Email and Phone!!!!!
 
                                         </div>
                                     </lightning-card>
@@ -378,7 +375,7 @@
                                             class="slds-align_absolute-center slds-notify slds-notify_alert slds-alert_warning"
                                             role="alert">
 
-                                            No Data Found with Respect to this Email!!!!!
+                                            No Data Found with Respect to this Email and Phone!!!!!
 
                                         </div>
                                     </lightning-card>
@@ -419,15 +416,27 @@
                                 <lightning-combobox name="Lead Gen Path" label="Lead Gen Path" value={Leadvalue}
                                    placeholder="Select Lead Gen Path" options={ldGenPath} onchange={ldGenPathValue}>
                                 </lightning-combobox>
-                                <lightning-input type="text" label="City" onchange={HandleCity}></lightning-input>
-                                <lightning-input type="text" label="State" value={StateValue} ></lightning-input>
-                                <lightning-input type="text" label="Country" value={CountryValue}></lightning-input>
-                                <lightning-input type="text" label="Source" onchange={HandleSource}></lightning-input>
-                                <lightning-input type="text" label="Medium" onchange={HandleMedium}></lightning-input>
-                                <lightning-input type="text" label="LGE" onchange={HandleLGE}></lightning-input>
+
+                                <lightning-combobox name="City" label="City" value={cityValue}
+                                    placeholder="Select Your City" options={CityOptions} onchange={HandleCityStatus} required="true">
+                                </lightning-combobox>
+
+                                <!--lightning-input type="text" label="City" onchange={HandleCity}></lightning-input-->
+                                 <lightning-input type="text" label="State" name="State" value={StateValue} disabled={StateDisable} onchange={HandleChangeStateCountry}></lightning-input>
+                                <lightning-input type="text" label="Country" name="Country" value={CountryValue}  disabled={CountryDisable} onchange={HandleChangeStateCountry}></lightning-input>
+                                <!--lightning-input type="text" label="Source" onchange={HandleSource}></lightning-input-->
+                                <lightning-combobox name="Source" label="Source" value={SourceValue}
+                                placeholder="Select Your Source" options={leadSource} onchange={HandleSource} required="true" >
+                               </lightning-combobox>
+                                <!--lightning-input type="text" label="Medium" onchange={HandleMedium}></lightning-input-->
+                                <lightning-combobox name="Medium" label="Medium" value={MediumValue}
+                                placeholder="Select Your Medium" options={leadmedium} onchange={HandleMedium} required="true">
+                               </lightning-combobox>
+                               
+                                <!--lightning-input type="text" label="LGE" onchange={HandleLGE}></lightning-input-->
                                 <lightning-input type="text" label="Visitor ID" onchange={HandleVisitorId}></lightning-input>
                                 <lightning-input type="text" label="TranScript" onchange={HandleTranscript}></lightning-input>
-                                <lightning-input type="text" label="Landing Page URL" onchange={HandlePageURL}></lightning-input>
+                                <!--lightning-input type="text" label="Landing Page URL" onchange={HandlePageURL}></lightning-input-->
                                 <!--c-custom-lookup icon-name="standard:user" s-object-api-name="user" label="Select User"
                                     onlookupupdate={lookupRecord} placeholder="type here..."></c-custom-lookup-->
                             </div>
@@ -444,6 +453,16 @@
             </lightning-card>
 
         </template>
+        
+        <div class="slds-m-around_large">
+            <div if:true={isLoaded} class="slds-is-relative">
+               <div align="center">
+                <div class="loader"></div>
+                Please wait! Loading Data...
+            </div>
+           </div>
+       </div>
+
         <template if:true={showPastLeads}>
             <lightning-card>
 

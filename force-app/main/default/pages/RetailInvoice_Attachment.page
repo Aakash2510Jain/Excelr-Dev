@@ -33,7 +33,7 @@
             <tr>
                 <td colspan="2"> Consignee(Ship to)<br/>
                     <b> Other Debtors</b><br/>
-                    State Name   :Karnataka,Code:29</td>
+                    State Name :{!getoppData.GST_State__c}, GST No :{!StateCode} </td>
                 <td style="text-align: center;">Delivery Note <br/>
                     {!getinvoiceData.Delivery_Note__c} </td>
                 <td style="text-align: center;">Mode/Terms of Payment<br/>

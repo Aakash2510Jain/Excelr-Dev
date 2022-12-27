@@ -26,7 +26,7 @@ public without sharing class voiceFormLWCcontroller{
     }
 
     @auraenabled
-    public static lead createLead(String firstname, string Lastname, string email, string phone, string ownerId, string agmId, string Course, string agentid,string city,string LdGenPath,string state,string country,string source,string medium,string lgedata){
+    public static lead createLead(String firstname, string Lastname, string email, string phone, string ownerId, string agmId, string Course, string agentid,string city,string LdGenPath,string state,string country,string source,string medium){
        // System.debug('userId ====> ' + userId);
         System.debug('agentid ====> ' + agentid);
         lead leadRec = new lead();
@@ -49,9 +49,9 @@ public without sharing class voiceFormLWCcontroller{
             leadRec.Course__c = Course;
             leadRec.City__c=city;
             leadRec.Lead_Gen_Path__c=LdGenPath;
-            leadRec.Source__c=source;
-            leadRec.Medium__c=medium;
-            leadRec.LGE__c=lgedata;
+            leadRec.LeadSource=source;
+            leadRec.UTM_Medium__c=medium;
+           // leadRec.LGE__c=lgedata;
             leadRec.Country__c=country;
             leadRec.State__c=state;
             if ( !existingTrainingUser.isEmpty() ){

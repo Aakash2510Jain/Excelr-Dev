@@ -28,7 +28,7 @@ public with sharing class Opportunitytriggerhandler{
                 }
 
                 if ( !accountIds.isEmpty() ){
-                    accountList = [SELECT AccountSource, Approval_Status__c, Email__c, GCLID__c, Id, Lead_Id__c, Name, OwnerId, Phone, Referral_Email__c, Referral_Phone__c
+                    accountList = [SELECT AccountSource, Approval_Status__c, Email__c, GCLID__c, Id,  Name, OwnerId, Phone, Referral_Email__c, Referral_Phone__c
                                    FROM Account
                                    where Id In:accountIds];
                     if ( !accountList.isEmpty() ){

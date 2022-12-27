@@ -4,10 +4,11 @@ public without sharing class walkInLeadLWCcontroller{
         list<lead> leadList = new list<lead>();
         String Phonestring = '%'+ EmailOrPhone;
 
+        System.debug('EmailOrPhone ====> ' + EmailOrPhone);
         if (EmailOrPhone != null) {
             leadList = [Select id, firstName, LastName, Owner_Email__c, Email, Phone
                         from Lead
-                        where Email = :EmailOrPhone OR Phone LIKE:Phonestring Order By CreatedDate Asc LIMIT 1];
+                        where Email = :EmailOrPhone OR Phone LIKE:Phonestring  Order By CreatedDate Asc LIMIT 1];
         }
         System.debug('leadList ======> ' + leadList);
         // if ( EmailOrPhone.contains('@') ){

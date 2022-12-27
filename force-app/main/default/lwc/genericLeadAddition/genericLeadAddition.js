@@ -8,58 +8,61 @@ import getMember from '@salesforce/apex/GenericLeadLWCcontroller.getMember';
 import getPuckistOflead from '@salesforce/apex/GenericLeadLWCcontroller.getPuckistOflead';
 import createLead from '@salesforce/apex/GenericLeadLWCcontroller.createLead';
 import createApplication from '@salesforce/apex/GenericLeadLWCcontroller.CreateApplication';
-import FirstName from '@salesforce/schema/Lead.FirstName';
-import LastName from '@salesforce/schema/Lead.LastName';
-import Email from '@salesforce/schema/Lead.Email';
-import Phone from '@salesforce/schema/Lead.Phone';
-import ISM__c from '@salesforce/schema/Lead.ISM__c';
-import Status from '@salesforce/schema/Lead.Status';
-import Profession__c from '@salesforce/schema/Lead.Profession__c';
-import HasOptedOutOfEmail from '@salesforce/schema/Lead.HasOptedOutOfEmail';
-import HasOptedOutOfFax from '@salesforce/schema/Lead.HasOptedOutOfFax';
-import Specialization__c from '@salesforce/schema/Lead.Specialization__c';
-import ISM_Name__c from '@salesforce/schema/Lead.ISM_Name__c';
-import Year_of_Graduation__c from '@salesforce/schema/Lead.Year_of_Graduation__c';
-import Year_of_Experience__c from '@salesforce/schema/Lead.Year_of_Experience__c';
-import Total_Calls__c from '@salesforce/schema/Lead.Total_Calls__c';
-import Total_Applications_Submitted__c from '@salesforce/schema/Lead.Total_Applications_Submitted__c';
-import Branch__c from '@salesforce/schema/Lead.Branch__c';
-import Why_This_Course__c from '@salesforce/schema/Lead.Why_This_Course__c';
-import Whatsapp_Opt_in__c from '@salesforce/schema/Lead.Whatsapp_Opt_in__c';
-import Total_Emails__c from '@salesforce/schema/Lead.Total_Emails__c';
-import Total_Conversation_Duration__c from '@salesforce/schema/Lead.Total_Conversation_Duration__c';
-import Total_Connected_Call__c from '@salesforce/schema/Lead.Total_Connected_Call__c';
-import Total_Call_Duration__c from '@salesforce/schema/Lead.Total_Call_Duration__c';
-import Telephonic_Conversation__c from '@salesforce/schema/Lead.Telephonic_Conversation__c';
-import Source__c from '@salesforce/schema/Lead.Source__c';
-import Relevant_Experience__c from '@salesforce/schema/Lead.Relevant_Experience__c';
-import Refree_Mob_No__c from '@salesforce/schema/Lead.Refree_Mob_No__c';
-import Reason_for_On_Hold__c from '@salesforce/schema/Lead.Reason_for_On_Hold__c';
-import Reason_For_Dead__c from '@salesforce/schema/Lead.Reason_For_Dead__c';
-import Rating from '@salesforce/schema/Lead.Rating';
-import Qualification__c from '@salesforce/schema/Lead.Qualification__c';
-import LeadSource from '@salesforce/schema/Lead.LeadSource';
-import OwnerId from '@salesforce/schema/Lead.OwnerId';
-import Is_Phone_Invalid__c from '@salesforce/schema/Lead.Is_Phone_Invalid__c';
-import Is_Email_Invalid__c from '@salesforce/schema/Lead.Is_Email_Invalid__c';
-import Hi__c from '@salesforce/schema/Lead.Hi__c';
-import Form_Source__c from '@salesforce/schema/Lead.Form_Source__c';
-import Enquired_Course__c from '@salesforce/schema/Lead.Enquired_Course__c';
-import Email_Conversation_Done__c from '@salesforce/schema/Lead.Email_Conversation_Done__c';
-import Do_you__c from '@salesforce/schema/Lead.Do_you__c';
-import Device__c from '@salesforce/schema/Lead.Device__c';
-import Designation__c from '@salesforce/schema/Lead.Designation__c';
-import Date_of_Enrollment__c from '@salesforce/schema/Lead.Date_of_Enrollment__c';
-import Course__c from '@salesforce/schema/Lead.Course__c';
-import CID__c from '@salesforce/schema/Lead.CID__c';
-import Campaign__c from '@salesforce/schema/Lead.Campaign__c';
-import Name from '@salesforce/schema/Lead.Name';
+// import FirstName from '@salesforce/schema/Lead.FirstName';
+// import LastName from '@salesforce/schema/Lead.LastName';
+// import Email from '@salesforce/schema/Lead.Email';
+// import Phone from '@salesforce/schema/Lead.Phone';
+// import ISM__c from '@salesforce/schema/Lead.ISM__c';
+// import Status from '@salesforce/schema/Lead.Status';
+// import Profession__c from '@salesforce/schema/Lead.Profession__c';
+// import HasOptedOutOfEmail from '@salesforce/schema/Lead.HasOptedOutOfEmail';
+// import HasOptedOutOfFax from '@salesforce/schema/Lead.HasOptedOutOfFax';
+// import Specialization__c from '@salesforce/schema/Lead.Specialization__c';
+// import ISM_Name__c from '@salesforce/schema/Lead.ISM_Name__c';
+// import Year_of_Graduation__c from '@salesforce/schema/Lead.Year_of_Graduation__c';
+// import Year_of_Experience__c from '@salesforce/schema/Lead.Year_of_Experience__c';
+// import Total_Calls__c from '@salesforce/schema/Lead.Total_Calls__c';
+// import Total_Applications_Submitted__c from '@salesforce/schema/Lead.Total_Applications_Submitted__c';
+// import Branch__c from '@salesforce/schema/Lead.Branch__c';
+// import Why_This_Course__c from '@salesforce/schema/Lead.Why_This_Course__c';
+// import Whatsapp_Opt_in__c from '@salesforce/schema/Lead.Whatsapp_Opt_in__c';
+// import Total_Emails__c from '@salesforce/schema/Lead.Total_Emails__c';
+// import Total_Conversation_Duration__c from '@salesforce/schema/Lead.Total_Conversation_Duration__c';
+// import Total_Connected_Call__c from '@salesforce/schema/Lead.Total_Connected_Call__c';
+// import Total_Call_Duration__c from '@salesforce/schema/Lead.Total_Call_Duration__c';
+// import Telephonic_Conversation__c from '@salesforce/schema/Lead.Telephonic_Conversation__c';
+// import Source__c from '@salesforce/schema/Lead.Source__c';
+// import Relevant_Experience__c from '@salesforce/schema/Lead.Relevant_Experience__c';
+// import Refree_Mob_No__c from '@salesforce/schema/Lead.Refree_Mob_No__c';
+// import Reason_for_On_Hold__c from '@salesforce/schema/Lead.Reason_for_On_Hold__c';
+// import Reason_For_Dead__c from '@salesforce/schema/Lead.Reason_For_Dead__c';
+// import Rating from '@salesforce/schema/Lead.Rating';
+// import Qualification__c from '@salesforce/schema/Lead.Qualification__c';
+// import LeadSource from '@salesforce/schema/Lead.LeadSource';
+// import OwnerId from '@salesforce/schema/Lead.OwnerId';
+// import Is_Phone_Invalid__c from '@salesforce/schema/Lead.Is_Phone_Invalid__c';
+// import Is_Email_Invalid__c from '@salesforce/schema/Lead.Is_Email_Invalid__c';
+// import Hi__c from '@salesforce/schema/Lead.Hi__c';
+// import Form_Source__c from '@salesforce/schema/Lead.Form_Source__c';
+// import Enquired_Course__c from '@salesforce/schema/Lead.Enquired_Course__c';
+// import Email_Conversation_Done__c from '@salesforce/schema/Lead.Email_Conversation_Done__c';
+// import Do_you__c from '@salesforce/schema/Lead.Do_you__c';
+// import Device__c from '@salesforce/schema/Lead.Device__c';
+// import Designation__c from '@salesforce/schema/Lead.Designation__c';
+// import Date_of_Enrollment__c from '@salesforce/schema/Lead.Date_of_Enrollment__c';
+// import Course__c from '@salesforce/schema/Lead.Course__c';
+// import CID__c from '@salesforce/schema/Lead.CID__c';
+// import Campaign__c from '@salesforce/schema/Lead.UTM_Campaign__c';
+// import Name from '@salesforce/schema/Lead.Name';
 
 import { getObjectInfo } from 'lightning/uiObjectInfoApi';
 import { getPicklistValues } from 'lightning/uiObjectInfoApi';
 import LEAD_OBJECT from '@salesforce/schema/Lead';
 import LEAD_GEN_PATH from '@salesforce/schema/Lead.Lead_Gen_Path__c';
-import FetchStateCounty from '@salesforce/apex/voiceFormLWCcontroller.FetchStateCounty';
+import LEAD_SOURCE from '@salesforce/schema/Lead.LeadSource';
+import LEAD_MEDIUM from '@salesforce/schema/Lead.UTM_Medium__c';
+import FetchStateCounty from '@salesforce/apex/GenericLeadLWCcontroller.FetchStateCounty';
+import Fetchcities from '@salesforce/apex/GenericLeadLWCcontroller.Fetchcities';
 
 import QueryPastLeads from '@salesforce/apex/GenericLeadLWCcontroller.QueryPastLeads';
 import LightningAlert from 'lightning/alert';
@@ -99,54 +102,54 @@ export default class WaklInLead extends LightningElement {
     @track courseforApp;
     @api recordId;
     @track newBTNdisAble = false;
-    @track ISM_Name = ISM_Name__c;
-    @track Profession = Profession__c;
-    @track statusLead = Status;
-    @track Fanme = FirstName;
-    @track Lname = LastName;
-    @track Email = Email;
-    @track Phone = Phone;
-    @track HasOptedOutOfEmail = HasOptedOutOfEmail;
-    @track HasOptedOutOfFax = HasOptedOutOfFax;
-    @track Specialization = Specialization__c;
-    @track ism = ISM__c;
-    @track Year_of_Graduation = Year_of_Graduation__c;
-    @track Year_of_Experience = Year_of_Experience__c;
-    @track Total_Calls = Total_Calls__c;
-    @track Total_Applications_Submitted = Total_Applications_Submitted__c;
-    @track Branch = Branch__c;
+    // @track ISM_Name = ISM_Name__c;
+    // @track Profession = Profession__c;
+    // @track statusLead = Status;
+    // @track Fanme = FirstName;
+    // @track Lname = LastName;
+    // @track Email = Email;
+    // @track Phone = Phone;
+    // @track HasOptedOutOfEmail = HasOptedOutOfEmail;
+    // @track HasOptedOutOfFax = HasOptedOutOfFax;
+    // @track Specialization = Specialization__c;
+    // @track ism = ISM__c;
+    // @track Year_of_Graduation = Year_of_Graduation__c;
+    // @track Year_of_Experience = Year_of_Experience__c;
+    // @track Total_Calls = Total_Calls__c;
+    // @track Total_Applications_Submitted = Total_Applications_Submitted__c;
+    // @track Branch = Branch__c;
     @track objectApiName = 'Lead';
 
-    @track Why_This_Course = Why_This_Course__c;
-    @track Whatsapp_Opt_in = Whatsapp_Opt_in__c;
-    @track Total_Emails = Total_Emails__c;
-    @track Total_Conversation_Duration = Total_Conversation_Duration__c;
-    @track Total_Connected_Call__c = Total_Connected_Call__c;
-    @track Total_Call_Duration = Total_Call_Duration__c;
-    @track Telephonic_Conversation = Telephonic_Conversation__c;
-    @track Source = Source__c;
-    @track Relevant_Experience = Relevant_Experience__c;
-    @track Refree_Mob_No = Refree_Mob_No__c;
-    @track Reason_for_On_Hold = Reason_for_On_Hold__c;
-    @track Reason_For_Dead = Reason_For_Dead__c;
-    @track Rating = Rating;
-    @track Qualification = Qualification__c;
-    @track LeadSource = LeadSource;
-    @track ISM = OwnerId;
-    @track Is_Phone_Invalid = Is_Phone_Invalid__c;
-    @track Is_Email_Invalid__c = Is_Email_Invalid__c;
-    @track Hic = Hi__c;
-    @track Form_Source = Form_Source__c;
-    @track Enquired_Course = Enquired_Course__c;
-    @track Email_Conversation = Email_Conversation_Done__c;
-    @track Do_you = Do_you__c;
-    @track Device = Device__c;
-    @track Designation = Designation__c;
-    @track Date_of_Enrollment = Date_of_Enrollment__c;
-    @track Course = Course__c;
-    @track CID = CID__c;
-    @track Campaign = Campaign__c;
-    @track Name = Name;
+    // @track Why_This_Course = Why_This_Course__c;
+    // @track Whatsapp_Opt_in = Whatsapp_Opt_in__c;
+    // @track Total_Emails = Total_Emails__c;
+    // @track Total_Conversation_Duration = Total_Conversation_Duration__c;
+    // @track Total_Connected_Call__c = Total_Connected_Call__c;
+    // @track Total_Call_Duration = Total_Call_Duration__c;
+    // @track Telephonic_Conversation = Telephonic_Conversation__c;
+    // @track Source = Source__c;
+    // @track Relevant_Experience = Relevant_Experience__c;
+    // @track Refree_Mob_No = Refree_Mob_No__c;
+    // @track Reason_for_On_Hold = Reason_for_On_Hold__c;
+    // @track Reason_For_Dead = Reason_For_Dead__c;
+    // @track Rating = Rating;
+    // @track Qualification = Qualification__c;
+    // @track LeadSource = LeadSource;
+    // @track ISM = OwnerId;
+    // @track Is_Phone_Invalid = Is_Phone_Invalid__c;
+    // @track Is_Email_Invalid__c = Is_Email_Invalid__c;
+    // @track Hic = Hi__c;
+    // @track Form_Source = Form_Source__c;
+    // @track Enquired_Course = Enquired_Course__c;
+    // @track Email_Conversation = Email_Conversation_Done__c;
+    // @track Do_you = Do_you__c;
+    // @track Device = Device__c;
+    // @track Designation = Designation__c;
+    // @track Date_of_Enrollment = Date_of_Enrollment__c;
+    // @track Course = Course__c;
+    // @track CID = CID__c;
+    // @track Campaign = Campaign__c;
+    // @track Name = Name;
 
     @track gruoMemberId;
     @track ismeId;
@@ -198,11 +201,14 @@ export default class WaklInLead extends LightningElement {
         this.inPutValue = EmailOrPhone;
     }
 
+    
     serachLeadBTN() {
+        this.handleClick();
         debugger;
         getLead({ EmailOrPhone: this.inPutValue })
             .then(data => {
                 debugger;
+                this.handleClick();
                 this.showFromOrEmpty = true;
                 this.data = data;
                 if (this.data.length > 0) {
@@ -304,6 +310,163 @@ export default class WaklInLead extends LightningElement {
         this.Leadvalue=event.target.value;
      }
 
+     //Getting Picklist Field Of LeadSource
+     @track LeadSourcePicklist=[];
+     @wire(getPicklistValues, { recordTypeId:'$objectInfo.data.defaultRecordTypeId', fieldApiName:LEAD_SOURCE})
+     wiredPicklistLeadSource({data,error}){
+         debugger;
+        if(data){
+           console.log('data=',data);
+           console.log('dataValues=',data.values);
+           let arr=[];
+           for(let i=0;i<data.values.length;i++){
+              arr.push({label:data.values[i].label,value:data.values[i].value});
+           }
+           this.LeadSourcePicklist=arr;
+           console.log('Picklistvalue=',this.LeadSourcePicklist);
+        }
+        else {
+            console.log('error=',error)
+        }
+     }
+
+     get leadSource(){
+        return this.LeadSourcePicklist;
+     }
+
+     @track SourceValue;
+     HandleSource(event){
+        debugger;
+        let Source=event.target.value;
+        this.SourceValue=Source;
+     }
+
+     //Getting Picklist Field Of Medium
+     @track LeadMediumPicklist=[];
+     @wire(getPicklistValues, { recordTypeId:'$objectInfo.data.defaultRecordTypeId', fieldApiName:LEAD_MEDIUM})
+     wiredPicklistLeadMedium({data,error}){
+         debugger;
+        if(data){
+           console.log('data=',data);
+           console.log('dataValues=',data.values);
+           let arr=[];
+           for(let i=0;i<data.values.length;i++){
+              arr.push({label:data.values[i].label,value:data.values[i].value});
+           }
+           this.LeadMediumPicklist=arr;
+           console.log('Picklistvalue=',this.LeadMediumPicklist);
+        }
+        else {
+            console.log('error=',error)
+        }
+     }
+
+     get leadmedium(){
+        return this.LeadMediumPicklist;
+     }
+
+     @track MediumValue;
+
+    HandleMedium(event){
+        debugger;
+      let Medium=event.target.value;
+      this.MediumValue=Medium;
+    }
+
+    @track CityPicklistValue=[];
+    @track cityValue;
+    @wire(Fetchcities)
+    WiredResponsecities({data,error}){
+        debugger;
+        if(data){
+         console.log('CityValuedata=',data);
+           let arr=[];
+           for(let i=0;i<data.length;i++){
+              arr.push({label:data[i].City__c,value:data[i].City__c});
+           }
+           this.CityPicklistValue=arr;
+           console.log('Picklistvalue=',this.CityPicklistValue);
+        }
+        else if(error){
+            console.log('error=',error);
+        }
+
+    }
+
+   get CityOptions(){
+     return this.CityPicklistValue;
+   }
+
+    @track CountryDisable=true;
+    @track StateDisable=true;
+    @track StateValue;
+    @track CountryValue;
+    HandleCityStatus(event){
+
+        debugger;
+        let city=event.detail.value;
+        if(city){
+            this.cityValue=city;
+            let state;
+            let TempValue;
+            let country;
+            TempValue=city;
+           
+            console.log('Tempstate=',TempValue);
+
+            if(TempValue=="Other"){
+                this.StateDisable=false;
+                this.CountryDisable=false;
+                alert('Please Type Your State and Country');
+            }
+            else{
+                this.StateDisable=true;
+                this.CountryDisable=true;
+            }
+
+            if(TempValue){
+                TempValue=TempValue.charAt(0).toUpperCase() + TempValue.slice(1);
+                console.log('Tempstate2=',TempValue);
+                state = this.StateCountryValue.find(item=>item.City__c==TempValue);
+                country=this.StateCountryValue.find(item=>item.City__c==TempValue);
+                console.log('state=',state);
+                
+            }
+            if(state){
+                this.StateValue=state.State__c;
+                this.CountryValue=country.Country__c;
+                console.log('StateValue=',this.StateValue);
+                
+            }
+            else{
+                this.StateValue='';
+                this.CountryValue='';
+            }
+
+            
+            console.log('state=',this.StateValue);
+        }
+        
+    }
+
+    HandleChangeStateCountry(event){
+        if(this.cityValue=='Other'){
+          
+            debugger;
+           let value=event.target.value;
+    
+           if(event.target.name=="State"){
+    
+            this.StateValue=value;
+           }
+           if(event.target.name=="Country"){
+    
+            this.CountryValue=value;
+           }
+        }
+          
+       }
+
     //open modal
     newhLeadBTN() {
         debugger;
@@ -396,12 +559,12 @@ export default class WaklInLead extends LightningElement {
         let medium=event.target.value;
         this.MediumValue=medium;
     }
-    @track LGEValue;
-    HandleLGE(event){
-        debugger;
-        let LGE=event.target.value;
-        this.LGEValue=LGE;
-    }
+    // @track LGEValue;
+    // HandleLGE(event){
+    //     debugger;
+    //     let LGE=event.target.value;
+    //     this.LGEValue=LGE;
+    //}
     @track VisitorIdValue;
     HandleVisitorId(event){
         debugger;
@@ -414,12 +577,12 @@ export default class WaklInLead extends LightningElement {
         let Trans=event.target.value;
         this.TranscriptValue=Trans;
     }
-    @track PageUrlValue;
-    HandlePageURL(event){
-        debugger;
-        let Purl=event.target.value;
-        this.PageUrlValue=Purl;
-    }
+    // @track PageUrlValue;
+    // HandlePageURL(event){
+    //     debugger;
+    //     let Purl=event.target.value;
+    //     this.PageUrlValue=Purl;
+    // }
 
     notifyismBTN() {
         debugger;
@@ -512,7 +675,7 @@ export default class WaklInLead extends LightningElement {
         debugger;
         var returnvalue = this.handleIncorrectEmail(this.emailValue)
         if (returnvalue == true) {
-            createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, ownerId: this.ismeId, agmId: this.gruoMemberId, Course: this.CourceLead, userId: this.selectedrecordDetails.Id, agentid: this.agentrecid,city:this.cityValue,source:this.sourceValue,medium:this.MediumValue, LGE:this.LGEValue,VisitorId:this.VisitorIdValue,Transcript:this.TranscriptValue,LandingPageURL:this.PageUrlValue})
+            createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, ownerId: this.ismeId, agmId: this.gruoMemberId, Course: this.CourceLead, agentid: this.agentrecid,city:this.cityValue,source:this.sourceValue,medium:this.MediumValue,VisitorId:this.VisitorIdValue,Transcript:this.TranscriptValue,leadGenPath:this.Leadvalue,state:this.StateValue,country:this.CountryValue})
                 .then(data => {
                     this.handleConfirm('Lead Created Successfully');
                     console.log(data)
@@ -555,13 +718,19 @@ export default class WaklInLead extends LightningElement {
         });
     }
 
+    @api isLoaded = false;
+    // change isLoaded to the opposite of its current value
+    handleClick() {
+        this.isLoaded = !this.isLoaded;
+    }
 
     ShowPastLeadPage() {
+        this.handleClick();
         debugger;
         QueryPastLeads({ ExcelRagentid: this.agentrecid })
             .then(data => {
                 debugger;
-
+                this.handleClick();
                 console.log('ertygutr54----', data);
                 this.showPastLeads = true;
                 this.showSearchDetails = false;
@@ -596,6 +765,7 @@ export default class WaklInLead extends LightningElement {
 
     ShowSearchpage() {
         debugger;
+       
         this.showPastLeads = false;
         this.showSearchDetails = true;
         this.columns = applicationcolumns;

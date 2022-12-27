@@ -1,4 +1,27 @@
 @RestResource(urlMapping = '/create_Account')
+/*
+ * {
+    "Name": "Aakash Jain",
+    "Phone": "9560635420",
+    "Email__c": "aakash.jain123@gmail.com ",
+    "Course__c": "Data Science",
+    "Type_of_Course__c": "combo",
+    "City__c": "Delhi",
+    "Form_Names__c": "Live Virtual",
+    "Source__c": "Youtube",
+    "UTM_Medium__c": "Direct",
+    "UTM_Campaign__c": "Campaign Name",
+    "UTM_Device__c": "Device Name",
+    "UTM_AdGroup__c": "Ad Group",
+    "UTM_Term__c": "Term",
+    "UTM_Channel__c": "Channel",
+    "UTM_Type__c": "RMKT",
+    "Location_UTM__c": "Location",
+    "UTM_Variety__c": "Variety",
+    "UTM_Experiment__c": "Experiment",
+    "Enter_UTM_Link__c": "Link"
+}
+*/
 global class API_CreateAccount{
     @HttpPost
     global static void doPost(){
@@ -27,7 +50,6 @@ global class API_CreateAccount{
                     insert opportunityRec;
 
                 } else{
-                    Lead leadRec = new Lead();
 
                     if (!existingLeadByEmail.isEmpty()){
                         //update Lead course
@@ -38,7 +60,7 @@ global class API_CreateAccount{
                     } else{
                         //Insert Lead
                         //Insert Application
-
+                        Lead leadRec = new Lead();
                         leadRec.Email = newAccount.Email__c;
                         leadRec.Phone = newAccount.Phone;
                         leadRec.LastName = newAccount.Name;
@@ -60,14 +82,20 @@ global class API_CreateAccount{
                         leadRec.UTM_Experiment__c = newAccount.UTM_Experiment__c;
                         leadRec.UTM_Medium__c = newAccount.UTM_Medium__c;
                         leadRec.Type_of_Course__c = newAccount.Type_of_Course__c;
-
+                        
                         String leadid = insertLead(leadRec);
-                        //string appRecId = Utility.createApplicationInstance(existingLeadByEmail[0].Id, '');
+                        system.debug('leadRec-->'+leadRec);
+                        system.debug('leadid-->'+leadid);
+                        if (leadRec != null){
+                            system.debug('Inside If');
+                            system.debug('leadid-->'+leadid);
+                            
+                            RestContext.response.responseBody = Blob.valueOf(JSON.serialize(new IntegrationWrapper.APIResponseWrapper('Success', 'Account created successfully ref Id:' + leadId)));
+                        }else{
+                            system.debug('Inside Else');
+                            RestContext.response.responseBody = Blob.valueOf(JSON.serialize(new IntegrationWrapper.APIResponseWrapper('Error', 'Could not create Account')));
+                        }
                     }
-                    if (leadRec != null)
-                        RestContext.response.responseBody = Blob.valueOf(JSON.serialize(new IntegrationWrapper.APIResponseWrapper('Success', 'Account created successfully ref Id:' + leadRec.id)));
-                    else
-                        RestContext.response.responseBody = Blob.valueOf(JSON.serialize(new IntegrationWrapper.APIResponseWrapper('Error', 'Could not create Account')));
                 }
             }
         } else{

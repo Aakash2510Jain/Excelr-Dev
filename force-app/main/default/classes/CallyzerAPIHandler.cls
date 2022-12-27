@@ -39,7 +39,7 @@ public class CallyzerAPIHandler
         clw.xnumber = '';
         clw.assignmentStrategy = '';
         clw.secondaryNumber = '';
-        clw.devices = l.Device__c;
+        //clw.devices = l.Device__c;
         clw.deviceTags = '';
         clw.status = l.Status;
         clw.email = l.Email;
@@ -50,7 +50,7 @@ public class CallyzerAPIHandler
         clw.state = l.State;
         clw.country = l.Country;
         clw.zip = l.PostalCode ; 
-        clw.source = l.Source__c ;
+        clw.source = l.UTM_Source__c ;
         clw.description = l.Description;
         clw.leadTags = '';
         clw.leadOption = '';
