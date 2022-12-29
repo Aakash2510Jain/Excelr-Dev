@@ -1,4 +1,4 @@
-public class GenericLeadLWCcontroller {
+public without sharing  class GenericLeadLWCcontroller {
 
      @auraenabled(cacheable = true)
     public static list<lead> getLead(String EmailOrPhone){
@@ -202,7 +202,7 @@ public class GenericLeadLWCcontroller {
 
     @AuraEnabled(Cacheable=True)
     Public Static List<City_State_Country__c> Fetchcities(){
-        List<City_State_Country__c> cityValues=[Select City__c From City_State_Country__c ORDER BY City__c];
+        List<City_State_Country__c> cityValues=[Select City__c,Order_Number__c From City_State_Country__c ORDER BY Order_Number__c ASC];
         
         return cityValues;
     }

@@ -1,12 +1,12 @@
 public class InvoiceTriggerHelper{
     static InvoiceTriggerHelper handlerInstance;
-
+    
     public static InvoiceTriggerHelper getInstance(){
         if ( handlerInstance == null )
             handlerInstance = new InvoiceTriggerHelper();
         return handlerInstance;
     }
-
+    
     public void beforeUpdate(Map<Id, Invoice__c> newMap, Map<Id, Invoice__c> oldMap){
         try{
             set<id> invoiceIds = new set<Id>();
@@ -26,10 +26,10 @@ public class InvoiceTriggerHelper{
             system.debug('Errror-->' + ex.getCause());
             system.debug('Errror-->' + ex.getLineNumber());
             HandleBusinessException.captureError('InvoiceTriggerHelper', 'Tax Invoice', ex);
-
+            
         }
     }
-
+    
     public void sendforApproval(list<Invoice__c> invoiceList){
         System.debug('invoiceList =====> ' + invoiceList);
         set<id> invoiceIds = new Set<Id>();
@@ -38,20 +38,21 @@ public class InvoiceTriggerHelper{
         try{
             if ( !invoiceList.isEmpty() ){
                 for ( invoice__c inv : invoiceList ){
-                    invoiceIds.add(inv.Id);
+                    if(inv.Type__c == 'Credit Note')
+                        invoiceIds.add(inv.Id);
                 }
                 Id financeUserId = [SELECT Id, Name
                                     FROM User
                                     WHERE Profile.Name = 'Finance'
                                     LIMIT 1].Id;
-
+                
                 List<ProcessInstance> recordUnderApprovalList = [Select ID, Status, TargetObjectID, TargetObject.Name
                                                                  From ProcessInstance
                                                                  Where Status = :Constants.PENDING AND TargetObjectID IN:invoiceIds];
                 for ( ProcessInstance approvalOpp : recordUnderApprovalList ){
                     underApprovalCaseSet.add(approvalOpp.TargetObjectID);
                 }
-
+                
                 for ( invoice__c inv : invoiceList ){
                     if ( underApprovalCaseSet.contains(inv.Id) ){
                         inv.addError(Constants.UNDER_APPROVAL_PROCESS_ERR_MSG);
@@ -59,7 +60,7 @@ public class InvoiceTriggerHelper{
                     if ( !underApprovalCaseSet.contains(inv.Id) ){
                         SendforApprovalProcess(inv.Id, '005N000000CSOuaIAH');
                     }
-
+                    
                     task tsk = new Task();
                     tsk.Subject = 'Release Credit Note';
                     tsk.Status = 'Open';
@@ -72,8 +73,8 @@ public class InvoiceTriggerHelper{
                     insert TaskListTobeCreated;
                 }
             }
-
-
+            
+            
         }
         catch ( Exception ex ){
             system.debug('Errror-->' + ex.getMessage());
@@ -82,34 +83,46 @@ public class InvoiceTriggerHelper{
             HandleBusinessException.captureError('InvoiceTriggerHelper', 'Tax Invoice', ex);
         }
     }
-
+    
     public void SendforApprovalProcess(Id objId, Id approverId){
         try{
-            Map<Id, Approval.ProcessSubmitRequest> InvoiceToapprovalRequestMap = new Map<Id, Approval.ProcessSubmitRequest>();
-            Approval.ProcessSubmitRequest approvalRequest = new Approval.ProcessSubmitRequest(  );
-            approvalRequest.setComments('Submitting for Referral Approval');
-            approvalRequest.setObjectId(objId);
-            approvalRequest.setProcessDefinitionNameOrId('Invoice_Payment_Approval');
-            approvalRequest.setNextApproverIds(new List<Id>{ approverId });
-            InvoiceToapprovalRequestMap.put(objId, approvalRequest);
+            system.debug('objId-->'+objId);
+            system.debug('approverId-->'+approverId);
+            /* Map<Id, Approval.ProcessSubmitRequest> InvoiceToapprovalRequestMap = new Map<Id, Approval.ProcessSubmitRequest>();
+Approval.ProcessSubmitRequest approvalRequest = new Approval.ProcessSubmitRequest(  );
+approvalRequest.setComments('Submitting for Referral Approval');
+approvalRequest.setObjectId(objId);
+approvalRequest.setProcessDefinitionNameOrId('Invoice_Payment_Approval');
+approvalRequest.setNextApproverIds(new List<Id>{ approverId });
+InvoiceToapprovalRequestMap.put(objId, approvalRequest);
 
-            if ( !InvoiceToapprovalRequestMap.isEmpty() ){
-                List<Approval.ProcessResult> result = Approval.process( InvoiceToapprovalRequestMap.values() );
-            }
+if ( !InvoiceToapprovalRequestMap.isEmpty() ){
+List<Approval.ProcessResult> result = Approval.process( InvoiceToapprovalRequestMap.values() );
+}
 
-
+*/
+            // Create an approval request for the Opportunity
+            Approval.ProcessSubmitRequest req1 = new Approval.ProcessSubmitRequest();
+            req1.setComments('Submitting request for approval automatically using Trigger');
+            req1.setObjectId(objId);
+            req1.setNextApproverIds(new Id[] {approverId});
+            
+            // Submit the approval request for the Opportunity
+            Approval.ProcessResult result = Approval.process(req1);
+            
+            
         }
         catch ( Exception e ){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
             HandleBusinessException.captureError('CaseTriggerHeper', 'doApproval', e);
         }
     }
-
+    
     public void sendReferralFormViaEmail(map<id, Invoice__c> InvoiceOldMap, map<id, Invoice__c> InvoiceNewMap){
-
+        
         set<String> ReferrarEmailList = new Set<string>();
         map<String, String> ReferrarNameWithEmail = new Map<String,String>();
-
+        
         try{
             if ( !InvoiceNewMap.isEmpty() ){
                 for ( Invoice__c invRec : InvoiceNewMap.values() ){
@@ -118,17 +131,17 @@ public class InvoiceTriggerHelper{
                         ReferrarNameWithEmail.put(invRec.Referrer_Email__c, invRec.Referral_Name__c);
                     }
                 }
-
+                
                 if (!ReferrarNameWithEmail.isEmpty()) {
                     //https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/CaptureBankDetails
                     EmailIUtility.SendReferralFormToReferrar(ReferrarNameWithEmail);
                 }
-
+                
             }
         }
         catch ( Exception e ){
-
+            
         }
     }
-
+    
 }

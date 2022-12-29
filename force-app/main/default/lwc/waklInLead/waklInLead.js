@@ -126,13 +126,14 @@ export default class WaklInLead extends LightningElement {
         getLead({ EmailOrPhone: this.inPutValue })
             .then(data => {
                 debugger;
-                this.handleClick();
+                
                 this.showFromOrEmpty = true;
                 this.data = data;
                 if (this.data.length > 0) {
                     this.newBTNdisAble = true;
                     this.recordId = this.data[0].Id;
                     this.ownerEmail = data[0].Owner_Email__c;
+                    this.handleClick();
                     console.log(data);
                     console.log(this.data);
                     console.log(this.data[0].Id)
@@ -143,6 +144,7 @@ export default class WaklInLead extends LightningElement {
                 if (this.data.length == 0) {
                     this.ifdataNotFound = true;
                     this.newBTNdisAble = false;
+                    this.handleClick();
                     this.ismBTNdisAble = true;
                     this.data = false;
                     this.appbtndisAble = true;
@@ -348,15 +350,25 @@ export default class WaklInLead extends LightningElement {
             });
     }
 
+    HandleLeadCreatedisable=false;
     createNewLead() {
         debugger;
+
+        if((this.namValue!=undefined || this.namValue!=null ) && (this.lNameValue!=undefined || this.lNameValue!=null ) && (this.emailValue!=undefined || this.emailValue!=null ) && (this.phoneValue!=undefined || this.phoneValue!=null ) 
+        && (this.CourceLead!=undefined || this.CourceLead!=null ) && (this.selectedrecordDetails!=undefined || this.selectedrecordDetails!=null )) 
+            
+           {
+
+            this.HandleLeadCreatedisable=true; 
+
         var returnvalue = this.handleIncorrectEmail(this.emailValue)
         if (returnvalue == true) {
             createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, ownerId: this.ismeId, agmId: this.gruoMemberId, Course: this.CourceLead, userId: this.selectedrecordDetails.Id, agentid: this.agentrecid })
                 .then(data => {
                     this.handleConfirm('Lead Created Successfully');
+                    this.HandleLeadCreatedisable=false; 
                     console.log(data)
-                    alert('Lead Record created successfully');
+                    //alert('Lead Record created successfully');
                     this.handleCancel();
 
                 })
@@ -368,6 +380,10 @@ export default class WaklInLead extends LightningElement {
         else {
             alert('Incorrect Email Pattern');
         }
+    }else{
+
+        alert('All Fields are Mandatory,Please Check any one Of Your Field Is Empty');
+    }
 
     }
 
@@ -454,9 +470,10 @@ export default class WaklInLead extends LightningElement {
     
     
     HandleCreateDisable=false;
-
+    @track isLoadedApplication=false;
     createapplicationForm() {
         this.HandleCreateDisable=true;
+        this.isLoadedApplication=true;
         debugger;
         createApplication({ Course: this.courseforApp, LeadId: this.recordId })
             .then(data => {
@@ -465,6 +482,8 @@ export default class WaklInLead extends LightningElement {
                 this.showapplicationMOdal = false;
                 this.HandleCreateDisable=false;
                 this.handleConfirm('Appication Created Successfully');
+                this.HandleCreateDisable=false;
+                this.isLoadedApplication=false;
                 this.appbtndisAble = true;
                 refreshApex(this.dataForApp);
                 

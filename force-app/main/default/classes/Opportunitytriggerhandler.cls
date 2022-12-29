@@ -20,7 +20,7 @@ public with sharing class Opportunitytriggerhandler{
         try{
             if ( !newOppMap.isEmpty() ){
                 for ( Opportunity opp : newOppMap.values() ){
-                    if ( opp.StageName != null && opp.StageName == 'Closed Won' && opp.StageName != oldOppMap.get(opp.id).StageName ){
+                    if ( opp.StageName != null && opp.StageName == 'Converted' && opp.StageName != oldOppMap.get(opp.id).StageName ){
                         accountIds.add(opp.AccountId);
                         //OppWithReferralAccount.put(opp.id, value)
                         AccountIdwithOpportunity.put(opp.AccountId, opp);
@@ -42,6 +42,7 @@ public with sharing class Opportunitytriggerhandler{
                                     invRec.OwnerId = AccountIdwithOpportunity.get(acc.Id).OwnerId;
                                     invRec.Status__c = 'Initiated';
                                     invRec.Amount__c = 2000;
+                                    invRec.Type__c = 'Credit Note';
                                     invRec.Initiated_Date__c = System.Today();
                                     invRec.Invoice_Due_Date__c = System.Today().addDays(3);
                                     invoiceListtobeInserted.add(invRec);

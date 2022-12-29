@@ -1,13 +1,13 @@
 import { api, LightningElement, track, wire } from 'lwc';
 import EXCELR_LOGO from '@salesforce/resourceUrl/ExcelRLogo';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import getLead from '@salesforce/apex/GenericLeadLWCcontroller.getLead';
-import getApplication from '@salesforce/apex/GenericLeadLWCcontroller.getApplication';
-import EmailIsm from '@salesforce/apex/GenericLeadLWCcontroller.EmailIsm';
-import getMember from '@salesforce/apex/GenericLeadLWCcontroller.getMember';
-import getPuckistOflead from '@salesforce/apex/GenericLeadLWCcontroller.getPuckistOflead';
-import createLead from '@salesforce/apex/GenericLeadLWCcontroller.createLead';
-import createApplication from '@salesforce/apex/GenericLeadLWCcontroller.CreateApplication';
+import getLead from '@salesforce/apex/ChatFormLWCcontroller.getLead';
+import getApplication from '@salesforce/apex/ChatFormLWCcontroller.getApplication';
+import EmailIsm from '@salesforce/apex/ChatFormLWCcontroller.EmailIsm';
+import getMember from '@salesforce/apex/ChatFormLWCcontroller.getMember';
+import getPuckistOflead from '@salesforce/apex/ChatFormLWCcontroller.getPuckistOflead';
+import createLead from '@salesforce/apex/ChatFormLWCcontroller.createLead';
+import createApplication from '@salesforce/apex/ChatFormLWCcontroller.CreateApplication';
 // import FirstName from '@salesforce/schema/Lead.FirstName';
 // import LastName from '@salesforce/schema/Lead.LastName';
 // import Email from '@salesforce/schema/Lead.Email';
@@ -58,13 +58,13 @@ import createApplication from '@salesforce/apex/GenericLeadLWCcontroller.CreateA
 import { getObjectInfo } from 'lightning/uiObjectInfoApi';
 import { getPicklistValues } from 'lightning/uiObjectInfoApi';
 import LEAD_OBJECT from '@salesforce/schema/Lead';
-import LEAD_GEN_PATH from '@salesforce/schema/Lead.Lead_Gen_Path__c';
+//import LEAD_GEN_PATH from '@salesforce/schema/Lead.Lead_Gen_Path__c';
 import LEAD_SOURCE from '@salesforce/schema/Lead.LeadSource';
 import LEAD_MEDIUM from '@salesforce/schema/Lead.UTM_Medium__c';
-import FetchStateCounty from '@salesforce/apex/GenericLeadLWCcontroller.FetchStateCounty';
-import Fetchcities from '@salesforce/apex/GenericLeadLWCcontroller.Fetchcities';
+import FetchStateCounty from '@salesforce/apex/ChatFormLWCcontroller.FetchStateCounty';
+import Fetchcities from '@salesforce/apex/ChatFormLWCcontroller.Fetchcities';
 
-import QueryPastLeads from '@salesforce/apex/GenericLeadLWCcontroller.QueryPastLeads';
+import QueryPastLeads from '@salesforce/apex/ChatFormLWCcontroller.QueryPastLeads';
 import LightningAlert from 'lightning/alert';
 import LightningConfirm from "lightning/confirm";
 import { refreshApex } from '@salesforce/apex';
@@ -91,7 +91,7 @@ const LeadListcolumns = [{ label: 'Name', fieldName: 'Name' },
 ]
 
 
-export default class WaklInLead extends LightningElement {
+export default class chatForm extends LightningElement {
     imageurl = EXCELR_LOGO;
     //feilds from schema
     @track ifdataNotFound = false;
@@ -284,36 +284,36 @@ export default class WaklInLead extends LightningElement {
 
     }
 
-    Picklistvalue=[];
+    // Picklistvalue=[];
     @wire(getObjectInfo, {objectApiName:LEAD_OBJECT})
     objectInfo
 
-    @wire(getPicklistValues, { recordTypeId:'$objectInfo.data.defaultRecordTypeId', fieldApiName:LEAD_GEN_PATH})
-     wiredPicklistValues({data,error}){
-         debugger;
-        if(data){
-           console.log('data=',data);
-           console.log('dataValues=',data.values);
-           let arr=[];
-           for(let i=0;i<data.values.length;i++){
-              arr.push({label:data.values[i].label,value:data.values[i].value});
-           }
-           this.Picklistvalue=arr;
-           console.log('Picklistvalue=',this.Picklistvalue);
-        }
-        else {
-            console.log('error=',error)
-        }
-     }
+    // @wire(getPicklistValues, { recordTypeId:'$objectInfo.data.defaultRecordTypeId', fieldApiName:LEAD_GEN_PATH})
+    //  wiredPicklistValues({data,error}){
+    //      debugger;
+    //     if(data){
+    //        console.log('data=',data);
+    //        console.log('dataValues=',data.values);
+    //        let arr=[];
+    //        for(let i=0;i<data.values.length;i++){
+    //           arr.push({label:data.values[i].label,value:data.values[i].value});
+    //        }
+    //        this.Picklistvalue=arr;
+    //        console.log('Picklistvalue=',this.Picklistvalue);
+    //     }
+    //     else {
+    //         console.log('error=',error)
+    //     }
+    //  }
 
-     get ldGenPath(){
-        return this.Picklistvalue;
-     }
+    //  get ldGenPath(){
+    //     return this.Picklistvalue;
+    //  }
 
-     ldGenPathValue(event){
-        debugger;
-        this.Leadvalue=event.target.value;
-     }
+    //  ldGenPathValue(event){
+    //     debugger;
+    //     this.Leadvalue=event.target.value;
+    //  }
 
      //Getting Picklist Field Of LeadSource
      @track LeadSourcePicklist=[];
@@ -404,9 +404,9 @@ export default class WaklInLead extends LightningElement {
 
     @track CountryDisable=true;
     @track StateDisable=true;
+    @track InputCity=false;
     @track StateValue;
     @track CountryValue;
-    @track InputCity=false;
     HandleCityStatus(event){
 
         debugger;
@@ -456,7 +456,6 @@ export default class WaklInLead extends LightningElement {
         
     }
 
-    
     @track UserInputCity
     HandleUserCityStatus(event){
         let value=event.target.value;
@@ -465,12 +464,15 @@ export default class WaklInLead extends LightningElement {
         }
 
     }
+     
+   
 
     HandleChangeStateCountry(event){
         if(this.cityValue=='Other'){
+            
             debugger;
            let value=event.target.value;
-    
+           
            if(event.target.name=="State"){
     
             this.StateValue=value;
@@ -593,12 +595,12 @@ export default class WaklInLead extends LightningElement {
         let Trans=event.target.value;
         this.TranscriptValue=Trans;
     }
-    // @track PageUrlValue;
-    // HandlePageURL(event){
-    //     debugger;
-    //     let Purl=event.target.value;
-    //     this.PageUrlValue=Purl;
-    // }
+    @track PageUrlValue;
+    HandlePageURL(event){
+        debugger;
+        let Purl=event.target.value;
+        this.PageUrlValue=Purl;
+    }
 
     notifyismBTN() {
         this.handleClick();
@@ -695,17 +697,18 @@ export default class WaklInLead extends LightningElement {
        
         if((this.namValue!=undefined || this.namValue!=null ) && (this.lNameValue!=undefined || this.lNameValue!=null ) && (this.emailValue!=undefined || this.emailValue!=null ) && (this.phoneValue!=undefined || this.phoneValue!=null ) 
              && (this.CourceLead!=undefined || this.CourceLead!=null ) && (this.cityValue!=undefined || this.cityValue!=null ) && (this.sourceValue!=undefined || this.sourceValue!=null ) && (this.MediumValue!=undefined || this.MediumValue!=null ) && 
-                 (this.Leadvalue!=undefined || this.Leadvalue!=null ))
+                (this.VisitorIdValue!=undefined || this.VisitorIdValue!=null ) && (this.TranscriptValue!=undefined || this.TranscriptValue!=null ) && (this.PageUrlValue!=undefined || this.PageUrlValue!=null ) )
                 {
                     this.HandleLeadCreatedisable=true; 
                     
                     if(this.cityValue=='Other'){
                         this.cityValue=this.UserInputCity
                     }
+                    
             debugger;
             var returnvalue = this.handleIncorrectEmail(this.emailValue)
             if (returnvalue == true) {
-                createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, ownerId: this.ismeId, agmId: this.gruoMemberId, Course: this.CourceLead, agentid: this.agentrecid,city:this.cityValue,source:this.sourceValue,medium:this.MediumValue,VisitorId:this.VisitorIdValue,Transcript:this.TranscriptValue,leadGenPath:this.Leadvalue,state:this.StateValue,country:this.CountryValue})
+                createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, ownerId: this.ismeId, agmId: this.gruoMemberId, Course: this.CourceLead, agentid:this.agentrecid ,city:this.cityValue,source:this.sourceValue,medium:this.MediumValue,VisitorId:this.VisitorIdValue,Transcript:this.TranscriptValue,state:this.StateValue,country:this.CountryValue,LandingPageURL:this.PageUrlValue})
                     .then(data => {
                         this.handleConfirm('Lead Created Successfully');
                         console.log(data)

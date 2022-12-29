@@ -212,7 +212,9 @@ export default class voiceForm extends LightningElement {
            console.log('dataValues=',data.values);
            let arr=[];
            for(let i=0;i<data.values.length;i++){
-              arr.push({label:data.values[i].label,value:data.values[i].value});
+            if((data.values[i].value=="Direct Calls") || (data.values[i].value=="Tollfree") ){
+                arr.push({label:data.values[i].label,value:data.values[i].value});
+            }  
            }
            this.Picklistvalue=arr;
            console.log('Picklistvalue=',this.Picklistvalue);
@@ -300,13 +302,13 @@ export default class voiceForm extends LightningElement {
         getLead({ EmailOrPhone: this.inPutValue })
             .then(data => {
                 debugger;
-                this.handleClick();
                 this.showFromOrEmpty = true;
                 this.data = data;
                 if (this.data.length > 0) {
                     this.newBTNdisAble = true;
                     this.recordId = this.data[0].Id;
                     this.ownerEmail = data[0].Owner_Email__c;
+                    this.handleClick();
                     console.log(data);
                     console.log(this.data);
                     console.log(this.data[0].Id)
@@ -315,6 +317,7 @@ export default class voiceForm extends LightningElement {
                     this.appbtndisAble = false;
                 }
                 if (this.data.length == 0) {
+                    this.handleClick();
                     this.ifdataNotFound = true;
                     this.newBTNdisAble = false;
                     this.ismBTNdisAble = true;
@@ -427,6 +430,7 @@ export default class voiceForm extends LightningElement {
     @track StateDisable=true;
     @track StateValue;
     @track CountryValue;
+    @track InputCity=false;
     HandleCityStatus(event){
 
         debugger;
@@ -444,6 +448,7 @@ export default class voiceForm extends LightningElement {
                 this.StateDisable=false;
                 this.CountryDisable=false;
                 alert('Please Type Your State and Country');
+                this.InputCity=true;
                
             }
             else{
@@ -475,6 +480,15 @@ export default class voiceForm extends LightningElement {
             console.log('state=',this.StateValue);
         }
         
+    }
+
+    @track UserInputCity
+    HandleUserCityStatus(event){
+        let value=event.target.value;
+        if(this.cityValue=='Other'){
+            this.UserInputCity=value;
+        }
+
     }
 
     HandleChangeStateCountry(event){
@@ -633,17 +647,30 @@ export default class voiceForm extends LightningElement {
     //             console.log('error=',error);
     //         });
     // }
-
+    HandleLeadCreatedisable=false;
     createNewLead() {
         debugger;
+        if((this.namValue!=undefined || this.namValue!=null ) && (this.lNameValue!=undefined || this.lNameValue!=null ) && (this.emailValue!=undefined || this.emailValue!=null ) && (this.phoneValue!=undefined || this.phoneValue!=null ) 
+        && (this.CourceLead!=undefined || this.CourceLead!=null ) && (this.cityValue!=undefined || this.cityValue!=null ) && (this.SourceValue!=undefined || this.SourceValue!=null ) && (this.MediumValue!=undefined || this.MediumValue!=null ) && 
+            (this.Leadvalue!=undefined || this.Leadvalue!=null ))
+           {
+
+            this.HandleLeadCreatedisable=true; 
+
+            if(this.cityValue=='Other'){
+                this.cityValue=this.UserInputCity
+            }
+            
+        
         var returnvalue = this.handleIncorrectEmail(this.emailValue)
         console.log('returnVALUE=',returnvalue);
-        //if (returnvalue == true) {
+        if (returnvalue == true) {
             createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, ownerId: this.ismeId, agmId: this.gruoMemberId, Course: this.CourceLead, agentid: this.agentrecid,city:this.cityValue,LdGenPath:this.Leadvalue,source:this.SourceValue,medium:this.MediumValue,country:this.CountryValue,state:this.StateValue})
                 .then(data => {
                     this.handleConfirm('Lead Created Successfully');
+                    this.HandleLeadCreatedisable=false; 
                     console.log(data)
-                    alert('Lead Record created successfully');
+                    //alert('Lead Record created successfully');
                     this.handleCancel();
 
                 })
@@ -651,10 +678,15 @@ export default class voiceForm extends LightningElement {
                     this.handleAlert('Error updating or reloading records');
 
                 })
-       // }
-        // else {
-        //     alert('Incorrect Email Pattern');
-        // }
+       }
+        else {
+            alert('Incorrect Email Pattern');
+        }
+
+    }
+    else{
+        alert('All Fields are Mandatory,Please Check any one Of Your Field Is Empty');
+    }
 
     }
 
@@ -741,17 +773,18 @@ export default class voiceForm extends LightningElement {
     
     
     HandleCreateDisable=false;
-
+    @track isLoadedApplication=false;
     createapplicationForm() {
         this.HandleCreateDisable=true;
+        this.isLoadedApplication=true;
         debugger;
         createApplication({ Course: this.courseforApp, LeadId: this.recordId })
             .then(data => {
                 debugger;
-                
                 this.showapplicationMOdal = false;
-                this.HandleCreateDisable=false;
+                this.HandleCreateDisable=false;  
                 this.handleConfirm('Appication Created Successfully');
+                this.isLoadedApplication=false;
                 this.appbtndisAble = true;
                 refreshApex(this.dataForApp);
                 

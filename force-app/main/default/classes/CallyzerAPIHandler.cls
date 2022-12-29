@@ -3,12 +3,12 @@ public class CallyzerAPIHandler
     public Static void processHistory(List<String> clientNums)
     {
         List<Contact> contacts = [Select Id,FirstName,LastName,Phone,OwnerId from Contact where Phone IN :clientNums];
-          System.debug('Contacts'+contacts);
+        System.debug('Contacts'+contacts);
         List<Lead> leads = [select Id,Name,Phone,OwnerId from Lead where Phone IN :clientNums];
-          System.debug('Leads'+leads);
+        System.debug('Leads'+leads);
         List<Task> conTask = new List<Task>();
         List<Task> leadTask = new List<Task>();
-      
+        
         for(Contact c: contacts)
         {
             Task t = new Task();
@@ -16,9 +16,9 @@ public class CallyzerAPIHandler
             t.OwnerId = c.OwnerId;  
             conTask.add(t);       
         }
-          insert conTask;
+        insert conTask;
         System.debug('Contact Tasks'+conTask);
-       
+        
         for(Lead l:leads)
         {
             Task t = new Task();
@@ -26,14 +26,14 @@ public class CallyzerAPIHandler
             t.OwnerId = l.OwnerId;
             leadTask.add(t);
         }
-          insert leadTask;
+        insert leadTask;
         System.debug('Lead Tasks'+leadTask);
     }
     
-   public Static void saveLead(String recordId)
+    public Static void saveLead(String recordId)
     {
-        Lead l = [select Id,Name,Phone from Lead where Id=:recordId];
-         CallyzerLeadWrapper clw = new CallyzerLeadWrapper();
+        Lead l = [select Id,Name,LastName,Status,Email,Company,Address,City,State,Country,PostalCode,LeadSource,Description,Phone from Lead where Id=:recordId];
+        CallyzerLeadWrapper clw = new CallyzerLeadWrapper();
         clw.firstName = l.Name ;
         clw.lastName = l.LastName ;
         clw.xnumber = '';
@@ -50,7 +50,7 @@ public class CallyzerAPIHandler
         clw.state = l.State;
         clw.country = l.Country;
         clw.zip = l.PostalCode ; 
-        clw.source = l.UTM_Source__c ;
+        clw.source = l.LeadSource ;
         clw.description = l.Description;
         clw.leadTags = '';
         clw.leadOption = '';
@@ -59,12 +59,62 @@ public class CallyzerAPIHandler
         string str = JSON.serialize(CallyzerLeadWrapper.class);
         str = str.replace('xnumber', 'number');
         HttpResponse resp = HTTPUtility.sendRequest('https://api1.callyzer.co/admin/api/lead/save', '924651b1-dd36-4481-b5c4-9294ac873484', str, 'POST');
-         
-       if(resp.getStatusCode() == 200)
-       {
-         //   Lead l = new Lead();
+        
+        if(resp.getStatusCode() == 200)
+        {
+            //   Lead l = new Lead();
             l.SyncedInCallyzer__c = true;
             update l;
         }
     }    
+    public static void getEmployeeId(List<String> userIds,CallyzerEmployeeWrapper s)
+    {
+        List<Callyzer_Sales_User__c> updateCallyzer = new List<Callyzer_Sales_User__c>();
+        List<Callyzer_Sales_User__c> InsertCallyzer = new List<Callyzer_Sales_User__c>();
+        
+        map<string, Callyzer_Sales_User__c> existingcallyzersalesusermap = new map<string, Callyzer_Sales_User__c>();
+        
+      //  List<Callyzer_Sales_User__c> upsertCallyzerSaleRec = new List<Callyzer_Sales_User__c>();
+        List<Callyzer_Sales_User__c> callyzerSalesUserRec = [select Id,Name,callyzerId__c,countryCode__c,deviceName__c,employeeCode__c,mobile__c from Callyzer_Sales_User__c where callyzerId__c =:userIds];
+        if(callyzerSalesUserRec.size()>0){
+            for(Callyzer_Sales_User__c calRec:callyzerSalesUserRec)
+            {
+                existingcallyzersalesusermap.put(calRec.callyzerId__c, calRec);
+            }
+        }
+        if(callyzerSalesUserRec.size()>0){ }
+            for(CallyzerEmployeeWrapper.employeeWrapper cew:s.data) //wrapper loop
+            {
+                Callyzer_Sales_User__c csu = new Callyzer_Sales_User__c();
+                if(existingcallyzersalesusermap.containsKey(cew.id))
+                {
+                   csu.mobile__c = cew.mobile;
+                   csu.countryCode__c = cew.countryCode;
+                   csu.deviceName__c = cew.deviceName;
+                    csu.Name = cew.employeeName;
+                    csu.employeeCode__c = cew.employeeCode ;
+                    updateCallyzer.add(csu);
+                   // update updateCallyzer;
+                } 
+                else
+                {
+                    csu.callyzerId__c = cew.id;
+                    csu.mobile__c = cew.mobile;
+                    csu.countryCode__c = cew.countryCode;
+                    csu.deviceName__c = cew.deviceName;
+                    csu.Name = cew.employeeName;
+                    csu.employeeCode__c = cew.employeeCode ;
+                    InsertCallyzer.add(csu);
+                  //  insert InsertCallyzer;
+                    
+                    
+                }
+            }
+                 update updateCallyzer;
+                 insert InsertCallyzer;
+            System.debug('UpdatedCallyzer---'+updateCallyzer);
+            System.debug('InsertedCallyzer---'+InsertCallyzer);
+        }
+        
+    //}
 }

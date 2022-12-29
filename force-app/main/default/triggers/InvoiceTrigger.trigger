@@ -1,4 +1,4 @@
-trigger InvoiceTrigger on Invoice__c(after update, before insert ){
+trigger InvoiceTrigger on Invoice__c(after update, before insert,After insert ){
     SObject_Trigger_Control__mdt triggerConfig = SObject_Trigger_Control__mdt.getInstance('Invoice');
     system.debug('triggerConfig:: ' + triggerConfig);
 
@@ -9,7 +9,7 @@ trigger InvoiceTrigger on Invoice__c(after update, before insert ){
             handlerInstance.beforeUpdate(trigger.newMap, trigger.oldMap);
         }
 
-        if (trigger.isInsert && trigger.isBefore) {
+        if (trigger.isInsert && trigger.isAfter) {
             handlerInstance.sendforApproval(trigger.new);
         }
         if (trigger.isAfter && trigger.isUpdate) {

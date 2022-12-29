@@ -1,4 +1,4 @@
-public without sharing class voiceFormLWCcontroller{
+public with sharing class ChatFormLWCcontroller {
     @auraenabled(cacheable = true)
     public static list<lead> getLead(String EmailOrPhone){
         list<lead> leadList = new list<lead>();
@@ -26,7 +26,7 @@ public without sharing class voiceFormLWCcontroller{
     }
 
     @auraenabled
-    public static lead createLead(String firstname, string Lastname, string email, string phone, string ownerId, string agmId, string Course, string agentid,string city,string LdGenPath,string state,string country,string source,string medium){
+    public static lead createLead(String firstname, string Lastname, string email, string phone, string ownerId, string agmId, string Course,  string agentid,string city,string state,string country,string source,string medium,string VisitorId,string Transcript,string LandingPageURL){
        // System.debug('userId ====> ' + userId);
         System.debug('agentid ====> ' + agentid);
         lead leadRec = new lead();
@@ -48,12 +48,15 @@ public without sharing class voiceFormLWCcontroller{
             leadRec.ISM__c = agmId;
             leadRec.Course__c = Course;
             leadRec.City__c=city;
-            leadRec.Lead_Gen_Path__c=LdGenPath;
+            leadRec.State__c=state;
+            leadRec.Country__c=country;
             leadRec.LeadSource=source;
             leadRec.UTM_Medium__c=medium;
-           // leadRec.LGE__c=lgedata;
-            leadRec.Country__c=country;
-            leadRec.State__c=state;
+            leadRec.Visitor_ID__c=VisitorId;
+            leadRec.Transcript__c=Transcript;
+           // leadRec.Lead_Gen_Path__c=leadGenPath;
+           // leadRec.LGE__c=LGE;
+            leadRec.Landing_Page_URL__c=LandingPageURL;
             if ( !existingTrainingUser.isEmpty() ){
                 leadRec.ExcelR_Training_User__c = existingTrainingUser[0].id;
             }
@@ -186,18 +189,17 @@ public without sharing class voiceFormLWCcontroller{
         }
     }
     
-    @AuraEnabled(Cacheable=True)
+     @AuraEnabled(Cacheable=True)
     Public Static List<City_State_Country__c> FetchStateCounty(){
         List<City_State_Country__c> cityStateCountry=[Select City__c,Country__c,State__c From City_State_Country__c ];
-        System.debug('cityStateCountry =====>' + cityStateCountry);
+        
         return cityStateCountry;
     }
-    
+
     @AuraEnabled(Cacheable=True)
     Public Static List<City_State_Country__c> Fetchcities(){
         List<City_State_Country__c> cityValues=[Select City__c,Order_Number__c From City_State_Country__c ORDER BY Order_Number__c ASC];
         
         return cityValues;
     }
-
 }

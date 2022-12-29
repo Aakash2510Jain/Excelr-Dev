@@ -5,7 +5,7 @@
 
         </div>
         <div class="slds-col" style="font-size:25px;">
-            <div style="padding-left: 100px; padding-top: 20px; font-weight: bold;">
+            <div style="padding-left: 120px; padding-top: 20px; font-weight: bold;">
                 Voice Form
             </div>
 
@@ -322,13 +322,7 @@
 
                                                     </lightning-layout-item>
 
-                                                    <lightning-layout-item padding="around-small" size="6">
-                                                        <div class="slds-border_bottom">
-                                                            <lightning-output-field field-name="Source__c"
-                                                                style="font-weight: bold;"> </lightning-output-field>
-                                                        </div>
-
-                                                    </lightning-layout-item>
+                                                   
                                                     <lightning-layout-item padding="around-small" size="6">
                                                         <div class="slds-border_bottom">
                                                             <lightning-output-field field-name="Phone"
@@ -352,7 +346,7 @@
                                 </template>
                                 <template if:true={ifdataNotFound}>
                                     <lightning-card>
-                                        <div style=" border-radius: 10px; width:1500px; height:50px; font-size: 25px; margin-top: 25px;"
+                                        <div style=" border-radius: 10px; width:1100px; height:50px; font-size: 25px; margin-top: 25px;"
                                             class="slds-align_absolute-center slds-notify slds-notify_alert slds-alert_warning"
                                             role="alert">
 
@@ -372,7 +366,7 @@
                                 </template>
                                 <template if:true={ifdataNotFound}>
                                     <lightning-card>
-                                        <div style=" border-radius: 10px; width:1500px; height:50px; font-size: 25px; margin-top: 25px;"
+                                        <div style=" border-radius: 10px; width:1100px; height:50px; font-size: 25px; margin-top: 25px;"
                                             class="slds-align_absolute-center slds-notify slds-notify_alert slds-alert_warning"
                                             role="alert">
 
@@ -405,7 +399,7 @@
                             </header>
                             <!-- Modal/Popup Box LWC body starts here -->
                             <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" >
-                                <lightning-input label="First Name" onchange={FnameChange}></lightning-input>
+                                <lightning-input label="First Name" onchange={FnameChange} required="true"></lightning-input>
                                 <lightning-input label="Last Name" required="true"
                                     onchange={LnameChange}></lightning-input>
                                 <lightning-input label="Email" required="true" onchange={EmailChange}></lightning-input>
@@ -421,6 +415,10 @@
                                 <lightning-combobox name="City" label="City" value={cityValue}
                                     placeholder="Select Your City" options={CityOptions} onchange={HandleCityStatus} required="true">
                                 </lightning-combobox>
+
+                                <template if:true={InputCity}>
+                                    <lightning-input type="text" label="City" name="UserCity" placeholder="Enter Your City" onchange={HandleUserCityStatus} ></lightning-input>
+                                </template>
 
                                 <!--lightning-input type="text" label="City" name="City" value={cityValue} onchange={HandleCityStatus}></lightning-input-->
                                 <lightning-input type="text" label="State"  name="State" value={StateValue} disabled={StateDisable} onchange={HandleChangeStateCountry}></lightning-input>
@@ -445,7 +443,7 @@
                             <!-- Modal/Popup Box LWC footer starts here -->
                             <footer class="slds-modal__footer">
                                 <button class="slds-button slds-button_neutral" onclick={handleCancel}>Cancel</button>
-                                <button class="slds-button slds-button_brand" onclick={createNewLead}>Create</button>
+                                <button class="slds-button slds-button_brand" onclick={createNewLead}  disabled={HandleLeadCreatedisable}>Create</button>
                             </footer>
                         </div>
                     </section>
@@ -603,6 +601,15 @@
                         <lightning-combobox name="course" label="Course" value={value} placeholder="Select Course"
                             options={courssweList} onchange={courseforapphandler}>
                         </lightning-combobox>
+
+                        <div class="slds-m-around_large">
+                            <div if:true={isLoadedApplication} class="slds-is-relative">
+                               <div align="center">
+                                <div class="loader"></div>
+                                Please wait! Creating Application...
+                            </div>
+                           </div>
+                       </div>
 
                     </div>
                     <!-- Modal/Popup Box LWC footer starts here -->

@@ -29,7 +29,7 @@ public class LeadTriggerHandler{
     public void afterInsert(List<Lead> leadList){
         try{
             for (Lead ld : leadList){
-                if (ld.LeadSource != null || ld.Course__c != null || ld.Quality_of_Lead__c != null || ld.Quality_of_Lead__c != null || ld.Location__c != null ){
+                if (ld.LeadSource != null || ld.Course__c != null || ld.Location__c != null ){
                     LeadAssignmentExecutionCriteria.validateEntryCriteria();
                 }
                 Utility.createApplicationInstance(ld.Id, ld.Course__c);
@@ -58,7 +58,7 @@ public class LeadTriggerHandler{
             system.debug('After Update');
             for (Lead ld : newLeadMap.values()){
                 system.debug('Lead Course' + ld.Course__c);
-                 if (ld.LeadSource != null || ld.Course__c != null || ld.Quality_of_Lead__c != null || ld.Quality_of_Lead__c != null || ld.Location__c != null ){
+                 if (ld.LeadSource != null || ld.Course__c != null ||  ld.Location__c != null ){
                    // LeadAssignmentExecutionCriteria.validateEntryCriteria();
                 }
             }

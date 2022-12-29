@@ -5,8 +5,8 @@
 
         </div>
         <div class="slds-col" style="font-size:25px;">
-            <div style="padding-left: 120px; padding-top: 20px; font-weight: bold;">
-                Walk-In Lead Form
+            <div style="padding-left: 100px; padding-top: 20px; font-weight: bold;">
+                Chat Form
             </div>
 
         </div>
@@ -30,7 +30,7 @@
                     </a>
                 </div>
                 <div class="slds-p-around_medium" style=" display: inline-block;">
-                    <lightning-button-menu alternative-text="Show menu" variant="border-filled"
+                    lightning-button-menu alternative-text="Show menu" variant="border-filled"
                         onselect={handleOnselect} label="Select Form">
                         <template for:each={mapData} for:item="currentItem" for:index="index">
                             <lightning-menu-item label={currentItem.label} value={currentItem.value} key={currentItem.value} onselect={handleOnselect}>
@@ -65,9 +65,8 @@
                         <lightning-button title="Create Application" label="Create Application"
                             onclick={showpplicationForm} variant="brand" style="margin-left:8px;"
                             disabled={appbtndisAble}></lightning-button>
-                            
                     </div>
-                </div> 
+                </div>
                 <div>
                     <template if:true={showFromOrEmpty}>
                         <lightning-tabset>
@@ -322,7 +321,6 @@
 
                                                     </lightning-layout-item>
 
-                                                    
                                                     <lightning-layout-item padding="around-small" size="6">
                                                         <div class="slds-border_bottom">
                                                             <lightning-output-field field-name="Phone"
@@ -371,6 +369,7 @@
                                             role="alert">
 
                                             No Data Found with Respect to this Email and Phone!!!!!
+
                                         </div>
                                     </lightning-card>
                                 </template>
@@ -382,9 +381,10 @@
 
                 </div>
                 <template if:true={isShowModal}>
+
                     <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
                         aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
-                        <div class="slds-modal__container">
+                        <div class="slds-modal__container" >
                             <!-- Modal/Popup Box LWC header here -->
                             <header class="slds-modal__header">
                                 <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
@@ -397,19 +397,49 @@
                                     Lead</h2>
                             </header>
                             <!-- Modal/Popup Box LWC body starts here -->
-                            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" >
                                 <lightning-input label="First Name" onchange={FnameChange} required="true"></lightning-input>
                                 <lightning-input label="Last Name" required="true"
                                     onchange={LnameChange}></lightning-input>
-                                <lightning-input label="Email" required="true" onchange={EmailChange}></lightning-input>
+                                <lightning-input label="Email" required="true" onchange={EmailChange} ></lightning-input>
                                 <lightning-input label="Phone" min-length="10" onchange={PhoneChange}
-                                    max-length="10" required="true"></lightning-input >
+                                    max-length="10" required="true"></lightning-input>
                                 <lightning-combobox name="course" label="Course" value={value}
                                     placeholder="Select Course" options={courssweList} onchange={courceHandler} required="true">
                                 </lightning-combobox>
 
-                                <c-custom-lookup icon-name="standard:user" s-object-api-name="user" label="Select User"
-                                    onlookupupdate={lookupRecord} placeholder="type here..." ></c-custom-lookup>
+                                <!--lightning-combobox name="Lead Gen Path" label="Lead Gen Path" value={Leadvalue}
+                                   placeholder="Select Lead Gen Path" options={ldGenPath} onchange={ldGenPathValue} required="true">
+                                </lightning-combobox-->
+
+                                <lightning-combobox name="City" label="City" value={cityValue}
+                                    placeholder="Select Your City" options={CityOptions} onchange={HandleCityStatus} required="true">
+                                </lightning-combobox>
+
+                                    <template if:true={InputCity}>
+                                        <lightning-input type="text" label="City" name="UserCity" placeholder="Enter Your City" onchange={HandleUserCityStatus} ></lightning-input>
+                                    </template>
+                                <!--lightning-input type="text" label="City" onchange={HandleCity}></lightning-input-->
+                                 <lightning-input type="text" label="State" name="State" value={StateValue} disabled={StateDisable} onchange={HandleChangeStateCountry}></lightning-input>
+                                <lightning-input type="text" label="Country" name="Country" value={CountryValue}  disabled={CountryDisable} onchange={HandleChangeStateCountry}></lightning-input>
+                                <!--lightning-input type="text" label="Source" onchange={HandleSource}></lightning-input-->
+                                <lightning-combobox name="Source" label="Source" value={SourceValue}
+                                placeholder="Select Your Source" options={leadSource} onchange={HandleSource} required="true" >
+                               </lightning-combobox>
+                                <!--lightning-input type="text" label="Medium" onchange={HandleMedium}></lightning-input-->
+                                <lightning-combobox name="Medium" label="Medium" value={MediumValue}
+                                placeholder="Select Your Medium" options={leadmedium} onchange={HandleMedium} required="true">
+                               </lightning-combobox>
+                               
+                                <lightning-input type="text" label="Visitor ID" onchange={HandleVisitorId} required="true"></lightning-input>
+                                <lightning-input type="text" label="TranScript" onchange={HandleTranscript} required="true"></lightning-input>
+
+                                <lightning-input type="text" label="Landing Page URL" onchange={HandlePageURL} required="true"></lightning-input>
+                                 <!--lightning-input type="text" label="LGE" onchange={HandleLGE} required="true"></lightning-input-->
+                                
+
+                                <!--c-custom-lookup icon-name="standard:user" s-object-api-name="user" label="Select User"
+                                    onlookupupdate={lookupRecord} placeholder="type here..."></c-custom-lookup-->
                             </div>
                             <!-- Modal/Popup Box LWC footer starts here -->
                             <footer class="slds-modal__footer">
@@ -424,6 +454,7 @@
             </lightning-card>
 
         </template>
+        
         <div class="slds-m-around_large">
             <div if:true={isLoaded} class="slds-is-relative">
                <div align="center">
@@ -432,6 +463,7 @@
             </div>
            </div>
        </div>
+
         <template if:true={showPastLeads}>
             <lightning-card>
 
@@ -553,6 +585,7 @@
 
 
         <template if:true={showapplicationMOdal}>
+            
             <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
                 aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
                 <div class="slds-modal__container">
@@ -568,13 +601,12 @@
                             Application</h2>
                     </header>
                     <!-- Modal/Popup Box LWC body starts here -->
-                    <div class="slds-modal__content slds-p-around_xx-large" id="modal-content-id-2"
-                        style="height:28rem">
+                    <div class="slds-modal__content slds-p-around_xx-large" id="modal-content-id-2" style="height:28rem">
 
                         <lightning-combobox name="course" label="Course" value={value} placeholder="Select Course"
                             options={courssweList} onchange={courseforapphandler}>
                         </lightning-combobox>
-
+                        
                         <div class="slds-m-around_large">
                             <div if:true={isLoadedApplication} class="slds-is-relative">
                                <div align="center">
@@ -588,8 +620,7 @@
                     <!-- Modal/Popup Box LWC footer starts here -->
                     <footer class="slds-modal__footer">
                         <button class="slds-button slds-button_neutral" onclick={handleappCancel}>Cancel</button>
-                        <button class="slds-button slds-button_brand" onclick={createapplicationForm}
-                            disabled={HandleCreateDisable}>Create</button>
+                        <button class="slds-button slds-button_brand" onclick={createapplicationForm} disabled={HandleCreateDisable}>Create</button>
                     </footer>
                 </div>
             </section>

@@ -30,26 +30,26 @@ public class CallyzerAPICallout
     
     public Static void saveLead(String recordId)
     {
-        Lead l = [select Id,Name,Phone from Lead where Id=:recordId];
+        Lead leadRec = [select Id,Name,LastName,Status,Email,Company,Address,City,State,Country,PostalCode,LeadSource,Description,Phone from Lead where Id=:recordId];
          CallyzerLeadWrapper clw = new CallyzerLeadWrapper();
-        clw.firstName = l.Name ;
-        clw.lastName = l.LastName ;
+        clw.firstName = leadRec.Name ;
+        clw.lastName = leadRec.LastName ;
         clw.xnumber = '';
         clw.assignmentStrategy = '';
         clw.secondaryNumber = '';
         //clw.devices = l.Device__c;
         clw.deviceTags = '';
-        clw.status = l.Status;
-        clw.email = l.Email;
-        clw.companyName = l.Company;
-        clw.address1 = String.valueOf(l.Address);
-        clw.address2 = String.valueOf(l.Address) ;
-        clw.city =l.City;
-        clw.state = l.State;
-        clw.country = l.Country;
-        clw.zip = l.PostalCode ; 
-        clw.source = l.UTM_Source__c ;
-        clw.description = l.Description;
+        clw.status = leadRec.Status;
+        clw.email = leadRec.Email;
+        clw.companyName = leadRec.Company;
+        clw.address1 = String.valueOf(leadRec.Address);
+        clw.address2 = String.valueOf(leadRec.Address) ;
+        clw.city =leadRec.City;
+        clw.state = leadRec.State;
+        clw.country = leadRec.Country;
+        clw.zip = leadRec.PostalCode ; 
+        clw.source = leadRec.LeadSource ;
+        clw.description = leadRec.Description;
         clw.leadTags = '';
         clw.leadOption = '';
         clw.assignToOption = '';
@@ -61,8 +61,30 @@ public class CallyzerAPICallout
        if(resp.getStatusCode() == 200)
        {
          //   Lead l = new Lead();
-            l.SyncedInCallyzer__c = true;
-            update l;
+            leadRec.SyncedInCallyzer__c = true;
+            update leadRec;
         }
     }    
+    public static void getEmployeeDetails()
+    {
+        String body = '{}';
+        HttpResponse response = HTTPUtility.sendRequest('https://api1.callyzer.co/admin/api/employee/manageEmployeeData', '924651b1-dd36-4481-b5c4-9294ac873484', body, 'POST');
+        String resBody =  response.getBody();
+        System.debug('ResponseBody'+resBody);
+       CallyzerEmployeeWrapper s =(CallyzerEmployeeWrapper) JSON.deserialize(resBody, CallyzerEmployeeWrapper.class);
+        List<String> userIds = new List<String>();
+        List<String> userSalesName  = new List<String>();
+        List<String> phoneNum  = new List<String>();
+       for(CallyzerEmployeeWrapper.employeeWrapper empWp:s.data)
+        {
+             userIds.add(empWp.id);
+           userSalesName.add(empWp.employeeName);
+           phoneNum.add(empWp.mobile);
+       }
+        System.debug('User Ids'+userIds);
+        System.debug('UserSalesName'+userSalesName);
+        System.debug('Phone Nums'+phoneNum);
+        CallyzerAPIHandler.getEmployeeId(userIds,s);
+       
+    }
 }

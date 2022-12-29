@@ -117,7 +117,7 @@ public without sharing class Utility{
                 System.PageReference pageReference = new System.PageReference(urlValue);
                 Map<String, String> parameters = pageReference.getParameters();
                 system.debug('utm_source ::' + parameters.get('utm_channel'));
-                leadRec.UTM_Source__c = parameters.get('utm_source');
+                //leadRec.UTM_Source__c = parameters.get('utm_source');
                 leadRec.UTM_Medium__c = parameters.get('utm_medium');
                 leadRec.UTM_Term__c = parameters.get('utm_term');
                 leadRec.UTM_Content__c = parameters.get('utm_content');

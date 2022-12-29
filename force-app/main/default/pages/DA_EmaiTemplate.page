@@ -1,0 +1,26 @@
+<apex:page showHeader="false" setup="false"  renderAs="pdf">
+    <div style="border-style: solid;">
+        <center> <div>
+            <img src="{!$Resource.ExcelrImage}" alt="Girl in a jacket" width="500" height="300" />
+            <!-- <apex:image value="{!$Resource.ExcelrImage}"   /> -->
+            
+            </div></center> 
+        <div>
+           
+                Hi Learner,<br/><br/>
+                
+                You received this email because you inquired about the <b>Data Analyst Certification Program from IBM and SGIT, Steinbeis University - Germany.</b> I'm <br/>
+                {ISM Name}, and I will be your learning consultant from now on.<br/> <br/>
+                
+                It was nice talking to you, and here are a few pointers on why you should do data analyst certification:<br/><br/>
+                
+                In the wake of the Pandemic, Data Analyst is turning out to be a pivotal career option for millions across the globe. Even when Covid-19 is battering other industries, the Data Analyst Profession shows no signs of slowing down.<br/><br/>
+                The certified Data Analyst program provides a diploma certificate from SGIT, Steinbeis University-Germany, where you get Alumnus Status from the University, which would add tons of value to your resume.
+       
+        </div>
+      <center><div class="footer">
+         <!--   <img src="{!$Resource.ExclrFooter}"  width="100" height="100" /> -->
+                <img src="{!$Resource.ExcelrImage}"  width="500" height="300" />
+        </div></center> 
+    </div>
+</apex:page>

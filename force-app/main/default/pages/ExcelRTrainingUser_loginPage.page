@@ -89,14 +89,35 @@
                         if (event.status && result != null) {
                             
                             debugger;
-                            Swal.fire(
+                            //var eventvalue = event.target.value;
+                            // var SelectedForm = '';
+                            // var SelectedFormName = document.getElementsById("ExcelRForm");
+                            // if (document.getElementById("FormType").checked) {
+                            //     SelectedForm = document.getElementById("FormType").value;
+                            // }
+                            // for(i = 0; i < ele.length; i++) {
+                            //     if(ele[i].checked){
+                            //         var SelectedForm = 
+                            //     }
+                            // }
+                            $scope.RadioChange = function (s) {
+                                    $scope.SelectedForm = s;
+                                };
+                            if (result.Departments__c.includes($scope.SelectedForm)) {
+                                Swal.fire(
                                 '', 'Logged In Successfully', 'Success'
-                            )
-                            $scope.$apply();
+                                )
+                                $scope.$apply();
+                                var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/ParentFormLwcPage'+'?id='+ result.Id + '&departments=' + result.Departments__c + '&';
+                                window.location.replace(urlString);
+                                
+                            }else{
+                                Swal.fire(
+                                '', 'You do not belong to ' + SelectedForm + ' Department. Please Select Correct Form Type!', 'Error'
+                                )
+                                $scope.$apply();
+                            }
                             
-                            //var urlString = 'https://excelr2--dev--c.sandbox.vf.force.com/apex/walkInLeadPage'+'?id='+ result;
-                            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/ParentFormLwcPage'+'?id='+ result.Id + '&departments=' + result.Departments__c;
-                            window.location.replace(urlString);
                             debugger;
                             
                         } else {
@@ -119,22 +140,25 @@
             <div class="container-fluid" style="width: 100%;padding: 0px;margin: 0px;">
                 <div  class="col-sm-6 bg-light text-dark" style="height: 100vh;">
                     
-                    <div class="robotUtill d-flex justify-content-center">
+                    <div class="robotUtill d-flex justify-content-center" style="background-color: #79BCEC ; background-image: linear-gradient(#79BCEC, #3888CA);">
                         <apex:image url="{!$Resource.ExcelRTheme}"/>
                     </div>
                 </div>
-                <div class="col-sm-6 text-white" style="height: 100vh; background-color:#171347;">
-                    
-                    
-                    
+                <div class="col-sm-6 text-dark" style="height: 100vh; background-color:#ffffff;">
                     <div class="form-section">
-                        
                         <div>
-                            <div class="logoUtill d-flex justify-content-center">
+                            <div class="logoUtill d-flex justify-content-center" >
                                 <apex:image url="{!$Resource.ExcelRLogo}"/>
                             </div>
+
+                            <div class="text-dark" style="margin-top:4rem;" id="ExcelRForm">
+                                <input type="radio" id="FormType" ng-change="RadioChange('Walk-In')" value="Walk-In">Walk-In</input>
+                                <input type="radio" id="FormType" ng-change="RadioChange('Voice')" value="Voice">Voice</input>
+                                <input type="radio" id="FormType" ng-change="RadioChange('Generic')" value="Generic">Generic</input>
+                                <input type="radio" id="FormType" ng-change="RadioChange('Chat')" value="Chat">Chat</input>
+                            </div>
                             
-                            <div class="form-group" style="margin-top:4rem">
+                            <div class="form-group" style="margin-top:4rem;">
                                 <label for="exampleInputEmail1">Email</label>
                                 <input ng-model="userName" type="email" class="form-control input-lg" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter your email" style=" border-radius: 10px;"/>
                             </div>

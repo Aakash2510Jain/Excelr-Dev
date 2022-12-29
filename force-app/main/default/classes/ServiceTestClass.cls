@@ -7,7 +7,7 @@ public class ServiceTestClass {
         RestResponse res 					= 	new RestResponse();
         request.requestUri 					= 	'https://excelr2--dev.sandbox.my.salesforce.com/services/apexrest/create_Account';
         request.httpMethod 					= 	'POST';
-        request.requestBody 				= 	Blob.valueOf('{"Name": "Aakash Jain",    "Phone": "9560635420",    "Email__c": "aakash.123jain@gmail.com ",    "Course__c": "Data Science",    "Type_of_Course__c": "combo",    "City__c": "Delhi",    "Form_Names__c": "Live Virtual",    "Source__c": "Youtube",    "UTM_Medium__c": "Direct",    "UTM_Campaign__c": "Campaign Name",    "UTM_Device__c": "Device Name",    "UTM_AdGroup__c": "Ad Group",    "UTM_Term__c": "Term",    "UTM_Channel__c": "Channel",    "UTM_Type__c": "RMKT",    "Location_UTM__c": "Location",    "UTM_Variety__c": "Variety",    "UTM_Experiment__c": "Experiment",    "Enter_UTM_Link__c": "Link"}');
+        request.requestBody 				= 	Blob.valueOf('{"Name": "Aakash Jain",    "Phone": "9560635420",    "Email__c": "aakash.123jain@gmail.com ",    "Course__c": "Data Science",    "Type_of_Course__c": "combo",    "City__c": "Delhi",    "Form_Names__c": "Live Virtual",    "UTM_Medium__c": "Direct",    "UTM_Campaign__c": "Campaign Name",    "UTM_Device__c": "Device Name",    "UTM_AdGroup__c": "Ad Group",    "UTM_Term__c": "Term",    "UTM_Channel__c": "Channel",    "UTM_Type__c": "RMKT",    "Location_UTM__c": "Location",    "UTM_Variety__c": "Variety",    "UTM_Experiment__c": "Experiment",    "Enter_UTM_Link__c": "Link"}');
         RestContext.request 				= 	request;
         RestContext.response				= 	res;
         API_CreateAccount.doPost();
@@ -32,7 +32,7 @@ public class ServiceTestClass {
         RestResponse res 					= 	new RestResponse();
         request.requestUri 					= 	'https://excelr2--dev.sandbox.my.salesforce.com/services/apexrest/create_lead';
         request.httpMethod 					= 	'POST';
-        request.requestBody 				= 	Blob.valueOf('{"Name": "Aakash Jain",    "Phone": "9560635420",    "Email__c": "aakash.123jain@gmail.com ",    "Course__c": "Data Science",    "Type_of_Course__c": "combo",    "City__c": "Delhi",    "Form_Names__c": "Live Virtual",    "Source__c": "Youtube",    "UTM_Medium__c": "Direct",    "UTM_Campaign__c": "Campaign Name",    "UTM_Device__c": "Device Name",    "UTM_AdGroup__c": "Ad Group",    "UTM_Term__c": "Term",    "UTM_Channel__c": "Channel",    "UTM_Type__c": "RMKT",    "Location_UTM__c": "Location",    "UTM_Variety__c": "Variety",    "UTM_Experiment__c": "Experiment",    "Enter_UTM_Link__c": "Link"}');
+        request.requestBody 				= 	Blob.valueOf('{"Name": "Aakash Jain",    "Phone": "9560635420",    "Email__c": "aakash.123jain@gmail.com ",    "Course__c": "Data Science",    "Type_of_Course__c": "combo",    "City__c": "Delhi",    "Form_Names__c": "Live Virtual",    "UTM_Medium__c": "Direct",    "UTM_Campaign__c": "Campaign Name",    "UTM_Device__c": "Device Name",    "UTM_AdGroup__c": "Ad Group",    "UTM_Term__c": "Term",    "UTM_Channel__c": "Channel",    "UTM_Type__c": "RMKT",    "Location_UTM__c": "Location",    "UTM_Variety__c": "Variety",    "UTM_Experiment__c": "Experiment",    "Enter_UTM_Link__c": "Link"}');
         RestContext.request 				= 	request;
         RestContext.response				= 	res;
         API_CreateLead.doPost();

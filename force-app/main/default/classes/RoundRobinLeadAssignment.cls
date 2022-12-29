@@ -186,7 +186,7 @@ public without sharing class RoundRobinLeadAssignment{
                                 limit 1].Name;
         List<Lead> leadsInQueue = [SELECT ID,  OWNERID, Lead_Assigned_Date__c, Lead_Assigned_Time__c, Status,Email
                                    FROM Lead
-                                   WHERE Ownerid = :queueId and (status != 'Junk' AND Status != 'Converted') limit 50000];
+                                   WHERE Ownerid = :queueId and (status != 'Junk' AND Status != 'Promote') limit 50000];
         mapofCouseByGroupName.put(groupName,groupName);
         /*list<Source_Intent_And_Group_Name__mdt> groupNameSourceIntent = [select id,Group_Name__c,Source_Intent__c from Source_Intent_And_Group_Name__mdt ];
          if(!groupNameSourceIntent.isEmpty()){

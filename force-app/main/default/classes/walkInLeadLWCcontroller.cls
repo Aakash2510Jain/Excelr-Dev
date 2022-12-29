@@ -48,6 +48,7 @@ public without sharing class walkInLeadLWCcontroller{
             leadRec.OwnerId = userId;
             leadRec.ISM__c = agmId;
             leadRec.Course__c = Course;
+            leadRec.City__c='NA';
             if ( !existingTrainingUser.isEmpty() ){
                 leadRec.ExcelR_Training_User__c = existingTrainingUser[0].id;
             }
