@@ -30,7 +30,7 @@
                     </a>
                 </div>
                 <div class="slds-p-around_medium" style=" display: inline-block;">
-                    lightning-button-menu alternative-text="Show menu" variant="border-filled"
+                    <lightning-button-menu alternative-text="Show menu" variant="border-filled"
                         onselect={handleOnselect} label="Select Form">
                         <template for:each={mapData} for:item="currentItem" for:index="index">
                             <lightning-menu-item label={currentItem.label} value={currentItem.value} key={currentItem.value} onselect={handleOnselect}>

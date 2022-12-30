@@ -536,6 +536,10 @@ export default class WaklInLead extends LightningElement {
             window.open(urlString, "_self");
             
         }
+        if (selectedVal == 'Chat') {
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+                                    window.location.replace(urlString, "_self");
+        }
     }
 
 }

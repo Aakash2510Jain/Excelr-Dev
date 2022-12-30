@@ -881,7 +881,10 @@ export default class chatForm extends LightningElement {
         if (selectedVal == 'Generic') {
             var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
             window.open(urlString, "_self");
-            
+        }
+        if (selectedVal == 'Chat') {
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            window.location.replace(urlString, "_self");
         }
     }
 

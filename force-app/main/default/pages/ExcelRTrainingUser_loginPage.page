@@ -2,72 +2,22 @@
     <html>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
         
+        
         <head>
+            <meta name="viewport" 
+             content="width=device-width,
+             initial-scale=1.0"/>
+
             <c:libraries ></c:libraries>
             <style>
-                *{
-                    margin: 0;
-                    padding: 0;
-                }
-                .welcmHeding{
-                font-family: "Times New Roman", Times, serif;
-                font-size: 4.2rem;
-                }
-                .form-group>input {
-                outline: 0;
-                padding: 1.25rem;
-                background: none;
-                border-radius: 1.2rem;
-                border-width:1px;
-                border-color:#1304b3;
                 
-                }
-                
-                input:focus {
-                border-color:#171347;
-                }
-                .form-section{
-                
-                padding: 10%;
-                align-items: center;
-                justify-content: center;
-                
-                }
-                .form-group>label{
-                font-size: 1.9rem;
-                padding-left: 2rem;
-                align-items: center;
-                }
-                .form-group>input{
-                    width: 95%;
-                    align-items: center;
-                    padding-left: 4rem;
-
-                }
-                input, select, textarea{
-                color: rgb(207, 33, 33);
-                padding-left: 4rem;
-                }
-                
-                
-                .loginSection{
-                height:590px;
-                }
-                .logoUtill{
-                width: 222px;   
-                height: 60px;
-                margin-left: auto;
-                margin-right: auto;
-                margin-bottom: 5em;
-                margin-top: 7rem; */
-                }
-                .robotUtill.{
-                width: 250px;   
-                height: 360px;
-                }
-                
-                
+            .ImageLeftSide{
+                width:40%;
+                height: 550px;
+            }
             </style>
+
+            
             <script>
             
             debugger;
@@ -76,9 +26,11 @@
                 $scope.userName;
                 $scope.showSpinner = false;
                 
-                $scope.contactDetails = { Name: "", Email__c: "" };
-                
                 debugger;
+                $scope.RadioChange = function (s) {
+                    debugger;
+                    $scope.SelectedForm = s;
+                 };
                 $scope.loginEmployee = function () {
                     
                     $scope.userPassword;
@@ -89,31 +41,33 @@
                         if (event.status && result != null) {
                             
                             debugger;
-                            //var eventvalue = event.target.value;
-                            // var SelectedForm = '';
-                            // var SelectedFormName = document.getElementsById("ExcelRForm");
-                            // if (document.getElementById("FormType").checked) {
-                            //     SelectedForm = document.getElementById("FormType").value;
-                            // }
-                            // for(i = 0; i < ele.length; i++) {
-                            //     if(ele[i].checked){
-                            //         var SelectedForm = 
-                            //     }
-                            // }
-                            $scope.RadioChange = function (s) {
-                                    $scope.SelectedForm = s;
-                                };
+                            
                             if (result.Departments__c.includes($scope.SelectedForm)) {
                                 Swal.fire(
                                 '', 'Logged In Successfully', 'Success'
                                 )
                                 $scope.$apply();
-                                var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/ParentFormLwcPage'+'?id='+ result.Id + '&departments=' + result.Departments__c + '&';
-                                window.location.replace(urlString);
+                                if ($scope.SelectedForm == 'Walk-In') {
+                                    var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage'+'?id='+ result.Id + '&departments=' + result.Departments__c;
+                                    window.location.replace(urlString, "_self");
+                                }
+                                if ($scope.SelectedForm == 'Voice') {
+                                    var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage'+'?id='+ result.Id + '&departments=' + result.Departments__c;
+                                    window.location.replace(urlString, "_self");
+                                }
+                                if ($scope.SelectedForm == 'Generic') {
+                                    var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage'+'?id='+ result.Id + '&departments=' + result.Departments__c;
+                                    window.location.replace(urlString, "_self");
+                                }
+                                if ($scope.SelectedForm == 'Chat') {
+                                    var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage'+'?id='+ result.Id + '&departments=' + result.Departments__c;
+                                    window.location.replace(urlString, "_self");
+                                }
+                                
                                 
                             }else{
                                 Swal.fire(
-                                '', 'You do not belong to ' + SelectedForm + ' Department. Please Select Correct Form Type!', 'Error'
+                                '', 'You do not belong to ' + $scope.SelectedForm + ' Department. Please Select Correct Department!', 'Error'
                                 )
                                 $scope.$apply();
                             }
@@ -136,45 +90,70 @@
         </head>
         
         <body ng-app="myApp" ng-controller="myController" >
-            
-            <div class="container-fluid" style="width: 100%;padding: 0px;margin: 0px;">
-                <div  class="col-sm-6 bg-light text-dark" style="height: 100vh;">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="ImageLeftSide">
+                            <apex:image url="{!$Resource.ExcelRTheme}"/>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="rightSideContent">
+                            <div class="logoUtill d-flex justify-content-center" >
+                                <apex:image url="{!$Resource.ExcelRLogo}"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+            <!-- <div class="container-fluid justify-content-center " style="width: 100%;padding: 0px;margin: 0px;">
+                <div  class="col-sm-6 bg-light text-dark justify-content-center" style="height: 100vh;">
                     
-                    <div class="robotUtill d-flex justify-content-center" style="background-color: #79BCEC ; background-image: linear-gradient(#79BCEC, #3888CA);">
+                    <div class="d-flex" style="background-color: #79BCEC ; background-image: linear-gradient(#79BCEC, #3888CA); height:100%;">
                         <apex:image url="{!$Resource.ExcelRTheme}"/>
                     </div>
                 </div>
-                <div class="col-sm-6 text-dark" style="height: 100vh; background-color:#ffffff;">
+                <div class="col-sm-6 text-dark justify-content-center" style="height: 100vh; background-color:#ffffff;">
                     <div class="form-section">
                         <div>
                             <div class="logoUtill d-flex justify-content-center" >
                                 <apex:image url="{!$Resource.ExcelRLogo}"/>
                             </div>
-
-                            <div class="text-dark" style="margin-top:4rem;" id="ExcelRForm">
-                                <input type="radio" id="FormType" ng-change="RadioChange('Walk-In')" value="Walk-In">Walk-In</input>
-                                <input type="radio" id="FormType" ng-change="RadioChange('Voice')" value="Voice">Voice</input>
-                                <input type="radio" id="FormType" ng-change="RadioChange('Generic')" value="Generic">Generic</input>
-                                <input type="radio" id="FormType" ng-change="RadioChange('Chat')" value="Chat">Chat</input>
+                            <div class="formclass" style="margin-top:4rem; background-color:#ffffff; box-shadow: 5px 5px 10px 10px rgb(230, 228, 228); border-radius:5px; color: #3888CA; font-weight: bold; max-width:auto; width:700px;">
+                                
+                                    <input style="margin: 20px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Walk-In')" value="Walk-In">Walk-In</input>
+                                    <input style="margin: 20px;"  type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Voice')" value="Voice">Voice</input>
+                                    <input style="margin: 20px;"  type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Generic')" value="Generic">Generic</input>
+                                    <input style="margin: 20px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Chat')" value="Chat">Chat</input>
+                                
                             </div>
-                            
-                            <div class="form-group" style="margin-top:4rem;">
+                            <div class="formclass form-group" style="margin-top:4rem; color: #3888CA;">
                                 <label for="exampleInputEmail1">Email</label>
                                 <input ng-model="userName" type="email" class="form-control input-lg" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter your email" style=" border-radius: 10px;"/>
                             </div>
                             
-                            <div class="form-group"  style="margin-top:3rem">
+                            <div class="formclass form-group"  style="margin-top:3rem; color: #3888CA;">
                                 <label for="exampleInputEmail1">Password</label>
                                 <input ng-model="userPassword" type="password" class="form-control input-lg" id="exampleInputEmail1" aria-describedby="emailHelp" style=" border-radius: 10px; " placeholder="*********"/>
                             </div>
-                            <div class="text-center">
-                                <button type="button" ng-click="loginEmployee()" class="btn btn-lg" style="background-color: rgb(241, 97, 0);color: white;padding-left: 40px;padding-right: 40px;border-radius: 15px; margin-top:3rem;">Login</button>    
+                            <div class="formclass">
+                                <button type="button" ng-click="loginEmployee()" class="btn btn-lg formclass" style="background-color:#3888CA; color: white;padding-left: 40px;padding-right: 40px;border-radius: 15px; margin-top:3rem;max-width: auto; width:700px;">Login</button>    
                             </div>
                         </div>
                     </div>
                     
                 </div>
-            </div>
+            </div> -->
             
         </body>
         

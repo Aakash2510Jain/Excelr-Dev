@@ -1,21 +1,76 @@
 @RESTResource(urlMapping = '/webEngageWebhook/*')
 
 global without sharing class WebEngageWebhookHandler{
+    public static string name;
+    public static string email;
+    public static string phone;
+    public static String description;
     @HttpPost
     global static String engageWebhookListener(){
         try{
             RestRequest req = RestContext.request;
             RestResponse res = RestContext.response;
-          //   Map<String,object> m1 = (Map<String,object>) JSON.deserializeUntyped(req);
             String body = req.requestBody.toString();
-                 Map<String,object> m1 = (Map<String,object>) JSON.deserializeUntyped(body);
-                             object m2 = m1.get('response');
-                Map<String,object> m3 =  (Map<String,object>) m2;
-                             object m4 =  m3.get('data');
-                             //object  m3 = m2.get('data'); 
+            Map<String,object> bodyMap = (Map<String,object>) JSON.deserializeUntyped(body);
+            system.debug('bodymap ===> ' + bodyMap);
+            object m2 = bodyMap.get('response');
+            system.debug('m2 ===> ' + m2);
+            Map<String,object>  m3 =  (Map<String,object>) m2;
+            system.debug('m3 ===> ' + m3);
+            Map<String,object> dataMap = ( Map<String,object>) m3.get('data');
+            system.debug('dataMap ===> ' + dataMap);
+            List<Object> listQuestionResponse = (List<Object>)  dataMap.get('questionResponses');
+            system.debug('listQuestionResponse ===> ' + listQuestionResponse);
+            integer i=0;
+            for(Object o:listQuestionResponse)
+            {
+                i++;
+                System.debug('i Value'+i);
+                Map<string,Object> m = (Map<string,Object>) o;
+                Map<string,Object> l = (Map<string,Object>) m.get('value');
+                system.debug('l ====> ' + l);
+                if(i<listQuestionResponse.size()){
+                    
+                    Map<string,Object> l1 = (Map<string,Object>) l.get('values');
+                    system.debug('l1 ====> ' + l1);
+                    if(l1.containsKey('Name*'))
+                    {
+                        name = (string) l1.get('Name*');
+                    }
+                    if(l1.containsKey('E-mail*'))
+                    {
+                        email = (string) l1.get('E-mail*');
+                    }
+                    if(l1.containsKey('Mobile Number*'))
+                    {
+                        phone =(string) l1.get('Mobile Number*');
+                    }
+                }    
+                 else{
+                              List<object> valueList = (List<object>) l.get('values');
+                               description =string.valueOf(valueList);
+                          System.debug('ValueList'+valueList);
+                    }
+            }
+            System.debug('Name :'+name);
+            System.debug('email'+email);
+            System.debug('phone'+phone);
             System.debug('Body---' + body);
+            List<lead> leadList = new List<lead>();
+            Lead leadRec = new Lead();
+            leadRec.LastName  = name;
+            leadRec.Phone = phone;
+            leadRec.Email = email;
+            leadRec.Course__c = 'Data Science';
+            leadRec.City__c = 'India';
+            leadRec.Description =description ;
+            leadList.add(leadRec);
+            system.debug('leadlist ====> ' + leadlist);
+            //insert leadList;
             return 'success';
         } catch (Exception e){
+            system.debug('error due to ' + e.getMessage());
+            system.debug('at line number ' + e.getLineNumber());
             return 'Error - ' + e.getMessage();
         }
     }
