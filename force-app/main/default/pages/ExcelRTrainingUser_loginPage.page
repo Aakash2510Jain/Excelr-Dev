@@ -10,11 +10,68 @@
 
             <c:libraries ></c:libraries>
             <style>
-                
-            .ImageLeftSide{
-                width:40%;
-                height: 550px;
+             .leftColm{
+                height: 100vh;
+                background-color:#0464b3; 
+               
             }
+            .logintoAccount{
+                color:#3888CA; 
+            }  
+            @media (min-width: 1400px) {
+                .rightSideContent{
+                    margin-top:10rem !important;
+                    float: center !important;
+                }
+                .radioGol >input{
+                    margin:20px !important;
+                }
+                .logoUtill{
+                    width:100%;
+                    height: 100%;
+                }
+                .logintoAccount{
+                    margin-top:5rem !important;
+                }
+                .text-center{
+                    margin-top: 5rem !important;
+                }
+                .ImageLeftSide{
+
+                }
+                .d-inline{
+                    margin:auto !important;
+                }
+
+            }
+            @media (max-width:400px){
+                .leftColm{
+                    height:100% !important;
+                }
+                .d-inline{
+                    text-align: center !important;
+                }
+                .forinnerRow{
+                    width: 80% !important;
+                    justify-content: space-around !important;
+
+                }
+                
+            } 
+            @media (max-width:500px){
+                .d-inline{
+                    text-align: center !important;
+                }.forinnerRow{
+                    width: 80% !important;
+                    justify-content: space-around !important;
+
+                }
+                .headrow{
+                    justify-content: center !important;
+                }
+            }
+               
+            
             </style>
 
             
@@ -92,17 +149,75 @@
         <body ng-app="myApp" ng-controller="myController" >
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-6 leftColm">
                         <div class="ImageLeftSide">
-                            <apex:image url="{!$Resource.ExcelRTheme}"/>
+                            <apex:image url="{!$Resource.ExcelRTheme}" style="height:100%; width:100%;"/>
                         </div>
                     </div>
                     <div class="col-sm-6">
-                        <div class="rightSideContent">
-                            <div class="logoUtill d-flex justify-content-center" >
-                                <apex:image url="{!$Resource.ExcelRLogo}"/>
+                        <div class="row d-flex justify-content-center">
+                            <div class="col-sm-2"></div>
+                            <div class="col-sm-8">
+
+                                <div class="rightSideContent">
+                                    <div class="mt-5">
+                                        <div class="mt-3">
+                                            <div class="logoUtill d-flex justify-content-center mt-5" >
+                                                <apex:image url="{!$Resource.ExcelRLogo}" style="height:70px; widht:150px;"/>
+                                            </div>
+                                        </div>
+                                        <div class="logintoAccount text-center mt-5">
+                                            <h4 class="mt-3">Login To Your Account</h4>
+                                        </div>
+                                        <div class="mt-5 headrow" >
+                                            <div class="row forinnerRow" style=" background-color:#ffffff; box-shadow: 5px 5px 10px 10px rgb(230, 228, 228); border-radius:5px; color: #3888CA; font-weight: bold;">
+                                                <div class="col-sm d-flex justify-content-center" >
+                                                    <div class="">
+                                                        <input style="margin: 11px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Walk-In')" value="Walk-In">Walk-In</input>
+                                                        <input style="margin: 11px;"  type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Voice')" value="Voice">Voice</input>
+                                                        <input style="margin: 11px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Chat')" value="Chat">Chat</input>
+                                                        <input style="margin: 11px;"  type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Generic')" value="Generic">Generic</input>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- <div  class="mt-5"  style=" background-color:#ffffff; box-shadow: 5px 5px 10px 10px rgb(230, 228, 228); border-radius:5px; color: #3888CA; font-weight: bold;">
+                                                <div class="formclass mt-5 radioGol d-inline">
+                                                    <div class="d-inline">
+                                                        <input style="margin: 16px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Walk-In')" value="Walk-In">Walk-In</input>
+                                                    </div>
+                                                    <div class="d-inline">
+                                                        <input style="margin: 16px;"  type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Voice')" value="Voice">Voice</input>
+                                                    </div>
+                                                    <div class="d-inline">
+                                                        <input style="margin: 16px;"  type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Generic')" value="Generic">Generic</input>
+                                                    </div>
+                                                    <div class="d-inline">
+                                                        <input style="margin: 16px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Chat')" value="Chat">Chat</input>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div> -->
+                                        </div>
+                                        <div class="formclass form-group mt-5" style="margin-top:4rem; color: #3888CA;">
+                                            <label for="exampleInputEmail1">Email</label>
+                                            <input ng-model="userName" type="email" class="form-control input-lg" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter your email" style=" border-radius: 10px;"/>
+                                        </div>
+                                        <div class="formclass form-group mt-5"  style="margin-top:3rem; color: #3888CA;">
+                                            <label for="exampleInputEmail1">Password</label>
+                                            <input ng-model="userPassword" type="password" class="form-control input-lg" id="exampleInputEmail1" aria-describedby="emailHelp" style=" border-radius: 10px; " placeholder="*********"/>
+                                        </div>
+                                        <div class="text-center">
+                                            <button class="btn  btn-primary btn-lg" ng-click="loginEmployee()">Login</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+
                             </div>
+                            <div class="col-sm-2"></div>
                         </div>
+
+                       
                     </div>
                 </div>
             </div>

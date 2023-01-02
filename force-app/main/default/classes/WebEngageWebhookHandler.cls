@@ -66,11 +66,12 @@ global without sharing class WebEngageWebhookHandler{
             leadRec.Description =description ;
             leadList.add(leadRec);
             system.debug('leadlist ====> ' + leadlist);
-            //insert leadList;
+            insert leadList;
             return 'success';
         } catch (Exception e){
             system.debug('error due to ' + e.getMessage());
             system.debug('at line number ' + e.getLineNumber());
+            HandleBusinessException.captureError('WebEngageWebhookHandler','engageWebhookListener', e);
             return 'Error - ' + e.getMessage();
         }
     }
