@@ -181,6 +181,7 @@ export default class WaklInLead extends LightningElement {
 
     @track showapplicationMOdal = false;
     @track appbtndisAble = true;
+    @track commentsValue;
 
     connectedCallback() {
         //defined a varibale
@@ -212,7 +213,7 @@ export default class WaklInLead extends LightningElement {
                 this.showFromOrEmpty = true;
                 this.data = data;
                 if (this.data.length > 0) {
-                    this.newBTNdisAble = true;
+                //   this.newBTNdisAble = true;
                     this.recordId = this.data[0].Id;
                     this.ownerEmail = data[0].Owner_Email__c;
                     this.handleClick();
@@ -226,7 +227,7 @@ export default class WaklInLead extends LightningElement {
                 if (this.data.length == 0) {
                     this.handleClick();
                     this.ifdataNotFound = true;
-                    this.newBTNdisAble = false;
+                //   this.newBTNdisAble = false;
                     this.ismBTNdisAble = true;
                     this.data = false;
                     this.appbtndisAble = true;
@@ -593,6 +594,11 @@ export default class WaklInLead extends LightningElement {
         let Trans=event.target.value;
         this.TranscriptValue=Trans;
     }
+    HandleComments(event)
+    {
+        let comment = event.target.value;
+        this.commentsValue = comment;
+    }
     // @track PageUrlValue;
     // HandlePageURL(event){
     //     debugger;
@@ -705,7 +711,7 @@ export default class WaklInLead extends LightningElement {
             debugger;
             var returnvalue = this.handleIncorrectEmail(this.emailValue)
             if (returnvalue == true) {
-                createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, ownerId: this.ismeId, agmId: this.gruoMemberId, Course: this.CourceLead, agentid: this.agentrecid,city:this.cityValue,source:this.sourceValue,medium:this.MediumValue,VisitorId:this.VisitorIdValue,Transcript:this.TranscriptValue,leadGenPath:this.Leadvalue,state:this.StateValue,country:this.CountryValue})
+                createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, ownerId: this.ismeId, agmId: this.gruoMemberId, Course: this.CourceLead, agentid: this.agentrecid,city:this.cityValue,source:this.sourceValue,medium:this.MediumValue,VisitorId:this.VisitorIdValue,Transcript:this.TranscriptValue,leadGenPath:this.Leadvalue,state:this.StateValue,country:this.CountryValue,comments:this.commentsValue})
                     .then(data => {
                         this.handleConfirm('Lead Created Successfully');
                         console.log(data)

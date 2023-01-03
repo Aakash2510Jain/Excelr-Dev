@@ -66,6 +66,9 @@
                         <lightning-button title="Create Application" label="Create Application"
                             onclick={showpplicationForm} variant="brand" style="margin-left:8px;"
                             disabled={appbtndisAble}></lightning-button>
+                            <lightning-button title="New Task " label="New Task" onclick={newTaskBTN} disabled={taskBTNdisAble}
+                            variant="brand" style="margin-left:8px;"></lightning-button>
+
                     </div>
                 </div>
                 <div>
@@ -432,6 +435,9 @@
                                 <lightning-combobox name="Medium" label="Medium" value={MediumValue}
                                     placeholder="Select Your Medium" options={leadmedium} onchange={HandleMedium} required="true">
                                 </lightning-combobox>
+                                
+                                <lightning-textarea  label="Comments" name="Comments" value={commentsValue} onchange={HandleComments}>
+                                </lightning-textarea>
 
                                 <!--lightning-input type="text" label="Medium" onchange={HandleMedium} required="true"></lightning-input-->
 
@@ -621,6 +627,41 @@
             </section>
             <div class="slds-backdrop slds-backdrop_open"></div>
             <!--div class="slds-backdrop slds-backdrop_open"></div -->
+        </template>
+        <template if:true={showtaskModal}>
+            <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+                <div class="slds-modal__container">
+                    <div class="slds-modal__header">
+                        <h1>Create New Task</h1>
+                      </div>
+                      <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
+                        <lightning-input type="text" name="subject" label="Subject" onchange={subChange}></lightning-input>
+                      <!--  <lightning-combobox name="Subject" label="Subject" value={subjectvalue}
+                                    placeholder="Select Subject" options={subjectList} onchange={subjectHandler} required="true"></lightning-combobox>
+                          <lightning-record-edit-form object-api-name="Task" id="createTask">
+                                        <lightning-input-field field-name="OwnerId" variant="label-hidden" onchange={handleAccountSelection}>                                
+                                        </lightning-input-field>
+                                </lightning-record-edit-form>  -->
+                        <lightning-combobox name="Priority" label="Priority" value={priorityValue}
+                          placeholder="Select Priority" options={priorityList} onchange={priorityHandler} required="true"></lightning-combobox> 
+
+                          <lightning-combobox name="Status" label="Status" value={statusValue}
+                          placeholder="Select Status" options={StatusList} onchange={statusHandler} required="true"></lightning-combobox>   
+                        
+                          <lightning-input type="date" name="Duedate" label="Due date" ></lightning-input>    
+                          <lightning-textarea  label="Comments" name="Comments" value={cv} onchange={Hc}>
+                          </lightning-textarea>
+                          <lightning-input type="datetime" name="input2" label="Followup Date/time " value={v}></lightning-input>
+
+                      </div>
+                      <div class="slds-modal__footer">
+                        <button class="slds-button slds-button_neutral" aria-label="Cancel and close" onclick={hideshowTaskModal}>Cancel</button>
+                        <button class="slds-button slds-button_brand">Save</button>
+                      </div>
+
+                    </div>
+                    </section>
+                    <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
         </template>
     </div>
 </template>

@@ -26,7 +26,7 @@ public without sharing class voiceFormLWCcontroller{
     }
 
     @auraenabled
-    public static lead createLead(String firstname, string Lastname, string email, string phone, string ownerId, string agmId, string Course, string agentid,string city,string LdGenPath,string state,string country,string source,string medium){
+    public static lead createLead(String firstname, string Lastname, string email, string phone, string ownerId, string agmId, string Course, string agentid,string city,string LdGenPath,string state,string country,string source,string medium,string comments){
        // System.debug('userId ====> ' + userId);
         System.debug('agentid ====> ' + agentid);
         lead leadRec = new lead();
@@ -51,6 +51,8 @@ public without sharing class voiceFormLWCcontroller{
             leadRec.Lead_Gen_Path__c=LdGenPath;
             leadRec.LeadSource=source;
             leadRec.UTM_Medium__c=medium;
+            leadRec.Lead_Generation_Method__c = 'Voice Form';
+            leadRec.Comments__c = comments ;
            // leadRec.LGE__c=lgedata;
             leadRec.Country__c=country;
             leadRec.State__c=state;
@@ -69,6 +71,30 @@ public without sharing class voiceFormLWCcontroller{
             //return null;
         }
         return leadRec;
+    }
+    
+    @AuraEnabled
+    public static Task createTask(String subject,string assignto,string priority,string status,string duedate,string comments,string followupDate){
+            Task taskRec = new Task();
+        try {
+           // Task taskRec = new Task();
+            taskRec.Subject = subject;
+            taskRec.OwnerId = assignto;
+            taskRec.WhoId = '';      // lead---Name
+            taskRec.Priority = priority;
+            taskRec.Status = status;
+            taskRec.ActivityDate = Date.parse(duedate);
+            taskRec.Description = comments;
+            taskRec.Followup_Date_Time__c = Date.parse(followupDate);
+            insert taskRec;
+            
+        } catch (Exception e) {
+            system.debug('Error Message'+e.getMessage());
+            System.debug('Error Line Number'+e.getLineNumber());
+        }
+             return taskRec;
+
+
     }
 
     @AuraEnabled
@@ -133,6 +159,43 @@ public without sharing class voiceFormLWCcontroller{
         system.debug('getLablePick::' + getLablePick);
         return getLablePick;
     }
+    
+    @auraenabled(cacheable = true)
+    Public Static map<String, String> getPickiststatusOfTask(){
+        String objectName = 'Task';
+        String fieldName = 'Status';
+        map<String, String> getLablePick = new map<String, String>();
+        Schema.SObjectType s = Schema.getGlobalDescribe().get(objectName);
+        Schema.DescribeSObjectResult r = s.getDescribe();
+        Map<String, Schema.SObjectField> fields = r.fields.getMap();
+        Schema.DescribeFieldResult fieldResult = fields.get(fieldName).getDescribe();
+        List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
+        for ( Schema.PicklistEntry pickListVal : ple ){
+            System.debug(pickListVal.getLabel() + ' ' + pickListVal.getValue());
+            getLablePick.put(pickListVal.getLabel(), pickListVal.getValue());
+        }
+        system.debug('getLablePick::' + getLablePick);
+        return getLablePick;
+    }
+
+    @auraenabled(cacheable = true)
+    Public Static map<String, String> getPickistpriorityOfTask(){
+        String objectName = 'Task';
+        String fieldName = 'Priority';
+        map<String, String> getLablePick = new map<String, String>();
+        Schema.SObjectType s = Schema.getGlobalDescribe().get(objectName);
+        Schema.DescribeSObjectResult r = s.getDescribe();
+        Map<String, Schema.SObjectField> fields = r.fields.getMap();
+        Schema.DescribeFieldResult fieldResult = fields.get(fieldName).getDescribe();
+        List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
+        for ( Schema.PicklistEntry pickListVal : ple ){
+            System.debug(pickListVal.getLabel() + ' ' + pickListVal.getValue());
+            getLablePick.put(pickListVal.getLabel(), pickListVal.getValue());
+        }
+        system.debug('getLablePick::' + getLablePick);
+        return getLablePick;
+    }
+
 
     @auraEnabled
     Public Static string EmailIsm(String LiD, String ownerMail){

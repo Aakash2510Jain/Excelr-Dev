@@ -26,7 +26,7 @@ public with sharing class ChatFormLWCcontroller {
     }
 
     @auraenabled
-    public static lead createLead(String firstname, string Lastname, string email, string phone, string ownerId, string agmId, string Course,  string agentid,string city,string state,string country,string source,string medium,string VisitorId,string Transcript,string LandingPageURL){
+    public static lead createLead(String firstname, string Lastname, string email, string phone, string ownerId, string agmId, string Course,  string agentid,string city,string state,string country,string source,string medium,string VisitorId,string Transcript,string LandingPageURL,string comments){
        // System.debug('userId ====> ' + userId);
         System.debug('agentid ====> ' + agentid);
         lead leadRec = new lead();
@@ -57,6 +57,8 @@ public with sharing class ChatFormLWCcontroller {
            // leadRec.Lead_Gen_Path__c=leadGenPath;
            // leadRec.LGE__c=LGE;
             leadRec.Landing_Page_URL__c=LandingPageURL;
+            leadRec.Lead_Generation_Method__c = 'Chat Form';
+            leadRec.Comments__c = comments;
             if ( !existingTrainingUser.isEmpty() ){
                 leadRec.ExcelR_Training_User__c = existingTrainingUser[0].id;
             }

@@ -27,7 +27,7 @@ public without sharing  class GenericLeadLWCcontroller {
     }
 
     @auraenabled
-    public static lead createLead(String firstname, string Lastname, string email, string phone, string ownerId, string agmId, string Course,  string agentid,string city,string state,string country,string source,string medium,string VisitorId,string Transcript,string leadGenPath){
+    public static lead createLead(String firstname, string Lastname, string email, string phone, string ownerId, string agmId, string Course,  string agentid,string city,string state,string country,string source,string medium,string VisitorId,string Transcript,string leadGenPath,string comments){
        // System.debug('userId ====> ' + userId);
         System.debug('agentid ====> ' + agentid);
         lead leadRec = new lead();
@@ -57,6 +57,8 @@ public without sharing  class GenericLeadLWCcontroller {
             leadRec.Visitor_ID__c=VisitorId;
             leadRec.Transcript__c=Transcript;
             leadRec.Lead_Gen_Path__c=leadGenPath;
+            leadRec.Lead_Generation_Method__c = 'Generic Form';
+            leadRec.Comments__c = comments;
             
 
 

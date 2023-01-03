@@ -100,6 +100,7 @@ export default class WaklInLead extends LightningElement {
 
     @track showapplicationMOdal = false;
     @track appbtndisAble = true;
+    @track commentsValue;
 
     connectedCallback() {
         //defined a varibale
@@ -130,7 +131,7 @@ export default class WaklInLead extends LightningElement {
                 this.showFromOrEmpty = true;
                 this.data = data;
                 if (this.data.length > 0) {
-                    this.newBTNdisAble = true;
+                //  this.newBTNdisAble = true;
                     this.recordId = this.data[0].Id;
                     this.ownerEmail = data[0].Owner_Email__c;
                     this.handleClick();
@@ -143,7 +144,7 @@ export default class WaklInLead extends LightningElement {
                 }
                 if (this.data.length == 0) {
                     this.ifdataNotFound = true;
-                    this.newBTNdisAble = false;
+                //  this.newBTNdisAble = false;
                     this.handleClick();
                     this.ismBTNdisAble = true;
                     this.data = false;
@@ -235,6 +236,11 @@ export default class WaklInLead extends LightningElement {
         debugger;
         let phone = Event.target.value;
         this.phoneValue = phone;
+    }
+    HandleComments(event)
+    {
+       let comment = event.target.value;
+       this.commentsValue = comment;
     }
 
     StatusChange(Event) {
@@ -363,7 +369,7 @@ export default class WaklInLead extends LightningElement {
 
         var returnvalue = this.handleIncorrectEmail(this.emailValue)
         if (returnvalue == true) {
-            createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, ownerId: this.ismeId, agmId: this.gruoMemberId, Course: this.CourceLead, userId: this.selectedrecordDetails.Id, agentid: this.agentrecid })
+            createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, ownerId: this.ismeId, agmId: this.gruoMemberId, Course: this.CourceLead, userId: this.selectedrecordDetails.Id, agentid: this.agentrecid,comments:this.commentsValue })
                 .then(data => {
                     this.handleConfirm('Lead Created Successfully');
                     this.HandleLeadCreatedisable=false; 

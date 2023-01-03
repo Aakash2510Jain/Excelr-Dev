@@ -5,12 +5,14 @@ global without sharing class WebEngageWebhookHandler{
     public static string email;
     public static string phone;
     public static String description;
+    public static String course;
     @HttpPost
     global static String engageWebhookListener(){
         try{
             RestRequest req = RestContext.request;
             RestResponse res = RestContext.response;
             String body = req.requestBody.toString();
+            system.debug('body-->'+body);
             Map<String,object> bodyMap = (Map<String,object>) JSON.deserializeUntyped(body);
             system.debug('bodymap ===> ' + bodyMap);
             object m2 = bodyMap.get('response');
@@ -20,6 +22,9 @@ global without sharing class WebEngageWebhookHandler{
             Map<String,object> dataMap = ( Map<String,object>) m3.get('data');
             system.debug('dataMap ===> ' + dataMap);
             List<Object> listQuestionResponse = (List<Object>)  dataMap.get('questionResponses');
+            Map<String,object> activityObject = (Map<String,object>)dataMap.get('activity');
+            //Map<String, object) activityMap = ()activityObject
+            
             system.debug('listQuestionResponse ===> ' + listQuestionResponse);
             integer i=0;
             for(Object o:listQuestionResponse)
@@ -45,24 +50,43 @@ global without sharing class WebEngageWebhookHandler{
                     {
                         phone =(string) l1.get('Mobile Number*');
                     }
-                }    
-                 else{
-                              List<object> valueList = (List<object>) l.get('values');
-                               description =string.valueOf(valueList);
-                          System.debug('ValueList'+valueList);
+                    if(l1.containsKey('Mobile Number*'))
+                    {
+                        phone =(string) l1.get('Mobile Number*');
                     }
+                    if(l1.containsKey('Course name'))
+                    {
+                        course =(string) l1.get('Course name');
+                    }
+                    
+                }    
+                else{
+                    List<object> valueList = (List<object>) l.get('values');
+                    description =string.valueOf(valueList);
+                    System.debug('ValueList'+valueList);
+                }
             }
             System.debug('Name :'+name);
             System.debug('email'+email);
             System.debug('phone'+phone);
             System.debug('Body---' + body);
+            System.debug('course---' + course);
             List<lead> leadList = new List<lead>();
             Lead leadRec = new Lead();
             leadRec.LastName  = name;
             leadRec.Phone = phone;
             leadRec.Email = email;
-            leadRec.Course__c = 'Data Science';
-            leadRec.City__c = 'India';
+            leadRec.Course__c = course != null?course:'NA';
+            leadRec.City__c = 'NA';
+            
+            system.debug('activity ===> ' + activityObject.get('city'));
+            
+            leadRec.Enter_UTM_Link__c = (string)activityObject.get('pageUrl');
+            leadRec.City__c = (string)activityObject.get('city');
+            leadRec.Country__c = (string)activityObject.get('country');
+            leadRec.Platform__c = (string)activityObject.get('platform');
+            leadRec.Activity_On__c	= (DateTime)JSON.deserialize('"' + String.valueOf(activityObject.get('activityOn')) + '"', DateTime.class);
+            
             leadRec.Description =description ;
             leadList.add(leadRec);
             system.debug('leadlist ====> ' + leadlist);

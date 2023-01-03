@@ -27,7 +27,7 @@ public without sharing class walkInLeadLWCcontroller{
     }
 
     @auraenabled
-    public static lead createLead(String firstname, string Lastname, string email, string phone, string ownerId, string agmId, string Course, string userId, string agentid){
+    public static lead createLead(String firstname, string Lastname, string email, string phone, string ownerId, string agmId, string Course, string userId, string agentid,string comments){
         System.debug('userId ====> ' + userId);
         System.debug('agentid ====> ' + agentid);
         lead leadRec = new lead();
@@ -49,6 +49,8 @@ public without sharing class walkInLeadLWCcontroller{
             leadRec.ISM__c = agmId;
             leadRec.Course__c = Course;
             leadRec.City__c='NA';
+            leadRec.Lead_Generation_Method__c = 'Walk-in Form';
+            leadRec.Comments__c = comments;
             if ( !existingTrainingUser.isEmpty() ){
                 leadRec.ExcelR_Training_User__c = existingTrainingUser[0].id;
             }

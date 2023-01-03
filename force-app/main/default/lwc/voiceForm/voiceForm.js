@@ -6,6 +6,8 @@ import getApplication from '@salesforce/apex/voiceFormLWCcontroller.getApplicati
 import EmailIsm from '@salesforce/apex/voiceFormLWCcontroller.EmailIsm';
 import getMember from '@salesforce/apex/voiceFormLWCcontroller.getMember';
 import getPuckistOflead from '@salesforce/apex/voiceFormLWCcontroller.getPuckistOflead';
+import getPickiststatusOfTask from '@salesforce/apex/voiceFormLWCcontroller.getPickiststatusOfTask';
+import getPickistpriorityOfTask from '@salesforce/apex/voiceFormLWCcontroller.getPickistpriorityOfTask';
 import createLead from '@salesforce/apex/voiceFormLWCcontroller.createLead';
 import createApplication from '@salesforce/apex/voiceFormLWCcontroller.CreateApplication';
 // import FirstName from '@salesforce/schema/Lead.FirstName';
@@ -57,12 +59,15 @@ import createApplication from '@salesforce/apex/voiceFormLWCcontroller.CreateApp
 
 import { getObjectInfo } from 'lightning/uiObjectInfoApi';
 import { getPicklistValues } from 'lightning/uiObjectInfoApi';
+
 import LEAD_OBJECT from '@salesforce/schema/Lead';
 import LEAD_GEN_PATH from '@salesforce/schema/Lead.Lead_Gen_Path__c';
 import LEAD_SOURCE from '@salesforce/schema/Lead.LeadSource';
 import LEAD_MEDIUM from '@salesforce/schema/Lead.UTM_Medium__c';
 import FetchStateCounty from '@salesforce/apex/voiceFormLWCcontroller.FetchStateCounty';
 import Fetchcities from '@salesforce/apex/voiceFormLWCcontroller.Fetchcities';
+
+
 
 import QueryPastLeads from '@salesforce/apex/voiceFormLWCcontroller.QueryPastLeads';
 import LightningAlert from 'lightning/alert';
@@ -98,10 +103,13 @@ export default class voiceForm extends LightningElement {
     @track ownerEmail;
     @track ismBTNdisAble = true;
     @track courssweList = [];
+    @track priorityList = [];
+    @track StatusList = [];
     @track CourceLead;
     @track courseforApp;
     @api recordId;
     @track newBTNdisAble = false;
+    @track commentsValue ;
    // @track ISM_Name = ISM_Name__c;
 //     @track Profession = Profession__c;
 //     //@track statusLead = Status;
@@ -157,6 +165,7 @@ export default class voiceForm extends LightningElement {
     @track objectList;
     @track columns;
     @track isShowModal = false;
+    @track showtaskModal = false;
     @track namValue;
     @track lNameValue;
     @track emailValue;
@@ -180,7 +189,9 @@ export default class voiceForm extends LightningElement {
     @track LeadrecordsFound = false;
 
     @track showapplicationMOdal = false;
+
     @track appbtndisAble = true;
+ 
     @track Leadvalue;
 
     connectedCallback() {
@@ -304,8 +315,9 @@ export default class voiceForm extends LightningElement {
                 debugger;
                 this.showFromOrEmpty = true;
                 this.data = data;
+                console.log('LeadId=',this.data.Id);
                 if (this.data.length > 0) {
-                    this.newBTNdisAble = true;
+                    //this.newBTNdisAble = true;
                     this.recordId = this.data[0].Id;
                     this.ownerEmail = data[0].Owner_Email__c;
                     this.handleClick();
@@ -319,7 +331,7 @@ export default class voiceForm extends LightningElement {
                 if (this.data.length == 0) {
                     this.handleClick();
                     this.ifdataNotFound = true;
-                    this.newBTNdisAble = false;
+                   // this.newBTNdisAble = false;
                     this.ismBTNdisAble = true;
                     this.data = false;
                     this.appbtndisAble = true;
@@ -364,6 +376,21 @@ export default class voiceForm extends LightningElement {
         this.isShowModal = true;
         //this.getPuckistOflead();
     }
+
+    newTaskBTN()
+    {
+        debugger;
+        this.showtaskModal = true;
+    }
+
+    
+
+
+    hideshowTaskModal()
+    {
+        this.showtaskModal = false;  
+    }
+
     //close modal from innner button
     handleCancel() {
         debugger;
@@ -528,6 +555,11 @@ export default class voiceForm extends LightningElement {
         }
 
     }
+    HandleComments(event)
+    {
+       let comment = event.target.value;
+       this.commentsValue = comment;
+    }
     PhoneChange(Event) {
         debugger;
         let phone = Event.target.value;
@@ -559,6 +591,31 @@ export default class voiceForm extends LightningElement {
         let selectedCource = event.detail.value;
         this.CourceLead = selectedCource;
     }
+
+    @track statusValue;
+    statusHandler(event)
+    {
+        debugger;
+        let selectedStatus = event.detail.value;
+        this.statusValue = selectedStatus;
+    }
+   
+    @track priorityValue;
+    priorityHandler(event)
+    {
+        debugger;
+        let selectedPriority = event.detail.value;
+        this.priorityValue = selectedPriority;
+    }
+   
+    @track statusValue;
+    statusHandler(event)
+    {
+        debugger;
+       let selectedStatus = event.detail.value;
+       this.statusValue =  selectedStatus;
+    }
+
 
     notifyismBTN() {
         debugger;
@@ -627,6 +684,48 @@ export default class voiceForm extends LightningElement {
         }
     }
 
+    // getPickiststatusOfTask
+    @wire(getPickiststatusOfTask)
+    wireRs({ error, data }) {
+        debugger;
+        if (data) {
+
+            let options = []
+            for (const [key, value] of Object.entries(data)) {
+                options.push({
+                    label: key,
+                    value: value
+                })
+                console.log(`${key}: ${value}`);
+            }
+            this.StatusList = options;
+            console.log(data);
+            console.log('statusList--',this.StatusList);
+        }
+        if (error) {
+
+        }
+    }
+    @wire(getPickistpriorityOfTask)
+    wireRs({ error, data }) {
+        if (data) {
+            let options = []
+            for (const [key, value] of Object.entries(data)) {
+                options.push({
+                    label: key,
+                    value: value
+                })
+                console.log(`${key}: ${value}`);
+            }
+            this.priorityList = options;
+            console.log(data)
+        }
+        if (error) {
+
+        }
+    }
+
+
     // handlecourseList() {
     //     getPuckistOflead()
     //         .then(result => {
@@ -665,7 +764,7 @@ export default class voiceForm extends LightningElement {
         var returnvalue = this.handleIncorrectEmail(this.emailValue)
         console.log('returnVALUE=',returnvalue);
         if (returnvalue == true) {
-            createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, ownerId: this.ismeId, agmId: this.gruoMemberId, Course: this.CourceLead, agentid: this.agentrecid,city:this.cityValue,LdGenPath:this.Leadvalue,source:this.SourceValue,medium:this.MediumValue,country:this.CountryValue,state:this.StateValue})
+            createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, ownerId: this.ismeId, agmId: this.gruoMemberId, Course: this.CourceLead, agentid: this.agentrecid,city:this.cityValue,LdGenPath:this.Leadvalue,source:this.SourceValue,medium:this.MediumValue,country:this.CountryValue,state:this.StateValue,comments:this.commentsValue})
                 .then(data => {
                     this.handleConfirm('Lead Created Successfully');
                     this.HandleLeadCreatedisable=false; 
@@ -809,6 +908,7 @@ export default class voiceForm extends LightningElement {
         debugger;
         this.showapplicationMOdal = true;
     }
+    
 
     handleappCancel() {
         debugger;
