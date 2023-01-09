@@ -89,7 +89,14 @@
                     $scope.SelectedForm = s;
                  };
                 $scope.loginEmployee = function () {
-                    
+                    if( $scope.SelectedForm == undefined ||  $scope.SelectedForm == ""){
+                        Swal.fire({
+                                icon: 'warning',
+                                title: 'Opps....!',
+                                text: 'Please Select Any Form !'
+                            })
+                            return;
+                    }
                     $scope.userPassword;
                     $scope.showSpinner = true;
                     $scope.loginPage = false;

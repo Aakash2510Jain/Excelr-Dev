@@ -1,5 +1,5 @@
 <template>
-    <div style="background-color: rgb(223, 223, 223);height: 100%;padding-top: 5%;">
+    <div style="background-color: rgb(223, 223, 223);height: 100vh;padding-top: 5%;">
         <div style="margin-left: 25%;margin-right: 25%;background-color: white; padding: 2%; border-radius: 5px;">
             <article class="slds-card">
                 <div class="slds-card__header slds-grid">
@@ -27,9 +27,10 @@
                                 <h2>Choose any mentioned demo.</h2>
                             </div>
                         </div>
+                        <div class="vl"></div>
                         <div class="slds-col slds-size_1-of-3 eventcontainer" style="padding-left: 20px; padding-right: 40px; padding-top: 20px; border-radius: 5px;padding-bottom: 20px;  overflow-x: hidden; height: 300px;">
                             <template if:true={result}>
-                                <div class="grid-container">
+                                <div>
                                     <template for:each={result.events} for:item="event">
                                         <div style="cursor: pointer;" class="evcard grid-item" key={event.Id} data-id={event.Id} onclick={eventClicked}>
                                             {event.Name}

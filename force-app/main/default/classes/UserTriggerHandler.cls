@@ -3,29 +3,32 @@ public class UserTriggerHandler {
    
     Public Static Void UserAfterUpdate(Map<Id,User> NewMap,Map<Id,User>OldMap ){
         
-         Map<Id,User> UpdatedUser=new Map<Id,User>();
+        try{
+         	Map<Id,User> UpdatedUser=new Map<Id,User>();
         
-        For(User Users:NewMap.Values()){
-            if((NewMap.get(Users.id).Working_Days__c!=OldMap.get(Users.id).Working_Days__c) || 
-                (NewMap.get(Users.id).Working_Start_Time__c!=OldMap.get(Users.id).Working_Start_Time__c)||
-                  (NewMap.get(Users.id).Working_End_Time__c!=OldMap.get(Users.id).Working_End_Time__c)||
-                    (NewMap.get(Users.id).Start_Date__c!=OldMap.get(Users.id).Start_Date__c) || 
-                      (NewMap.get(Users.id).End_Date__c!=OldMap.get(Users.id).End_Date__c)){
-                          
-                          UpdatedUser.put(Users.Id,Users);
-                      }
+            For(User Users:NewMap.Values()){
+                if((NewMap.get(Users.id).Working_Days__c!=OldMap.get(Users.id).Working_Days__c) || 
+                    (NewMap.get(Users.id).Working_Start_Time__c!=OldMap.get(Users.id).Working_Start_Time__c)||
+                      (NewMap.get(Users.id).Working_End_Time__c!=OldMap.get(Users.id).Working_End_Time__c)||
+                        (NewMap.get(Users.id).Start_Date__c!=OldMap.get(Users.id).Start_Date__c) || 
+                          (NewMap.get(Users.id).End_Date__c!=OldMap.get(Users.id).End_Date__c)){
+                              
+                              UpdatedUser.put(Users.Id,Users);
+                          }
+            }
+            
+            if(!UpdatedUser.isEmpty()){
+                DeleteAvailibility(UpdatedUser);
+                CreateAvailibility(UpdatedUser);
+            }   
+        }catch(Exception e){
+            System.debug('Exception----'+e.getMessage());
         }
-        
-        if(!UpdatedUser.isEmpty()){
-            DeleteAvailibility(UpdatedUser);
-            CreateAvailibility(UpdatedUser);
-        }
-        
-        
+         
     }
     
     Public Static Void DeleteAvailibility(Map<Id,User>UserMap){
-        
+        System.debug('UserMapDelete----'+UserMap);
         List<Availability__c> AvailableRecList=[Select Id,Name From Availability__c Where OwnerId IN:UserMap.keySet()];
         if(!AvailableRecList.isEmpty()){
             delete AvailableRecList;
@@ -34,7 +37,7 @@ public class UserTriggerHandler {
     }
     
     Public Static Void CreateAvailibility(Map<Id,User>UserMap){
-        
+        System.debug('UserMap----'+UserMap);
         List<Availability__c> Av=new List<Availability__c>();
         for(User U:UserMap.values()){
             
@@ -62,6 +65,7 @@ public class UserTriggerHandler {
                 }
             }
             
+            System.debug('Av----'+Av);
             insert Av;
     
         }

@@ -50,7 +50,7 @@ public class UtilityClassForTestClass {
                                       
                                       return leadRec;
                                   }
-    public static Opportunity insertOpp(string name,date dates,string stagename,ID accid){
+    public static Opportunity insertOpp(string name,date dates,string stagename,ID accid ){
         Opportunity opp = new Opportunity();
         opp.AccountId = accid;
         opp.Name = name;

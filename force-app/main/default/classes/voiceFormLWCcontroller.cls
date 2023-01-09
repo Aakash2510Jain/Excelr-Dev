@@ -5,7 +5,7 @@ public without sharing class voiceFormLWCcontroller{
         String Phonestring = '%'+ EmailOrPhone;
 
         if (EmailOrPhone != null) {
-            leadList = [Select id, firstName, LastName, Owner_Email__c, Email, Phone
+            leadList = [Select id, firstName, LastName, Owner_Email__c,OwnerId,Owner.LastName,Owner.FirstName,Owner.Name, Email, Phone
                         from Lead
                         where Email = :EmailOrPhone OR Phone LIKE:Phonestring Order By CreatedDate Asc LIMIT 1];
         }
@@ -74,27 +74,30 @@ public without sharing class voiceFormLWCcontroller{
     }
     
     @AuraEnabled
-    public static Task createTask(String subject,string assignto,string priority,string status,string duedate,string comments,string followupDate){
-            Task taskRec = new Task();
+    public static String createTaskForVoice (String subject,string assignto,string priority,string status,Date duedate,string comments,DateTime followupDate, string leadId){
+        system.debug('assignto-->'+assignto);
+        system.debug('leadId-->'+leadId);
+        system.debug('comments'+comments);
+        Task taskRec = new Task();
         try {
+           // Lead lRec = [select Id, OwnerId from Lead where id =''];
            // Task taskRec = new Task();
             taskRec.Subject = subject;
-            taskRec.OwnerId = assignto;
-            taskRec.WhoId = '';      // lead---Name
+            taskRec.OwnerId = assignto; 
+            taskRec.WhoId = leadId;      // lead---Name
             taskRec.Priority = priority;
             taskRec.Status = status;
-            taskRec.ActivityDate = Date.parse(duedate);
+            taskRec.ActivityDate = duedate;
             taskRec.Description = comments;
-            taskRec.Followup_Date_Time__c = Date.parse(followupDate);
+            taskRec.Followup_Date_Time__c = followupDate;
             insert taskRec;
+            return 'Success';
             
         } catch (Exception e) {
             system.debug('Error Message'+e.getMessage());
             System.debug('Error Line Number'+e.getLineNumber());
+            return 'error';
         }
-             return taskRec;
-
-
     }
 
     @AuraEnabled

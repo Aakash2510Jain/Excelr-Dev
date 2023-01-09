@@ -6,6 +6,11 @@ import getApplication from '@salesforce/apex/walkInLeadLWCcontroller.getApplicat
 import EmailIsm from '@salesforce/apex/walkInLeadLWCcontroller.EmailIsm';
 import getMember from '@salesforce/apex/walkInLeadLWCcontroller.getMember';
 import getPuckistOflead from '@salesforce/apex/walkInLeadLWCcontroller.getPuckistOflead';
+
+import getPickiststatusOfTask from '@salesforce/apex/walkInLeadLWCcontroller.getPickiststatusOfTask';
+import getPickistpriorityOfTask from '@salesforce/apex/walkInLeadLWCcontroller.getPickistpriorityOfTask';
+import createTask from '@salesforce/apex/walkInLeadLWCcontroller.createTaskForVoice';
+
 import createLead from '@salesforce/apex/walkInLeadLWCcontroller.createLead';
 import createApplication from '@salesforce/apex/walkInLeadLWCcontroller.CreateApplication';
 // import EMAIL_FIELD from '@salesforce/schema/Lead.Email';
@@ -54,6 +59,8 @@ export default class WaklInLead extends LightningElement {
     @track ownerEmail;
     @track ismBTNdisAble = true;
     @track courssweList = [];
+    @track priorityList = [];
+    @track StatusList = [];
     @track CourceLead;
     @track courseforApp;
     @track recordId;
@@ -76,6 +83,7 @@ export default class WaklInLead extends LightningElement {
     @track objectList;
     @track columns;
     @track isShowModal = false;
+    @track showtaskModal = false;
     @track namValue;
     @track lNameValue;
     @track emailValue;
@@ -121,6 +129,9 @@ export default class WaklInLead extends LightningElement {
         this.inPutValue = EmailOrPhone;
     }
 
+    @track CaptureOwnerId;
+    @track captureownerName;
+    @track taskBTNdisAble = true;
     serachLeadBTN() {
         this.handleClick();
         debugger;
@@ -132,12 +143,16 @@ export default class WaklInLead extends LightningElement {
                 this.data = data;
                 if (this.data.length > 0) {
                 //  this.newBTNdisAble = true;
+                    this.taskBTNdisAble = false;
                     this.recordId = this.data[0].Id;
                     this.ownerEmail = data[0].Owner_Email__c;
+                    this.CaptureOwnerId = data[0].OwnerId;
+                    this.captureownerName = data[0].Owner.Name;
                     this.handleClick();
                     console.log(data);
                     console.log(this.data);
                     console.log(this.data[0].Id)
+                    console.log('Capture Owner Name',this.captureownerName);
                     this.ismBTNdisAble = false;
                     this.ifdataNotFound = false;
                     this.appbtndisAble = false;
@@ -146,6 +161,7 @@ export default class WaklInLead extends LightningElement {
                     this.ifdataNotFound = true;
                 //  this.newBTNdisAble = false;
                     this.handleClick();
+                    this.taskBTNdisAble = true;
                     this.ismBTNdisAble = true;
                     this.data = false;
                     this.appbtndisAble = true;
@@ -189,18 +205,53 @@ export default class WaklInLead extends LightningElement {
         return refreshApex(this.wiredbearResult);
      }
 
+     createTaskRec()
+     {
+          debugger;
+         createTask({ subject: this.subjectvalue, assignto:this.CaptureOwnerId,priority:this.priorityValue,status:this.statusValue,duedate:this.DuedateValue,comments:this.comValue,followupDate:this.followupValue,leadId:this.recordId })
+ 
+             .then((result) => {
+                 console.log('result',result);
+                 if(result=='Success'){
+                     this.handleConfirm('Task Created Successfully');
+                     this.showtaskModal=false;
+                 }
+                
+             })
+             .catch((error) => {
+                 this.error = error;
+                 console.log('error',error);
+             });
+     }
+
     //open modal
     newhLeadBTN() {
         debugger;
         this.isShowModal = true;
         //this.getPuckistOflead();
     }
+
+    @track showtaskModal=false;
+    newTaskBTN()
+    {
+        debugger;
+        this.showtaskModal = true;
+    }
+
+    hideshowTaskModal()
+    {
+        this.showtaskModal = false;  
+    }
+
     //close modal from innner button
+   
     handleCancel() {
         debugger;
         this.isShowModal = false;
+        this.showtaskModal=false;
 
     }
+    
     FnameChange(Event) {
         debugger;
         let firstname = Event.target.value;
@@ -269,6 +320,64 @@ export default class WaklInLead extends LightningElement {
         this.CourceLead = selectedCource;
     }
 
+    @track subjectvalue
+    subjectHandler(event)
+    {
+       debugger;
+       let selectedSubject = event.target.value;
+       this.subjectvalue = selectedSubject;
+    }
+
+    @track statusValue;
+    statusHandler(event)
+    {
+        debugger;
+        let selectedStatus = event.detail.value;
+        this.statusValue = selectedStatus;
+    }
+
+    @track DuedateValue;
+    duedateHandler(event)
+    {
+        debugger;
+        let selectedDuedate = event.detail.value;
+        this.DuedateValue = selectedDuedate;
+
+    }
+
+    @track comValue;
+    commentHandler(event)
+    {
+        debugger;
+        let selectedComment = event.target.value;
+        this.comValue = selectedComment;
+    }
+    @track followupValue;
+    followupHandler(event)
+    {
+        debugger;
+        let selectedfollowup = event.target.value;
+        this.followupValue = selectedfollowup;
+    }
+
+   
+    @track priorityValue;
+    priorityHandler(event)
+    {
+        debugger;
+        let selectedPriority = event.detail.value;
+        this.priorityValue = selectedPriority;
+    }
+   
+    @track statusValue;
+    statusHandler(event)
+    {
+        debugger;
+       let selectedStatus = event.detail.value;
+       this.statusValue =  selectedStatus;
+    }
+
+
     notifyismBTN() {
         debugger;
         EmailIsm({ LiD: this.recordId, ownerMail: this.ownerEmail })
@@ -335,6 +444,48 @@ export default class WaklInLead extends LightningElement {
 
         }
     }
+
+      // getPickiststatusOfTask
+      @wire(getPickiststatusOfTask)
+      wiredRs({ error, data }) {
+          debugger;
+          if (data) {
+              debugger;
+              let options = [];
+              for (const [key, value] of Object.entries(data)) {
+                  options.push({
+                      label: key,
+                      value: value
+                  })
+                  console.log(`${key}: ${value}`);
+              }
+              this.StatusList = options;
+              console.log(data);
+              console.log('statusList--',this.StatusList);
+          }
+          if (error) {
+               console.log('error=',error);
+          }
+      }
+       //getPickistpriorityOfTask
+      @wire(getPickistpriorityOfTask)
+      wireRs({ error, data }) {
+          if (data) {
+              let options = []
+              for (const [key, value] of Object.entries(data)) {
+                  options.push({
+                      label: key,
+                      value: value
+                  })
+                  console.log(`${key}: ${value}`);
+              }
+              this.priorityList = options;
+              console.log(data)
+          }
+          if (error) {
+  
+          }
+      }
 
     handlecourseList() {
         getPuckistOflead()

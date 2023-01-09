@@ -4,6 +4,7 @@ trigger TriggerOnUser on User (After insert,After Update) {
         UserTriggerHandler.CreateAvailibility(Trigger.newMap);
     }
     if(Trigger.isUpdate && Trigger.isAfter){
+        System.debug('After Update called');
         UserTriggerHandler.UserAfterUpdate(Trigger.newMap,Trigger.OldMap);
     }
 

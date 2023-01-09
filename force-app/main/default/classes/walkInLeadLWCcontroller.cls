@@ -6,7 +6,7 @@ public without sharing class walkInLeadLWCcontroller{
 
         System.debug('EmailOrPhone ====> ' + EmailOrPhone);
         if (EmailOrPhone != null) {
-            leadList = [Select id, firstName, LastName, Owner_Email__c, Email, Phone
+            leadList = [Select id, firstName, LastName, Owner_Email__c,OwnerId,Owner.LastName,Owner.FirstName,Owner.Name, Email, Phone
                         from Lead
                         where Email = :EmailOrPhone OR Phone LIKE:Phonestring  Order By CreatedDate Asc LIMIT 1];
         }
@@ -69,6 +69,33 @@ public without sharing class walkInLeadLWCcontroller{
     }
 
     @AuraEnabled
+    public static String createTaskForVoice (String subject,string assignto,string priority,string status,Date duedate,string comments,DateTime followupDate, string leadId){
+        system.debug('assignto-->'+assignto);
+        system.debug('leadId-->'+leadId);
+        system.debug('');
+        Task taskRec = new Task();
+        try {
+           // Lead lRec = [select Id, OwnerId from Lead where id =''];
+           // Task taskRec = new Task();
+            taskRec.Subject = subject;
+            taskRec.OwnerId = assignto; 
+            taskRec.WhoId = leadId;      // lead---Name
+            taskRec.Priority = priority;
+            taskRec.Status = status;
+            taskRec.ActivityDate = duedate;
+            taskRec.Description = comments;
+            taskRec.Followup_Date_Time__c = followupDate;
+            insert taskRec;
+            return 'Success';
+            
+        } catch (Exception e) {
+            system.debug('Error Message'+e.getMessage());
+            System.debug('Error Line Number'+e.getLineNumber());
+            return 'error';
+        }
+    }
+
+    @AuraEnabled
     public static Application__c CreateApplication(string Course, string LeadId ){
         System.debug('Course =====> ' + Course);
         //System.debug('Course =====> ' + userId);
@@ -117,6 +144,42 @@ public without sharing class walkInLeadLWCcontroller{
     Public Static map<String, String> getPuckistOflead(){
         String objectName = 'Lead';
         String fieldName = 'Course__c';
+        map<String, String> getLablePick = new map<String, String>();
+        Schema.SObjectType s = Schema.getGlobalDescribe().get(objectName);
+        Schema.DescribeSObjectResult r = s.getDescribe();
+        Map<String, Schema.SObjectField> fields = r.fields.getMap();
+        Schema.DescribeFieldResult fieldResult = fields.get(fieldName).getDescribe();
+        List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
+        for ( Schema.PicklistEntry pickListVal : ple ){
+            System.debug(pickListVal.getLabel() + ' ' + pickListVal.getValue());
+            getLablePick.put(pickListVal.getLabel(), pickListVal.getValue());
+        }
+        system.debug('getLablePick::' + getLablePick);
+        return getLablePick;
+    }
+
+    @auraenabled(cacheable = true)
+    Public Static map<String, String> getPickiststatusOfTask(){
+        String objectName = 'Task';
+        String fieldName = 'Status';
+        map<String, String> getLablePick = new map<String, String>();
+        Schema.SObjectType s = Schema.getGlobalDescribe().get(objectName);
+        Schema.DescribeSObjectResult r = s.getDescribe();
+        Map<String, Schema.SObjectField> fields = r.fields.getMap();
+        Schema.DescribeFieldResult fieldResult = fields.get(fieldName).getDescribe();
+        List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
+        for ( Schema.PicklistEntry pickListVal : ple ){
+            System.debug(pickListVal.getLabel() + ' ' + pickListVal.getValue());
+            getLablePick.put(pickListVal.getLabel(), pickListVal.getValue());
+        }
+        system.debug('getLablePick::' + getLablePick);
+        return getLablePick;
+    }
+
+    @auraenabled(cacheable = true)
+    Public Static map<String, String> getPickistpriorityOfTask(){
+        String objectName = 'Task';
+        String fieldName = 'Priority';
         map<String, String> getLablePick = new map<String, String>();
         Schema.SObjectType s = Schema.getGlobalDescribe().get(objectName);
         Schema.DescribeSObjectResult r = s.getDescribe();

@@ -6,6 +6,12 @@ import getApplication from '@salesforce/apex/ChatFormLWCcontroller.getApplicatio
 import EmailIsm from '@salesforce/apex/ChatFormLWCcontroller.EmailIsm';
 import getMember from '@salesforce/apex/ChatFormLWCcontroller.getMember';
 import getPuckistOflead from '@salesforce/apex/ChatFormLWCcontroller.getPuckistOflead';
+
+import getPickiststatusOfTask from '@salesforce/apex/ChatFormLWCcontroller.getPickiststatusOfTask';
+import getPickistpriorityOfTask from '@salesforce/apex/ChatFormLWCcontroller.getPickistpriorityOfTask';
+import createTask from '@salesforce/apex/ChatFormLWCcontroller.createTaskForVoice';
+
+
 import createLead from '@salesforce/apex/ChatFormLWCcontroller.createLead';
 import createApplication from '@salesforce/apex/ChatFormLWCcontroller.CreateApplication';
 // import FirstName from '@salesforce/schema/Lead.FirstName';
@@ -98,6 +104,8 @@ export default class chatForm extends LightningElement {
     @track ownerEmail;
     @track ismBTNdisAble = true;
     @track courssweList = [];
+    @track priorityList = [];
+    @track StatusList = [];
     @track CourceLead;
     @track courseforApp;
     @api recordId;
@@ -157,6 +165,7 @@ export default class chatForm extends LightningElement {
     @track objectList;
     @track columns;
     @track isShowModal = false;
+    @track showtaskModal = false;
     @track namValue;
     @track lNameValue;
     @track emailValue;
@@ -202,7 +211,9 @@ export default class chatForm extends LightningElement {
         this.inPutValue = EmailOrPhone;
     }
 
-    
+    @track CaptureOwnerId;
+    @track captureownerName;
+    @track taskBTNdisAble = true;
     serachLeadBTN() {
         this.handleClick();
         debugger;
@@ -214,8 +225,11 @@ export default class chatForm extends LightningElement {
                 this.data = data;
                 if (this.data.length > 0) {
                 //  this.newBTNdisAble = true;
+                    this.taskBTNdisAble = false;
                     this.recordId = this.data[0].Id;
                     this.ownerEmail = data[0].Owner_Email__c;
+                    this.CaptureOwnerId = data[0].OwnerId;
+                    this.captureownerName = data[0].Owner.Name;
                     this.handleClick();
                     console.log(data);
                     console.log(this.data);
@@ -227,6 +241,7 @@ export default class chatForm extends LightningElement {
                 if (this.data.length == 0) {
                     this.handleClick();
                     this.ifdataNotFound = true;
+                    this.taskBTNdisAble = true;
                 //  this.newBTNdisAble = false;
                     this.ismBTNdisAble = true;
                     this.data = false;
@@ -445,6 +460,7 @@ export default class chatForm extends LightningElement {
                 this.CountryValue=country.Country__c;
                 console.log('StateValue=',this.StateValue);
                 
+                
             }
             else{
                 this.StateValue='';
@@ -485,6 +501,25 @@ export default class chatForm extends LightningElement {
         }
           
        }
+       createTaskRec()
+       {
+            debugger;
+            console.log('captureownerId',this.CaptureOwnerId);
+           createTask({ subject: this.subjectvalue, assignto:this.CaptureOwnerId,priority:this.priorityValue,status:this.statusValue,duedate:this.DuedateValue,comments:this.comValue,followupDate:this.followupValue,leadId:this.recordId })
+   
+               .then((result) => {
+                   console.log('result',result);
+                   if(result=='Success'){
+                       this.handleConfirm('Task Created Successfully');
+                       this.showtaskModal=false;
+                   }
+                  
+               })
+               .catch((error) => {
+                   this.error = error;
+                   console.log('error',error);
+               });
+       }
 
     //open modal
     newhLeadBTN() {
@@ -492,10 +527,24 @@ export default class chatForm extends LightningElement {
         this.isShowModal = true;
         //this.getPuckistOflead();
     }
+
+    @track showtaskModal=false;
+    newTaskBTN()
+    {
+        debugger;
+        this.showtaskModal = true;
+    }
+
+    hideshowTaskModal()
+    {
+        this.showtaskModal = false;  
+    }
+
     //close modal from innner button
     handleCancel() {
         debugger;
         this.isShowModal = false;
+        this.showtaskModal=false;
 
     }
     FnameChange(Event) {
@@ -608,6 +657,64 @@ export default class chatForm extends LightningElement {
         this.PageUrlValue=Purl;
     }
 
+     
+    @track subjectvalue
+    subjectHandler(event)
+    {
+       debugger;
+       let selectedSubject = event.target.value;
+       this.subjectvalue = selectedSubject;
+    }
+
+    @track statusValue;
+    statusHandler(event)
+    {
+        debugger;
+        let selectedStatus = event.detail.value;
+        this.statusValue = selectedStatus;
+    }
+
+    @track DuedateValue;
+    duedateHandler(event)
+    {
+        debugger;
+        let selectedDuedate = event.detail.value;
+        this.DuedateValue = selectedDuedate;
+
+    }
+
+    @track comValue;
+    commentHandler(event)
+    {
+        debugger;
+        let selectedComment = event.target.value;
+        this.comValue = selectedComment;
+    }
+    @track followupValue;
+    followupHandler(event)
+    {
+        debugger;
+        let selectedfollowup = event.target.value;
+        this.followupValue = selectedfollowup;
+    }
+
+   
+    @track priorityValue;
+    priorityHandler(event)
+    {
+        debugger;
+        let selectedPriority = event.detail.value;
+        this.priorityValue = selectedPriority;
+    }
+   
+    @track statusValue;
+    statusHandler(event)
+    {
+        debugger;
+       let selectedStatus = event.detail.value;
+       this.statusValue =  selectedStatus;
+    }
+
     notifyismBTN() {
         this.handleClick();
         debugger;
@@ -676,6 +783,48 @@ export default class chatForm extends LightningElement {
 
         }
     }
+
+     // getPickiststatusOfTask
+     @wire(getPickiststatusOfTask)
+     wiredRs({ error, data }) {
+         debugger;
+         if (data) {
+             debugger;
+             let options = [];
+             for (const [key, value] of Object.entries(data)) {
+                 options.push({
+                     label: key,
+                     value: value
+                 })
+                 console.log(`${key}: ${value}`);
+             }
+             this.StatusList = options;
+             console.log(data);
+             console.log('statusList--',this.StatusList);
+         }
+         if (error) {
+              console.log('error=',error);
+         }
+     }
+      //getPickistpriorityOfTask
+     @wire(getPickistpriorityOfTask)
+     wireRs({ error, data }) {
+         if (data) {
+             let options = []
+             for (const [key, value] of Object.entries(data)) {
+                 options.push({
+                     label: key,
+                     value: value
+                 })
+                 console.log(`${key}: ${value}`);
+             }
+             this.priorityList = options;
+             console.log(data)
+         }
+         if (error) {
+ 
+         }
+     }
 
     handlecourseList() {
         getPuckistOflead()

@@ -23,11 +23,12 @@ public without sharing class GMeetAPIHandler {
         //=============== for dateTime ========================================
         //time starttime = createTime(bs.Start_Time__c);
         datetime StartDatetime = Datetime.newInstance(bs.Date__c,(bs.Start_Time__c));
-        
+        StartDatetime = StartDatetime.addMinutes(-330);
         System.debug('StartDatetime =======> ' + StartDatetime);
         System.debug('StartDatetime serialize =======> ' + JSON.serialize(StartDatetime));
 
         datetime EndDateTime = Datetime.newInstance(bs.Date__c,(bs.End_Time__c));
+        EndDateTime = EndDateTime.addMinutes(-330);
         System.debug('EndDateTime =======> ' + EndDateTime);
         System.debug('EndDateTime  serialized =======> ' + JSON.serialize(EndDateTime));
 

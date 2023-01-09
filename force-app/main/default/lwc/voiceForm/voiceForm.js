@@ -6,8 +6,11 @@ import getApplication from '@salesforce/apex/voiceFormLWCcontroller.getApplicati
 import EmailIsm from '@salesforce/apex/voiceFormLWCcontroller.EmailIsm';
 import getMember from '@salesforce/apex/voiceFormLWCcontroller.getMember';
 import getPuckistOflead from '@salesforce/apex/voiceFormLWCcontroller.getPuckistOflead';
+
 import getPickiststatusOfTask from '@salesforce/apex/voiceFormLWCcontroller.getPickiststatusOfTask';
 import getPickistpriorityOfTask from '@salesforce/apex/voiceFormLWCcontroller.getPickistpriorityOfTask';
+import createTask from '@salesforce/apex/voiceFormLWCcontroller.createTaskForVoice';
+
 import createLead from '@salesforce/apex/voiceFormLWCcontroller.createLead';
 import createApplication from '@salesforce/apex/voiceFormLWCcontroller.CreateApplication';
 // import FirstName from '@salesforce/schema/Lead.FirstName';
@@ -307,6 +310,9 @@ export default class voiceForm extends LightningElement {
       this.MediumValue=Medium;
     }
 
+    @track CaptureOwnerId;
+    @track captureownerName;
+    @track taskBTNdisAble = true;
     serachLeadBTN() {
         this.handleClick();
         debugger;
@@ -315,22 +321,28 @@ export default class voiceForm extends LightningElement {
                 debugger;
                 this.showFromOrEmpty = true;
                 this.data = data;
-                console.log('LeadId=',this.data.Id);
+                console.log('LeadId===',this.data.Id);
                 if (this.data.length > 0) {
                     //this.newBTNdisAble = true;
+                    this.taskBTNdisAble = false;
                     this.recordId = this.data[0].Id;
                     this.ownerEmail = data[0].Owner_Email__c;
+                    this.CaptureOwnerId = data[0].OwnerId;
+                    this.captureownerName = data[0].Owner.Name;
                     this.handleClick();
                     console.log(data);
                     console.log(this.data);
                     console.log(this.data[0].Id)
+                   console.log('Capture Owner Name',this.captureownerName);
                     this.ismBTNdisAble = false;
                     this.ifdataNotFound = false;
                     this.appbtndisAble = false;
+                    
                 }
                 if (this.data.length == 0) {
                     this.handleClick();
                     this.ifdataNotFound = true;
+                    this.taskBTNdisAble = true;
                    // this.newBTNdisAble = false;
                     this.ismBTNdisAble = true;
                     this.data = false;
@@ -369,6 +381,25 @@ export default class voiceForm extends LightningElement {
         }
 
     }
+    createTaskRec()
+    {
+         debugger;
+        createTask({ subject: this.subjectvalue, assignto:this.CaptureOwnerId,priority:this.priorityValue,status:this.statusValue,duedate:this.DuedateValue,comments:this.comValue,followupDate:this.followupValue,leadId:this.recordId })
+
+            .then((result) => {
+                console.log('result',result);
+                if(result=='Success'){
+                    this.handleConfirm('Task Created Successfully');
+                    this.showtaskModal=false;
+                }
+               
+            })
+            .catch((error) => {
+                this.error = error;
+                console.log('error',error);
+            });
+    }
+    
 
     //open modal
     newhLeadBTN() {
@@ -376,15 +407,13 @@ export default class voiceForm extends LightningElement {
         this.isShowModal = true;
         //this.getPuckistOflead();
     }
-
+    
+    @track showtaskModal=false;
     newTaskBTN()
     {
         debugger;
         this.showtaskModal = true;
     }
-
-    
-
 
     hideshowTaskModal()
     {
@@ -392,9 +421,11 @@ export default class voiceForm extends LightningElement {
     }
 
     //close modal from innner button
+   
     handleCancel() {
         debugger;
         this.isShowModal = false;
+        this.showtaskModal=false;
 
     }
     FnameChange(Event) {
@@ -591,6 +622,14 @@ export default class voiceForm extends LightningElement {
         let selectedCource = event.detail.value;
         this.CourceLead = selectedCource;
     }
+    
+    @track subjectvalue
+    subjectHandler(event)
+    {
+       debugger;
+       let selectedSubject = event.target.value;
+       this.subjectvalue = selectedSubject;
+    }
 
     @track statusValue;
     statusHandler(event)
@@ -599,6 +638,31 @@ export default class voiceForm extends LightningElement {
         let selectedStatus = event.detail.value;
         this.statusValue = selectedStatus;
     }
+
+    @track DuedateValue;
+    duedateHandler(event)
+    {
+        debugger;
+        let selectedDuedate = event.detail.value;
+        this.DuedateValue = selectedDuedate;
+
+    }
+
+    @track comValue;
+    commentHandler(event)
+    {
+        debugger;
+        let selectedComment = event.target.value;
+        this.comValue = selectedComment;
+    }
+    @track followupValue;
+    followupHandler(event)
+    {
+        debugger;
+        let selectedfollowup = event.target.value;
+        this.followupValue = selectedfollowup;
+    }
+
    
     @track priorityValue;
     priorityHandler(event)
@@ -664,9 +728,9 @@ export default class voiceForm extends LightningElement {
 
         }
     }
-
+    //wire method name changed
     @wire(getPuckistOflead)
-    wireRs({ error, data }) {
+    wireRss({ error, data }) {
         if (data) {
             let options = []
             for (const [key, value] of Object.entries(data)) {
@@ -686,11 +750,11 @@ export default class voiceForm extends LightningElement {
 
     // getPickiststatusOfTask
     @wire(getPickiststatusOfTask)
-    wireRs({ error, data }) {
+    wiredRs({ error, data }) {
         debugger;
         if (data) {
-
-            let options = []
+            debugger;
+            let options = [];
             for (const [key, value] of Object.entries(data)) {
                 options.push({
                     label: key,
@@ -703,9 +767,10 @@ export default class voiceForm extends LightningElement {
             console.log('statusList--',this.StatusList);
         }
         if (error) {
-
+             console.log('error=',error);
         }
     }
+     //getPickistpriorityOfTask
     @wire(getPickistpriorityOfTask)
     wireRs({ error, data }) {
         if (data) {
@@ -725,27 +790,27 @@ export default class voiceForm extends LightningElement {
         }
     }
 
-
-    // handlecourseList() {
-    //     getPuckistOflead()
-    //         .then(result => {
-    //             ///this.data = result;
-    //             let options = []
-    //             for (const [key, value] of Object.entries(result)) {
-    //                 options.push({
-    //                     label: key,
-    //                     value: value
-    //                 })
-    //                 console.log(`${key}: ${value}`);
-    //             }
-    //             this.courssweList = options;
-    //             console.log(courssweList)
-    //         })
-    //         .catch(error => {
-    //             this.error = error;
-    //             console.log('error=',error);
-    //         });
-    // }
+   /* 793 - 812 */
+     handlecourseList() {
+         getPuckistOflead()
+             .then(result => {
+                 ///this.data = result;
+                 let options = []
+                 for (const [key, value] of Object.entries(result)) {
+                     options.push({
+                         label: key,
+                         value: value
+                     })
+                     console.log(`${key}: ${value}`);
+                 }
+                this.courssweList = options;
+                console.log(courssweList)
+             })
+             .catch(error => {
+                this.error = error;
+                console.log('error=',error);
+            });
+     }
     HandleLeadCreatedisable=false;
     createNewLead() {
         debugger;

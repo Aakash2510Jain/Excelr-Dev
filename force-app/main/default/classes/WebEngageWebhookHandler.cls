@@ -77,7 +77,6 @@ global without sharing class WebEngageWebhookHandler{
             leadRec.Phone = phone;
             leadRec.Email = email;
             leadRec.Course__c = course != null?course:'NA';
-            leadRec.City__c = 'NA';
             
             system.debug('activity ===> ' + activityObject.get('city'));
             

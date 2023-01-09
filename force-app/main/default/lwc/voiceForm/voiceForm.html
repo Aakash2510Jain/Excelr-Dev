@@ -628,35 +628,36 @@
             <div class="slds-backdrop slds-backdrop_open"></div>
             <!--div class="slds-backdrop slds-backdrop_open"></div -->
         </template>
+       
         <template if:true={showtaskModal}>
             <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
                 <div class="slds-modal__container">
                     <div class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                        title="Close" onclick={handleCancel}>
+                        <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                            size="small"></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
                         <h1>Create New Task</h1>
                       </div>
                       <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
-                        <lightning-input type="text" name="subject" label="Subject" onchange={subChange}></lightning-input>
-                      <!--  <lightning-combobox name="Subject" label="Subject" value={subjectvalue}
-                                    placeholder="Select Subject" options={subjectList} onchange={subjectHandler} required="true"></lightning-combobox>
-                          <lightning-record-edit-form object-api-name="Task" id="createTask">
-                                        <lightning-input-field field-name="OwnerId" variant="label-hidden" onchange={handleAccountSelection}>                                
-                                        </lightning-input-field>
-                                </lightning-record-edit-form>  -->
+                        <lightning-input type="text" name="subject" label="Subject" value={subjectvalue} onchange={subjectHandler}></lightning-input>
                         <lightning-combobox name="Priority" label="Priority" value={priorityValue}
                           placeholder="Select Priority" options={priorityList} onchange={priorityHandler} required="true"></lightning-combobox> 
 
                           <lightning-combobox name="Status" label="Status" value={statusValue}
                           placeholder="Select Status" options={StatusList} onchange={statusHandler} required="true"></lightning-combobox>   
                         
-                          <lightning-input type="date" name="Duedate" label="Due date" ></lightning-input>    
-                          <lightning-textarea  label="Comments" name="Comments" value={cv} onchange={Hc}>
+                          <lightning-input type="date" name="Duedate" label="Due date" value={DuedateValue} onchange={duedateHandler} ></lightning-input>    
+                          <lightning-textarea  label="Comments" name="Comments" value={comValue} onchange={commentHandler}>
                           </lightning-textarea>
-                          <lightning-input type="datetime" name="input2" label="Followup Date/time " value={v}></lightning-input>
+                          <lightning-input type="datetime" name="input2" label="Followup Date/time " value={followupValue} onchange={followupHandler}></lightning-input>
 
                       </div>
                       <div class="slds-modal__footer">
                         <button class="slds-button slds-button_neutral" aria-label="Cancel and close" onclick={hideshowTaskModal}>Cancel</button>
-                        <button class="slds-button slds-button_brand">Save</button>
+                        <button class="slds-button slds-button_brand" onclick={createTaskRec}>Save</button>
                       </div>
 
                     </div>

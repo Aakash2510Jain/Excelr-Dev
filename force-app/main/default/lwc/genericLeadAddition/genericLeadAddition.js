@@ -6,6 +6,11 @@ import getApplication from '@salesforce/apex/GenericLeadLWCcontroller.getApplica
 import EmailIsm from '@salesforce/apex/GenericLeadLWCcontroller.EmailIsm';
 import getMember from '@salesforce/apex/GenericLeadLWCcontroller.getMember';
 import getPuckistOflead from '@salesforce/apex/GenericLeadLWCcontroller.getPuckistOflead';
+
+import getPickiststatusOfTask from '@salesforce/apex/GenericLeadLWCcontroller.getPickiststatusOfTask';
+import getPickistpriorityOfTask from '@salesforce/apex/GenericLeadLWCcontroller.getPickistpriorityOfTask';
+import createTask from '@salesforce/apex/GenericLeadLWCcontroller.createTaskForVoice';
+
 import createLead from '@salesforce/apex/GenericLeadLWCcontroller.createLead';
 import createApplication from '@salesforce/apex/GenericLeadLWCcontroller.CreateApplication';
 // import FirstName from '@salesforce/schema/Lead.FirstName';
@@ -98,6 +103,8 @@ export default class WaklInLead extends LightningElement {
     @track ownerEmail;
     @track ismBTNdisAble = true;
     @track courssweList = [];
+    @track priorityList = [];
+    @track StatusList = [];
     @track CourceLead;
     @track courseforApp;
     @api recordId;
@@ -157,6 +164,7 @@ export default class WaklInLead extends LightningElement {
     @track objectList;
     @track columns;
     @track isShowModal = false;
+    @track showtaskModal = false;
     @track namValue;
     @track lNameValue;
     @track emailValue;
@@ -171,7 +179,7 @@ export default class WaklInLead extends LightningElement {
     @track DepartmentList = [];
     @track mapData = [];
     @track showFromOrEmpty = false;
-
+    @track commentsValue ;
     @track dataForApp;
     @track Leaddata = [];
     @track showPastLeads = false;
@@ -181,7 +189,6 @@ export default class WaklInLead extends LightningElement {
 
     @track showapplicationMOdal = false;
     @track appbtndisAble = true;
-    @track commentsValue;
 
     connectedCallback() {
         //defined a varibale
@@ -202,7 +209,9 @@ export default class WaklInLead extends LightningElement {
         this.inPutValue = EmailOrPhone;
     }
 
-    
+    @track taskBTNdisAble = true;
+    @track captureownerName;
+    @track CaptureOwnerId;
     serachLeadBTN() {
         this.handleClick();
         debugger;
@@ -213,10 +222,14 @@ export default class WaklInLead extends LightningElement {
                 this.showFromOrEmpty = true;
                 this.data = data;
                 if (this.data.length > 0) {
-                //   this.newBTNdisAble = true;
+                   // this.newBTNdisAble = true;
+                    this.taskBTNdisAble = false;
+                    this.handleClick();
                     this.recordId = this.data[0].Id;
                     this.ownerEmail = data[0].Owner_Email__c;
-                    this.handleClick();
+                    this.CaptureOwnerId=data[0].OwnerId;
+                    this.captureownerName = data[0].Owner.Name;
+                    //this.handleClick();
                     console.log(data);
                     console.log(this.data);
                     console.log(this.data[0].Id)
@@ -227,7 +240,8 @@ export default class WaklInLead extends LightningElement {
                 if (this.data.length == 0) {
                     this.handleClick();
                     this.ifdataNotFound = true;
-                //   this.newBTNdisAble = false;
+                    this.taskBTNdisAble = true;
+                  //  this.newBTNdisAble = false;
                     this.ismBTNdisAble = true;
                     this.data = false;
                     this.appbtndisAble = true;
@@ -483,6 +497,24 @@ export default class WaklInLead extends LightningElement {
         }
           
        }
+       createTaskRec()
+       {
+            debugger;
+           createTask({ subject: this.subjectvalue, assignto:this.CaptureOwnerId,priority:this.priorityValue,status:this.statusValue,duedate:this.DuedateValue,taskcomments:this.comValue,followupDate:this.followupValue,leadId:this.recordId })
+   
+               .then((result) => {
+                   console.log('result',result);
+                   if(result=='Success'){
+                       this.handleConfirm('Task Created Successfully');
+                       this.showtaskModal=false;
+                   }
+                  
+               })
+               .catch((error) => {
+                   this.error = error;
+                   console.log('error',error);
+               });
+       }
 
     //open modal
     newhLeadBTN() {
@@ -490,8 +522,30 @@ export default class WaklInLead extends LightningElement {
         this.isShowModal = true;
         //this.getPuckistOflead();
     }
+    // new task button
+    @track showtaskModal=false;
+    newTaskBTN()
+    {
+        debugger;
+        this.showtaskModal = true;
+    }
+
+    hideshowTaskModal()
+    {
+        this.showtaskModal = false;  
+    }
+
     //close modal from innner button
+   
     handleCancel() {
+        debugger;
+        this.isShowModal = false;
+        this.showtaskModal=false;
+
+    }
+
+    //close modal from innner button
+    handleCancels() {
         debugger;
         this.isShowModal = false;
 
@@ -527,6 +581,11 @@ export default class WaklInLead extends LightningElement {
         }
 
     }
+    HandleComments(event)
+    {
+       let comment = event.target.value;
+       this.commentsValue = comment;
+    }
     PhoneChange(Event) {
         debugger;
         let phone = Event.target.value;
@@ -558,6 +617,66 @@ export default class WaklInLead extends LightningElement {
         let selectedCource = event.detail.value;
         this.CourceLead = selectedCource;
     }
+    
+    @track subjectvalue
+    subjectHandler(event)
+    {
+       debugger;
+       let selectedSubject = event.target.value;
+       this.subjectvalue = selectedSubject;
+    }
+
+    @track statusValue;
+    statusHandler(event)
+    {
+        debugger;
+        let selectedStatus = event.detail.value;
+        this.statusValue = selectedStatus;
+    }
+
+    @track DuedateValue;
+    duedateHandler(event)
+    {
+        debugger;
+        let selectedDuedate = event.detail.value;
+        this.DuedateValue = selectedDuedate;
+
+    }
+
+    @track comValue;
+    commentHandler(event)
+    {
+        debugger;
+        let selectedComment = event.target.value;
+        this.comValue = selectedComment;
+    }
+    @track followupValue;
+    followupHandler(event)
+    {
+        debugger;
+        let selectedfollowup = event.target.value;
+        this.followupValue = selectedfollowup;
+    }
+
+   
+    @track priorityValue;
+    priorityHandler(event)
+    {
+        debugger;
+        let selectedPriority = event.detail.value;
+        this.priorityValue = selectedPriority;
+    }
+   
+    @track statusValue;
+    statusHandler(event)
+    {
+        debugger;
+       let selectedStatus = event.detail.value;
+       this.statusValue =  selectedStatus;
+    }
+
+
+
     @track cityValue;
     HandleCity(event){
         debugger;
@@ -594,11 +713,6 @@ export default class WaklInLead extends LightningElement {
         let Trans=event.target.value;
         this.TranscriptValue=Trans;
     }
-    HandleComments(event)
-    {
-        let comment = event.target.value;
-        this.commentsValue = comment;
-    }
     // @track PageUrlValue;
     // HandlePageURL(event){
     //     debugger;
@@ -621,6 +735,9 @@ export default class WaklInLead extends LightningElement {
                 this.handleAlert('Email not sent');
             })
     }
+
+    //For Creating Task
+   
 
     @wire(getMember)
     wireRes(data, error) {
@@ -674,6 +791,48 @@ export default class WaklInLead extends LightningElement {
 
         }
     }
+
+     // getPickiststatusOfTask
+     @wire(getPickiststatusOfTask)
+     wiredRs({ error, data }) {
+         debugger;
+         if (data) {
+             debugger;
+             let options = [];
+             for (const [key, value] of Object.entries(data)) {
+                 options.push({
+                     label: key,
+                     value: value
+                 })
+                 console.log(`${key}: ${value}`);
+             }
+             this.StatusList = options;
+             console.log(data);
+             console.log('statusList--',this.StatusList);
+         }
+         if (error) {
+              console.log('error=',error);
+         }
+     }
+      //getPickistpriorityOfTask
+     @wire(getPickistpriorityOfTask)
+     wireRs({ error, data }) {
+         if (data) {
+             let options = []
+             for (const [key, value] of Object.entries(data)) {
+                 options.push({
+                     label: key,
+                     value: value
+                 })
+                 console.log(`${key}: ${value}`);
+             }
+             this.priorityList = options;
+             console.log(data)
+         }
+         if (error) {
+ 
+         }
+     }
 
     handlecourseList() {
         getPuckistOflead()
@@ -866,6 +1025,7 @@ export default class WaklInLead extends LightningElement {
     handleappCancel() {
         debugger;
         this.showapplicationMOdal = false;
+        
     }
 
     handleOnselect(event) {
@@ -885,10 +1045,6 @@ export default class WaklInLead extends LightningElement {
             var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
             window.open(urlString, "_self");
             
-        }
-        if (selectedVal == 'Chat') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
-            window.location.replace(urlString, "_self");
         }
     }
 
