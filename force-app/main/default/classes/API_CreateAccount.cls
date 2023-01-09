@@ -68,8 +68,8 @@ global class API_CreateAccount{
                         leadRec.Form_Source__c = newAccount.Form_Source__c;
                         leadRec.Enter_UTM_Link__c = newAccount.Enter_UTM_Link__c;
                        
-                        leadRec.Course__c = newAccount.Course__c;
-                        leadRec.City__c = newAccount.City__c;
+                        leadRec.Course__c = newAccount.Course__c != null ? newAccount.Course__c : 'NA';
+                        leadRec.City__c = newAccount.City__c != null ? newAccount.City__c : 'NA';
                         leadRec.Form_Names__c = newAccount.Form_Names__c;                        
                         leadRec.UTM_Campaign__c = newAccount.UTM_Campaign__c;
                         leadRec.UTM_Device__c = newAccount.UTM_Device__c;
