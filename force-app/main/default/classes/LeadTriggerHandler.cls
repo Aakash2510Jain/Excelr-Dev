@@ -1,12 +1,12 @@
 public class LeadTriggerHandler{
     static LeadTriggerHandler handlerInstance;
-
+    
     public static LeadTriggerHandler getInstance(){
         if (handlerInstance == null)
             handlerInstance = new LeadTriggerHandler();
         return handlerInstance;
     }
-
+    
     public void beforeInsert(List<Lead> leadList){
         try{
             for (Lead ld : leadList){
@@ -25,12 +25,12 @@ public class LeadTriggerHandler{
             HandleBusinessException.captureError('LeadTriggerHandler', 'Before Lead Insert', e);
         }
     }
-
+    
     public void afterInsert(List<Lead> leadList){
         try{
             for (Lead ld : leadList){
-                if (ld.LeadSource != null || ld.Course__c != null || ld.Location__c != null ){
-                    LeadAssignmentExecutionCriteria.validateEntryCriteria();
+                if (ld.Quality_of_Lead__c != null){
+                    //LeadAssignmentExecutionCriteria.validateEntryCriteria();
                 }
                 Utility.createApplicationInstance(ld.Id, ld.Course__c);
             }
@@ -39,7 +39,7 @@ public class LeadTriggerHandler{
             HandleBusinessException.captureError('LeadTriggerHandler', 'After Lead Insert', e);
         }
     }
-
+    
     public void beforeUpdate(Map<Id, Lead> newLeadMap, Map<Id, Lead> oldLeadMap){
         try{
             for (Lead ld : newLeadMap.values()){
@@ -52,14 +52,21 @@ public class LeadTriggerHandler{
             HandleBusinessException.captureError('LeadTriggerHandler', 'Before Lead Update', e);
         }
     }
-
+    
     public void afterUpdate(Map<Id, Lead> newLeadMap, Map<Id, Lead> oldLeadMap){
         try{
+            set<String> leadQuality = new set<String>();
+            
             system.debug('After Update');
             for (Lead ld : newLeadMap.values()){
-                system.debug('Lead Course' + ld.Course__c);
-                 if (ld.LeadSource != null || ld.Course__c != null ||  ld.Location__c != null ){
-                   // LeadAssignmentExecutionCriteria.validateEntryCriteria();
+                if (ld.Quality_of_Lead__c != null && ld.Quality_of_Lead__c != oldLeadMap.get(ld.Id).Quality_of_Lead__c){
+                    leadQuality.add(ld.Quality_of_Lead__c);
+                    //LeadAssignmentExecutionCriteria.validateEntryCriteria();
+                }
+            }
+            if(!leadQuality.isEmpty()){
+                for(string qualityOfLead : leadQuality){
+                    RoundRobinLeadAssignment.assignLeadsToBDS(qualityOfLead);
                 }
             }
         } catch (Exception e){
@@ -67,5 +74,5 @@ public class LeadTriggerHandler{
             HandleBusinessException.captureError('LeadTriggerHandler', 'After Lead Update', e);
         }
     }
-
+    
 }

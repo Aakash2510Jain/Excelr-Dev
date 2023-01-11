@@ -46,15 +46,15 @@ public without Sharing class BuildMaps{
         list<lead> listOfAssignedTodayLeads = new list<lead>();
         
         
-        listOfGroupMember = [select id, Max_Lead_Per_Day__c, Assignment_Group__r.Minimum_Lead_Volume__c, Assignment_Group__r.Name, Group_Member__r.Id, Group_Member__r.Max_Lead_Per_Day__c, Assignment_Group__r.Max_Lead_Per_Day__c, Assignment_Group__r.Lead_Stage__c, Assignment_Group__r.Lead_Stage_Exceed_Count__c
+        listOfGroupMember = [select id, Max_Lead_Per_Day__c, Assignment_Group__r.Minimum_Lead_Volume__c, Assignment_Group__r.name__c, Group_Member__r.Id, Group_Member__r.Max_Lead_Per_Day__c, Assignment_Group__r.Max_Lead_Per_Day__c, Assignment_Group__r.Lead_Stage__c, Assignment_Group__r.Lead_Stage_Exceed_Count__c
                              from Assignment_Group_Member__c
-                             where active__c = true and assignment_group__r.name = :groupName];
+                             where active__c = true and Assignment_Group__r.name__c = :groupName];
         listOfTodayLeads = [select id, Lead_Assigned_Date__c, ownerId, status
                             from lead
                             where Lead_Assigned_Date__c = today];
         listOfNewLeads = [select id, Lead_Assigned_Date__c, ownerId, status
                           from lead
-                          where status = 'New'];
+                          where status = 'Open'];
         listOfAssignedTodayLeads = [select id, Lead_Assigned_Date__c, ownerId, status
                                     from lead
                                     where Lead_Assigned_Date__c = today];
@@ -116,18 +116,18 @@ public without Sharing class BuildMaps{
         list<lead> listOfAssignedTodayLeads = new list<lead>();
         
         
-        listOfGroupMember = [select id, Max_Lead_Per_Day__c, Assignment_Group__r.Minimum_Lead_Volume__c, Assignment_Group__r.Name, Group_Member__r.Id, Group_Member__r.Max_Lead_Per_Day__c, Assignment_Group__r.Max_Lead_Per_Day__c, Assignment_Group__r.Lead_Stage__c, Assignment_Group__r.Lead_Stage_Exceed_Count__c
+        listOfGroupMember = [select id, Max_Lead_Per_Day__c, Assignment_Group__r.Minimum_Lead_Volume__c, Assignment_Group__r.name__c, Group_Member__r.Id, Group_Member__r.Max_Lead_Per_Day__c, Assignment_Group__r.Max_Lead_Per_Day__c, Assignment_Group__r.Lead_Stage__c, Assignment_Group__r.Lead_Stage_Exceed_Count__c
                              from Assignment_Group_Member__c
-                             where active__c = true and assignment_group__r.name = :groupName];
-        listOfTodayLeads = [select id, Lead_Assigned_Date__c, ownerId, status
+                             where active__c = true and Assignment_Group__r.name__c = :groupName];
+        listOfTodayLeads = [select id, Lead_Assigned_Date__c,Status, ownerId
                             from lead
-                            where Lead_Assigned_Date__c = today and status != 'Open'];
-        listOfNewLeads = [select id, Lead_Assigned_Date__c, ownerId, status
+                            where Lead_Assigned_Date__c = today];
+        listOfNewLeads = [select id, Lead_Assigned_Date__c,Status, ownerId
                           from lead
-                          where status != 'New'];
-        listOfAssignedTodayLeads = [select id, Lead_Assigned_Date__c, ownerId, status
+                          where Status = 'Open'];
+        listOfAssignedTodayLeads = [select id, Lead_Assigned_Date__c, Status,ownerId 
                                     from lead
-                                    where Lead_Assigned_Date__c = today and status != 'Open'];
+                                    where Lead_Assigned_Date__c = today];
         if (!listOfNewLeads.isEmpty()){
             for (lead ld : listOfNewLeads){
                 if (mapofMemidByPendingLeads.containsKey(ld.OwnerId)){
@@ -166,7 +166,7 @@ public without Sharing class BuildMaps{
             } else{
                 mapofMemidByTodayLeadCount.put(ld.ownerId, 1);
             }
-            if (ld.Status != 'Open'){
+            if (ld.status == 'Open'){
                 if (mapofMemidByTodayNewLead.containsKey(ld.ownerId)){
                     integer count = mapofMemidByTodayNewLead.get(ld.ownerId);
                     mapofMemidByTodayNewLead.put(ld.ownerId, count + 1);
@@ -179,7 +179,10 @@ public without Sharing class BuildMaps{
     
     public static void makeAllMemberOOF(){
         
-        List<Assignment_Group_Member__c> agmList = new list<Assignment_Group_Member__c>();
+        list<Assignment_Group_Member__c> agmList = new list<Assignment_Group_Member__c>();
+        agmList = [select id, Out_Of_Office__c
+                   from Assignment_Group_Member__c
+                   where active__c = true and Out_Of_Office__c = false];
         
         if (!agmList.isEmpty()){
             for (Assignment_Group_Member__c agm : agmList){
