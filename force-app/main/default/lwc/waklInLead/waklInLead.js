@@ -13,17 +13,6 @@ import createTask from '@salesforce/apex/walkInLeadLWCcontroller.createTaskForVo
 
 import createLead from '@salesforce/apex/walkInLeadLWCcontroller.createLead';
 import createApplication from '@salesforce/apex/walkInLeadLWCcontroller.CreateApplication';
-// import EMAIL_FIELD from '@salesforce/schema/Lead.Email';
-// import PHONE_FIELD from '@salesforce/schema/Lead.Phone';
-// import ISM_FIELD from '@salesforce/schema/Lead.ISM__c';
-// import STATUS_FIELD from '@salesforce/schema/Lead.Status';
-// import ISMNAME_FIELD from '@salesforce/schema/Lead.ISM_Name__c';
-// import SOURCE_FIELD from '@salesforce/schema/Lead.Source__c';
-// import LEADSOURCE_FIELD from '@salesforce/schema/Lead.LeadSource';
-// import OWNERID_FIELD from '@salesforce/schema/Lead.OwnerId';
-// import COURSE_FIELD from '@salesforce/schema/Lead.Course__c';
-// import CID_FIELD from '@salesforce/schema/Lead.CID__c';
-// import NAME_FIELD from '@salesforce/schema/Lead.Name';
 
 import QueryPastLeads from '@salesforce/apex/walkInLeadLWCcontroller.QueryPastLeads';
 import LightningAlert from 'lightning/alert';
@@ -65,17 +54,7 @@ export default class WaklInLead extends LightningElement {
     @track courseforApp;
     @track recordId;
     @track newBTNdisAble = false;
-    // @track iSM_Name = ISMNAME_FIELD;
-    // @track statusLeadfield = STATUS_FIELD;
-    // @track emailfield = EMAIL_FIELD;
-    // @track phonefield = PHONE_FIELD;
-    // @track iSMfield = ISM_FIELD;
     objectApiName = 'Lead';
-    // @track sourcefield = SOURCE_FIELD;
-    // @track leadSourcefield = LEADSOURCE_FIELD;
-    // @track coursefield = COURSE_FIELD;
-    // @track cIDfield = CID_FIELD;
-    // namefield = NAME_FIELD;
 
     @track gruoMemberId;
     @track ismeId;
@@ -638,7 +617,7 @@ export default class WaklInLead extends LightningElement {
                 
                 this.showapplicationMOdal = false;
                 this.HandleCreateDisable=false;
-                this.handleConfirm('Appication Created Successfully');
+                this.handleConfirm('Application Created Successfully');
                 this.HandleCreateDisable=false;
                 this.isLoadedApplication=false;
                 this.appbtndisAble = true;

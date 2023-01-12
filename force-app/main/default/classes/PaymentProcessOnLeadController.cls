@@ -28,6 +28,7 @@ public class PaymentProcessOnLeadController{
 
     @AuraEnabled(Cacheable = True)
     Public Static Decimal ShowAmount(String ProductName){
+        system.debug('ProductName-->'+ProductName);
         Decimal Amount;
         Product2 PrdRec = [Select Id, Name, (Select Id, Name, UnitPrice
                                              From PricebookEntries)
@@ -41,8 +42,9 @@ public class PaymentProcessOnLeadController{
     }
 
     @AuraEnabled
-    Public Static Decimal ShowPriceIncludingGST(String NbfcValue, integer tenure, integer originalAmount){
+    Public Static Decimal ShowPriceIncludingGST(String NbfcValue, integer tenure, Decimal originalAmount){
 
+        system.debug('originalAmount='+originalAmount);
         Decimal finalPriceWithGST;
         NBFC__c nbfcRec = [Select Processing_Fee__c, Interest_Rate__c, GST_on_Subvention__c
                            From NBFC__c
@@ -54,12 +56,14 @@ public class PaymentProcessOnLeadController{
             Decimal basePlusProcessingPlusInter = basePlusProcessing + basePlusProcessing * (nbfcRec.Interest_Rate__c / 100);
             Decimal finalWithGST = basePlusProcessingPlusInter + basePlusProcessingPlusInter * (nbfcRec.GST_on_Subvention__c / 100);
             finalPriceWithGST = finalWithGST;
+            system.debug('finalPriceWithGST='+finalPriceWithGST);
         } else{
 
             Decimal basePrice = originalAmount;
             Decimal basePlusProcessingPlusInter = basePrice + basePrice * (nbfcRec.Interest_Rate__c / 100);
             Decimal finalWithGST = basePlusProcessingPlusInter + basePlusProcessingPlusInter * (nbfcRec.GST_on_Subvention__c / 100);
             finalPriceWithGST = finalWithGST;
+            system.debug('finalPriceWithGST='+finalPriceWithGST);
         }
 
         return finalPriceWithGST.setScale(2);

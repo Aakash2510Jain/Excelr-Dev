@@ -109,6 +109,7 @@ export default class PaymentProcessOnLead extends LightningElement {
            this.originalPrice = data;
            this.Amount=data;
            console.log('Amount='+this.Amount);
+           console.log('originalPrice='+this.originalPrice);
         }
         else{
             console.log('error='+error);

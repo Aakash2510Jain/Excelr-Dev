@@ -10,10 +10,10 @@ trigger InvoiceTrigger on Invoice__c(after update, before insert,After insert ){
         }
 
         if (trigger.isInsert && trigger.isAfter) {
-            handlerInstance.sendforApproval(trigger.new);
+           // handlerInstance.sendforApproval(trigger.new);
         }
         if (trigger.isAfter && trigger.isUpdate) {
-            handlerInstance.sendReferralFormViaEmail(trigger.oldMap, trigger.newMap);
+           // handlerInstance.sendReferralFormViaEmail(trigger.oldMap, trigger.newMap);
         }
     }
 }
