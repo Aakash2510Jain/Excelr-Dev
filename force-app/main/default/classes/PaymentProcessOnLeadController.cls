@@ -71,7 +71,7 @@ public class PaymentProcessOnLeadController{
 
     @AuraEnabled
     Public Static string InsertProduct(string recordId, Integer Quantity, String ProductName, integer Amount, String paymentType){
-
+        system.debug('Inserting Product');
         Product2 PrdRec = [Select Id, Name, (Select Id, Name, UnitPrice
                                              From PricebookEntries)
                            From Product2 
@@ -109,16 +109,12 @@ public class PaymentProcessOnLeadController{
 
     @AuraEnabled
     Public Static string LeadUpdateOnFullLoan(string recordId, integer FullTenureValue, String FullNBFCValue, Integer Quantity, String ProductName, Decimal Amount){
-
-        system.debug('recordId=' + recordId + 'FullTenureValue=' + FullTenureValue);
-        system.debug('FullNBFCValue=' + FullNBFCValue + 'Amount=' + Amount);
-        system.debug('Quantity=' + Quantity + 'Product__c=' + ProductName);
-
+        
         product2 PrdRec = [Select Id, Name, (Select Id, Name, UnitPrice
                                              From PricebookEntries)
                            From Product2 
                            where id = :ProductName];
-
+        
         Lead LeadRec = new Lead();
         LeadRec.Id = recordId;
         LeadRec.Capture_Tenure__c = FullTenureValue;
@@ -127,12 +123,10 @@ public class PaymentProcessOnLeadController{
         LeadRec.Quantity__c = Quantity;
         LeadRec.Payment_Initiated_Date_Time__c = System.now();
         LeadRec.Product__c = PrdRec.Id;
-
-        system.debug('recordId=' + recordId + 'FullTenureValue=' + FullTenureValue);
-        system.debug('FullNBFCValue=' + FullNBFCValue + 'Amount=' + Amount);
-        system.debug('Quantity=' + Quantity + 'Product__c=' + PrdRec.Id);
-
-
+        string leadCourse = PrdRec.name.substringBefore('-');
+        leadCourse = leadCourse.trim();
+        LeadRec.Course__c = leadCourse;
+        
         Update LeadRec;
 
         Invoice__c invRec = new Invoice__c();
@@ -149,55 +143,74 @@ public class PaymentProcessOnLeadController{
 
     @AuraEnabled
     Public Static String leadUpdateOnPartialLoan(string recordId, integer PartialTenureValue, String partialNBFCValue, Integer PartialUpfrontValue, Integer Quantity, String ProductName, Decimal Amount, String paymentType){
-
-        product2 PrdRec = [Select Id, Name, (Select Id, Name, UnitPrice
-                                             From PricebookEntries)
-                           From Product2 
-                           where id = :ProductName];
-
-
-        Lead LeadRec = new Lead();
-        LeadRec.Id = recordId;
-        LeadRec.Capture_Tenure__c = PartialTenureValue;
-        LeadRec.Capture_NBFC_Partner__c = partialNBFCValue;
-        LeadRec.Capture_Upfront_payment__c = PartialUpfrontValue;
-        LeadRec.Total_Amount__c = Amount;
-        LeadRec.Quantity__c = Quantity;
-        LeadRec.Payment_Initiated_Date_Time__c = System.now();
-        LeadRec.Payment_Type__c = paymentType;
-        LeadRec.Product__c = PrdRec.Id;
-
-        Update LeadRec;
-
-
-        Invoice__c invRec = new Invoice__c();
-        invRec.LeadInvoice__c = recordId;
-        invRec.Status__c = 'Initiated';
-        invRec.Amount__c = PartialUpfrontValue;
-        invRec.Initiated_Date__c = System.Today();
-        invRec.Invoice_Due_Date__c = System.Today() + 2;
-
-        insert invRec;
-
-
-        if (paymentType == 'razorpay'){
-
-            return RazorpayPaymentHandler.initateRazorpayPament(invRec.id);
-
-        } else{
-
-            ccAvenueLwcController.initateCCAvenuePayment(invRec.id);
-
+        system.debug('Partial Loan');
+        try{
+            product2 PrdRec = [Select Id, Name, (Select Id, Name, UnitPrice
+                                                 From PricebookEntries)
+                               From Product2 
+                               where id = :ProductName];
+            
+            system.debug('PrdRec.name -->' +PrdRec.name);
+            Lead LeadRec = new Lead();
+            LeadRec.Id = recordId;
+            LeadRec.Capture_Tenure__c = PartialTenureValue;
+            LeadRec.Capture_NBFC_Partner__c = partialNBFCValue;
+            LeadRec.Capture_Upfront_payment__c = PartialUpfrontValue;
+            LeadRec.Total_Amount__c = Amount;
+            LeadRec.Quantity__c = Quantity;
+            LeadRec.Payment_Initiated_Date_Time__c = System.now();
+            LeadRec.Payment_Type__c = paymentType;
+            LeadRec.Product__c = PrdRec.Id;
+            string leadCourse = PrdRec.name.substringBefore('-');
+            leadCourse = leadCourse.trim();
+            LeadRec.Course__c = leadCourse;
+            Update LeadRec;
+            
+            
+            Invoice__c invRec = new Invoice__c();
+            invRec.LeadInvoice__c = recordId;
+            invRec.Status__c = 'Initiated';
+            invRec.Amount__c = PartialUpfrontValue;
+            invRec.Initiated_Date__c = System.Today();
+            invRec.Invoice_Due_Date__c = System.Today() + 2;
+            
+            insert invRec;
+            
+            Utility.createApplicationInstance(recordId,leadCourse);
+            
+            if (paymentType == 'razorpay'){
+                
+                return RazorpayPaymentHandler.initateRazorpayPament(invRec.id);
+                
+            } else{
+                
+                ccAvenueLwcController.initateCCAvenuePayment(invRec.id);
+                
+            }
+            
+            
+            return 'Success';
+        }catch(exception e){
+            system.debug('Error -->'+e.getMessage());
+            system.debug('Error@@ -->'+e.getLineNumber());
+            return 'Error';
         }
-
-
-        return 'Success';
     }
 
     @AuraEnabled
     Public Static String CreateInvoice(String recordId, Decimal FinalAmount, integer PartialTenureValue, String partialNBFCValue, Integer PartialUpfrontValue, Integer Quantity, String ProductName, Decimal Amount, String paymentType){
 
-        if (PartialTenureValue == null && partialNBFCValue == null && PartialUpfrontValue == null && Quantity == null && ProductName == null && Amount == null && paymentType == null){
+        System.debug('FinalAmount ===> ' + FinalAmount);
+        System.debug('PartialTenureValue ===> ' + PartialTenureValue);
+        System.debug('partialNBFCValue ===> ' + partialNBFCValue);
+        System.debug('PartialUpfrontValue ===> ' + PartialUpfrontValue);
+        System.debug('Quantity ===> ' + Quantity);
+        System.debug('ProductName ===> ' + ProductName);
+        System.debug('Amount ===> ' + Amount);
+        System.debug('paymentType ===> ' + paymentType);
+
+        system.debug('Create Invoice');
+        if (PartialTenureValue == null && partialNBFCValue == null && PartialUpfrontValue == null && Quantity != null && ProductName != null && Amount == null && paymentType != null){
 
 
             Invoice__c invRec = new Invoice__c();
@@ -226,10 +239,12 @@ public class PaymentProcessOnLeadController{
             LeadRec.Payment_Initiated_Date_Time__c = System.now();
             LeadRec.Payment_Type__c = paymentType;
             LeadRec.Product__c = PrdRec.Id;
-
+            string leadCourse = PrdRec.name.substringBefore('-');
+            leadCourse = leadCourse.trim();
+            LeadRec.Course__c = leadCourse;
             Update LeadRec;
 
-
+            List<Invoice__c> invoiceList = new List<Invoice__c>();
             Invoice__c invRec = new Invoice__c();
             invRec.LeadInvoice__c = recordId;
             invRec.Status__c = 'Initiated';
@@ -237,7 +252,17 @@ public class PaymentProcessOnLeadController{
             invRec.Initiated_Date__c = System.Today();
             invRec.Invoice_Due_Date__c = System.Today() + 2;
 
-            insert invRec;
+            invoiceList.add(invRec);
+
+            Invoice__c invRecLoan = new Invoice__c();
+            invRecLoan.LeadInvoice__c = recordId;
+            invRecLoan.Status__c = 'Initiated';
+            invRecLoan.Amount__c = Amount - PartialUpfrontValue;
+            invRecLoan.Initiated_Date__c = System.Today();
+            invRecLoan.Invoice_Due_Date__c = System.Today() + 2;
+            invoiceList.add(invRecLoan);
+
+            insert invoiceList;
         }
 
         return 'Success';

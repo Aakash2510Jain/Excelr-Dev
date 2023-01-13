@@ -493,6 +493,17 @@ export default class voiceForm extends LightningElement {
         }
 
     }
+    
+
+    handleCorrectPhone(PhoneToverify){
+        var regExpPhoneformat = /^[0-9]{1,10}$/g;
+        if (PhoneToverify.match(regExpPhoneformat)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
     HandleComments(event)
     {
        let comment = event.target.value;
@@ -721,9 +732,9 @@ export default class voiceForm extends LightningElement {
     HandleLeadCreatedisable=false;
     createNewLead() {
         debugger;
-        if((this.namValue!=undefined || this.namValue!=null ) && (this.lNameValue!=undefined || this.lNameValue!=null ) && (this.emailValue!=undefined || this.emailValue!=null ) && (this.phoneValue!=undefined || this.phoneValue!=null ) 
-        && (this.CourceLead!=undefined || this.CourceLead!=null ) && (this.cityValue!=undefined || this.cityValue!=null ) && (this.SourceValue!=undefined || this.SourceValue!=null ) && (this.MediumValue!=undefined || this.MediumValue!=null ) && 
-            (this.Leadvalue!=undefined || this.Leadvalue!=null ))
+        if((this.namValue!=undefined && this.namValue!=null ) && (this.lNameValue!=undefined && this.lNameValue!=null ) && (this.emailValue!=undefined && this.emailValue!=null ) && (this.phoneValue!=undefined && this.phoneValue!=null ) 
+        && (this.CourceLead!=undefined && this.CourceLead!=null ) && (this.cityValue!=undefined && this.cityValue!=null ) && (this.SourceValue!=undefined && this.SourceValue!=null ) && (this.MediumValue!=undefined && this.MediumValue!=null ) && 
+            (this.Leadvalue!=undefined && this.Leadvalue!=null ))
            {
 
             this.HandleLeadCreatedisable=true; 
@@ -734,8 +745,9 @@ export default class voiceForm extends LightningElement {
             
         
         var returnvalue = this.handleIncorrectEmail(this.emailValue)
+        var phoneregexreturnvalue = this.handleCorrectPhone(this.phoneValue)
         console.log('returnVALUE=',returnvalue);
-        if (returnvalue == true) {
+        if (returnvalue == true && this.handleCorrectPhone(this.phoneValue)) {
             createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, ownerId: this.ismeId, agmId: this.gruoMemberId, Course: this.CourceLead, agentid: this.agentrecid,city:this.cityValue,LdGenPath:this.Leadvalue,source:this.SourceValue,medium:this.MediumValue,country:this.CountryValue,state:this.StateValue,comments:this.commentsValue})
                 .then(data => {
                     this.handleConfirm('Lead Created Successfully');
@@ -743,20 +755,36 @@ export default class voiceForm extends LightningElement {
                     console.log(data)
                     //alert('Lead Record created successfully');
                     this.handleCancel();
+                    this.namValue = '';
+                    this.lNameValue = '';
+                    this.commentsValue = '';
+                    this.agentrecid= '';
+                    this.ismeId = '';
+                    this.emailValue = '';
+                    this.phoneValue = '';
+                    this.gruoMemberId = '';
+                    this.CourceLead = '';
+                    this.CountryValue = '';
+                    this.cityValue = '';
+                    this.Leadvalue = '';
 
                 })
                 .catch(error => {
                     this.handleAlert('Error updating or reloading records');
-
+                    this.handleCancel();
+                    this.HandleLeadCreatedisable=false; 
+                    
                 })
        }
         else {
-            alert('Incorrect Email Pattern');
+            alert('Incorrect Email or Phone Pattern');
+            this.HandleLeadCreatedisable=false; 
         }
 
     }
     else{
         alert('All Fields are Mandatory,Please Check any one Of Your Field Is Empty');
+        this.HandleLeadCreatedisable=false; 
     }
 
     }

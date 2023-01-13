@@ -27,14 +27,15 @@ public without Sharing class BuildMaps{
     
     public static Map<String, Integer> makeQNameToLastAssignedQmemberRRid(){
         Map<String, Integer> qNameToLastAssignedQmemberRRid = new Map<String, Integer>();
-        List<Assignment_Group__c> allExistingQueue = new List<Assignment_Group__c>([SELECT id, name, Last_Allocated_RRid__c
+        List<Assignment_Group__c> allExistingQueue = new List<Assignment_Group__c>([SELECT id, name,name__c, Last_Allocated_RRid__c
                                                                                     from Assignment_Group__c]);
         for (Assignment_Group__c q : allExistingQueue){
             if (q.Last_Allocated_RRid__c != null){
-                qNameToLastAssignedQmemberRRid.put(q.name, Integer.valueOf(q.Last_Allocated_RRid__c));
+                qNameToLastAssignedQmemberRRid.put(q.name__c, Integer.valueOf(q.Last_Allocated_RRid__c));
             } else
-                qNameToLastAssignedQmemberRRid.put(q.name, null);
+                qNameToLastAssignedQmemberRRid.put(q.name__c, null);
         }
+        system.debug('qNameToLastAssignedQmemberRRid-->'+qNameToLastAssignedQmemberRRid);
         return qNameToLastAssignedQmemberRRid;
     }
     

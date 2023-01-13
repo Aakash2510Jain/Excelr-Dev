@@ -757,9 +757,9 @@ export default class chatForm extends LightningElement {
 
     createNewLead() {
        
-        if((this.namValue!=undefined || this.namValue!=null ) && (this.lNameValue!=undefined || this.lNameValue!=null ) && (this.emailValue!=undefined || this.emailValue!=null ) && (this.phoneValue!=undefined || this.phoneValue!=null ) 
-             && (this.CourceLead!=undefined || this.CourceLead!=null ) && (this.cityValue!=undefined || this.cityValue!=null ) && (this.sourceValue!=undefined || this.sourceValue!=null ) && (this.MediumValue!=undefined || this.MediumValue!=null ) && 
-                (this.VisitorIdValue!=undefined || this.VisitorIdValue!=null ) && (this.TranscriptValue!=undefined || this.TranscriptValue!=null ) && (this.PageUrlValue!=undefined || this.PageUrlValue!=null ) )
+        if((this.namValue!=undefined && this.namValue!=null ) && (this.lNameValue!=undefined && this.lNameValue!=null ) && (this.emailValue!=undefined && this.emailValue!=null ) && (this.phoneValue!=undefined && this.phoneValue!=null ) 
+             && (this.CourceLead!=undefined && this.CourceLead!=null ) && (this.cityValue!=undefined && this.cityValue!=null ) && (this.sourceValue!=undefined && this.sourceValue!=null ) && (this.MediumValue!=undefined && this.MediumValue!=null ) && 
+                (this.VisitorIdValue!=undefined && this.VisitorIdValue!=null ) && (this.TranscriptValue!=undefined && this.TranscriptValue!=null ) && (this.PageUrlValue!=undefined && this.PageUrlValue!=null ) )
                 {
                     this.HandleLeadCreatedisable=true; 
                     
@@ -769,7 +769,7 @@ export default class chatForm extends LightningElement {
                     
             debugger;
             var returnvalue = this.handleIncorrectEmail(this.emailValue)
-            if (returnvalue == true) {
+            if (returnvalue == true && this.handleCorrectPhone(this.phoneValue)) {
                 createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, ownerId: this.ismeId, agmId: this.gruoMemberId, Course: this.CourceLead, agentid:this.agentrecid ,city:this.cityValue,source:this.sourceValue,medium:this.MediumValue,VisitorId:this.VisitorIdValue,Transcript:this.TranscriptValue,state:this.StateValue,country:this.CountryValue,LandingPageURL:this.PageUrlValue,comments:this.commentsValue})
                     .then(data => {
                         this.handleConfirm('Lead Created Successfully');
@@ -777,19 +777,34 @@ export default class chatForm extends LightningElement {
                         //alert('Lead Record created successfully');
                         this.handleCancel();
                         this.HandleLeadCreatedisable=false;
+                        this.namValue = '';
+                        this.lNameValue = '';
+                        this.commentsValue = '';
+                        this.agentrecid = '';
+                        this.ismeId = '';
+                        this.emailValue = '';
+                        this.phoneValue = '';
+                        this.gruoMemberId = '';
+                        this.CourceLead = '';
+                        this.CountryValue = '';
+                        this.cityValue = '';
+                        this.Leadvalue = '';
     
                     })
                     .catch(error => {
                         this.handleAlert('Error updating or reloading records');
-    
+                        this.HandleLeadCreatedisable=false;
+                        this.handleCancel();
                     })
             }
             else {
                 alert('Incorrect Email Pattern');
+                this.HandleLeadCreatedisable=false;
             }
         }
         else{
             alert('All Fields are Mandatory,Please Check any one Of Your Field Is Empty');
+            this.HandleLeadCreatedisable=false;
         }  
        
 

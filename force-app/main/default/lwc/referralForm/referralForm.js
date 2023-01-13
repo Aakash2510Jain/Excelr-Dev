@@ -60,28 +60,68 @@ export default class ReferralForm extends LightningElement {
 
     SaveReferralFormDetails() {
         debugger;
-        SubmitReferralDetails({ FirstN: this.FirstName, LastName: this.Lastname, Email: this.Email, Phone: this.Phone, ReferralEm: this.ReferralEmail, ReferralPh: this.ReferralPhone, Course: this.Coursevalue })
-            .then(result => {
-                debugger;
-                if (result == 'SUCCESS') {
-                    this.FirstName = '';
-                    this.Lastname = '';
-                    this.Email = '';
-                    this.Phone = '';
-                    this.ReferralEmail = '';
-                    this.ReferralPhone = '';
-                    this.Coursevalue = '';
-                    this.handleConfirm('Referral Form Submitted Successfully');
 
-                }
-                else if (result == 'Fail') {
-                    this.handleAlert('Referral Email Does not Exist In the system. Please Provide correct email Id!!!!!');
-                }
+        if ((this.FirstName != undefined && this.FirstName != null) && (this.Lastname != undefined && this.Lastname != null) && (this.Email != undefined && this.Email != null) && (this.Phone != undefined && this.Phone != null) && (this.ReferralEmail != undefined && this.ReferralEmail != null) && (this.ReferralPhone != undefined && this.ReferralPhone != null)) {
+            var returnvalue = this.handleIncorrectEmail(this.Email)
+            var phoneregexreturnvalue = this.handleCorrectPhone(this.Phone)
+            if (returnvalue == true && this.handleCorrectPhone(this.phoneValue)) {
+                SubmitReferralDetails({ FirstN: this.FirstName, LastName: this.Lastname, Email: this.Email, Phone: this.Phone, ReferralEm: this.ReferralEmail, ReferralPh: this.ReferralPhone, Course: this.Coursevalue })
+                    .then(result => {
+                        debugger;
+                        if (result == 'SUCCESS') {
+                            this.FirstName = '';
+                            this.Lastname = '';
+                            this.Email = '';
+                            this.Phone = '';
+                            this.ReferralEmail = '';
+                            this.ReferralPhone = '';
+                            this.Coursevalue = '';
+                            this.handleConfirm('Referral Form Submitted Successfully');
 
-            })
-            .catch(error => {
-                this.handleAlert('Error in Submission of Referral Form. Please try after Sometime');
-            })
+                        }
+                        else if (result == 'Fail') {
+                            this.handleAlert('Referral Email Does not Exist In the system. Please Provide correct email Id!!!!!');
+                        }
+
+                    })
+                    .catch(error => {
+                        this.handleAlert('Error in Submission of Referral Form. Please try after Sometime');
+                    })
+
+            }
+            else {
+                alert('Incorrect Email or Phone Pattern');
+                this.HandleLeadCreatedisable = false;
+            }
+        }
+        else{
+            alert('All Fields are Mandatory,Please Check any one Of Your Field Is Empty');
+        }
+
+
+    }
+
+    handleIncorrectEmail(emailtocheck) {
+        debugger;
+
+        var regExpEmailformat = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (emailtocheck.match(regExpEmailformat)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+
+    }
+
+    handleCorrectPhone(PhoneToverify) {
+        var regExpPhoneformat = /^[0-9]{1,10}$/g;
+        if (PhoneToverify.match(regExpPhoneformat)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     async handleConfirm(msg) {

@@ -4,7 +4,12 @@ export default class IndexchildLWC extends LightningElement {
     
     @api indexchild;
 
-    get position() {
-        return indexchild + 1;
+    connectedCallback() {
+        //defined a varibale
+        this.position();
+
+    }
+    position() {
+        this.indexchild = this.indexchild + 1;
     }
 }

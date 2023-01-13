@@ -53,8 +53,11 @@
             <lightning-card>
                 <div class="slds-align_absolute-center">
                     <div class="slds-size_2-of-6">
-                        <lightning-input label="Email Or Phone" onchange={emailHandler}
+                        <span onkeypress={serachLeadBTN}>
+                            <lightning-input label="Email Or Phone" onchange={emailHandler}
                             style="margin-top:8px;"></lightning-input>
+                        </span>
+                        
                     </div>
                     <div class="slds-size_2-of-6  slds-p-top_x-large" style="margin-left:8px;">
                         <lightning-button title="Search" label="Search" onclick={serachLeadBTN}></lightning-button>
@@ -405,7 +408,7 @@
                                 <lightning-input label="Last Name" required="true"
                                     onchange={LnameChange}></lightning-input>
                                 <lightning-input label="Email" required="true" onchange={EmailChange}></lightning-input>
-                                <lightning-input label="Phone" min-length="10" onchange={PhoneChange}
+                                <lightning-input type="tel" label="Phone" min-length="10" onchange={PhoneChange}
                                     max-length="10" required="true"></lightning-input >
                                 <lightning-combobox name="course" label="Course" value={value}
                                     placeholder="Select Course" options={courssweList} onchange={courceHandler} required="true">
@@ -499,7 +502,6 @@
                                     <th class="slds-truncate slds-cell-wrap" scope="col">
                                         <div>
                                             <c-indexchild-l-w-c indexchild={i}></c-indexchild-l-w-c>
-                                            {i}
                                         </div>
                                     </th>
                                     <th class="slds-truncate slds-cell-wrap" scope="col">

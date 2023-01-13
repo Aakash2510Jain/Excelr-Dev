@@ -24,6 +24,7 @@ public without sharing class RoundRobinLeadAssignment{
         
         //qNameAndMemberIdTORoundRobinIDMaP = makeqNameAndMemberIdTORoundRobinIDMaP(qualityOfLead);
         qNameToLastAssignedQmemberRRid = BuildMaps.makeQNameToLastAssignedQmemberRRid(); // qname with last allocated ID
+        system.debug('qNameToLastAssignedQmemberRRid-->'+qNameToLastAssignedQmemberRRid);
         QnameAndRRidToMemberIDMap = makeQnameAndRRidToMemberID(mapofCouseByGroupName.get(qualityOfLead)); // qname with qname+rrid
         BuildMaps.validateUserCapacity(mapofCouseByGroupName.get(qualityOfLead), qualityOfLead);
         BuildMaps.validateUserCapacityForRM(qualityOfLead, leadIds);
@@ -118,16 +119,20 @@ public without sharing class RoundRobinLeadAssignment{
                 }
             }
         }
-        
+        system.debug('qNameToLastAssignedQmemberRRid.keySet().isEmpty()-->'+qNameToLastAssignedQmemberRRid.keySet().isEmpty());
         if (!qNameToLastAssignedQmemberRRid.keySet().isEmpty()){
+            system.debug('Inside Last RRId');
             List<Assignment_Group__c> updateQrId = new List<Assignment_Group__c>();
-            updateQrId = [Select id, name, Last_Allocated_RRid__c
+            updateQrId = [Select id, name, Last_Allocated_RRid__c,Name__c
                           from Assignment_Group__c
-                          where Name IN:qNameToLastAssignedQmemberRRid.keySet()];
+                          where Name__c IN:qNameToLastAssignedQmemberRRid.keySet()];
+            system.debug('updateQrId-->'+updateQrId);
             for (Assignment_Group__c Q : updateQrId){
-                Q.Last_Allocated_RRid__c = qNameToLastAssignedQmemberRRid.get(Q.Name);
+                Q.Last_Allocated_RRid__c = qNameToLastAssignedQmemberRRid.get(Q.Name__c);
+                system.debug('Q.Last_Allocated_RRid__c -->'+Q.Last_Allocated_RRid__c );
                 QtoBeUpdated.add(q);
             }
+            system.debug('QtoBeUpdated-->'+QtoBeUpdated);
         }
         System.debug('updateLeadList---' + updateLeadList);
         if (!updateLeadList.isEmpty()){
@@ -150,7 +155,7 @@ public without sharing class RoundRobinLeadAssignment{
         system.debug('BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID)--->'+BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID));
         if (BuildMaps.mapofMemidByAssignedLead.get(qMemberID) == null){
             system.debug('Inside If');
-            isconditionapproved = false;
+            isconditionapproved = true;
         } else if (BuildMaps.mapofMemidByAssignedLead.get(qMemberID) != null && BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID) != null && BuildMaps.mapofMemidByAssignedLead.get(qMemberID) < BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID)){
             system.debug('Inside Else If');
             system.debug('BuildMaps.mapofMemidByPendingLeads.get(qMemberID)-->'+BuildMaps.mapofMemidByPendingLeads.get(qMemberID));
@@ -191,7 +196,7 @@ public without sharing class RoundRobinLeadAssignment{
                             limit 1].name__c;
         List<Lead> leadsInQueue = [SELECT ID, OWNERID, Lead_Assigned_Date__c, Lead_Assigned_Time__c, Status
                                    FROM Lead
-                                   WHERE Ownerid = :queueId limit 50000];
+                                   WHERE Ownerid = :queueId AND Quality_of_Lead__c != null limit 50000];
         mapofCouseByGroupName.put(groupName,groupName);
         /*list<Source_Intent_And_Group_Name__mdt> groupNameSourceIntent = [select id,Group_Name__c,Source_Intent__c from Source_Intent_And_Group_Name__mdt ];
 if(!groupNameSourceIntent.isEmpty()){

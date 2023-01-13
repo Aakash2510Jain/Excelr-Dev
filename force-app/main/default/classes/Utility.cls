@@ -179,7 +179,7 @@ public without sharing class Utility{
                                                  from Invoice__c
                                                  Where LeadInvoice__c = :convertedLeadRec.Id
                                                  order by createdDate Desc];
-                    applicationsListAttachedToLead = [Select Id, Account__c
+                    applicationsListAttachedToLead = [Select Id, Account__c,Course__c
                                                       From Application__c
                                                       Where Lead__c = :convertedLeadRec.Id];
                     List<PricebookEntry> priceBookEntryList = [Select Id, Product2Id
@@ -191,7 +191,7 @@ public without sharing class Utility{
 
                     Opportunity oppRec = new Opportunity();
                     oppRec.Id = covertedAccRec.Opportunities[0].Id;
-                    oppRec.StageName = 'Closed Won';
+                    oppRec.StageName = 'Converted';
                     update oppRec;
 
                     OpportunityLineItem oppProdRec = new OpportunityLineItem();

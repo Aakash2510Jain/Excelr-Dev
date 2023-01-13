@@ -267,6 +267,16 @@ export default class WaklInLead extends LightningElement {
         let phone = Event.target.value;
         this.phoneValue = phone;
     }
+
+    handleCorrectPhone(PhoneToverify){
+        var regExpPhoneformat = /^[0-9]{1,10}$/g;
+        if (PhoneToverify.match(regExpPhoneformat)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
     HandleComments(event)
     {
        let comment = event.target.value;
@@ -491,14 +501,15 @@ export default class WaklInLead extends LightningElement {
         debugger;
 
         if((this.namValue!=undefined || this.namValue!=null ) && (this.lNameValue!=undefined || this.lNameValue!=null ) && (this.emailValue!=undefined || this.emailValue!=null ) && (this.phoneValue!=undefined || this.phoneValue!=null ) 
-        && (this.CourceLead!=undefined || this.CourceLead!=null ) && (this.selectedrecordDetails!=undefined || this.selectedrecordDetails!=null )) 
+        && (this.CourceLead!=undefined && this.CourceLead!=null && this.CourceLead!='' ) && (this.selectedrecordDetails!=undefined || this.selectedrecordDetails!=null )) 
             
            {
 
             this.HandleLeadCreatedisable=true; 
 
         var returnvalue = this.handleIncorrectEmail(this.emailValue)
-        if (returnvalue == true) {
+        var phoneregexreturnvalue = this.handleCorrectPhone(this.phoneValue)
+        if (returnvalue == true && this.handleCorrectPhone(this.phoneValue)) {
             createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, ownerId: this.ismeId, agmId: this.gruoMemberId, Course: this.CourceLead, userId: this.selectedrecordDetails.Id, agentid: this.agentrecid,comments:this.commentsValue })
                 .then(data => {
                     this.handleConfirm('Lead Created Successfully');
@@ -506,18 +517,30 @@ export default class WaklInLead extends LightningElement {
                     console.log(data)
                     //alert('Lead Record created successfully');
                     this.handleCancel();
+                    this.namValue = '';
+                    this.lNameValue = '';
+                    this.commentsValue = '';
+                    this.agentrecid= '';
+                    this.ismeId = '';
+                    this.emailValue = '';
+                    this.phoneValue = '';
+                    this.gruoMemberId = '';
+                    this.CourceLead = '';
 
                 })
                 .catch(error => {
                     this.handleAlert('Error updating or reloading records');
+                    this.handleCancel();
+                    this.HandleLeadCreatedisable=false;
 
                 })
         }
         else {
-            alert('Incorrect Email Pattern');
+            alert('Incorrect Email or Phone Pattern');
+            this.HandleLeadCreatedisable=false;
         }
     }else{
-
+        this.HandleLeadCreatedisable=false;
         alert('All Fields are Mandatory,Please Check any one Of Your Field Is Empty');
     }
 
@@ -527,7 +550,8 @@ export default class WaklInLead extends LightningElement {
         const result = await LightningConfirm.open({
             message: message,
             theme: "success",
-            label: "Success"
+            label: "Success",
+            variant: 'header',
         });
         console.log("🚀 ~ result", result);
     }
@@ -541,7 +565,8 @@ export default class WaklInLead extends LightningElement {
         await LightningAlert.open({
             message: message,
             theme: "error",
-            label: "Alert"
+            label: "Error!",
+            variant: 'header',
         }).then(() => {
             console.log("###Alert Closed");
         });

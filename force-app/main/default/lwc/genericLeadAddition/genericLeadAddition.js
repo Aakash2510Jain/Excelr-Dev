@@ -86,7 +86,7 @@ export default class WaklInLead extends LightningElement {
     @track DepartmentList = [];
     @track mapData = [];
     @track showFromOrEmpty = false;
-    @track commentsValue ;
+    @track commentsValue;
     @track dataForApp;
     @track Leaddata = [];
     @track showPastLeads = false;
@@ -104,7 +104,7 @@ export default class WaklInLead extends LightningElement {
 
     }
 
-    convertStringtoList(){
+    convertStringtoList() {
         this.DepartmentList = this.DepartmentListstring.split(';');
         for (var key in this.DepartmentList) {
             this.mapData.push({ label: this.DepartmentList[key], value: this.DepartmentList[key] }); //Here we are creating the array to show on UI.
@@ -125,16 +125,16 @@ export default class WaklInLead extends LightningElement {
         getLead({ EmailOrPhone: this.inPutValue })
             .then(data => {
                 debugger;
-                
+
                 this.showFromOrEmpty = true;
                 this.data = data;
                 if (this.data.length > 0) {
-                   // this.newBTNdisAble = true;
+                    // this.newBTNdisAble = true;
                     this.taskBTNdisAble = false;
                     this.handleClick();
                     this.recordId = this.data[0].Id;
                     this.ownerEmail = data[0].Owner_Email__c;
-                    this.CaptureOwnerId=data[0].OwnerId;
+                    this.CaptureOwnerId = data[0].OwnerId;
                     this.captureownerName = data[0].Owner.Name;
                     //this.handleClick();
                     console.log(data);
@@ -148,7 +148,7 @@ export default class WaklInLead extends LightningElement {
                     this.handleClick();
                     this.ifdataNotFound = true;
                     this.taskBTNdisAble = true;
-                  //  this.newBTNdisAble = false;
+                    //  this.newBTNdisAble = false;
                     this.ismBTNdisAble = true;
                     this.data = false;
                     this.appbtndisAble = true;
@@ -168,13 +168,13 @@ export default class WaklInLead extends LightningElement {
             this.dataForApp = data;
             console.log(this.dataForApp);
             this.columns = applicationcolumns;
-           
+
             if (Array.isArray(this.dataForApp.data)) {
                 if (this.dataForApp.data.length > 0) {
                     //this.appbtndisAble = false;
-                    
+
                 }
-                else if(this.dataForApp.data.length == 0) {
+                else if (this.dataForApp.data.length == 0) {
                     //this.appbtndisAble = true;
                 }
             }
@@ -191,237 +191,236 @@ export default class WaklInLead extends LightningElement {
     }
 
 
-    @track StateCountryValue=[];
+    @track StateCountryValue = [];
     @wire(FetchStateCounty)
-    WiredResponse({data,error}){
+    WiredResponse({ data, error }) {
         debugger;
-        if(data){
-            console.log('StateCountryValuedata=',data);
-           this.StateCountryValue=data;
-           console.log('StateCountryValue=',this.StateCountryValue); 
+        if (data) {
+            console.log('StateCountryValuedata=', data);
+            this.StateCountryValue = data;
+            console.log('StateCountryValue=', this.StateCountryValue);
         }
-        else if(error){
-            console.log('error=',error);
+        else if (error) {
+            console.log('error=', error);
         }
 
     }
 
-    Picklistvalue=[];
-    @wire(getObjectInfo, {objectApiName:LEAD_OBJECT})
+    Picklistvalue = [];
+    @wire(getObjectInfo, { objectApiName: LEAD_OBJECT })
     objectInfo
 
-    @wire(getPicklistValues, { recordTypeId:'$objectInfo.data.defaultRecordTypeId', fieldApiName:LEAD_GEN_PATH})
-     wiredPicklistValues({data,error}){
-         debugger;
-        if(data){
-           console.log('data=',data);
-           console.log('dataValues=',data.values);
-           let arr=[];
-           for(let i=0;i<data.values.length;i++){
-              arr.push({label:data.values[i].label,value:data.values[i].value});
-           }
-           this.Picklistvalue=arr;
-           console.log('Picklistvalue=',this.Picklistvalue);
+    @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: LEAD_GEN_PATH })
+    wiredPicklistValues({ data, error }) {
+        debugger;
+        if (data) {
+            console.log('data=', data);
+            console.log('dataValues=', data.values);
+            let arr = [];
+            for (let i = 0; i < data.values.length; i++) {
+                arr.push({ label: data.values[i].label, value: data.values[i].value });
+            }
+            this.Picklistvalue = arr;
+            console.log('Picklistvalue=', this.Picklistvalue);
         }
         else {
-            console.log('error=',error)
+            console.log('error=', error)
         }
-     }
-
-     get ldGenPath(){
-        return this.Picklistvalue;
-     }
-
-     ldGenPathValue(event){
-        debugger;
-        this.Leadvalue=event.target.value;
-     }
-
-     //Getting Picklist Field Of LeadSource
-     @track LeadSourcePicklist=[];
-     @wire(getPicklistValues, { recordTypeId:'$objectInfo.data.defaultRecordTypeId', fieldApiName:LEAD_SOURCE})
-     wiredPicklistLeadSource({data,error}){
-         debugger;
-        if(data){
-           console.log('data=',data);
-           console.log('dataValues=',data.values);
-           let arr=[];
-           for(let i=0;i<data.values.length;i++){
-              arr.push({label:data.values[i].label,value:data.values[i].value});
-           }
-           this.LeadSourcePicklist=arr;
-           console.log('Picklistvalue=',this.LeadSourcePicklist);
-        }
-        else {
-            console.log('error=',error)
-        }
-     }
-
-     get leadSource(){
-        return this.LeadSourcePicklist;
-     }
-
-     @track SourceValue;
-     HandleSource(event){
-        debugger;
-        let Source=event.target.value;
-        this.SourceValue=Source;
-     }
-
-     //Getting Picklist Field Of Medium
-     @track LeadMediumPicklist=[];
-     @wire(getPicklistValues, { recordTypeId:'$objectInfo.data.defaultRecordTypeId', fieldApiName:LEAD_MEDIUM})
-     wiredPicklistLeadMedium({data,error}){
-         debugger;
-        if(data){
-           console.log('data=',data);
-           console.log('dataValues=',data.values);
-           let arr=[];
-           for(let i=0;i<data.values.length;i++){
-              arr.push({label:data.values[i].label,value:data.values[i].value});
-           }
-           this.LeadMediumPicklist=arr;
-           console.log('Picklistvalue=',this.LeadMediumPicklist);
-        }
-        else {
-            console.log('error=',error)
-        }
-     }
-
-     get leadmedium(){
-        return this.LeadMediumPicklist;
-     }
-
-     @track MediumValue;
-
-    HandleMedium(event){
-        debugger;
-      let Medium=event.target.value;
-      this.MediumValue=Medium;
     }
 
-    @track CityPicklistValue=[];
+    get ldGenPath() {
+        return this.Picklistvalue;
+    }
+
+    ldGenPathValue(event) {
+        debugger;
+        this.Leadvalue = event.target.value;
+    }
+
+    //Getting Picklist Field Of LeadSource
+    @track LeadSourcePicklist = [];
+    @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: LEAD_SOURCE })
+    wiredPicklistLeadSource({ data, error }) {
+        debugger;
+        if (data) {
+            console.log('data=', data);
+            console.log('dataValues=', data.values);
+            let arr = [];
+            for (let i = 0; i < data.values.length; i++) {
+                arr.push({ label: data.values[i].label, value: data.values[i].value });
+            }
+            this.LeadSourcePicklist = arr;
+            console.log('Picklistvalue=', this.LeadSourcePicklist);
+        }
+        else {
+            console.log('error=', error)
+        }
+    }
+
+    get leadSource() {
+        return this.LeadSourcePicklist;
+    }
+
+    @track SourceValue;
+    HandleSource(event) {
+        debugger;
+        let Source = event.target.value;
+        this.SourceValue = Source;
+    }
+
+    //Getting Picklist Field Of Medium
+    @track LeadMediumPicklist = [];
+    @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: LEAD_MEDIUM })
+    wiredPicklistLeadMedium({ data, error }) {
+        debugger;
+        if (data) {
+            console.log('data=', data);
+            console.log('dataValues=', data.values);
+            let arr = [];
+            for (let i = 0; i < data.values.length; i++) {
+                arr.push({ label: data.values[i].label, value: data.values[i].value });
+            }
+            this.LeadMediumPicklist = arr;
+            console.log('Picklistvalue=', this.LeadMediumPicklist);
+        }
+        else {
+            console.log('error=', error)
+        }
+    }
+
+    get leadmedium() {
+        return this.LeadMediumPicklist;
+    }
+
+    @track MediumValue;
+
+    HandleMedium(event) {
+        debugger;
+        let Medium = event.target.value;
+        this.MediumValue = Medium;
+    }
+
+    @track CityPicklistValue = [];
     @track cityValue;
     @wire(Fetchcities)
-    WiredResponsecities({data,error}){
+    WiredResponsecities({ data, error }) {
         debugger;
-        if(data){
-         console.log('CityValuedata=',data);
-           let arr=[];
-           for(let i=0;i<data.length;i++){
-              arr.push({label:data[i].City__c,value:data[i].City__c});
-           }
-           this.CityPicklistValue=arr;
-           console.log('Picklistvalue=',this.CityPicklistValue);
+        if (data) {
+            console.log('CityValuedata=', data);
+            let arr = [];
+            for (let i = 0; i < data.length; i++) {
+                arr.push({ label: data[i].City__c, value: data[i].City__c });
+            }
+            this.CityPicklistValue = arr;
+            console.log('Picklistvalue=', this.CityPicklistValue);
         }
-        else if(error){
-            console.log('error=',error);
+        else if (error) {
+            console.log('error=', error);
         }
 
     }
 
-   get CityOptions(){
-     return this.CityPicklistValue;
-   }
+    get CityOptions() {
+        return this.CityPicklistValue;
+    }
 
-    @track CountryDisable=true;
-    @track StateDisable=true;
+    @track CountryDisable = true;
+    @track StateDisable = true;
     @track StateValue;
     @track CountryValue;
-    @track InputCity=false;
-    HandleCityStatus(event){
+    @track InputCity = false;
+    HandleCityStatus(event) {
 
         debugger;
-        let city=event.detail.value;
-        if(city){
-            this.cityValue=city;
+        let city = event.detail.value;
+        if (city) {
+            this.cityValue = city;
             let state;
             let TempValue;
             let country;
-            TempValue=city;
-           
-            console.log('Tempstate=',TempValue);
+            TempValue = city;
 
-            if(TempValue=="Other"){
-                this.StateDisable=false;
-                this.CountryDisable=false;
-                this.InputCity=true;
+            console.log('Tempstate=', TempValue);
+
+            if (TempValue == "Other") {
+                this.StateDisable = false;
+                this.CountryDisable = false;
+                this.InputCity = true;
                 alert('Please Type Your State and Country');
             }
-            else{
-                this.StateDisable=true;
-                this.CountryDisable=true;
+            else {
+                this.StateDisable = true;
+                this.CountryDisable = true;
             }
 
-            if(TempValue){
-                TempValue=TempValue.charAt(0).toUpperCase() + TempValue.slice(1);
-                console.log('Tempstate2=',TempValue);
-                state = this.StateCountryValue.find(item=>item.City__c==TempValue);
-                country=this.StateCountryValue.find(item=>item.City__c==TempValue);
-                console.log('state=',state);
-                
+            if (TempValue) {
+                TempValue = TempValue.charAt(0).toUpperCase() + TempValue.slice(1);
+                console.log('Tempstate2=', TempValue);
+                state = this.StateCountryValue.find(item => item.City__c == TempValue);
+                country = this.StateCountryValue.find(item => item.City__c == TempValue);
+                console.log('state=', state);
+
             }
-            if(state){
-                this.StateValue=state.State__c;
-                this.CountryValue=country.Country__c;
-                console.log('StateValue=',this.StateValue);
-                
+            if (state) {
+                this.StateValue = state.State__c;
+                this.CountryValue = country.Country__c;
+                console.log('StateValue=', this.StateValue);
+
             }
-            else{
-                this.StateValue='';
-                this.CountryValue='';
+            else {
+                this.StateValue = '';
+                this.CountryValue = '';
             }
 
-            
-            console.log('state=',this.StateValue);
+
+            console.log('state=', this.StateValue);
         }
-        
+
     }
 
-    
+
     @track UserInputCity
-    HandleUserCityStatus(event){
-        let value=event.target.value;
-        if(this.cityValue=='Other'){
-            this.UserInputCity=value;
+    HandleUserCityStatus(event) {
+        let value = event.target.value;
+        if (this.cityValue == 'Other') {
+            this.UserInputCity = value;
         }
 
     }
 
-    HandleChangeStateCountry(event){
-        if(this.cityValue=='Other'){
+    HandleChangeStateCountry(event) {
+        if (this.cityValue == 'Other') {
             debugger;
-           let value=event.target.value;
-    
-           if(event.target.name=="State"){
-    
-            this.StateValue=value;
-           }
-           if(event.target.name=="Country"){
-    
-            this.CountryValue=value;
-           }
+            let value = event.target.value;
+
+            if (event.target.name == "State") {
+
+                this.StateValue = value;
+            }
+            if (event.target.name == "Country") {
+
+                this.CountryValue = value;
+            }
         }
-          
-       }
-       createTaskRec()
-       {
-            debugger;
-           createTask({ subject: this.subjectvalue, assignto:this.CaptureOwnerId,priority:this.priorityValue,status:this.statusValue,duedate:this.DuedateValue,taskcomments:this.comValue,followupDate:this.followupValue,leadId:this.recordId })
-   
-               .then((result) => {
-                   console.log('result',result);
-                   if(result=='Success'){
-                       this.handleConfirm('Task Created Successfully');
-                       this.showtaskModal=false;
-                   }
-                  
-               })
-               .catch((error) => {
-                   this.error = error;
-                   console.log('error',error);
-               });
-       }
+
+    }
+    createTaskRec() {
+        debugger;
+        createTask({ subject: this.subjectvalue, assignto: this.CaptureOwnerId, priority: this.priorityValue, status: this.statusValue, duedate: this.DuedateValue, taskcomments: this.comValue, followupDate: this.followupValue, leadId: this.recordId })
+
+            .then((result) => {
+                console.log('result', result);
+                if (result == 'Success') {
+                    this.handleConfirm('Task Created Successfully');
+                    this.showtaskModal = false;
+                }
+
+            })
+            .catch((error) => {
+                this.error = error;
+                console.log('error', error);
+            });
+    }
 
     //open modal
     newhLeadBTN() {
@@ -430,24 +429,22 @@ export default class WaklInLead extends LightningElement {
         //this.getPuckistOflead();
     }
     // new task button
-    @track showtaskModal=false;
-    newTaskBTN()
-    {
+    @track showtaskModal = false;
+    newTaskBTN() {
         debugger;
         this.showtaskModal = true;
     }
 
-    hideshowTaskModal()
-    {
-        this.showtaskModal = false;  
+    hideshowTaskModal() {
+        this.showtaskModal = false;
     }
 
     //close modal from innner button
-   
+
     handleCancel() {
         debugger;
         this.isShowModal = false;
-        this.showtaskModal=false;
+        this.showtaskModal = false;
 
     }
 
@@ -488,10 +485,19 @@ export default class WaklInLead extends LightningElement {
         }
 
     }
-    HandleComments(event)
-    {
-       let comment = event.target.value;
-       this.commentsValue = comment;
+
+    handleCorrectPhone(PhoneToverify){
+        var regExpPhoneformat = /^[0-9]{1,10}$/g;
+        if (PhoneToverify.match(regExpPhoneformat)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    HandleComments(event) {
+        let comment = event.target.value;
+        this.commentsValue = comment;
     }
     PhoneChange(Event) {
         debugger;
@@ -524,26 +530,23 @@ export default class WaklInLead extends LightningElement {
         let selectedCource = event.detail.value;
         this.CourceLead = selectedCource;
     }
-    
+
     @track subjectvalue
-    subjectHandler(event)
-    {
-       debugger;
-       let selectedSubject = event.target.value;
-       this.subjectvalue = selectedSubject;
+    subjectHandler(event) {
+        debugger;
+        let selectedSubject = event.target.value;
+        this.subjectvalue = selectedSubject;
     }
 
     @track statusValue;
-    statusHandler(event)
-    {
+    statusHandler(event) {
         debugger;
         let selectedStatus = event.detail.value;
         this.statusValue = selectedStatus;
     }
 
     @track DuedateValue;
-    duedateHandler(event)
-    {
+    duedateHandler(event) {
         debugger;
         let selectedDuedate = event.detail.value;
         this.DuedateValue = selectedDuedate;
@@ -551,56 +554,52 @@ export default class WaklInLead extends LightningElement {
     }
 
     @track comValue;
-    commentHandler(event)
-    {
+    commentHandler(event) {
         debugger;
         let selectedComment = event.target.value;
         this.comValue = selectedComment;
     }
     @track followupValue;
-    followupHandler(event)
-    {
+    followupHandler(event) {
         debugger;
         let selectedfollowup = event.target.value;
         this.followupValue = selectedfollowup;
     }
 
-   
+
     @track priorityValue;
-    priorityHandler(event)
-    {
+    priorityHandler(event) {
         debugger;
         let selectedPriority = event.detail.value;
         this.priorityValue = selectedPriority;
     }
-   
+
     @track statusValue;
-    statusHandler(event)
-    {
+    statusHandler(event) {
         debugger;
-       let selectedStatus = event.detail.value;
-       this.statusValue =  selectedStatus;
+        let selectedStatus = event.detail.value;
+        this.statusValue = selectedStatus;
     }
 
 
 
     @track cityValue;
-    HandleCity(event){
+    HandleCity(event) {
         debugger;
-        let city=event.target.value;
-        this.cityValue=city;
+        let city = event.target.value;
+        this.cityValue = city;
     }
     @track sourceValue;
-    HandleSource(event){
+    HandleSource(event) {
         debugger;
-        let source=event.target.value;
-        this.sourceValue=source;
+        let source = event.target.value;
+        this.sourceValue = source;
     }
     @track MediumValue;
-    HandleMedium(event){
+    HandleMedium(event) {
         debugger;
-        let medium=event.target.value;
-        this.MediumValue=medium;
+        let medium = event.target.value;
+        this.MediumValue = medium;
     }
     // @track LGEValue;
     // HandleLGE(event){
@@ -609,16 +608,16 @@ export default class WaklInLead extends LightningElement {
     //     this.LGEValue=LGE;
     //}
     @track VisitorIdValue;
-    HandleVisitorId(event){
+    HandleVisitorId(event) {
         debugger;
-        let VId=event.target.value;
-        this.VisitorIdValue=VId;
+        let VId = event.target.value;
+        this.VisitorIdValue = VId;
     }
     @track TranscriptValue;
-    HandleTranscript(event){
+    HandleTranscript(event) {
         debugger;
-        let Trans=event.target.value;
-        this.TranscriptValue=Trans;
+        let Trans = event.target.value;
+        this.TranscriptValue = Trans;
     }
     // @track PageUrlValue;
     // HandlePageURL(event){
@@ -644,7 +643,7 @@ export default class WaklInLead extends LightningElement {
     }
 
     //For Creating Task
-   
+
 
     @wire(getMember)
     wireRes(data, error) {
@@ -699,47 +698,47 @@ export default class WaklInLead extends LightningElement {
         }
     }
 
-     // getPickiststatusOfTask
-     @wire(getPickiststatusOfTask)
-     wiredRs({ error, data }) {
-         debugger;
-         if (data) {
-             debugger;
-             let options = [];
-             for (const [key, value] of Object.entries(data)) {
-                 options.push({
-                     label: key,
-                     value: value
-                 })
-                 console.log(`${key}: ${value}`);
-             }
-             this.StatusList = options;
-             console.log(data);
-             console.log('statusList--',this.StatusList);
-         }
-         if (error) {
-              console.log('error=',error);
-         }
-     }
-      //getPickistpriorityOfTask
-     @wire(getPickistpriorityOfTask)
-     wireRs({ error, data }) {
-         if (data) {
-             let options = []
-             for (const [key, value] of Object.entries(data)) {
-                 options.push({
-                     label: key,
-                     value: value
-                 })
-                 console.log(`${key}: ${value}`);
-             }
-             this.priorityList = options;
-             console.log(data)
-         }
-         if (error) {
- 
-         }
-     }
+    // getPickiststatusOfTask
+    @wire(getPickiststatusOfTask)
+    wiredRs({ error, data }) {
+        debugger;
+        if (data) {
+            debugger;
+            let options = [];
+            for (const [key, value] of Object.entries(data)) {
+                options.push({
+                    label: key,
+                    value: value
+                })
+                console.log(`${key}: ${value}`);
+            }
+            this.StatusList = options;
+            console.log(data);
+            console.log('statusList--', this.StatusList);
+        }
+        if (error) {
+            console.log('error=', error);
+        }
+    }
+    //getPickistpriorityOfTask
+    @wire(getPickistpriorityOfTask)
+    wireRs({ error, data }) {
+        if (data) {
+            let options = []
+            for (const [key, value] of Object.entries(data)) {
+                options.push({
+                    label: key,
+                    value: value
+                })
+                console.log(`${key}: ${value}`);
+            }
+            this.priorityList = options;
+            console.log(data)
+        }
+        if (error) {
+
+        }
+    }
 
     handlecourseList() {
         getPuckistOflead()
@@ -761,45 +760,58 @@ export default class WaklInLead extends LightningElement {
             });
     }
 
-   @track HandleLeadCreatedisable=false;
+    @track HandleLeadCreatedisable = false;
 
     createNewLead() {
-       
-        if((this.namValue!=undefined || this.namValue!=null ) && (this.lNameValue!=undefined || this.lNameValue!=null ) && (this.emailValue!=undefined || this.emailValue!=null ) && (this.phoneValue!=undefined || this.phoneValue!=null ) 
-             && (this.CourceLead!=undefined || this.CourceLead!=null ) && (this.cityValue!=undefined || this.cityValue!=null ) && (this.sourceValue!=undefined || this.sourceValue!=null ) && (this.MediumValue!=undefined || this.MediumValue!=null ) && 
-                 (this.Leadvalue!=undefined || this.Leadvalue!=null ))
-                {
-                    this.HandleLeadCreatedisable=true; 
-                    
-                    if(this.cityValue=='Other'){
-                        this.cityValue=this.UserInputCity
-                    }
+
+        if ((this.namValue != undefined && this.namValue != null) && (this.lNameValue != undefined && this.lNameValue != null) && (this.emailValue != undefined && this.emailValue != null) && (this.phoneValue != undefined && this.phoneValue != null)
+            && (this.CourceLead != undefined && this.CourceLead != null) && (this.cityValue != undefined && this.cityValue != null) && (this.sourceValue != undefined && this.sourceValue != null) && (this.MediumValue != undefined && this.MediumValue != null) &&
+            (this.Leadvalue != undefined && this.Leadvalue != null)) {
+            this.HandleLeadCreatedisable = true;
+
+            if (this.cityValue == 'Other') {
+                this.cityValue = this.UserInputCity
+            }
             debugger;
             var returnvalue = this.handleIncorrectEmail(this.emailValue)
-            if (returnvalue == true) {
-                createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, ownerId: this.ismeId, agmId: this.gruoMemberId, Course: this.CourceLead, agentid: this.agentrecid,city:this.cityValue,source:this.sourceValue,medium:this.MediumValue,VisitorId:this.VisitorIdValue,Transcript:this.TranscriptValue,leadGenPath:this.Leadvalue,state:this.StateValue,country:this.CountryValue,comments:this.commentsValue})
+            if (returnvalue == true && this.handleCorrectPhone(this.phoneValue)) {
+                createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, ownerId: this.ismeId, agmId: this.gruoMemberId, Course: this.CourceLead, agentid: this.agentrecid, city: this.cityValue, source: this.sourceValue, medium: this.MediumValue, VisitorId: this.VisitorIdValue, Transcript: this.TranscriptValue, leadGenPath: this.Leadvalue, state: this.StateValue, country: this.CountryValue, comments: this.commentsValue })
                     .then(data => {
                         this.handleConfirm('Lead Created Successfully');
                         console.log(data)
                         //alert('Lead Record created successfully');
                         this.handleCancel();
-                        this.HandleLeadCreatedisable=false;
-    
+                        this.HandleLeadCreatedisable = false;
+                        this.namValue = '';
+                        this.lNameValue = '';
+                        this.commentsValue = '';
+                        this.agentrecid = '';
+                        this.ismeId = '';
+                        this.emailValue = '';
+                        this.phoneValue = '';
+                        this.gruoMemberId = '';
+                        this.CourceLead = '';
+                        this.CountryValue = '';
+                        this.cityValue = '';
+                        this.Leadvalue = '';
+
                     })
                     .catch(error => {
                         this.handleAlert('Error updating or reloading records');
-    
+                        this.HandleLeadCreatedisable = false;
+                        this.handleCancel();
+
                     })
             }
             else {
-                alert('Incorrect Email Pattern');
+                alert('Incorrect Email or Phone Pattern');
+                this.HandleLeadCreatedisable = false;
             }
         }
-        else{
+        else {
             alert('All Fields are Mandatory,Please Check any one Of Your Field Is Empty');
-        }  
-       
-
+            this.HandleLeadCreatedisable = false;
+        }
     }
 
     async handleConfirm(message) {
@@ -873,7 +885,7 @@ export default class WaklInLead extends LightningElement {
 
     ShowSearchpage() {
         debugger;
-       
+
         this.showPastLeads = false;
         this.showSearchDetails = true;
         this.columns = applicationcolumns;
@@ -883,37 +895,37 @@ export default class WaklInLead extends LightningElement {
 
     }
 
-    
-    
-    HandleCreateDisable=false;
-    @track isLoadedApplication=false;
+
+
+    HandleCreateDisable = false;
+    @track isLoadedApplication = false;
 
     createapplicationForm() {
-        this.HandleCreateDisable=true;
+        this.HandleCreateDisable = true;
         debugger;
-        this.isLoadedApplication=true;
+        this.isLoadedApplication = true;
         createApplication({ Course: this.courseforApp, LeadId: this.recordId })
             .then(data => {
                 debugger;
-                
+
                 this.showapplicationMOdal = false;
-                this.HandleCreateDisable=false;
+                this.HandleCreateDisable = false;
                 this.handleConfirm('Application Created Successfully');
-                this.isLoadedApplication=false;
+                this.isLoadedApplication = false;
                 this.appbtndisAble = true;
                 refreshApex(this.dataForApp);
-                
-                
-                
-                
+
+
+
+
             })
             .catch(error => {
-                this.HandleCreateDisable=false;
-                this.isLoadedApplication=false;
+                this.HandleCreateDisable = false;
+                this.isLoadedApplication = false;
                 this.handleAlert('Error updating or reloading records');
             })
 
-            
+
 
     }
 
@@ -932,29 +944,29 @@ export default class WaklInLead extends LightningElement {
     handleappCancel() {
         debugger;
         this.showapplicationMOdal = false;
-        
+
     }
 
     handleOnselect(event) {
         debugger;
         var selectedVal = event.detail.value;
         if (selectedVal == 'Walk-In') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring;
             window.open(urlString, "_self");
-            
+
         }
         if (selectedVal == 'Voice') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring;
             window.open(urlString, "_self");
-            
+
         }
         if (selectedVal == 'Generic') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring;
             window.open(urlString, "_self");
-            
+
         }
         if (selectedVal == 'Chat') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring;
             window.location.replace(urlString, "_self");
         }
     }

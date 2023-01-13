@@ -89,29 +89,56 @@
                     $scope.SelectedForm = s;
                  };
                 $scope.loginEmployee = function () {
-                    if( $scope.SelectedForm == undefined ||  $scope.SelectedForm == ""){
+                    /*if( $scope.SelectedForm == undefined ||  $scope.SelectedForm == ""){
                         Swal.fire({
                                 icon: 'warning',
                                 title: 'Opps....!',
                                 text: 'Please Select Any Form !'
                             })
                             return;
-                    }
+                    }*/
                     $scope.userPassword;
                     $scope.showSpinner = true;
                     $scope.loginPage = false;
                     debugger;
                     ExcelRTrainingUserLoginController.excelRTrainerLogIn($scope.userName, $scope.userPassword, function (result, event) {
                         if (event.status && result != null) {
-                            
+                            var DepartmentArr = result.Departments__c.split(';');
                             debugger;
                             
-                            if (result.Departments__c.includes($scope.SelectedForm)) {
+                            //if (result.Departments__c.includes($scope.SelectedForm)) {
                                 Swal.fire(
                                 '', 'Logged In Successfully', 'Success'
-                                )
+                                );
+                                //return;
                                 $scope.$apply();
-                                if ($scope.SelectedForm == 'Walk-In') {
+                                if (result.Departments__c != null) {
+                                    if (DepartmentArr[0] == 'Walk-In') {
+                                        var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage'+'?id='+ result.Id + '&departments=' + result.Departments__c;
+                                        window.location.replace(urlString, "_self");
+                                    }
+                                    if (DepartmentArr[0] == 'Voice') {
+                                        var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage' + '?id=' + result.Id + '&departments=' + result.Departments__c;
+                                        window.location.replace(urlString, "_self");
+                                    }
+                                    if (DepartmentArr[0] == 'Generic') {
+                                        var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage' + '?id=' + result.Id + '&departments=' + result.Departments__c;
+                                        window.location.replace(urlString, "_self");
+                                    }
+                                    if (DepartmentArr[0] == 'Chat') {
+                                        var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage' + '?id=' + result.Id + '&departments=' + result.Departments__c;
+                                        window.location.replace(urlString, "_self");
+                                    }   
+                                }
+                                else{
+                                    Swal.fire({
+                                    icon: 'error',
+                                    title: 'Opps....!',
+                                    text: 'You are not part of any Department now! Please Contact to Admin!!'
+                            })
+
+                                }
+                                /*if ($scope.SelectedForm == 'Walk-In') {
                                     var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage'+'?id='+ result.Id + '&departments=' + result.Departments__c;
                                     window.location.replace(urlString, "_self");
                                 }
@@ -126,15 +153,15 @@
                                 if ($scope.SelectedForm == 'Chat') {
                                     var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage'+'?id='+ result.Id + '&departments=' + result.Departments__c;
                                     window.location.replace(urlString, "_self");
-                                }
+                                }*/
                                 
                                 
-                            }else{
-                                Swal.fire(
-                                '', 'You do not belong to ' + $scope.SelectedForm + ' Department. Please Select Correct Department!', 'Error'
-                                )
-                                $scope.$apply();
-                            }
+                            // }else{
+                            //     Swal.fire(
+                            //     '', 'You do not belong to ' + $scope.SelectedForm + ' Department. Please Select Correct Department!', 'Error'
+                            //     )
+                            //     $scope.$apply();
+                            // }
                             
                             debugger;
                             
@@ -177,7 +204,7 @@
                                             <h4 class="mt-3">Login To Your Account</h4>
                                         </div>
                                         <div class="mt-5 headrow" >
-                                            <div class="row forinnerRow" style=" background-color:#ffffff; box-shadow: 5px 5px 10px 10px rgb(230, 228, 228); border-radius:5px; color: #3888CA; font-weight: bold;">
+                                            <!--div class="row forinnerRow" style=" background-color:#ffffff; box-shadow: 5px 5px 10px 10px rgb(230, 228, 228); border-radius:5px; color: #3888CA; font-weight: bold;">
                                                 <div class="col-sm d-flex justify-content-center" >
                                                     <div class="">
                                                         <input style="margin: 11px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Walk-In')" value="Walk-In">Walk-In</input>
@@ -186,8 +213,8 @@
                                                         <input style="margin: 11px;"  type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Generic')" value="Generic">Generic</input>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <!-- <div  class="mt-5"  style=" background-color:#ffffff; box-shadow: 5px 5px 10px 10px rgb(230, 228, 228); border-radius:5px; color: #3888CA; font-weight: bold;">
+                                            </div -->
+                                            <!--div  class="mt-5"  style=" background-color:#ffffff; box-shadow: 5px 5px 10px 10px rgb(230, 228, 228); border-radius:5px; color: #3888CA; font-weight: bold;">
                                                 <div class="formclass mt-5 radioGol d-inline">
                                                     <div class="d-inline">
                                                         <input style="margin: 16px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Walk-In')" value="Walk-In">Walk-In</input>
@@ -203,7 +230,7 @@
                                                     </div>
                                                     
                                                 </div>
-                                            </div> -->
+                                            </div -->
                                         </div>
                                         <div class="formclass form-group mt-5" style="margin-top:4rem; color: #3888CA;">
                                             <label for="exampleInputEmail1">Email</label>
