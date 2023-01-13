@@ -438,8 +438,8 @@
                                </lightning-combobox>
                                
                                 <!--lightning-input type="text" label="LGE" onchange={HandleLGE}></lightning-input-->
-                                <lightning-input type="text" label="Visitor ID" onchange={HandleVisitorId}></lightning-input>
-                                <lightning-input type="text" label="TranScript" onchange={HandleTranscript} ></lightning-input>
+                                <lightning-input type="text" label="Visitor ID" onchange={HandleVisitorId} required="true"></lightning-input>
+                                <lightning-input type="text" label="TranScript" onchange={HandleTranscript} required="true"></lightning-input>
                                 <lightning-textarea  label="Comments" name="Comments" value={commentsValue} onchange={HandleComments}>
                                 </lightning-textarea>
 

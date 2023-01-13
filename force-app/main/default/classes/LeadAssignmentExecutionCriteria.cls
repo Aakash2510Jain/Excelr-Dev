@@ -3,12 +3,9 @@ public without sharing class LeadAssignmentExecutionCriteria {
     @future(Callout=true)
     public static void validateEntryCriteria(){
         //Getting the Validated Leads : 
-        List<Lead> leadListToBeProcessed = [SELECT Address,AdGroup__c,AD_Set_Id__c,AD_Set_Name__c,Assignment_Group__c,Branch__c,Capture_NBFC_Partner__c,Capture_Tenure__c,Capture_Upfront_payment__c,CID__c,City,City__c,Company,ConvertedAccountId,ConvertedContactId,ConvertedDate,ConvertedOpportunityId,Country,Country__c,Course_Interested_Rating__c,Course__c,CreatedById,CreatedDate,Current_Domain__c,Date_of_Enrollment__c,Description,Designation__c,Do_you__c,Email,EmailBouncedDate,EmailBouncedReason,Email_Conversation_Done__c,Enquired_Course__c,Enter_UTM_Link__c,ExcelR_Training_User__c,Facebook_Ad_Id__c,Facebook_Ad_Name__c,Facebook_Platform__c,FirstName,Form_Names__c,Form_Source__c,GCLID__c,GeocodeAccuracy,Id,Industry,IsConverted,IsDeleted,ISM_Name__c,ISM__c,IsUnreadByOwner,Is_Email_Invalid__c,Is_Phone_Invalid__c,Jigsaw,JigsawContactId,Keyword__c,Landing_Page_URL__c,LastActivityDate,LastModifiedById,LastModifiedDate,LastName,LastReferencedDate,LastViewedDate,Latitude,LeadSource,Lead_Assigned_Date_TIme__c,Lead_Assigned_Date__c,Lead_Assigned_Time__c,Lead_Create_Date__c,Lead_Gen_Form_Id__c,Lead_Gen_Path__c,Lead_Id_FB__c,Lead_Name__c,Location__c,Longitude,MasterRecordId,Match_Type__c,MiddleName,MobilePhone,Name,Next_follow_up_date_time__c,NumberOfEmployees,OwnerId,Owner_Email__c,Owner_ManagerId__c,Payment_Initiated_Date_Time__c,Payment_Type__c,Phone,PhotoUrl,PostalCode,Prior_Status__c,Product__c,Profession__c,Qualification__c,Quality_of_Lead__c,Quantity__c,Rating,Reason_For_Dead__c,Reason_for_On_Hold__c,Referral_Email__c,Referral_Phone__c,referrer__c,Refree_Mob_No__c,Relevant_Experience__c,Salutation,sfleadcaphfprod__External_Lead_ID__c,Should_be_Converted__c,Specialization__c,State,State__c,Status,Street,Suffix,SyncedInCallyzer__c,SystemModstamp,Telephonic_Conversation__c,Title,Total_Amount__c,Total_Applications_Submitted__c,Total_Calls__c,Total_Call_Duration__c,Total_Connected_Call__c,Total_Conversation_Duration__c,Total_Course_Interests__c,Total_Emails__c,Transcript__c,Type_of_Course__c,UTM_AdGroup__c,UTM_Campaign__c,UTM_Channel__c,UTM_Content__c,UTM_Device__c,UTM_Experiment__c,UTM_link__c,UTM_Location__c,UTM_Medium__c,UTM_Term__c,UTM_Type__c,UTM_Variety__c,Visitor_ID__c,Website,Whatsapp_Opt_in__c,Why_This_Course__c,Year_of_Experience__c,Year_of_Graduation__c FROM Lead WHERE OwnerId =: Constants.queueId AND (LeadSource != null or  Course__c != null or Location__c != null) limit 10000] ; 
+        List<Lead> leadListToBeProcessed = [SELECT Address,AdGroup__c,AD_Set_Id__c,AD_Set_Name__c,Assignment_Group__c,Branch__c,Capture_NBFC_Partner__c,Capture_Tenure__c,Capture_Upfront_payment__c,CID__c,City,City__c,Company,ConvertedAccountId,ConvertedContactId,ConvertedDate,ConvertedOpportunityId,Country,Country__c,Course_Interested_Rating__c,Course__c,CreatedById,CreatedDate,Current_Domain__c,Date_of_Enrollment__c,Description,Designation__c,Do_you__c,Email,EmailBouncedDate,EmailBouncedReason,Email_Conversation_Done__c,Enquired_Course__c,Enter_UTM_Link__c,ExcelR_Training_User__c,Facebook_Ad_Id__c,Facebook_Ad_Name__c,Facebook_Platform__c,FirstName,Form_Names__c,Form_Source__c,GCLID__c,GeocodeAccuracy,Id,Industry,IsConverted,IsDeleted,ISM_Name__c,ISM__c,IsUnreadByOwner,Is_Email_Invalid__c,Is_Phone_Invalid__c,Jigsaw,JigsawContactId,Keyword__c,Landing_Page_URL__c,LastActivityDate,LastModifiedById,LastModifiedDate,LastName,LastReferencedDate,LastViewedDate,Latitude,LeadSource,Lead_Assigned_Date_TIme__c,Lead_Assigned_Date__c,Lead_Assigned_Time__c,Lead_Create_Date__c,Lead_Gen_Form_Id__c,Lead_Gen_Path__c,Lead_Id_FB__c,Lead_Name__c,Location__c,Longitude,MasterRecordId,Match_Type__c,MiddleName,MobilePhone,Name,Next_follow_up_date_time__c,NumberOfEmployees,OwnerId,Owner_Email__c,Owner_ManagerId__c,Payment_Initiated_Date_Time__c,Payment_Type__c,Phone,PhotoUrl,PostalCode,Prior_Status__c,Product__c,Profession__c,Qualification__c,Quality_of_Lead__c,Quantity__c,Rating,Reason_For_Dead__c,Reason_for_On_Hold__c,Referral_Email__c,Referral_Phone__c,referrer__c,Refree_Mob_No__c,Relevant_Experience__c,Salutation,sfleadcaphfprod__External_Lead_ID__c,Should_be_Converted__c,Specialization__c,State,State__c,Status,Street,Suffix,SyncedInCallyzer__c,SystemModstamp,Telephonic_Conversation__c,Title,Total_Amount__c,Total_Applications_Submitted__c,Total_Calls__c,Total_Call_Duration__c,Total_Connected_Call__c,Total_Conversation_Duration__c,Total_Course_Interests__c,Total_Emails__c,Transcript__c,Type_of_Course__c,UTM_AdGroup__c,UTM_Campaign__c,UTM_Channel__c,UTM_Content__c,UTM_Device__c,UTM_Experiment__c,UTM_link__c,UTM_Location__c,UTM_Medium__c,UTM_Term__c,UTM_Type__c,UTM_Variety__c,Visitor_ID__c,Website,Whatsapp_Opt_in__c,Why_This_Course__c,Year_of_Experience__c,Year_of_Graduation__c FROM Lead WHERE OwnerId =: Constants.queueId limit 10000] ; 
         Set<Lead> assignedLead = new Set<Lead>();
-        if(leadListToBeProcessed != Null){
-            system.debug('leadListToBeProcessed'+leadListToBeProcessed.size());
-        }
-        
+      
         Boolean IsLeadAssigned = False;
         list<lead> newLeadListTemp 												= new list<lead>();
         list<lead> DefaultQueueList 												= new list<lead>();
@@ -18,21 +15,18 @@ public without sharing class LeadAssignmentExecutionCriteria {
         map<String,String> mapofExeIdByEvaluaationExp 							= new map<string,String>();
         map<String,List<String>> mapByallFields 		            	        = new map<String,List<String>>();
         map<String,List<String>> mapofFieldsWithPossibleValues 			        = new map<String,List<String>>();
-        map<String,map<String,Map<String,String>>> matchingTypeFieldByCriteria = new map<String,map<String,Map<String,String>>>();
+        map<String,map<String,Map<String,String>>> matchingTypeFieldByCriteria 	= new map<String,map<String,Map<String,String>>>();
         map<string,map<string,List<String>>> multipleCriteriasForFields 	    = new map<string,map<string,List<String>>>();
-        map<string,map<string,List<Decimal>>> allotedFieldbySequenceList	= new map<string, map<string,List<Decimal>>>();
+        map<string,map<string,List<Decimal>>> allotedFieldbySequenceList		= new map<string, map<string,List<Decimal>>>();
         map<String,List<Lead>> mapofRMGroupNameByLeadList 						= new map<String,List<Lead>>();
         map<string,map<string,String>> expectedValuebyCriteria 					= new map<string,map<string,String>>();
         map<String,String> leadIdByMatchedCriterias 							= new map<String,String>();
         map<string,map<string,Decimal>> allotedFieldbySequence 					= new map<string,map<string,Decimal>>();
         map<string,String> criteriaNameById 									= new Map<String,String>();
-        
-        map<String,map<string,list<String>>> fieldByMatchingType 				= new map<String,map<string,list<String>>>();
-        
+        map<String,map<string,list<String>>> fieldByMatchingType 				= new map<String,map<string,list<String>>>();       
         map<String,map<string,String>> fieldByFieldType 						= new map<String,map<string,String>>();
         map<string,String> leadValueForFields 									= new Map<String,String>();
         map<String,List<Lead>> mapofCriteriaIdByLeadList 						= new map<String,List<Lead>>();
-        //Older
         map<String,List<Lead>> mapofFbGroupNameByLeadList = new map<String,List<Lead>>();
         map<string,Decimal> allotedMarksbySequence = new Map<String,Decimal>();
         set<String> newLeadsSet = new set<String>();
@@ -452,13 +446,13 @@ public without sharing class LeadAssignmentExecutionCriteria {
         system.debug('mapofExecutionIdByLeadList::--->'+mapofExecutionIdByLeadList);
         system.debug('mapofFBGroupNameByLeadList::--------->'+mapofGlobalGroupNameByLeadList);
         
-        list<Assignment_Group__c> agList = [SELECT id,name,Lead_Assigning_Criteria__c from assignment_group__c where Lead_Assigning_Criteria__c in: mapofExecutionIdByLeadList.keySet()];
+        list<Assignment_Group__c> agList = [SELECT id,name,Lead_Assigning_Criteria__c,Name__C from assignment_group__c where Lead_Assigning_Criteria__c in: mapofExecutionIdByLeadList.keySet()];
         map<string,list<lead>> mapOfGroupNameByListLead = new map<string,list<lead>>();
         
         system.debug('agList---->'+agList);
         if(!agList.isEmpty()){
             for(assignment_group__c assGroup : agList){
-                mapOfGroupNameByListLead.put(assGroup.name, mapofExecutionIdByLeadList.get(assGroup.Lead_Assigning_Criteria__c));
+                mapOfGroupNameByListLead.put(assGroup.Name__c, mapofExecutionIdByLeadList.get(assGroup.Lead_Assigning_Criteria__c));
             }
             list<String> leadIdList = new list<String>();
             map<string,list<String>> mapofGroupnameByLeadIdList = new map<String,list<String>>();

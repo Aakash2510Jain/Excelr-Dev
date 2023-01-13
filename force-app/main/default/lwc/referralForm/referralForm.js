@@ -96,6 +96,7 @@ export default class ReferralForm extends LightningElement {
         }
         else{
             alert('All Fields are Mandatory,Please Check any one Of Your Field Is Empty');
+        this.HandleLeadCreatedisable=false; 
         }
 
 

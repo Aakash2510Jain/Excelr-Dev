@@ -3,7 +3,6 @@ public without sharing class RoundRobinLeadAssignment{
     public static string groupName = '';
     public static set<String> leadIds = new Set<String>();
     public static map<string, string> mapofCouseByGroupName = new map<string, string>();
-    @future
     public static void assignLeadsToBDS(String qualityOfLead){
         system.debug('qualityOfLead::' + qualityOfLead);
         boolean withinWorkingHour = false;

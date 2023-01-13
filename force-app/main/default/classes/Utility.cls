@@ -272,6 +272,10 @@ public without sharing class Utility{
         applicationId = API_CreateAccount.insertApplication(appRec);
         return applicationId;
     }
+
+Public static void API_ErrorORSuccess(List<String> ErrorFields, String ErrorMsg, Integer ErrorStatus, string ErrOrSuccId){
+
+    }
     
     
 

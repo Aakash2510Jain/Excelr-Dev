@@ -1,14 +1,14 @@
 public without sharing class ReferralFormController {
     
     @AuraEnabled
-    public static String SubmitReferralDetails(String FirstN, String LastName, String Email, String Phone, String ReferralEm, String ReferralPh, String Course){
+    public static String SubmitReferralDetails(String FirstN, String LastName, String Email, String Phone, String ReferralEm, String ReferralPh){ //, String Course
         System.debug('FirstN ====> ' + FirstN);
         System.debug('LastName ====> ' + LastName);
         System.debug('Email ====> ' + Email);
         System.debug('Phone ====> ' + Phone);
         System.debug('ReferralEmail ====> ' + ReferralEm);
         System.debug('ReferralPhone ====> ' + ReferralPh);
-        System.debug('Course ====> ' + Course);
+       // System.debug('Course ====> ' + Course);
         string message= '';
         try {
             if (ReferralEm != null) {
