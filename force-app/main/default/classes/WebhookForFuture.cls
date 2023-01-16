@@ -1,12 +1,20 @@
-public without sharing class WebhookForFuture{
-    @future
-    Public static void uploadcalllogs(string callLogString){
+public without sharing class WebhookForFuture implements Queueable{
+    
+
+    private String callLogString;
+
+    public WebhookForFuture(String callLogString) {
+        this.callLogString = callLogString;
+    }
+
+    Public void execute(QueueableContext context){
 
 
         //-------------------------------------------- For Payload -------------------------------------------
         Set<String> EmployeePhones = new Set<String>();
         Set<String> TaskIds = new Set<String>();
         Set<String> CustomerPhones = new Set<String>();
+        Set<String> CustomerPhonesForContact = new Set<String>();
         map<String, Map<string, Object>> CustomerPhoneWithObject = new map<String, Map<string, Object>>();
         map<String, Map<string, Object>> TaskIdWithObject = new map<String, Map<string, Object>>();
         Map<String, String> TaskIdwithCutomerPone = new map<String, String>();
@@ -31,13 +39,20 @@ public without sharing class WebhookForFuture{
             //for (OBject obj : bodyMap){
                 //Map<string, Object> m = (Map<string, Object>)obj;
                 String EmployeeName = String.valueof(m.get('employeeName'));
-                List<Object> logsList = (List<Object>)m.get('Logs');
+                List<Object> logsList = (List<Object>)m.get('logs');
                 EmployeePhones.add((String) m.get('employeeNumber'));
+                String EmployeePhoneNumber  = (String) m.get('employeeNumber');
+
+                List<Callyzer_Sales_User__c> CallyzerSalesUser = [SELECT callyzerId__c,countryCode__c,deviceName__c,employeeCode__c,Id,mobile__c,Name,OwnerId 
+                                            FROM Callyzer_Sales_User__c 
+                                            Where mobile__c IN:EmployeePhones ];
+                                            System.debug('CallyzerSalesUser ===> ' + CallyzerSalesUser);
 
                 for (Object logObj : logsList){
                     Map<string, Object> logmap = (Map<string, Object>)logObj;
                     System.debug('logmap =====> ' + logmap);
                     CustomerPhones.add('+91' + ((String) logmap.get('number')).right(10));
+                    CustomerPhonesForContact.add(((String) logmap.get('number')).right(10));
                     TaskIds.add((string) logmap.get('id'));
                     CustomerPhoneWithObject.put((string) logmap.get('number'), logmap);
                     TaskIdWithObject.put((string) logmap.get('id'), logmap);
@@ -62,7 +77,7 @@ public without sharing class WebhookForFuture{
                 System.debug('PhoneWithLead =====> ' + PhoneWithLead);
                 LIst<Contact> ExistingContactwithPhone = [Select id, Phone, ownerId
                                                           From Contact
-                                                          Where Phone IN:CustomerPhones];
+                                                          Where Phone IN:CustomerPhonesForContact];
 
                 if (ExistingContactwithPhone.size() > 0){
                     for (Contact con : ExistingContactwithPhone){
@@ -71,13 +86,13 @@ public without sharing class WebhookForFuture{
 
                     if (CustomerPhones.size() > 0){
                         for (string phoneStr : CustomerPhones){
-                            if (!PhoneWithContact.containsKey(phoneStr)){
+                            if (!PhoneWithContact.containsKey(phoneStr.right(10)) && !PhoneWithLead.containsKey(phoneStr)){
                                 PhoneStringNotExistintheSystem.add(phoneStr);
                             }
                         }
                     }
                 }
-
+                System.debug('PhoneStringNotExistintheSystem =====> ' + PhoneStringNotExistintheSystem);
                 System.debug('PhoneWithContact =====> ' + PhoneWithContact);
             }
             System.debug('TaskIds ====> ' + TaskIds);
@@ -120,10 +135,16 @@ public without sharing class WebhookForFuture{
                         System.debug('I am inside to create task for Lead');
                         if (!TaskCallObjectIdWithTask.isEmpty() && !TaskCallObjectIdWithTask.containsKey(str)){
                             Task tsk = CreateTaskForLead(TaskIdWithObject, str, PhoneWithLead);
+                            if (CallyzerSalesUser.size() >0) {
+                                tsk.Callyzer_Sales_User__c = CallyzerSalesUser[0].id;
+                            }
 
                             TaskListTobeInserted.add(tsk);
                         } else{
                             Task tsk = CreateTaskForLead(TaskIdWithObject, str, PhoneWithLead);
+                            if (CallyzerSalesUser.size() >0) {
+                                tsk.Callyzer_Sales_User__c = CallyzerSalesUser[0].id;
+                            }
                             TaskListTobeInserted.add(tsk);
                         }
 
@@ -133,26 +154,38 @@ public without sharing class WebhookForFuture{
                 if (!PhoneWithContact.isEmpty()){
                     System.debug('(String) (TaskIdWithObject.get(str)).get(number)).right(10) ==== >' + ((String) (TaskIdWithObject.get(str)).get('number')));
                     System.debug('phone exist in Lead or not ====> ' + PhoneWithLead.containsKey('+91' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10)));
-                    if (!PhoneWithLead.containsKey('+91' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10)) && PhoneWithContact.containsKey('+91' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
+                    if (!PhoneWithLead.containsKey('+91' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10)) && PhoneWithContact.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
                         //!PhoneWithLead.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10)) &&
                         System.debug('I am inside to create task for Contact');
                         if (!TaskCallObjectIdWithTask.isEmpty() && !TaskCallObjectIdWithTask.containsKey(str)){
                             Task tsk = CreatetaskForContact(TaskIdWithObject, str, PhoneWithContact);
+                            if (CallyzerSalesUser.size() >0) {
+                                tsk.Callyzer_Sales_User__c = CallyzerSalesUser[0].id;
+                            }
                             TaskListTobeInserted.add(tsk);
                         } else{
                             Task tsk = CreatetaskForContact(TaskIdWithObject, str, PhoneWithContact);
+                            if (CallyzerSalesUser.size() >0) {
+                                tsk.Callyzer_Sales_User__c = CallyzerSalesUser[0].id;
+                            }
                             TaskListTobeInserted.add(tsk);
 
                         }
                     }
                 }
                 if (PhoneStringNotExistintheSystem.size() > 0){
-                    if (!PhoneWithLead.containsKey('+91' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10)) && !PhoneWithContact.containsKey('+91' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
+                    if (!PhoneWithLead.containsKey('+91' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10)) && !PhoneWithContact.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
                         if (!TaskCallObjectIdWithTask.isEmpty() && !TaskCallObjectIdWithTask.containsKey(str)){
                             Task tsk = createLeadAndtask(str,TaskIdWithObject);
+                            if (CallyzerSalesUser.size() >0) {
+                                tsk.Callyzer_Sales_User__c = CallyzerSalesUser[0].id;
+                            }
                             TaskListTobeInserted.add(tsk);
                         } else{
                             Task tsk = createLeadAndtask(str, TaskIdWithObject);
+                            if (CallyzerSalesUser.size() >0) {
+                                tsk.Callyzer_Sales_User__c = CallyzerSalesUser[0].id;
+                            }
                             TaskListTobeInserted.add(tsk);
 
                         }
@@ -218,8 +251,8 @@ public without sharing class WebhookForFuture{
         tsk.CallObject = (String) (TaskIdWithObject.get(str)).get('id');
         //This is the default...
         System.debug('((String) (TaskIdWithObject.get(str)).get(number)).right(10)' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10));
-        tsk.OwnerId = PhoneWithContact.get('+91' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10)).OwnerId;
-        tsk.WhoId = PhoneWithContact.get('+91' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10)).Id;
+        tsk.OwnerId = PhoneWithContact.get(((String) (TaskIdWithObject.get(str)).get('number')).right(10)).OwnerId;
+        tsk.WhoId = PhoneWithContact.get(((String) (TaskIdWithObject.get(str)).get('number')).right(10)).Id;
         tsk.Status = 'New';
         tsk.Call_Type__c = (String) (TaskIdWithObject.get(str)).get('callType');
         tsk.CallDurationInSeconds = Integer.valueof((TaskIdWithObject.get(str)).get('duration'));

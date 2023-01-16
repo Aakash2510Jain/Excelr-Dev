@@ -69,6 +69,8 @@ public class PaymentProcessOnOpportunityController {
 
         return finalPriceWithGST.setScale(2);
     }
+
+
     
      @AuraEnabled
     Public Static string CreateOppLineItem(string recordId,Integer Quantity,String ProductName,integer Amount, String paymentType){
@@ -134,6 +136,9 @@ public class PaymentProcessOnOpportunityController {
          OppRec.Loan_Amount__c=Amount;
          OppRec.Loan_Type__c =LoanType;
          OppRec.NBFCPartner__c=FullNBFCValue;
+         string OppCourse = PrdRec.name.substringBefore('-');
+         OppCourse = OppCourse.trim();
+         OppRec.Course__c = OppCourse;
         
          Update OppRec;
         
@@ -197,6 +202,77 @@ public class PaymentProcessOnOpportunityController {
         }
         
        
+        return 'Success';
+    }
+
+    @AuraEnabled
+    Public Static String CreateInvoice(String recordId, Decimal FinalAmount, integer PartialTenureValue, String partialNBFCValue, Integer PartialUpfrontValue, Integer Quantity, String ProductName, Decimal Amount, String paymentType){
+
+        System.debug('FinalAmount ===> ' + FinalAmount);
+        System.debug('PartialTenureValue ===> ' + PartialTenureValue);
+        System.debug('partialNBFCValue ===> ' + partialNBFCValue);
+        System.debug('PartialUpfrontValue ===> ' + PartialUpfrontValue);
+        System.debug('Quantity ===> ' + Quantity);
+        System.debug('ProductName ===> ' + ProductName);
+        System.debug('Amount ===> ' + Amount);
+        System.debug('paymentType ===> ' + paymentType);
+
+        system.debug('Create Invoice');
+        if (PartialTenureValue == null && partialNBFCValue == null && PartialUpfrontValue == null && Quantity != null && ProductName != null && Amount == null && paymentType != null){
+
+
+            Invoice__c invRec = new Invoice__c();
+            invRec.Opportunity__c = recordId;
+            invRec.Status__c = 'Initiated';
+            invRec.Amount__c = FinalAmount;
+            invRec.Initiated_Date__c = System.Today();
+            invRec.Invoice_Due_Date__c = System.Today() + 2;
+
+            insert invRec;
+        } else if (PartialTenureValue != null && partialNBFCValue != null && PartialUpfrontValue != null && Quantity != null && ProductName != null && Amount != null && paymentType != null){
+
+            product2 PrdRec = [Select Id, Name, (Select Id, Name, UnitPrice
+                                                 From PricebookEntries)
+                               From Product2 
+                               where id = :ProductName];
+
+
+            Opportunity OppRec=new Opportunity();
+            OppRec.Id = recordId;
+            OppRec.Loan_Tenure__c = PartialTenureValue;
+            OppRec.NBFCPartner__c = partialNBFCValue;
+            OppRec.Upfront_Amount__c = PartialUpfrontValue;
+            OppRec.Loan_Amount__c = Amount;
+            OppRec.TotalOpportunityQuantity = Quantity;
+            OppRec.Payment_Initiated_Date_Time__c = System.now();
+            OppRec.Payment_Mode__c = paymentType;
+            //OppRec.Product__c = PrdRec.Id;
+            string OppCourse = PrdRec.name.substringBefore('-');
+            OppCourse = OppCourse.trim();
+            OppRec.Course__c = OppCourse;
+            Update OppRec;
+
+            List<Invoice__c> invoiceList = new List<Invoice__c>();
+            Invoice__c invRec = new Invoice__c();
+            invRec.Opportunity__c = recordId;
+            invRec.Status__c = 'Initiated';
+            invRec.Amount__c = PartialUpfrontValue;
+            invRec.Initiated_Date__c = System.Today();
+            invRec.Invoice_Due_Date__c = System.Today() + 2;
+
+            invoiceList.add(invRec);
+
+            Invoice__c invRecLoan = new Invoice__c();
+            invRecLoan.Opportunity__c = recordId;
+            invRecLoan.Status__c = 'Initiated';
+            invRecLoan.Amount__c = Amount - PartialUpfrontValue;
+            invRecLoan.Initiated_Date__c = System.Today();
+            invRecLoan.Invoice_Due_Date__c = System.Today() + 2;
+            invoiceList.add(invRecLoan);
+
+            insert invoiceList;
+        }
+
         return 'Success';
     }
 

@@ -13,8 +13,10 @@ import { getObjectInfo } from 'lightning/uiObjectInfoApi';
 import { getPicklistValues } from 'lightning/uiObjectInfoApi';
 import OPP_OBJECT from '@salesforce/schema/Opportunity';
 import PAYMENT_FIELD from '@salesforce/schema/Opportunity.Payment_Mode__c';
+import ShowPriceIncludingGST from '@salesforce/apex/PaymentProcessOnOpportunityController.ShowPriceIncludingGST';
+import CreateInvoice from '@salesforce/apex/PaymentProcessOnOpportunityController.CreateInvoice';
 
-export default class PaymentProcessOnOpp extends LightningElement {
+export default class PaymentProcessOnOpp extends LightningElement {  
    // RazorPayImage=staticimage;
    // CcAvenueImage=CcStatic;
 
@@ -82,6 +84,29 @@ export default class PaymentProcessOnOpp extends LightningElement {
         }
      }
 
+     HandlePaymentMethods(){
+        debugger;
+        this.LoadSpinner=true;
+        this.ShowPaymentCard=false;
+        CreateInvoice({recordId:this.recordId,FinalAmount:this.Amount,PartialTenureValue:this.PartialLoanTenureValue,partialNBFCValue:this.PartialLoanNBFCPartnervalue,PartialUpfrontValue: this.PartialLoanUpfrontpaymentvalue,Quantity:this.QuantityValue,ProductName:this.ProductValue,Amount:this.priceIncludingGst,paymentType:this.PaymentType})
+        .then(result=>{
+            if(result=='Success'){
+                this.LoadSpinner=false;
+                this.showToast('success','Invoice created successfully!','success');
+                this.dispatchEvent(new CloseActionScreenEvent());
+            }
+            else{
+                this.showToast('Failed',result,'error');
+            }
+
+        })
+        .catch(error=>{
+            this.showToast('Failed',error,'error');
+            
+
+        })
+    }
+
 
     @wire(ShowAmount,{ProductName:'$ProductValue'})
      wiredResponse({data,error}){
@@ -102,22 +127,27 @@ export default class PaymentProcessOnOpp extends LightningElement {
      @track fetchedArr=[];
      @track nbfcCSList = [];
  
-     @wire(ShowNbfcPartners)
-     wiredNbfcResponse({data,error}){
-           debugger;
-          if(data){
-             this.nbfcCSList = data;
-              console.log('data=',data);
-              let arr=[];
-              for(let i=0;i<data.length;i++){
-                  arr.push({label:data[i].Name,value:data[i].Name});
-              }
-              this.fetchedArr=arr;
-              console.log('fetchedArr='+this.fetchedArr);
-          }
-          else if(error){
-              console.log('error='+error);
-          }
+    //Here Getting NBFC Partner List
+    @wire(ShowNbfcPartners)
+    wiredNbfcResponse({data,error}){
+          debugger;
+         if(data){
+            this.nbfcCSList = data;
+
+            console.log('data=',data);
+            
+            for(var key in data){
+                this.fetchedArr.push({label:key,value:key});
+            }
+            console.log('fetchedArr=',this.fetchedArr);
+         }
+         else if(error){
+            console.log('error='+error);
+         }
+      }
+
+       get options(){
+        return this.fetchedArr;
        }
 
 
@@ -147,127 +177,253 @@ export default class PaymentProcessOnOpp extends LightningElement {
     @track FullLoanTenureValue;
     @track FullLoanNBFCPartnervalue;
 
-    @track priceIncludingGst=0;
-    HandleFullLoanInput(event){
+
+    @track tenureList=[];
+       @track tenurevalue=[];
+
+       HandleFullLoanInputNBFCPartner(event){
         debugger;
         let name = event.target.name;
         let value = event.target.value;
 
-        if(name=='Tenure'){
+        if(this.FullLoanNBFCPartnervalue!=value){
             this.FullLoanTenureValue='';
+            this.FullLoanNBFCPartnervalue=value;
         }
-       else if(name=='NBFCPartner'){
-           this.FullLoanNBFCPartnervalue=value;
-           let interestRate = this.nbfcCSList.find(item=>item.Name==value).Interest_Rate__c;
-           let GSTRate = this.nbfcCSList.find(item=>item.Name==value).GST_on_Subvention__c;
-           let ProcessingFee = this.nbfcCSList.find(item=>item.Name==value).Processing_Fee__c;
-           let Tenure = this.nbfcCSList.find(item=>item.Name==value).Tenure__c;
-           console.log('interestRate----',interestRate);
-           console.log('GSTRate----',GSTRate);
-           console.log('ProcessingFee----',ProcessingFee);
-           console.log('Tenure----',Tenure);
-           this.FullLoanTenureValue=Tenure;
-           if(ProcessingFee!=0 ){
-            var basePlusProcessing = this.originalPrice + ProcessingFee ;
-                var basePlusProcessingPlusInter = basePlusProcessing + basePlusProcessing*(interestRate/100);
-                var finalWithGST = basePlusProcessingPlusInter + basePlusProcessingPlusInter*(GSTRate/100);
+           // this.FullLoanNBFCPartnervalue=value;
 
-                this.Amount = finalWithGST;
-                 //this.loanAmount=(this.Amount*this.QuantityValue)-this.PartialLoanUpfrontpaymentvalue;
+             this.tenureList=this.nbfcCSList[value];
+             console.log('tenureList='+this.tenureList);
+
+             let arr=[];
+             this.tenureList.forEach(element => {
+             debugger;
+                         
+             arr.push({label:element,value:element});
+              });
+              this.tenurevalue=arr;
+              console.log('tenurevalue=',this.tenurevalue);
+                  
+    }
+
+    get TenureOptions(){
+        return this.tenurevalue;
+     }
+
+     @track priceIncludingGst;
+
+     HandleFullLoanInput(event){
+        debugger;
+       this.FullLoanTenureValue = parseInt(event.detail.value);
+       console.log('event.c/bankDetails=',event.detail.value);
+       console.log('FullLoanNBFCPartnervalue',this.FullLoanNBFCPartnervalue)
+
+       ShowPriceIncludingGST({NbfcValue:this.FullLoanNBFCPartnervalue,tenure:this.FullLoanTenureValue,originalAmount:this.originalPrice})
+        .then(result=>{  
+           this.priceIncludingGst=result;
+           console.log('priceIncludingGst=',this.priceIncludingGst); 
+        })
+        .catch(error=>{
+             console.log('error',error);
+        })
+        
+       if((this.FullLoanTenureValue!=undefined  && this.FullLoanNBFCPartnervalue!=undefined)){
+             this.DisableSave=false;
+             }
+
+             
+   }
+
+
+
+
+//     @track priceIncludingGst=0;
+//     HandleFullLoanInput(event){
+//         debugger;
+//         let name = event.target.name;
+//         let value = event.target.value;
+
+//         if(name=='Tenure'){
+//             this.FullLoanTenureValue='';
+//         }
+//        else if(name=='NBFCPartner'){
+//            this.FullLoanNBFCPartnervalue=value;
+//            let interestRate = this.nbfcCSList.find(item=>item.Name==value).Interest_Rate__c;
+//            let GSTRate = this.nbfcCSList.find(item=>item.Name==value).GST_on_Subvention__c;
+//            let ProcessingFee = this.nbfcCSList.find(item=>item.Name==value).Processing_Fee__c;
+//            let Tenure = this.nbfcCSList.find(item=>item.Name==value).Tenure__c;
+//            console.log('interestRate----',interestRate);
+//            console.log('GSTRate----',GSTRate);
+//            console.log('ProcessingFee----',ProcessingFee);
+//            console.log('Tenure----',Tenure);
+//            this.FullLoanTenureValue=Tenure;
+//            if(ProcessingFee!=0 ){
+//             var basePlusProcessing = this.originalPrice + ProcessingFee ;
+//                 var basePlusProcessingPlusInter = basePlusProcessing + basePlusProcessing*(interestRate/100);
+//                 var finalWithGST = basePlusProcessingPlusInter + basePlusProcessingPlusInter*(GSTRate/100);
+
+//                 this.Amount = finalWithGST;
+//                  //this.loanAmount=(this.Amount*this.QuantityValue)-this.PartialLoanUpfrontpaymentvalue;
             
             
-           }
-           else{
-            var basePlusInter = this.originalPrice + this.originalPrice*(interestRate/100) ;
-            var finalWithGST= basePlusInter + basePlusInter*(GSTRate/100)
-            this.Amount = finalWithGST;
-           }
+//            }
+//            else{
+//             var basePlusInter = this.originalPrice + this.originalPrice*(interestRate/100) ;
+//             var finalWithGST= basePlusInter + basePlusInter*(GSTRate/100)
+//             this.Amount = finalWithGST;
+//            }
 
-           if(this.Amount!=this.originalPrice){
-            this.priceIncludingGst=(this.Amount).toFixed(2);
-           }
-       }
+//            if(this.Amount!=this.originalPrice){
+//             this.priceIncludingGst=(this.Amount).toFixed(2);
+//            }
+//        }
 
 
-     if((this.FullLoanTenureValue!=undefined  && this.FullLoanNBFCPartnervalue!=undefined)){
-          this.DisableSave=false;
-   }
-  }
+//      if((this.FullLoanTenureValue!=undefined  && this.FullLoanNBFCPartnervalue!=undefined)){
+//           this.DisableSave=false;
+//    }
+//   }
 
-  get options(){
-    return this.fetchedArr;
-   }
+//   get options(){
+//     return this.fetchedArr;
+//    }
+
+@track ProcessingFees;
+@track GstValue;
+
+HandlePartialLoanInputNBFCPartner(event){
+    debugger;
+    let name = event.target.name;
+    let value = event.target.value;
+
+    if(this.PartialLoanNBFCPartnervalue!=value){
+        this.PartialLoanTenureValue='';
+        this.PartialLoanNBFCPartnervalue=value;
+    }
+        this.PartialLoanNBFCPartnervalue=value;
+
+         this.tenureList=this.nbfcCSList[value];
+         console.log('tenureList='+this.tenureList);
+
+         let arr=[];
+         this.tenureList.forEach(element => {
+         debugger;
+                     
+         arr.push({label:element,value:element});
+          });
+          this.tenurevalue=arr;
+          console.log('tenurevalue=',this.tenurevalue);
+
+}
+     
+    get PartialTenureoptions(){
+        return this.tenurevalue;
+    }
+
+    HandlePartialLoanInput(event){
+        debugger;
+        let value = parseInt(event.detail.value);
+
+        if(this.PartialLoanTenureValue!=value){
+
+            this.PartialLoanUpfrontpaymentvalue=0;
+            this.loanAmount='';
+            this.PartialLoanTenureValue=parseInt(value);
+        }
+        ShowPriceIncludingGST({NbfcValue:this.PartialLoanNBFCPartnervalue,tenure:this.PartialLoanTenureValue,originalAmount:this.originalPrice})
+        .then(result=>{
+             
+           this.priceIncludingGst=result;
+           console.log('priceIncludingGst=',this.priceIncludingGst);
+        })
+        .catch(error=>{
+             console.log('error',error);
+        })
+
+    }
+
+    HandlePartialLoanInputUpfront(event){
+
+        let value=event.detail.value;
+        this.PartialLoanUpfrontpaymentvalue=value;
+
+        this.loanAmount=this.priceIncludingGst-this.PartialLoanUpfrontpaymentvalue;
+
+        if((this.PartialLoanTenureValue!=undefined  && this.PartialLoanNBFCPartnervalue!=undefined && this.PartialLoanUpfrontpaymentvalue!=undefined)){
+            this.DisableNext=false;
+              } 
+    }
 
 
    @track PartialLoanTenureValue;
    @track PartialLoanNBFCPartnervalue;
    @track PartialLoanUpfrontpaymentvalue;
 
-   HandlePartialLoanInput(event){
-    debugger;
-    let name = event.target.name;
-    let value = event.target.value;
+//    HandlePartialLoanInput(event){
+//     debugger;
+//     let name = event.target.name;
+//     let value = event.target.value;
 
-    if(name=='Tenure'){
-        this.PartialLoanTenureValue=' ';
-    }
-   else if(name=='NBFCPartner'){
-       this.PartialLoanNBFCPartnervalue=value;
-       let interestRate = this.nbfcCSList.find(item=>item.Name==value).Interest_Rate__c;
-       let GSTRate = this.nbfcCSList.find(item=>item.Name==value).GST_on_Subvention__c;
-       let ProcessingFee = this.nbfcCSList.find(item=>item.Name==value).Processing_Fee__c;
-       let Tenure = this.nbfcCSList.find(item=>item.Name==value).Tenure__c;
-       console.log('interestRate----',interestRate);
-       console.log('GSTRate----',GSTRate);
-       console.log('ProcessingFee----',ProcessingFee);
-       console.log('Tenure----',Tenure);
-       this.ProcessingFees=ProcessingFee;
-       this.GstValue=GSTRate;
-       this.PartialLoanTenureValue=Tenure;
-       if(ProcessingFee!=0){
+//     if(name=='Tenure'){
+//         this.PartialLoanTenureValue=' ';
+//     }
+//    else if(name=='NBFCPartner'){
+//        this.PartialLoanNBFCPartnervalue=value;
+//        let interestRate = this.nbfcCSList.find(item=>item.Name==value).Interest_Rate__c;
+//        let GSTRate = this.nbfcCSList.find(item=>item.Name==value).GST_on_Subvention__c;
+//        let ProcessingFee = this.nbfcCSList.find(item=>item.Name==value).Processing_Fee__c;
+//        let Tenure = this.nbfcCSList.find(item=>item.Name==value).Tenure__c;
+//        console.log('interestRate----',interestRate);
+//        console.log('GSTRate----',GSTRate);
+//        console.log('ProcessingFee----',ProcessingFee);
+//        console.log('Tenure----',Tenure);
+//        this.ProcessingFees=ProcessingFee;
+//        this.GstValue=GSTRate;
+//        this.PartialLoanTenureValue=Tenure;
+//        if(ProcessingFee!=0){
             
-            var basePlusProcessing = this.originalPrice + ProcessingFee ;
-            var basePlusProcessingPlusInter = basePlusProcessing + basePlusProcessing*(interestRate/100);
-            var finalWithGST = basePlusProcessingPlusInter + basePlusProcessingPlusInter*(GSTRate/100);
+//             var basePlusProcessing = this.originalPrice + ProcessingFee ;
+//             var basePlusProcessingPlusInter = basePlusProcessing + basePlusProcessing*(interestRate/100);
+//             var finalWithGST = basePlusProcessingPlusInter + basePlusProcessingPlusInter*(GSTRate/100);
 
-            this.Amount = finalWithGST;
-             this.loanAmount=((this.Amount*this.QuantityValue)-this.PartialLoanUpfrontpaymentvalue).toFixed(2);
+//             this.Amount = finalWithGST;
+//              this.loanAmount=((this.Amount*this.QuantityValue)-this.PartialLoanUpfrontpaymentvalue).toFixed(2);
              
           
-       }
-       else{
+//        }
+//        else{
 
-        var basePlusInter = this.originalPrice + this.originalPrice*(interestRate/100) ;
-        var finalWithGST= basePlusInter + basePlusInter*(GSTRate/100)
-        this.Amount = finalWithGST;
-        this.loanAmount=((this.Amount*this.QuantityValue)-this.PartialLoanUpfrontpaymentvalue).toFixed(2);
+//         var basePlusInter = this.originalPrice + this.originalPrice*(interestRate/100) ;
+//         var finalWithGST= basePlusInter + basePlusInter*(GSTRate/100)
+//         this.Amount = finalWithGST;
+//         this.loanAmount=((this.Amount*this.QuantityValue)-this.PartialLoanUpfrontpaymentvalue).toFixed(2);
            
-       }
+//        }
 
-       if(this.Amount!=this.originalPrice){
-        this.priceIncludingGst=(this.Amount).toFixed(2);
-       }
-   }
-   else if(name=='Upfrontpayment'){
-       this.PartialLoanUpfrontpaymentvalue=value;
+//        if(this.Amount!=this.originalPrice){
+//         this.priceIncludingGst=(this.Amount).toFixed(2);
+//        }
+//    }
+//    else if(name=='Upfrontpayment'){
+//        this.PartialLoanUpfrontpaymentvalue=value;
        
-       if( this.ProcessingFees!=0){
-        this.loanAmount=((this.Amount*this.QuantityValue)-this.PartialLoanUpfrontpaymentvalue).toFixed(2);  
+//        if( this.ProcessingFees!=0){
+//         this.loanAmount=((this.Amount*this.QuantityValue)-this.PartialLoanUpfrontpaymentvalue).toFixed(2);  
         
-       }
-       else{
-        this.loanAmount=((this.Amount*this.QuantityValue)-this.PartialLoanUpfrontpaymentvalue).toFixed(2);  
+//        }
+//        else{
+//         this.loanAmount=((this.Amount*this.QuantityValue)-this.PartialLoanUpfrontpaymentvalue).toFixed(2);  
         
-       }
+//        }
          
-   }
+//    }
 
-   if((this.PartialLoanTenureValue!=undefined && this.PartialLoanNBFCPartnervalue!=undefined && this.PartialLoanUpfrontpaymentvalue!=undefined)){
-        this.DisableNext=false;
-   }
-  }
+//    if((this.PartialLoanTenureValue!=undefined && this.PartialLoanNBFCPartnervalue!=undefined && this.PartialLoanUpfrontpaymentvalue!=undefined)){
+//         this.DisableNext=false;
+//    }
+//   }
 
-  LoanButtonName;
+  @track LoanButtonName;
     HandleLoanNotNeed(event){
         this.LoanButtonName=event.target.name;
         this.ShowPaymentCard=true;

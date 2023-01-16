@@ -9,7 +9,12 @@ global static String WebhookListener(){
         RestResponse res = RestContext.response;
         String body = req.requestBody.toString();
         system.debug('body-->'+body);
-        WebhookForFuture.uploadcalllogs(body);
+        //WebhookForFuture.uploadcalllogs(body);
+
+        WebhookForFuture QueueablaWebhookJob = new WebhookForFuture (body);
+        ID jobID = System.enqueueJob(QueueablaWebhookJob);  
+        AsyncApexJob jobInfo = [SELECT Id, Status, NumberOfErrors FROM AsyncApexJob WHERE Id =: jobID];
+
         return 'SUCCESS';
     } catch (Exception e) {
         system.debug('error due to ' + e.getMessage());

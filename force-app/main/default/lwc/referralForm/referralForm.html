@@ -39,31 +39,58 @@
     <div>
         <lightning-card>
             <div class="slds-align_absolute-center">
-                <div class="slds-size_2-of-6"> 
-                    <lightning-input name="FN" label="First Name"  required ="true" onchange={ReferralFormInputHandler} style="margin-top:8px;" value={FirstName} type="text" ></lightning-input>
-                    <lightning-input  name="LN" label="Last Name" required ="true" onchange={ReferralFormInputHandler} style="margin-top:8px;" value={Lastname}></lightning-input>
-                    <lightning-input name="EM" label="Email" required ="true" onchange={ReferralFormInputHandler} style="margin-top:8px;" value={Email}></lightning-input>
-                    <lightning-input  name="PH" label="Phone" required ="true" onchange={ReferralFormInputHandler} style="margin-top:8px;" value={Phone}></lightning-input>
-                    <lightning-input  name="REFEM" label="ReferralEmail" required ="true" onchange={ReferralFormInputHandler} style="margin-top:8px;" value={ReferralEmail}></lightning-input>
-                    <lightning-input  name="REFPH" label="ReferralPhone" required ="true" onchange={ReferralFormInputHandler} style="margin-top:8px;" value={ReferralPhone}></lightning-input>
+                <div class="slds-size_2-of-6">
 
+                    <lightning-input name="CID" label="Customer ID of Referer" required="true"
+                        onchange={ReferralFormInputHandler} style="margin-top:8px;" value={CID_of_Referer}
+                        type="text"></lightning-input>
+
+                    <lightning-input name="FN" label="First Name of Reference" required="true"
+                        onchange={ReferralFormInputHandler} style="margin-top:8px;" value={FirstName}
+                        type="text"></lightning-input>
+                    <lightning-input name="LN" label="Last Name of Reference" required="true"
+                        onchange={ReferralFormInputHandler} style="margin-top:8px;" value={Lastname}></lightning-input>
+                    <lightning-input name="EM" label="Email Id of Reference" required="true"
+                        onchange={ReferralFormInputHandler} style="margin-top:8px;" value={Email}></lightning-input>
+                    <lightning-input name="PH" label="Phone no. of Reference" required="true"
+                        onchange={ReferralFormInputHandler} style="margin-top:8px;" value={Phone}></lightning-input>
+                    <lightning-input name="CourseType" label="Type of Course" required="true"
+                        onchange={ReferralFormInputHandler} style="margin-top:8px;"
+                        value={type_of_Course}></lightning-input>
                     <template if:true={CoursePicklistValues.data}>
-                        <lightning-combobox name="CR" label="Course" value={Coursevalue} placeholder="select"
-                            options={CoursePicklistValues.data.values} onchange={ReferralFormInputHandler}>
+                        <lightning-combobox name="CR" label="Course Name of Reference" value={Coursevalue}
+                            placeholder="select" options={CoursePicklistValues.data.values}
+                            onchange={ReferralFormInputHandler}>
                         </lightning-combobox>
                     </template>
-                </div>   
+                    <template if:true={TypeofCoursePicklistValues.data}>
+                        <lightning-combobox name="TOCR" label="Type of Course Reference" value={typeofCoursevalue}
+                            placeholder="select" options={TypeofCoursePicklistValues.data.values}
+                            onchange={ReferralFormInputHandler}>
+                        </lightning-combobox>
+                    </template>
+                    <lightning-input name="ReferenceLocation" label="Location of Reference" required="true"
+                        onchange={ReferralFormInputHandler} style="margin-top:8px;"
+                        value={location_of_reference}></lightning-input>
+
+
+
+                </div>
             </div>
-            <br/>
-            
+            <br />
+
         </lightning-card>
     </div>
 
     <lightning-modal-footer class="my-modal-footer">
         <div class=" slds-align_absolute-center">
-            <lightning-button title="Save" label="Submit" onclick={SaveReferralFormDetails}   variant="brand" style="margin-top:8px ;"></lightning-button>
+            <lightning-button title="Save" label="Submit" onclick={SaveReferralFormDetails} variant="brand"
+                style="margin-top:8px ;"></lightning-button>
+            <lightning-button variant="brand" label="Brand" title="Primary action" onclick={handleClick}
+                class="slds-m-left_x-small"></lightning-button>
+
         </div>
-        
+
     </lightning-modal-footer>
-    
+
 </template>

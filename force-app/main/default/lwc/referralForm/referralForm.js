@@ -1,6 +1,7 @@
 import { LightningElement, track, api, wire } from 'lwc';
 import { getPicklistValues } from 'lightning/uiObjectInfoApi';
-import COURSE_FIELD from '@salesforce/schema/Lead.Course__c';
+import COURSE_FIELD from '@salesforce/schema/Lead.Course__c'; 
+import TYPE_OF_COURSE_FIELD from '@salesforce/schema/Lead.Type_of_Course__c';
 import SubmitReferralDetails from '@salesforce/apex/ReferralFormController.SubmitReferralDetails';
 
 import { getObjectInfo } from 'lightning/uiObjectInfoApi';
@@ -18,15 +19,19 @@ export default class ReferralForm extends LightningElement {
     @track Phone
     @track Email
     @track Coursevalue
-    @track ReferralEmail
-    @track ReferralPhone
     @track msg
+    @track CID_of_Referer
+    @track type_of_Course
+    @track location_of_reference
 
     @wire(getObjectInfo, { objectApiName: LEAD_OBJECT })
     objectInfo
 
     @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: COURSE_FIELD })
     CoursePicklistValues
+
+    @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: TYPE_OF_COURSE_FIELD })
+    TypeofCoursePicklistValues
 
     ReferralFormInputHandler(event) {
         debugger;
@@ -46,26 +51,27 @@ export default class ReferralForm extends LightningElement {
         else if (InputName == 'PH') {
             this.Phone = Textvalue;
         }
-        else if (InputName == 'REFEM') {
-            this.ReferralEmail = Textvalue;
-        }
-        else if (InputName == 'REFPH') {
-            this.ReferralPhone = Textvalue;
-        }
         else if (InputName == 'CR') {
             this.Coursevalue = Textvalue;
+        } else if (InputName == 'CID') {
+            this.CID_of_Referer = Textvalue;
+        } else if (InputName == 'CourseType') {
+            this.type_of_Course = Textvalue;
+        } else if (InputName == 'ReferenceLocation') {
+            this.location_of_reference = Textvalue;
+        }else if (InputName == 'TOCR') {
+            this.type_of_Course = Textvalue;
         }
 
     }
 
     SaveReferralFormDetails() {
         debugger;
-
-        if ((this.FirstName != undefined && this.FirstName != null) && (this.Lastname != undefined && this.Lastname != null) && (this.Email != undefined && this.Email != null) && (this.Phone != undefined && this.Phone != null) && (this.ReferralEmail != undefined && this.ReferralEmail != null) && (this.ReferralPhone != undefined && this.ReferralPhone != null)) {
+        if ((this.FirstName != undefined && this.FirstName != null) && (this.Lastname != undefined && this.Lastname != null) && (this.Email != undefined && this.Email != null) && (this.Phone != undefined && this.Phone != null) && (this.CID_of_Referer != undefined && this.CID_of_Referer != null) && (this.type_of_Course != undefined && this.type_of_Course != null) && (this.location_of_reference != undefined && this.location_of_reference != null)) {
             var returnvalue = this.handleIncorrectEmail(this.Email)
-            var phoneregexreturnvalue = this.handleCorrectPhone(this.Phone)
-            if (returnvalue == true && this.handleCorrectPhone(this.phoneValue)) {
-                SubmitReferralDetails({ FirstN: this.FirstName, LastName: this.Lastname, Email: this.Email, Phone: this.Phone, ReferralEm: this.ReferralEmail, ReferralPh: this.ReferralPhone, Course: this.Coursevalue })
+            //var phoneregexreturnvalue = this.handleCorrectPhone(this.Phone)
+            if (returnvalue == true && this.handleCorrectPhone(this.Phone)) {
+                SubmitReferralDetails({ FirstN: this.FirstName, LastName: this.Lastname, Email: this.Email, Phone: this.Phone, Coursevalue: this.Coursevalue, CID_of_Referer: this.CID_of_Referer, type_of_Course: this.type_of_Course, location_of_reference: this.location_of_reference })
                     .then(result => {
                         debugger;
                         if (result == 'SUCCESS') {
@@ -73,8 +79,9 @@ export default class ReferralForm extends LightningElement {
                             this.Lastname = '';
                             this.Email = '';
                             this.Phone = '';
-                            this.ReferralEmail = '';
-                            this.ReferralPhone = '';
+                            this.CID_of_Referer = '';
+                            this.type_of_Course = '';
+                            this.location_of_reference = '';
                             this.Coursevalue = '';
                             this.handleConfirm('Referral Form Submitted Successfully');
 
@@ -94,14 +101,16 @@ export default class ReferralForm extends LightningElement {
                 this.HandleLeadCreatedisable = false;
             }
         }
-        else{
+        else {
             alert('All Fields are Mandatory,Please Check any one Of Your Field Is Empty');
-        this.HandleLeadCreatedisable=false; 
+            this.HandleLeadCreatedisable = false;
         }
 
 
     }
-
+    handleClick(event) {
+        debugger;
+    }
     handleIncorrectEmail(emailtocheck) {
         debugger;
 
