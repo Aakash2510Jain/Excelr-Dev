@@ -9,6 +9,9 @@ public without Sharing class BuildMaps{
     public static map<string, Integer> mapofMemidByMinLeadsCount = new map<string, integer>();
     public static map<string, integer> mapofMemidByTodayNewLead = new map<string, integer>();
     public static map<string, integer> mapofMemidByAssignedLead = new map<string, integer>();
+    public static map<string, integer> mapofMemidByMaxLeadPerMonthFromUser = new map<string, integer>();
+    public static map<string, integer> mapofMemidByMaxLeadPerDayFromAG = new map<string, integer>();
+    
     /* Condition map end*/
     public static boolean CheckBusinessHours(){
         Datetime toBeChecked = System.now();
@@ -47,7 +50,7 @@ public without Sharing class BuildMaps{
         list<lead> listOfAssignedTodayLeads = new list<lead>();
         
         
-        listOfGroupMember = [select id, Max_Lead_Per_Day__c, Assignment_Group__r.Minimum_Lead_Volume__c, Assignment_Group__r.name__c, Group_Member__r.Id, Group_Member__r.Max_Lead_Per_Day__c, Assignment_Group__r.Max_Lead_Per_Day__c, Assignment_Group__r.Lead_Stage__c, Assignment_Group__r.Lead_Stage_Exceed_Count__c
+        listOfGroupMember = [select id, Max_Lead_Per_Day__c, Assignment_Group__r.Minimum_Lead_Volume__c, Assignment_Group__r.name__c, Group_Member__r.Id, Group_Member__r.Max_Lead_Per_Day__c,Group_Member__r.Max_Lead_Per_Month__c, Assignment_Group__r.Max_Lead_Per_Day__c, Assignment_Group__r.Lead_Stage__c, Assignment_Group__r.Lead_Stage_Exceed_Count__c
                              from Assignment_Group_Member__c
                              where active__c = true and Assignment_Group__r.name__c = :groupName];
         listOfTodayLeads = [select id, Lead_Assigned_Date__c, ownerId, status
@@ -75,6 +78,8 @@ public without Sharing class BuildMaps{
             mapofMemIdByMaxLeadCountByGroupPerDay.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Max_Lead_Per_Day__c));
             mapofMemidbyMaxleadCountFromUser.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Group_Member__r.Max_Lead_Per_Day__c));
             mapofMemidByMinLeadsCount.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Assignment_Group__r.Minimum_Lead_Volume__c));
+            mapofMemidByMaxLeadPerMonthFromUser.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Group_Member__r.Max_Lead_Per_Month__c));
+            mapofMemidByMaxLeadPerDayFromAG.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Assignment_Group__r.Max_Lead_Per_Day__c));
         }
         
         if (!listOfAssignedTodayLeads.isEmpty()){

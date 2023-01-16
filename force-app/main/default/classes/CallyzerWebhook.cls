@@ -1,5 +1,5 @@
 @RESTResource(urlMapping = '/callyzerWebhook/*')
-global with sharing class CallyzerWebhook {
+global without sharing class CallyzerWebhook {
 
 @HttpPost
 global static String WebhookListener(){

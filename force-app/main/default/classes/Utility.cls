@@ -273,8 +273,29 @@ public without sharing class Utility{
         return applicationId;
     }
 
-Public static void API_ErrorORSuccess(List<String> ErrorFields, String ErrorMsg, Integer ErrorStatus, string ErrOrSuccId){
+Public static void API_ErrorORSuccess(List<String> ErrorFields, String ErrorMsg, Integer ErrorStatus, string ErrOrSuccId, STring ClassName, String MethodName){
+        try {
+            API_Log__c APILog = new API_Log__c();
+            if (ErrorFields.size()>0) {
+                APILog.Error_Fields__c = String.join(ErrorFields, ',');
+            }
+            APILog.Class_Name__c = ClassName;
+            APILog.Method_Name__c = MethodName;
+            if (ErrorMsg != null) {
+                APILog.Error_Message__c = ErrorMsg;
+            }
+            if (ErrorStatus != null) {
+                APILog.Error_Status__c = ErrorStatus;
+            }
+            if (ErrOrSuccId != null) {
+                APILog.Error_Success_Id_if_Any__c = ErrOrSuccId;
+            }
+            insert APILog;
 
+        } catch (Exception e) {
+            System.debug('the error has occured due to ===> ' + e.getMessage());
+            System.debug('the error has occured at ===> ' + e.getLineNumber());
+        }
     }
     
     

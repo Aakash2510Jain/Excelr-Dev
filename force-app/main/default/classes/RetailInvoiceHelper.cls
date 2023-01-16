@@ -3,7 +3,7 @@ global class RetailInvoiceHelper {
     global Invoice__c getinvoiceData {get;set;}
     global Opportunity getoppData {get;set;} 
     global Account getAccData {get;set;} 
-    global OpportunityLineItem getOLIData {get;set;} 
+    global List<OpportunityLineItem> getOLIData {get;set;} 
     global Decimal PercentageTotal {get;set;}
     global Decimal TotalAmountWithPercentage {get;set;}
     global Decimal TotalTaXAmount {get;set;}
@@ -12,23 +12,34 @@ global class RetailInvoiceHelper {
     global List<GST_State_Code__c> gstdata {get;set;}
     global Decimal StateCode {get;set;}
     global String currentState {get;set;}
+    
+    global String getOLIDataName {get;set;}
+    global Decimal getOLIDataQuantity {get;set;}
+    global Decimal getOLIDataTotalPrice {get;set;}
+     
     global RetailInvoiceHelper(ApexPages.StandardController controller) {
+        String recordId = '';
+        String oppId = '';
+        String AccId = '';
+        Decimal TotalPrice = 0.0;
+        Decimal Rate = 0.0;
         
+        recordId = ApexPages.currentPage().getParameters().get('Id');
+
         getcustomData=[Select Name,Address__c,City__c,Pin_Code__c,State_Code__c,GSTIN__c,State_Name__c,EMail__c,Central_GST__c,State_GST__c,HSN_SAC__c,Rate__c from CustomInformation__c LIMIT 1];
-        String recordId = ApexPages.currentPage().getParameters().get('Id');
-        system.debug('recordId:'+recordId);
-        
-       
-        
         getinvoiceData = [Select Id,Name,Initiated_Date__c,Opportunity__c,Delivery_Note__c,Mode_Terms_of_Payment__c,Reference_No__c,Other_References__c from Invoice__c where Id=:recordId LIMIT 1];
-        String oppId= getinvoiceData.Opportunity__c;
-        system.debug('oppId ::'+oppId);
         
-        getoppData= [Select Id,AccountId,GST_State__c FROM Opportunity where Id=: oppId LIMIT 1];
-        String AccId= getoppData.AccountId;
-        currentState = getoppData.GST_State__c;
+        if(getinvoiceData.Opportunity__c != null)
+            oppId= getinvoiceData.Opportunity__c;
+        if(!string.isBlank(oppId) && !string.isEmpty(oppId))
+            getoppData= [Select Id,AccountId,GST_State__c FROM Opportunity where Id=: oppId LIMIT 1];
+        if(getoppData.AccountId != null){
+            AccId= getoppData.AccountId;
+            currentState = getoppData.GST_State__c;
+        }
         
-         gstdata = [SELECT Id,Name,State_Code__c	 FROM GST_State_Code__c];
+        
+        gstdata = [SELECT Id,Name,State_Code__c	 FROM GST_State_Code__c];
         for(GST_State_Code__c gst : gstdata){
             if(gst.Name == currentState){
                 System.debug('Name ::'+gst.Name);
@@ -36,19 +47,28 @@ global class RetailInvoiceHelper {
                 System.debug('StateCode ::'+StateCode);
             }
         }
-        
-        getAccData= [Select Id,Name,Email__c,ShippingState,ShippingPostalCode FROM Account where Id=: AccId LIMIT 1];     
-        
-        getOLIData= [Select OpportunityId,Name,Quantity,Product2Id,TotalPrice from OpportunityLineItem where OpportunityId=:oppId LIMIT 1];
-              
-        Decimal TotalPrice = getOLIData.TotalPrice;
-        Decimal Rate = getcustomData.Rate__c;
-        PercentageTotal = (TotalPrice) * (Rate) / 100;
-        TotalAmountWithPercentage = TotalPrice + (PercentageTotal * 2);
-        wordAmount =Integer.valueOf(TotalAmountWithPercentage);
-        AmountTotalAmountWithPercentageInWords = NumberToText.convert(wordAmount);
-        TotalTaXAmount = (PercentageTotal * 2);
-      
+        if(!string.isBlank(AccId) && !string.isEmpty(AccId))
+            getAccData= [Select Id,Name,Email__c,ShippingState,ShippingPostalCode FROM Account where Id=: AccId LIMIT 1];     
+        if(!string.isBlank(oppId) && !string.isEmpty(oppId)){
+            getOLIData= [Select OpportunityId,Name,Quantity,Product2Id,TotalPrice from OpportunityLineItem where OpportunityId =: oppId LIMIT 1];
+            if(!getOLIData.isEmpty()){
+                TotalPrice = getOLIData[0].TotalPrice;
+                Rate = getcustomData.Rate__c;
+                PercentageTotal = (TotalPrice) * (Rate) / 100;
+                TotalAmountWithPercentage = TotalPrice + (PercentageTotal * 2);
+                wordAmount =Integer.valueOf(TotalAmountWithPercentage);
+                AmountTotalAmountWithPercentageInWords = NumberToText.convert(wordAmount);
+                TotalTaXAmount = (PercentageTotal * 2);
+                getOLIDataName = getOLIData[0].Name;
+                getOLIDataQuantity  = getOLIData[0].Quantity;
+                getOLIDataTotalPrice = getOLIData[0].TotalPrice;
+            }else{
+                getOLIDataName = '';
+                getOLIDataQuantity  = 0.0;
+                getOLIDataTotalPrice = 0.0;
+            }
+            
+        }
     }
     @future(callout = true)
     global static void attachPdf(string recordId){

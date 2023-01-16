@@ -9,9 +9,14 @@ import CreateOppLineItem from '@salesforce/apex/PaymentProcessOnOpportunityContr
 import OppUpdateOnFullLoan from '@salesforce/apex/PaymentProcessOnOpportunityController.OppUpdateOnFullLoan';
 import OppUpdateOnPartialLoan from '@salesforce/apex/PaymentProcessOnOpportunityController.OppUpdateOnPartialLoan';
 
+import { getObjectInfo } from 'lightning/uiObjectInfoApi';
+import { getPicklistValues } from 'lightning/uiObjectInfoApi';
+import OPP_OBJECT from '@salesforce/schema/Opportunity';
+import PAYMENT_FIELD from '@salesforce/schema/Opportunity.Payment_Mode__c';
+
 export default class PaymentProcessOnOpp extends LightningElement {
-    RazorPayImage=staticimage;
-    CcAvenueImage=CcStatic;
+   // RazorPayImage=staticimage;
+   // CcAvenueImage=CcStatic;
 
     @api recordId;
 
@@ -30,6 +35,52 @@ export default class PaymentProcessOnOpp extends LightningElement {
     @track originalPrice;
     @track  Amount;
     @track loanAmount;
+
+
+    //Here Getting The Payment Types
+    Picklistvalue=[];
+    @wire(getObjectInfo, {objectApiName:OPP_OBJECT})
+    objectInfo
+
+    @wire(getPicklistValues, { recordTypeId:'$objectInfo.data.defaultRecordTypeId', fieldApiName:PAYMENT_FIELD})
+     wiredPicklistValues({data,error}){
+         debugger;
+        if(data){
+           console.log('data=',data);
+           console.log('dataValues=',data.values);
+           let arr=[];
+           for(let i=0;i<data.values.length;i++){
+              arr.push({label:data.values[i].label,value:data.values[i].value});
+           }
+           this.Picklistvalue=arr;
+           console.log('Picklistvalue=',this.Picklistvalue);
+        }
+        else {
+            console.log('error=',error)
+        }
+     }
+
+     get Paymentoptions(){
+        return this.Picklistvalue;
+     }
+
+     HandlePaymentType(event){
+        debugger;
+        this.PaymentType=event.detail.value;
+
+        if(this.PaymentType=='razorpay'){
+            this.HandleRazorPay();
+        }
+        else if(this.PaymentType=='CC Avenue'){
+            this.HandleCCAvenuePay();
+        }
+        else if( this.LoanButtonName=='LoanNotNeed' && (this.PaymentType=='Cash' || this.PaymentType=='POS' || this.PaymentType=='Cheque' )){
+            this.HandlePaymentMethods();
+        }
+        else if( this.Loanvalue=='Partial Loan' && (this.PaymentType=='Cash' || this.PaymentType=='POS' || this.PaymentType=='Cheque' )){
+            this.HandlePaymentMethods();
+        }
+     }
 
 
     @wire(ShowAmount,{ProductName:'$ProductValue'})
@@ -89,6 +140,9 @@ export default class PaymentProcessOnOpp extends LightningElement {
     //       this.HandleButtonDisable=false;
     //    }
     }
+
+   
+
 
     @track FullLoanTenureValue;
     @track FullLoanNBFCPartnervalue;
@@ -236,7 +290,7 @@ export default class PaymentProcessOnOpp extends LightningElement {
         //this.FullLoanButton=true;
        
         
-        if(this.Loanvalue=='Full Loan'){
+        if(this.Loanvalue=='100% Loan'){
             this.ShowFullLoanOption=true;
             this.FullLoanButton=true;
 
@@ -257,7 +311,7 @@ export default class PaymentProcessOnOpp extends LightningElement {
 
     get Loanoptions(){
         return [
-            { label: 'Full Loan', value: 'Full Loan' },
+            { label: '100% Loan', value: '100% Loan' },
             { label: 'Partial Loan', value: 'Partial Loan' },
         ];
     }
@@ -265,7 +319,7 @@ export default class PaymentProcessOnOpp extends LightningElement {
     HandleRadioButton(event){
         this.Loanvalue=event.detail.value;
 
-        if(this.Loanvalue=='Full Loan'){
+        if(this.Loanvalue=='100% Loan'){
              this.ShowFullLoanOption=true;          
              this.FullLoanButton=true;
              this.ShowPartialLoanOption=false;

@@ -1,22 +1,73 @@
 public class PaymentProcessOnOpportunityController {
     
-    @AuraEnabled(Cacheable=True)
-    Public Static List<NBFC__c> ShowNbfcPartners(){
-        list<NBFC__c> NBFCList=[Select Name,Interest_Rate__c,GST_on_Subvention__c,Processing_Fee__c,Tenure__c From NBFC__c];
-        system.debug('NBFCList='+NBFCList);
-        return NBFCList;
+    @AuraEnabled(Cacheable = True)
+    Public Static Map<String, List<Decimal>> ShowNbfcPartners(){
+        Map<String, List<Decimal>> nbfcName = new Map<String, List<Decimal>>();
+
+        list<NBFC__c> NBFCList = [Select NBFC_Name__c, Tenure__c
+                                  From NBFC__c
+                                  ORDER BY Tenure__c ASC];
+        system.debug('NBFCList=' + NBFCList);
+
+        for (NBFC__c nbfc : NBFCList){
+
+            if (nbfcName.containsKey(nbfc.NBFC_Name__c)){
+                List<Decimal> tenurelist = nbfcName.get(nbfc.NBFC_Name__c);
+                system.debug('tenurelist=' + tenurelist);
+                tenurelist.add(nbfc.Tenure__c);
+            } else{
+                List<Decimal> newtenurelist = new List<Decimal>();
+                newtenurelist.add(nbfc.Tenure__c);
+                system.debug('newtenurelist=' + newtenurelist);
+                nbfcName.put(nbfc.NBFC_Name__c, newtenurelist);
+            }
+        }
+        system.debug('nbfcName=' + nbfcName);
+
+        return nbfcName;
     }
-    
-    @AuraEnabled(Cacheable=True)
+
+    @AuraEnabled(Cacheable = True)
     Public Static Decimal ShowAmount(String ProductName){
+        system.debug('ProductName-->'+ProductName);
         Decimal Amount;
-        Product2 PrdRec=[Select Id,Name,(Select Id,Name,UnitPrice From PricebookEntries) From Product2 where id=:ProductName ];
+        Product2 PrdRec = [Select Id, Name, (Select Id, Name, UnitPrice
+                                             From PricebookEntries)
+                           From Product2 
+                           where id = :ProductName];
 
-        System.debug('Product----'+PrdRec);
-        if(PrdRec==null || PrdRec.PricebookEntries!=null && PrdRec.PricebookEntries.size()==0) return null;
+        System.debug('Product----' + PrdRec);
+        if (PrdRec == null || PrdRec.PricebookEntries != null && PrdRec.PricebookEntries.size() == 0)
+            return null;
         return PrdRec.PricebookEntries[0].UnitPrice;
+    }
 
-        
+    @AuraEnabled
+    Public Static Decimal ShowPriceIncludingGST(String NbfcValue, integer tenure, Decimal originalAmount){
+
+        system.debug('originalAmount='+originalAmount);
+        Decimal finalPriceWithGST;
+        NBFC__c nbfcRec = [Select Processing_Fee__c, Interest_Rate__c, GST_on_Subvention__c
+                           From NBFC__c
+                           Where NBFC_Name__c = :NbfcValue AND Tenure__c = :tenure];
+
+        if (nbfcRec.Processing_Fee__c != 0){
+
+            Decimal basePlusProcessing = originalAmount + nbfcRec.Processing_Fee__c;
+            Decimal basePlusProcessingPlusInter = basePlusProcessing + basePlusProcessing * (nbfcRec.Interest_Rate__c / 100);
+            Decimal finalWithGST = basePlusProcessingPlusInter + basePlusProcessingPlusInter * (nbfcRec.GST_on_Subvention__c / 100);
+            finalPriceWithGST = finalWithGST;
+            system.debug('finalPriceWithGST='+finalPriceWithGST);
+        } else{
+
+            Decimal basePrice = originalAmount;
+            Decimal basePlusProcessingPlusInter = basePrice + basePrice * (nbfcRec.Interest_Rate__c / 100);
+            Decimal finalWithGST = basePlusProcessingPlusInter + basePlusProcessingPlusInter * (nbfcRec.GST_on_Subvention__c / 100);
+            finalPriceWithGST = finalWithGST;
+            system.debug('finalPriceWithGST='+finalPriceWithGST);
+        }
+
+        return finalPriceWithGST.setScale(2);
     }
     
      @AuraEnabled

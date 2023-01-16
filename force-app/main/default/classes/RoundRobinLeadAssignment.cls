@@ -14,6 +14,7 @@ public without sharing class RoundRobinLeadAssignment{
         Map<String, Integer> qNameAndMemberIdTORoundRobinIDMaP = new Map<String, Integer>();
         Map<String, Integer> qNameToLastAssignedQmemberRRid = new Map<String, Integer>();
         Map<String, String> QnameAndRRidToMemberIDMap = new Map<String, String>();
+        map<string, integer> mapofMemidByMaxLeadPerMonthFromUser = new map<string, integer>();
         
         //withinWorkingHour = BuildMaps.CheckBusinessHours();
         qNameToListOfLeadsMap = makeQueueNameToListOfAssignedLeadsMap(qualityOfLead);//Group wise leads based on source intent
@@ -27,6 +28,7 @@ public without sharing class RoundRobinLeadAssignment{
         QnameAndRRidToMemberIDMap = makeQnameAndRRidToMemberID(mapofCouseByGroupName.get(qualityOfLead)); // qname with qname+rrid
         BuildMaps.validateUserCapacity(mapofCouseByGroupName.get(qualityOfLead), qualityOfLead);
         BuildMaps.validateUserCapacityForRM(qualityOfLead, leadIds);
+        
         system.debug('BuildMaps.mapofMemIdByExceedCount::' + BuildMaps.mapofMemIdByExceedCount);//member id with exceed count
         system.debug('BuildMaps.mapofMemidByTodayLeadCount::' + BuildMaps.mapofMemidByTodayLeadCount);//member id with today's lead count
         system.debug('BuildMaps.mapofMemIdByMaxLeadCountPerDay::' + BuildMaps.mapofMemIdByMaxLeadCountPerDay);// member id with max lead count per day(AGM)
@@ -155,26 +157,18 @@ public without sharing class RoundRobinLeadAssignment{
         if (BuildMaps.mapofMemidByAssignedLead.get(qMemberID) == null){
             system.debug('Inside If');
             isconditionapproved = true;
-        } else if (BuildMaps.mapofMemidByAssignedLead.get(qMemberID) != null && BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID) != null && BuildMaps.mapofMemidByAssignedLead.get(qMemberID) < BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID)){
-            system.debug('Inside Else If');
-            system.debug('BuildMaps.mapofMemidByPendingLeads.get(qMemberID)-->'+BuildMaps.mapofMemidByPendingLeads.get(qMemberID));
-            system.debug('BuildMaps.mapofMemIdByExceedCount.get(qMemberID)-->'+BuildMaps.mapofMemIdByExceedCount.get(qMemberID));
-            if ( (BuildMaps.mapofMemidByPendingLeads.get(qMemberID) != null && BuildMaps.mapofMemIdByExceedCount.get(qMemberID) != null)){// && BuildMaps.mapofMemidByPendingLeads.get(qMemberID) < BuildMaps.mapofMemIdByExceedCount.get(qMemberID))){
-                system.debug('inside pendingmap');
-                system.debug('Inside Else If If');
-                /*if (BuildMaps.mapofMemidByTodayNewLead.get(qMemberID) == null || (BuildMaps.mapofMemidByTodayNewLead.get(qMemberID) != null && BuildMaps.mapofMemidByMinLeadsCount.get(qMemberID) != null && BuildMaps.mapofMemidByTodayNewLead.get(qMemberID) < BuildMaps.mapofMemidByMinLeadsCount.get(qMemberID) && BuildMaps.mapofMemidByTodayLeadCount.get(qMemberID) != null && BuildMaps.mapofMemIdByMaxLeadCountPerDay.get(qMemberID) != null && BuildMaps.mapofMemidByTodayLeadCount.get(qMemberID) < BuildMaps.mapofMemIdByMaxLeadCountPerDay.get(qMemberID))){
-                    system.debug('inside minumum section');
-                    isconditionapproved = true;
-                } else if (BuildMaps.mapofMemIdByMaxLeadCountPerDay.get(qMemberID) == null && BuildMaps.mapofMemidByTodayLeadCount.get(qMemberID) != null && BuildMaps.mapofMemIdByMaxLeadCountByGroupPerDay.get(qMemberID) != null && BuildMaps.mapofMemidByTodayLeadCount.get(qMemberID) < BuildMaps.mapofMemIdByMaxLeadCountByGroupPerDay.get(qMemberID)){
-                    isconditionapproved = true;
-                } else if (BuildMaps.mapofMemIdByMaxLeadCountByGroupPerDay.get(qMemberID) == null && BuildMaps.mapofMemidByTodayLeadCount.get(qMemberID) != null && BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID) != null && BuildMaps.mapofMemidByTodayLeadCount.get(qMemberID) < BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID)){
-                    isconditionapproved = true;
-                }*/
-                isconditionapproved = true;
-            } else{
-                system.debug('Inside Else');
+        }else{
+            if(BuildMaps.mapofMemidByMaxLeadPerMonthFromUser.get(qMemberID) != null && BuildMaps.mapofMemidByAssignedLead.get(qMemberID) <= BuildMaps.mapofMemidByMaxLeadPerMonthFromUser.get(qMemberID)){
+                if(BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID) != null  && BuildMaps.mapofMemidByAssignedLead.get(qMemberID) <= BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID)){
+                    if(BuildMaps.mapofMemidByMaxLeadPerDayFromAG.get(qMemberID) != null && BuildMaps.mapofMemidByAssignedLead.get(qMemberID) <= BuildMaps.mapofMemidByMaxLeadPerDayFromAG.get(qMemberID)){
+                        if(BuildMaps.mapofMemIdByMaxLeadCountByGroupPerDay.get(qMemberID) != null && BuildMaps.mapofMemidByAssignedLead.get(qMemberID) <= BuildMaps.mapofMemIdByMaxLeadCountByGroupPerDay.get(qMemberID)){
+                            isconditionapproved = true;
+                        }
+                    }
+                } 
+            }else{
                 isconditionapproved = false;
-            }
+            }           
         }
         
         system.debug('isconditionapproved::' + isconditionapproved);
@@ -197,19 +191,7 @@ public without sharing class RoundRobinLeadAssignment{
                                    FROM Lead
                                    WHERE Ownerid = :queueId AND Quality_of_Lead__c != null limit 50000];
         mapofCouseByGroupName.put(groupName,groupName);
-        /*list<Source_Intent_And_Group_Name__mdt> groupNameSourceIntent = [select id,Group_Name__c,Source_Intent__c from Source_Intent_And_Group_Name__mdt ];
-if(!groupNameSourceIntent.isEmpty()){
-system.debug('Inside source');
-system.debug('qualityOfLead::'+qualityOfLead);
-for(Source_Intent_And_Group_Name__mdt signMeta : groupNameSourceIntent){
-sourceIntentByGroupMap.put(signMeta.Source_Intent__c,signMeta.Group_Name__c);
-
-if(signMeta.Source_Intent__c == qualityOfLead){
-mapofCouseByGroupName.put(signMeta.Source_Intent__c,signMeta.Group_Name__c);
-}
-}
-}
-*/
+        
         // Inserting QueueId and list of case assigned to the queue id into the map:-QueueNameToListOfAssignedCasesMap
         system.debug('leadsInQueue-->'+leadsInQueue.size());
         if (!leadsInQueue.isEmpty()){
@@ -220,18 +202,6 @@ mapofCouseByGroupName.put(signMeta.Source_Intent__c,signMeta.Group_Name__c);
             for(Lead ld: leadsInQueue){
                 leadIds.add(ld.Id);
             }
-            /*for(Lead ld: leadsInQueue){
-
-if(ld.Category__c != null){
-if(groupNameByLeads.containsKey(sourceIntentByGroupMap.get(ld.Category__c)))
-{
-groupNameByLeads.get(sourceIntentByGroupMap.get(ld.Category__c)).add(ld);
-}else{
-groupNameByLeads.put(sourceIntentByGroupMap.get(ld.Category__c),new List<lead>{ld});
-}
-}
-System.debug('QueueNameToListOfAssignedCasesMap::'+groupNameByLeads);
-}*/
         }
         return groupNameByLeads;
     }
