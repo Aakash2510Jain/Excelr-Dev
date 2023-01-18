@@ -144,7 +144,7 @@ public with sharing class ChatFormLWCcontroller {
         return GmList;
     }
 
-    @auraenabled(cacheable = true)
+    @auraenabled
     public static List<Application__c> getApplication(String lid){
         System.debug('lid ====> ' +lid);
         List<Application__c> AppList = [SELECT Course__c, Id, Name,LID__c,Applied_Date_Time__c, Lead__c

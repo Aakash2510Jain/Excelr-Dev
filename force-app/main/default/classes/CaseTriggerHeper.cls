@@ -88,9 +88,9 @@ public class CaseTriggerHeper {
                     }
                     
                     if(csRec.Severity__c == 'L3'){
-                        Id oppOwnersRoleId = freshCaseMap.get(csRec.Id).Account.Owner.UserRoleId;
-                        system.debug('oppOwnersRoleId :: ' + oppOwnersRoleId);
-                        Id BHId = approvalBHWrapper.smToManagerMap.containsKey(oppOwnersRoleId) && approvalBHWrapper.managerRoleToUserIdMap.containsKey(approvalBHWrapper.smToManagerMap.get(oppOwnersRoleId)) ? approvalBHWrapper.managerRoleToUserIdMap.get(approvalBHWrapper.smToManagerMap.get(oppOwnersRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
+                        Id caseOwnersRoleId = freshCaseMap.get(csRec.Id).Account.Owner.UserRoleId;
+                        system.debug('caseOwnersRoleId :: ' + freshCaseMap.get(csRec.Id).Account.OwnerId);
+                        Id BHId = approvalBHWrapper.smToManagerMap.containsKey(caseOwnersRoleId) && approvalBHWrapper.managerRoleToUserIdMap.containsKey(approvalBHWrapper.smToManagerMap.get(caseOwnersRoleId)) ? approvalBHWrapper.managerRoleToUserIdMap.get(approvalBHWrapper.smToManagerMap.get(caseOwnersRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
                         system.debug('BHId :: ' + BHId);
                         if(BHId!= null){ 
                             createTask('L3 Severity Case assigned!', BHId, csRec.AccountId);

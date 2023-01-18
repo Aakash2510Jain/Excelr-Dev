@@ -8,6 +8,9 @@ public without sharing class RoundRobinLeadAssignment{
     public static void assignLeadsToBDS(String qualityOfLead, List<Lead> leadsListToBeAssigned){
         system.debug('qualityOfLead::' + qualityOfLead);
         system.debug('leadsListToBeAssigned::' + leadsListToBeAssigned.size());
+        for(lead ld : leadsListToBeAssigned){
+            system.debug('ld.Id::'+ld.Id);
+        }
         boolean withinWorkingHour = false;
         List<lead> updateLeadList = new List<lead>();
         List<Assignment_Group__c> QtoBeUpdated = new List<Assignment_Group__c>();
