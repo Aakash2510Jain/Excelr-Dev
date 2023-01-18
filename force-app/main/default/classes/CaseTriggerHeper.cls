@@ -14,9 +14,9 @@ public class CaseTriggerHeper {
             Utility.ApprovalWrapper approvalQAWrapper = Utility.getUserQAMap();
             
             for(Case caseRec : newCaseList){
-                Id oppOwnersRoleId = freshCaseMap.get(caseRec.Id).Owner.UserRoleId;
-                system.debug('oppOwnersRoleId :: ' + oppOwnersRoleId);
-                Id QAId = approvalQAWrapper.smToManagerMap.containsKey(oppOwnersRoleId) && approvalQAWrapper.managerRoleToUserIdMap.containsKey(approvalQAWrapper.smToManagerMap.get(oppOwnersRoleId)) ? approvalQAWrapper.managerRoleToUserIdMap.get(approvalQAWrapper.smToManagerMap.get(oppOwnersRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
+                Id caseOwnersRoleId = freshCaseMap.get(caseRec.Id).Owner.UserRoleId;
+                system.debug('caseOwnersRoleId :: ' + caseOwnersRoleId);
+                Id QAId = approvalQAWrapper.smToManagerMap.containsKey(caseOwnersRoleId) && approvalQAWrapper.managerRoleToUserIdMap.containsKey(approvalQAWrapper.smToManagerMap.get(caseOwnersRoleId)) ? approvalQAWrapper.managerRoleToUserIdMap.get(approvalQAWrapper.smToManagerMap.get(caseOwnersRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
                 system.debug('QAId :: ' + QAId);
                 
                 if(QAId != null){

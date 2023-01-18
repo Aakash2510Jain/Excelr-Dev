@@ -31,9 +31,9 @@
                 
             </tr>             
             <tr>
-                <td colspan="2"> Consignee(Ship to)<br/>
+                <td colspan="2"> Consignee (Ship to)<br/>
                     <b> Other Debtors</b><br/>
-                    State Name :{!getoppData.GST_State__c}, GST No :{!StateCode} </td>
+                    State Name&nbsp;&nbsp;&nbsp;&nbsp; :{!getoppData.GST_State__c},&nbsp;&nbsp; Code &nbsp;:&nbsp; {!StateCode} </td>
                 <td style="text-align: center;">Delivery Note <br/>
                     {!getinvoiceData.Delivery_Note__c} </td>
                 <td style="text-align: center;">Mode/Terms of Payment<br/>
@@ -43,10 +43,10 @@
                 <td colspan="2" >
                     <div style="float:bottom;margin-bottom:50px;">
                         Buyer(Bill to)<br/>
-                        <b>{!getAccData.Name}</b><br/>
-                        {!getAccData.Email__c}<br/>
-                        {!getAccData.ShippingState}<br/>
-                        State Name:    {!getAccData.ShippingState},Code: {!getAccData.ShippingPostalCode}
+                        <b>{!getAccData.Contacts[0].Name}</b><br/>
+                        {!getAccData.Contacts[0].Email}<br/>
+                        {!getAccData.City__c}<br/>
+                        State Name:    {!getoppData.GST_State__c},Code: {!StateCode}
                     </div> 
                 </td> 
                 
@@ -68,16 +68,17 @@
             </tr>
             <tr>
                 <td>1</td>
-                <td style="text-align: center;"><b> Consulting Fee-Blr</b><br/>
+                <td ><b style="text-align: center;"> Consulting Fee</b><br/>
                     {!getOLIDataName}<br/>
-                    <b>{!getcustomData.Central_GST__c}</b><br/>
-                    <b>{!getcustomData.State_GST__c}</b></td>
+                    <b style="text-align: right;">{!getcustomData.Central_GST__c}</b><br/>
+                    <b style="text-align: right;">{!getcustomData.State_GST__c}</b></td>
                 <td style="text-align: center;"><b>{!getcustomData.HSN_SAC__c} </b></td>
                 <td style="text-align: center;">{!getOLIDataQuantity}<br/> </td>
                 <td style="text-align: center;"><br/><br/> {!getcustomData.Rate__c} <br/> {!getcustomData.Rate__c}</td>
                 <td style="text-align: center;"><br/><br/> % <br/> % </td>
-                <td><b>{!getOLIDataTotalPrice} <br/><br/>{!PercentageTotal}<br/>{!PercentageTotal}</b></td> </tr> 
-            <tr><td> </td>
+                <td><b>{!getOLIDataTotalPrice} -- <br/><br/>{!PercentageTotal}<br/>{!PercentageTotal}</b></td> </tr> 
+            <tr>
+                <td> </td>
                 <td style="text-align: right;">Total </td>
                 <td> </td>
                 <td> </td>
@@ -87,7 +88,7 @@
             <table border="2" style="width: 100%;">  
                 <td>
                     <h4>
-                        <apex:outputText escape="false"><p style="">Amount Chargeable(in words) &nbsp;&nbsp;&nbsp;  E. &amp; O.E.</p>  </apex:outputText>
+                        <apex:outputText escape="false"><p style="">Amount Chargeable(in words) &nbsp;&nbsp;&nbsp;&nbsp;  E. &amp; O.E.</p>  </apex:outputText>
                     </h4>
                     
                     <b  style="font-size: 13px;">INR {!AmountTotalAmountWithPercentageInWords}</b></td> 
@@ -114,9 +115,9 @@
             <tr> 
                 <td >{!getcustomData.HSN_SAC__c}</td>
                 <td style="text-align: center;">{!getOLIDataTotalPrice}</td>
-                <td style="text-align: center;">{!getcustomData.Rate__c}</td>
+                <td style="text-align: center;">{!getcustomData.Rate__c}%</td>
                 <td style="text-align: center;">{!PercentageTotal}</td>
-                <td style="text-align: center;">{!getcustomData.Rate__c}</td>
+                <td style="text-align: center;">{!getcustomData.Rate__c}%</td>
                 <td style="text-align: center;">{!PercentageTotal}</td>
                 <td style="text-align: center;">{!TotalTaXAmount}</td>
             </tr>
@@ -132,7 +133,7 @@
         <table border="2" style="width: 100%;">
             <tr><td> Tax amount(in words):  <b>INR Three Thousand Eight Hundred Thirteen and Fifty Six paise Only</b><br/>
                 Remarks:<br/>
-                invoice raised to {!getAccData.Name}<br/>
+                invoice raised to {!getAccData.Contacts[0].Name}<br/>
                 {!getAccData.Email__c} <br/>
                 <div style="float:right;margin-right:-1.5px;margin-bottom:-1.5px;padding-top:5px;padding-left:5px;padding-bottom:5px;padding-right:5px; border-style: solid;border-width:1px; !important">
                     <b>for {!getcustomData.Name}<br/><br/></b>
@@ -143,7 +144,9 @@
                 
             </tr>
             
-        </table>           
-        
+        </table>   
+        <p style="text-align:center;margin-top:10px">
+            This is a Computer Generated Invoice
+        </p>    
     </div>  
 </apex:page>

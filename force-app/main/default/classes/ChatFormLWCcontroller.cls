@@ -26,11 +26,13 @@ public with sharing class ChatFormLWCcontroller {
     }
 
     @auraenabled
-    public static lead createLead(String firstname, string Lastname, string email, string phone, string ownerId, string agmId, string Course,  string agentid,string city,string state,string country,string source,string medium,string VisitorId,string Transcript,string LandingPageURL,string comments){
+    public static String createLead(String firstname, string Lastname, string email, string phone,  string Course,  string agentid,string city,string state,string country,string source,string medium,string VisitorId,string Transcript,string LandingPageURL,string comments){
        // System.debug('userId ====> ' + userId);
         System.debug('agentid ====> ' + agentid);
         lead leadRec = new lead();
         list<ExcelR_Training_User__c> existingTrainingUser = new list<ExcelR_Training_User__c>();
+
+        string message = '';
         try{
 
             if ( agentid != null ){
@@ -39,13 +41,12 @@ public with sharing class ChatFormLWCcontroller {
                                         Where id = :agentid];
             }
 
-            system.debug(firstname + ' : ' + Lastname + ' : ' + email + ' : ' + phone + ' : ' + Lastname + agmId);
+            system.debug(firstname + ' : ' + Lastname + ' : ' + email + ' : ' + phone + ' : ' + Lastname );
             leadRec.FirstName = firstname;
             leadRec.LastName = Lastname;
             leadRec.Email = email;
             leadRec.Phone = phone;
             //leadRec.OwnerId = userId;
-            leadRec.ISM__c = agmId;
             leadRec.Course__c = Course;
             leadRec.City__c=city;
             leadRec.State__c=state;
@@ -66,14 +67,18 @@ public with sharing class ChatFormLWCcontroller {
             system.debug('leadRec===========================' + leadRec);
             insert leadRec;
             System.debug('lead rec Id =====> ' + leadRec.Id);
-            return leadRec;
+            if (leadRec.id != null) {
+                message = 'SUCCESS';
+            }
+            //return message;
         }
         catch ( Exception ex ){
             system.debug('Error-->' + ex.getMessage());
             system.debug('Error@@-->' + ex.getLineNumber());
+            message = 'FAIL';
             //return null;
         }
-        return leadRec;
+        return message;
     }
 
     @AuraEnabled
@@ -107,12 +112,13 @@ public with sharing class ChatFormLWCcontroller {
     public static Application__c CreateApplication(string Course, string LeadId ){
         System.debug('Course =====> ' + Course);
         //System.debug('Course =====> ' + userId);
-        System.debug('Course =====> ' + LeadId);
+        System.debug('LeadId =====> ' + LeadId);
         List<Lead> leadlist = new List<Lead>();
         try {
             if (LeadId != null) {
                 leadlist = [Select id, ownerId from Lead Where Id =: LeadId];
             }
+            System.debug('leadlist ===> ' + leadlist);
             Application__c app = new Application__c();
             app.Course__c = course;
             app.Applied_Date_Time__c = system.now();
@@ -121,7 +127,7 @@ public with sharing class ChatFormLWCcontroller {
                 app.OwnerId = leadlist[0].ownerId;
                 
             }
-            
+            System.debug('app ====> ' + app);
             insert app;
             return app;
 

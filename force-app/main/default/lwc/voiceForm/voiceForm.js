@@ -291,13 +291,21 @@ export default class voiceForm extends LightningElement {
     createTaskRec()
     {
          debugger;
-        createTask({ subject: this.subjectvalue, assignto:this.CaptureOwnerId,priority:this.priorityValue,status:this.statusValue,duedate:this.DuedateValue,comments:this.comValue,followupDate:this.followupValue,leadId:this.recordId })
+
+         if ((this.subjectvalue != null && this.subjectvalue != undefined && this.subjectvalue != '') && (this.CaptureOwnerId != null && this.CaptureOwnerId != undefined && this.CaptureOwnerId != '') && (this.priorityValue != null && this.priorityValue != undefined && this.priorityValue != '') && (this.statusValue != null && this.statusValue != undefined && this.statusValue != '')){
+            createTask({ subject: this.subjectvalue, assignto:this.CaptureOwnerId,priority:this.priorityValue,status:this.statusValue,duedate:this.DuedateValue,comments:this.comValue,followupDate:this.followupValue,leadId:this.recordId })
 
             .then((result) => {
                 console.log('result',result);
                 if(result=='Success'){
                     this.handleConfirm('Task Created Successfully');
                     this.showtaskModal=false;
+                    this.subjectvalue = '';
+                     this.priorityValue = '';
+                     this.statusValue = '';
+                     this.DuedateValue = '';
+                     this.comValue = '';
+                     this.followupValue = '';
                 }
                
             })
@@ -305,6 +313,11 @@ export default class voiceForm extends LightningElement {
                 this.error = error;
                 console.log('error',error);
             });
+         }
+         else {
+            alert('Mandatory Fields are Empty,Please Check and fill that Field(s)!! ');
+         }
+        
     }
     
 
@@ -732,9 +745,9 @@ export default class voiceForm extends LightningElement {
     HandleLeadCreatedisable=false;
     createNewLead() {
         debugger;
-        if((this.namValue!=undefined && this.namValue!=null ) && (this.lNameValue!=undefined && this.lNameValue!=null ) && (this.emailValue!=undefined && this.emailValue!=null ) && (this.phoneValue!=undefined && this.phoneValue!=null ) 
-        && (this.CourceLead!=undefined && this.CourceLead!=null ) && (this.cityValue!=undefined && this.cityValue!=null ) && (this.SourceValue!=undefined && this.SourceValue!=null ) && (this.MediumValue!=undefined && this.MediumValue!=null ) && 
-            (this.Leadvalue!=undefined && this.Leadvalue!=null ))
+        if((this.namValue!=undefined && this.namValue!=null && this.namValue!='' ) && (this.lNameValue!=undefined && this.lNameValue!=null && this.lNameValue!='') && (this.emailValue!=undefined && this.emailValue!=null && this.emailValue!='' ) && (this.phoneValue!=undefined && this.phoneValue!=null  && this.phoneValue!='' ) 
+        && (this.CourceLead!=undefined && this.CourceLead!=null && this.CourceLead!='' ) && (this.cityValue!=undefined && this.cityValue!=null && this.cityValue!='' ) && (this.SourceValue!=undefined && this.SourceValue!=null && this.SourceValue!='') && (this.MediumValue!=undefined && this.MediumValue!=null  && this.MediumValue!='') && 
+            (this.Leadvalue!=undefined && this.Leadvalue!=null  && this.Leadvalue!=''))
            {
 
             this.HandleLeadCreatedisable=true; 
@@ -744,34 +757,40 @@ export default class voiceForm extends LightningElement {
             }
             
         
-        var returnvalue = this.handleIncorrectEmail(this.emailValue)
-        var phoneregexreturnvalue = this.handleCorrectPhone(this.phoneValue)
-        console.log('returnVALUE=',returnvalue);
-        if (returnvalue == true && this.handleCorrectPhone(this.phoneValue)) {
-            createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, ownerId: this.ismeId, agmId: this.gruoMemberId, Course: this.CourceLead, agentid: this.agentrecid,city:this.cityValue,LdGenPath:this.Leadvalue,source:this.SourceValue,medium:this.MediumValue,country:this.CountryValue,state:this.StateValue,comments:this.commentsValue})
-                .then(data => {
-                    this.handleConfirm('Lead Created Successfully');
-                    this.HandleLeadCreatedisable=false; 
-                    console.log(data)
-                    //alert('Lead Record created successfully');
-                    this.handleCancel();
-                    this.namValue = '';
-                    this.lNameValue = '';
-                    this.commentsValue = '';
-                    this.agentrecid= '';
-                    this.ismeId = '';
-                    this.emailValue = '';
-                    this.phoneValue = '';
-                    this.gruoMemberId = '';
-                    this.CourceLead = '';
-                    this.CountryValue = '';
-                    this.cityValue = '';
-                    this.Leadvalue = '';
+            var returnvalue = this.handleIncorrectEmail(this.emailValue)
+            var phoneregexreturnvalue = this.handleCorrectPhone(this.phoneValue)
+            console.log('returnVALUE=', returnvalue);
+            if (returnvalue == true && this.handleCorrectPhone(this.phoneValue)) {
+                createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, Course: this.CourceLead, agentid: this.agentrecid, city: this.cityValue, LdGenPath: this.Leadvalue, source: this.SourceValue, medium: this.MediumValue, country: this.CountryValue, state: this.StateValue, comments: this.commentsValue })
+                    .then(data => {
 
-                })
-                .catch(error => {
-                    this.handleAlert('Error updating or reloading records');
-                    this.handleCancel();
+                        if (data == 'SUCCES') {
+                            this.handleConfirm('Lead Created Successfully');
+                            this.HandleLeadCreatedisable = false;
+                            console.log(data)
+                            //alert('Lead Record created successfully');
+                            this.handleCancel();
+                            this.namValue = '';
+                            this.lNameValue = '';
+                            this.commentsValue = '';
+                            this.emailValue = '';
+                            this.phoneValue = '';
+                            this.CourceLead = '';
+                            this.CountryValue = '';
+                            this.cityValue = '';
+                            this.Leadvalue = '';
+
+                        }
+                        else if (data == 'FAIL') {
+                            this.HandleLeadCreatedisable = true;
+                            this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
+                        }
+
+
+                    })
+                    .catch(error => {
+                        this.handleAlert('Error updating or reloading records');
+                        this.handleCancel();
                     this.HandleLeadCreatedisable=false; 
                     
                 })

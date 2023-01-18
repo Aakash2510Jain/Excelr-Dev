@@ -177,7 +177,9 @@ public class PaymentProcessOnOpportunityController {
          OppRec.Loan_Type__c =LoanType;
          OppRec.NBFCPartner__c=partialNBFCValue;
          OppRec.Upfront_Amount__c=PartialUpfrontValue;
-        
+         string OppCourse = PrdRec.name.substringBefore('-');
+         OppCourse = OppCourse.trim();
+         OppRec.Course__c = OppCourse;
          Update OppRec;
         
         Invoice__c invRec=new Invoice__c();

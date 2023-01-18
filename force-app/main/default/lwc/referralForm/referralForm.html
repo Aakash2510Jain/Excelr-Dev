@@ -54,9 +54,9 @@
                         onchange={ReferralFormInputHandler} style="margin-top:8px;" value={Email}></lightning-input>
                     <lightning-input name="PH" label="Phone no. of Reference" required="true"
                         onchange={ReferralFormInputHandler} style="margin-top:8px;" value={Phone}></lightning-input>
-                    <lightning-input name="CourseType" label="Type of Course" required="true"
+                    <!--lightning-input name="CourseType" label="Type of Course" required="true"
                         onchange={ReferralFormInputHandler} style="margin-top:8px;"
-                        value={type_of_Course}></lightning-input>
+                        value={type_of_Course}></lightning-input -->
                     <template if:true={CoursePicklistValues.data}>
                         <lightning-combobox name="CR" label="Course Name of Reference" value={Coursevalue}
                             placeholder="select" options={CoursePicklistValues.data.values}
@@ -69,9 +69,13 @@
                             onchange={ReferralFormInputHandler}>
                         </lightning-combobox>
                     </template>
-                    <lightning-input name="ReferenceLocation" label="Location of Reference" required="true"
+
+                    <lightning-combobox name="ReferenceLocation" label="Location of Reference" value={location_of_reference}
+                                    placeholder="Select Your City" options={CityOptions} onchange={ReferralFormInputHandler} required="true">
+                                </lightning-combobox>
+                    <!--lightning-input name="ReferenceLocation" label="Location of Reference" required="true"
                         onchange={ReferralFormInputHandler} style="margin-top:8px;"
-                        value={location_of_reference}></lightning-input>
+                        value={location_of_reference}></lightning-input -->
 
 
 
@@ -86,8 +90,8 @@
         <div class=" slds-align_absolute-center">
             <lightning-button title="Save" label="Submit" onclick={SaveReferralFormDetails} variant="brand"
                 style="margin-top:8px ;"></lightning-button>
-            <lightning-button variant="brand" label="Brand" title="Primary action" onclick={handleClick}
-                class="slds-m-left_x-small"></lightning-button>
+            <!--lightning-button variant="brand" label="Brand" title="Primary action" onclick={handleClick}
+                class="slds-m-left_x-small"></lightning-button -->
 
         </div>
 

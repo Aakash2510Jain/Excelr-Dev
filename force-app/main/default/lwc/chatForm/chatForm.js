@@ -410,22 +410,29 @@ export default class chatForm extends LightningElement {
        }
        createTaskRec()
        {
-            debugger;
-            console.log('captureownerId',this.CaptureOwnerId);
-           createTask({ subject: this.subjectvalue, assignto:this.CaptureOwnerId,priority:this.priorityValue,status:this.statusValue,duedate:this.DuedateValue,comments:this.comValue,followupDate:this.followupValue,leadId:this.recordId })
-   
-               .then((result) => {
-                   console.log('result',result);
-                   if(result=='Success'){
-                       this.handleConfirm('Task Created Successfully');
-                       this.showtaskModal=false;
-                   }
-                  
-               })
-               .catch((error) => {
-                   this.error = error;
-                   console.log('error',error);
-               });
+           debugger;
+           console.log('captureownerId', this.CaptureOwnerId);
+           if ((this.subjectvalue != null && this.subjectvalue != undefined && this.subjectvalue != '') && (this.CaptureOwnerId != null && this.CaptureOwnerId != undefined && this.CaptureOwnerId != '') && (this.priorityValue != null && this.priorityValue != undefined && this.priorityValue != '') && (this.statusValue != null && this.statusValue != undefined && this.statusValue != '')) {
+               createTask({ subject: this.subjectvalue, assignto: this.CaptureOwnerId, priority: this.priorityValue, status: this.statusValue, duedate: this.DuedateValue, comments: this.comValue, followupDate: this.followupValue, leadId: this.recordId })
+
+                   .then((result) => {
+                       console.log('result', result);
+                       if (result == 'Success') {
+                           this.handleConfirm('Task Created Successfully');
+                           this.showtaskModal = false;
+                       }
+
+                   })
+                   .catch((error) => {
+                       this.error = error;
+                       console.log('error', error);
+                   });
+           }
+           else {
+            alert('Mandatory Fields are Empty,Please Check and fill that Field(s)!! ');
+           }
+          
+
        }
 
     //open modal
@@ -757,9 +764,9 @@ export default class chatForm extends LightningElement {
 
     createNewLead() {
        
-        if((this.namValue!=undefined && this.namValue!=null ) && (this.lNameValue!=undefined && this.lNameValue!=null ) && (this.emailValue!=undefined && this.emailValue!=null ) && (this.phoneValue!=undefined && this.phoneValue!=null ) 
-             && (this.CourceLead!=undefined && this.CourceLead!=null ) && (this.cityValue!=undefined && this.cityValue!=null ) && (this.sourceValue!=undefined && this.sourceValue!=null ) && (this.MediumValue!=undefined && this.MediumValue!=null ) && 
-                (this.VisitorIdValue!=undefined && this.VisitorIdValue!=null ) && (this.TranscriptValue!=undefined && this.TranscriptValue!=null ) && (this.PageUrlValue!=undefined && this.PageUrlValue!=null ) )
+        if((this.namValue!=undefined && this.namValue!=null && this.namValue!=''  ) && (this.lNameValue!=undefined && this.lNameValue!=null && this.lNameValue!='') && (this.emailValue!=undefined && this.emailValue!=null && this.emailValue!='') && (this.phoneValue!=undefined && this.phoneValue!=null && this.phoneValue!='') 
+             && (this.CourceLead!=undefined && this.CourceLead!=null && this.CourceLead!='') && (this.cityValue!=undefined && this.cityValue!=null && this.cityValue!='') && (this.sourceValue!=undefined && this.sourceValue!=null && this.sourceValue!='') && (this.MediumValue!=undefined && this.MediumValue!=null && this.MediumValue!='') && 
+                (this.VisitorIdValue!=undefined && this.VisitorIdValue!=null && this.VisitorIdValue!='' ) && (this.TranscriptValue!=undefined && this.TranscriptValue!=null&& this.TranscriptValue!='') && (this.PageUrlValue!=undefined && this.PageUrlValue!=null && this.PageUrlValue!='' ) )
                 {
                     this.HandleLeadCreatedisable=true; 
                     
@@ -770,9 +777,11 @@ export default class chatForm extends LightningElement {
             debugger;
             var returnvalue = this.handleIncorrectEmail(this.emailValue)
             if (returnvalue == true && this.handleCorrectPhone(this.phoneValue)) {
-                createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, ownerId: this.ismeId, agmId: this.gruoMemberId, Course: this.CourceLead, agentid:this.agentrecid ,city:this.cityValue,source:this.sourceValue,medium:this.MediumValue,VisitorId:this.VisitorIdValue,Transcript:this.TranscriptValue,state:this.StateValue,country:this.CountryValue,LandingPageURL:this.PageUrlValue,comments:this.commentsValue})
+                createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, Course: this.CourceLead, agentid:this.agentrecid ,city:this.cityValue,source:this.sourceValue,medium:this.MediumValue,VisitorId:this.VisitorIdValue,Transcript:this.TranscriptValue,state:this.StateValue,country:this.CountryValue,LandingPageURL:this.PageUrlValue,comments:this.commentsValue})
                     .then(data => {
-                        this.handleConfirm('Lead Created Successfully');
+
+                        if (data == 'SUCCESS') {
+                            this.handleConfirm('Lead Created Successfully');
                         console.log(data)
                         //alert('Lead Record created successfully');
                         this.handleCancel();
@@ -780,16 +789,18 @@ export default class chatForm extends LightningElement {
                         this.namValue = '';
                         this.lNameValue = '';
                         this.commentsValue = '';
-                        this.agentrecid = '';
-                        this.ismeId = '';
                         this.emailValue = '';
                         this.phoneValue = '';
-                        this.gruoMemberId = '';
                         this.CourceLead = '';
                         this.CountryValue = '';
                         this.cityValue = '';
                         this.Leadvalue = '';
-    
+                            
+                        }
+                        else if (data == 'FAIL') {
+                            this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
+                            this.HandleLeadCreatedisable=true;
+                        }
                     })
                     .catch(error => {
                         this.handleAlert('Error updating or reloading records');
@@ -832,6 +843,16 @@ export default class chatForm extends LightningElement {
         }).then(() => {
             console.log("###Alert Closed");
         });
+    }
+
+    handleCorrectPhone(PhoneToverify){
+        var regExpPhoneformat = /^[0-9]{1,10}$/g;
+        if (PhoneToverify.match(regExpPhoneformat)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     @api isLoaded = false;

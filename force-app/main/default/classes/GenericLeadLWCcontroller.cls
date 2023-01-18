@@ -27,9 +27,10 @@ public without sharing  class GenericLeadLWCcontroller {
     }
 
     @auraenabled
-    public static lead createLead(String firstname, string Lastname, string email, string phone, string ownerId, string agmId, string Course,  string agentid,string city,string state,string country,string source,string medium,string VisitorId,string Transcript,string leadGenPath,string comments){
+    public static String createLead(String firstname, string Lastname, string email, string phone, string Course,  string agentid,string city,string state,string country,string source,string medium,string VisitorId,string Transcript,string leadGenPath,string comments){
        // System.debug('userId ====> ' + userId);
         System.debug('agentid ====> ' + agentid);
+        string message = '';
         lead leadRec = new lead();
         list<ExcelR_Training_User__c> existingTrainingUser = new list<ExcelR_Training_User__c>();
         try{
@@ -40,13 +41,12 @@ public without sharing  class GenericLeadLWCcontroller {
                                         Where id = :agentid];
             }
 
-            system.debug(firstname + ' : ' + Lastname + ' : ' + email + ' : ' + phone + ' : ' + Lastname + agmId);
+            system.debug(firstname + ' : ' + Lastname + ' : ' + email + ' : ' + phone + ' : ' + Lastname );
             leadRec.FirstName = firstname;
             leadRec.LastName = Lastname;
             leadRec.Email = email;
             leadRec.Phone = phone;
             //leadRec.OwnerId = userId;
-            leadRec.ISM__c = agmId;
             leadRec.Course__c = Course;
             leadRec.City__c=city;
             leadRec.State__c=state;
@@ -70,14 +70,19 @@ public without sharing  class GenericLeadLWCcontroller {
             system.debug('leadRec===========================' + leadRec);
             insert leadRec;
             System.debug('lead rec Id =====> ' + leadRec.Id);
-            return leadRec;
+
+            if (leadRec.id != null) {
+                message = 'SUCCESS';
+            }
+            //return message;
         }
         catch ( Exception ex ){
             system.debug('Error-->' + ex.getMessage());
             system.debug('Error@@-->' + ex.getLineNumber());
+            message = 'FAIL';
             //return null;
         }
-        return leadRec;
+        return message;
     }
     @AuraEnabled
     public static String createTaskForVoice (String subject,string assignto,string priority,string status,Date duedate,string taskcomments,DateTime followupDate, string leadId){

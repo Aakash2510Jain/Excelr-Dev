@@ -3,6 +3,8 @@ import { getPicklistValues } from 'lightning/uiObjectInfoApi';
 import COURSE_FIELD from '@salesforce/schema/Lead.Course__c'; 
 import TYPE_OF_COURSE_FIELD from '@salesforce/schema/Lead.Type_of_Course__c';
 import SubmitReferralDetails from '@salesforce/apex/ReferralFormController.SubmitReferralDetails';
+//import QueryCityList from '@salesforce/apex/ReferralFormController.QueryCityList';
+import Fetchcities from '@salesforce/apex/voiceFormLWCcontroller.Fetchcities';
 
 import { getObjectInfo } from 'lightning/uiObjectInfoApi';
 import LEAD_OBJECT from '@salesforce/schema/Lead';
@@ -33,6 +35,30 @@ export default class ReferralForm extends LightningElement {
     @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: TYPE_OF_COURSE_FIELD })
     TypeofCoursePicklistValues
 
+    @track CityPicklistValue=[];
+    @track cityValue;
+    @wire(Fetchcities)
+    WiredResponsecities({data,error}){
+        debugger;
+        if(data){
+         console.log('CityValuedata=',data);
+           let arr=[];
+           for(let i=0;i<data.length;i++){
+              arr.push({label:data[i].City__c,value:data[i].City__c});
+           }
+           this.CityPicklistValue=arr;
+           console.log('Picklistvalue=',this.CityPicklistValue);
+        }
+        else if(error){
+            console.log('error=',error);
+        }
+
+    }
+
+   get CityOptions(){
+     return this.CityPicklistValue;
+   }
+
     ReferralFormInputHandler(event) {
         debugger;
 
@@ -55,13 +81,14 @@ export default class ReferralForm extends LightningElement {
             this.Coursevalue = Textvalue;
         } else if (InputName == 'CID') {
             this.CID_of_Referer = Textvalue;
-        } else if (InputName == 'CourseType') {
-            this.type_of_Course = Textvalue;
         } else if (InputName == 'ReferenceLocation') {
             this.location_of_reference = Textvalue;
         }else if (InputName == 'TOCR') {
             this.type_of_Course = Textvalue;
         }
+        /*else if (InputName == 'CourseType') {
+            this.type_of_Course = Textvalue;
+        }*/
 
     }
 

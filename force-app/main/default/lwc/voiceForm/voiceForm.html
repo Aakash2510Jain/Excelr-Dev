@@ -642,17 +642,18 @@
                         <h1>Create New Task</h1>
                       </div>
                       <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
-                        <lightning-input type="text" name="subject" label="Subject" value={subjectvalue} onchange={subjectHandler}></lightning-input>
+                        <lightning-input type="text" name="subject" label="Subject" value={subjectvalue} onchange={subjectHandler} required="true"></lightning-input>
                         <lightning-combobox name="Priority" label="Priority" value={priorityValue}
                           placeholder="Select Priority" options={priorityList} onchange={priorityHandler} required="true"></lightning-combobox> 
 
                           <lightning-combobox name="Status" label="Status" value={statusValue}
                           placeholder="Select Status" options={StatusList} onchange={statusHandler} required="true"></lightning-combobox>   
                         
-                          <lightning-input type="date" name="Duedate" label="Due date" value={DuedateValue} onchange={duedateHandler} ></lightning-input>    
+                          <lightning-input type="date" name="Duedate" label="Due date" value={DuedateValue} onchange={duedateHandler} ></lightning-input>   
+                          <lightning-input type="datetime" name="input2" label="Followup Date/time " value={followupValue} onchange={followupHandler}></lightning-input> 
                           <lightning-textarea  label="Comments" name="Comments" value={comValue} onchange={commentHandler}>
                           </lightning-textarea>
-                          <lightning-input type="datetime" name="input2" label="Followup Date/time " value={followupValue} onchange={followupHandler}></lightning-input>
+                          
 
                       </div>
                       <div class="slds-modal__footer">

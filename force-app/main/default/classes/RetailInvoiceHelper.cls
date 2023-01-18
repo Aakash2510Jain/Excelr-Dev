@@ -48,9 +48,9 @@ global class RetailInvoiceHelper {
             }
         }
         if(!string.isBlank(AccId) && !string.isEmpty(AccId))
-            getAccData= [Select Id,Name,Email__c,ShippingState,ShippingPostalCode FROM Account where Id=: AccId LIMIT 1];     
+            getAccData= [Select Id,Name,Email__c,City__c,ShippingState,ShippingPostalCode,(Select Name,Email From Contacts) FROM Account where Id=: AccId LIMIT 1];     
         if(!string.isBlank(oppId) && !string.isEmpty(oppId)){
-            getOLIData= [Select OpportunityId,Name,Quantity,Product2Id,TotalPrice from OpportunityLineItem where OpportunityId =: oppId LIMIT 1];
+            getOLIData= [Select OpportunityId,Name,Quantity,Product2Id,TotalPrice,Product2.Name from OpportunityLineItem where OpportunityId =: oppId LIMIT 1];
             if(!getOLIData.isEmpty()){
                 TotalPrice = getOLIData[0].TotalPrice;
                 Rate = getcustomData.Rate__c;
@@ -59,7 +59,7 @@ global class RetailInvoiceHelper {
                 wordAmount =Integer.valueOf(TotalAmountWithPercentage);
                 AmountTotalAmountWithPercentageInWords = NumberToText.convert(wordAmount);
                 TotalTaXAmount = (PercentageTotal * 2);
-                getOLIDataName = getOLIData[0].Name;
+                getOLIDataName = getOLIData[0].Product2.Name;
                 getOLIDataQuantity  = getOLIData[0].Quantity;
                 getOLIDataTotalPrice = getOLIData[0].TotalPrice;
             }else{

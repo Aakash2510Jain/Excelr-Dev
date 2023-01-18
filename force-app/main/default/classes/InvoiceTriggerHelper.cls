@@ -26,7 +26,6 @@ public class InvoiceTriggerHelper{
             system.debug('Errror-->' + ex.getCause());
             system.debug('Errror-->' + ex.getLineNumber());
             HandleBusinessException.captureError('InvoiceTriggerHelper', 'Tax Invoice', ex);
-            
         }
     }
     

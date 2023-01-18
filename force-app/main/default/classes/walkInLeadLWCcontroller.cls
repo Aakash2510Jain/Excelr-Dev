@@ -27,11 +27,12 @@ public without sharing class walkInLeadLWCcontroller{
     }
 
     @auraenabled
-    public static lead createLead(String firstname, string Lastname, string email, string phone, string ownerId, string agmId, string Course, string userId, string agentid,string comments){
+    public static String createLead(String firstname, string Lastname, string email, string phone,  string Course, string userId, string agentid,string comments){
         System.debug('userId ====> ' + userId);
         System.debug('agentid ====> ' + agentid);
         lead leadRec = new lead();
         list<ExcelR_Training_User__c> existingTrainingUser = new list<ExcelR_Training_User__c>();
+        String message = '';
         try{
 
             if ( agentid != null ){
@@ -40,13 +41,12 @@ public without sharing class walkInLeadLWCcontroller{
                                         Where id = :agentid];
             }
 
-            system.debug(firstname + ' : ' + Lastname + ' : ' + email + ' : ' + phone + ' : ' + Lastname + agmId);
+            system.debug(firstname + ' : ' + Lastname + ' : ' + email + ' : ' + phone + ' : ' + Lastname);
             leadRec.FirstName = firstname;
             leadRec.LastName = Lastname;
             leadRec.Email = email;
             leadRec.Phone = phone;
             leadRec.OwnerId = userId;
-            leadRec.ISM__c = agmId;
             leadRec.Course__c = Course;
             leadRec.City__c='NA';
             leadRec.Lead_Generation_Method__c = 'Walk-in Form';
@@ -58,14 +58,18 @@ public without sharing class walkInLeadLWCcontroller{
             system.debug('leadRec===========================' + leadRec);
             insert leadRec;
             System.debug('lead rec Id =====> ' + leadRec.Id);
-            return leadRec;
+            if (leadRec.id != null) {
+                message = 'SUCCESS';
+            }
+            //return leadRec;
         }
         catch ( Exception ex ){
             system.debug('Error-->' + ex.getMessage());
             system.debug('Error@@-->' + ex.getLineNumber());
+            message = 'FAIL';
             //return null;
         }
-        return leadRec;
+        return message;
     }
 
     @AuraEnabled

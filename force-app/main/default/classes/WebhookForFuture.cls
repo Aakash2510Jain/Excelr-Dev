@@ -97,7 +97,7 @@ public without sharing class WebhookForFuture implements Queueable{
             }
             System.debug('TaskIds ====> ' + TaskIds);
             if (!TaskIds.isEmpty()){
-                ExistingtaskList = [Select id, WhoId, ownerId
+                ExistingtaskList = [Select id, WhoId, ownerId,CallObject
                                     From task
                                     where CallObject IN:TaskIds];
 
@@ -140,8 +140,17 @@ public without sharing class WebhookForFuture implements Queueable{
                             }
 
                             TaskListTobeInserted.add(tsk);
-                        } else{
+                        } else if(!TaskCallObjectIdWithTask.isEmpty() && TaskCallObjectIdWithTask.containsKey(str)){
                             Task tsk = CreateTaskForLead(TaskIdWithObject, str, PhoneWithLead);
+                            tsk.Id = TaskCallObjectIdWithTask.get(str).Id;
+                            if (CallyzerSalesUser.size() >0) {
+                                tsk.Callyzer_Sales_User__c = CallyzerSalesUser[0].id;
+                            }
+                            TaskListTobeInserted.add(tsk);
+                        }
+                        else {
+                            Task tsk = CreateTaskForLead(TaskIdWithObject, str, PhoneWithLead);
+                            //tsk.Id = TaskCallObjectIdWithTask.get(str).Id;
                             if (CallyzerSalesUser.size() >0) {
                                 tsk.Callyzer_Sales_User__c = CallyzerSalesUser[0].id;
                             }
@@ -163,17 +172,26 @@ public without sharing class WebhookForFuture implements Queueable{
                                 tsk.Callyzer_Sales_User__c = CallyzerSalesUser[0].id;
                             }
                             TaskListTobeInserted.add(tsk);
-                        } else{
+                        } else if(!TaskCallObjectIdWithTask.isEmpty() && TaskCallObjectIdWithTask.containsKey(str)){
                             Task tsk = CreatetaskForContact(TaskIdWithObject, str, PhoneWithContact);
+                            tsk.Id = TaskCallObjectIdWithTask.get(str).Id;
                             if (CallyzerSalesUser.size() >0) {
                                 tsk.Callyzer_Sales_User__c = CallyzerSalesUser[0].id;
                             }
                             TaskListTobeInserted.add(tsk);
 
                         }
+                        else{
+                            Task tsk = CreatetaskForContact(TaskIdWithObject, str, PhoneWithContact);
+                            //tsk.Id = TaskCallObjectIdWithTask.get(str).Id;
+                            if (CallyzerSalesUser.size() >0) {
+                                tsk.Callyzer_Sales_User__c = CallyzerSalesUser[0].id;
+                            }
+                            TaskListTobeInserted.add(tsk);
+                        }
                     }
                 }
-                if (PhoneStringNotExistintheSystem.size() > 0){
+                /*if (PhoneStringNotExistintheSystem.size() > 0){
                     if (!PhoneWithLead.containsKey('+91' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10)) && !PhoneWithContact.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
                         if (!TaskCallObjectIdWithTask.isEmpty() && !TaskCallObjectIdWithTask.containsKey(str)){
                             Task tsk = createLeadAndtask(str,TaskIdWithObject);
@@ -191,26 +209,28 @@ public without sharing class WebhookForFuture implements Queueable{
                         }
                     }
 
-                }
+                }*/
             }
 
             System.debug('TaskListTobeInserted =====> ' + TaskListTobeInserted);
             if (!TaskListTobeInserted.isEmpty()){
-                Database.SaveResult[] srList = Database.insert (TaskListTobeInserted, false);
+                //Database.SaveResult[] srList = Database.insert (TaskListTobeInserted, false);
+
+                Database.UpsertResult[] srList = Database.upsert(TaskListTobeInserted, false);
 
                 if (!srList.isEmpty()){
-                    for (Database.SaveResult sr : srList){
+                    for (Database.UpsertResult sr : srList){
                         if (sr.isSuccess()){
                             // Operation was successful, so get the ID of the record that was processed
                             System.debug('Successfully inserted account. Account ID: ' + sr.getId());
-                            Utility.API_ErrorORSuccess(null, 'SUCCESS', null, sr.getId(), 'WebhookForFuture', 'uploadcalllogs');
+                            Utility.API_ErrorORSuccess(null, 'SUCCESS', null, sr.getId(), 'WebhookForFuture', 'uploadcalllogs', callLogString);
                         } else{
                             // Operation failed, so get all errors
                             for (Database.Error err : sr.getErrors()){
                                 System.debug('The following error has occurred.');
                                 System.debug(err.getStatusCode() + ': ' + err.getMessage());
                                 System.debug('Account fields that affected this error: ' + err.getFields());
-                                Utility.API_ErrorORSuccess(err.getFields(), err.getMessage(), Integer.valueof(err.getStatusCode()), null, 'WebhookForFuture', 'uploadcalllogs');
+                                Utility.API_ErrorORSuccess(err.getFields(), err.getMessage(), Integer.valueof(err.getStatusCode()), null, 'WebhookForFuture', 'uploadcalllogs', callLogString);
                             }
                         }
                     }
@@ -218,12 +238,6 @@ public without sharing class WebhookForFuture implements Queueable{
                 }
             }
         }
-    }
-
-    public Static void ConvertDatetimeObjectToDateTime(String DTObj){
-
-        String DTOBJECT = '2022-12-08 11:48:54';
-        DTOBJECT = DTOBJECT.replace(' ', 'T') + '.000Z';
     }
 
     Public static Task CreateTaskForLead(map<String, Map<string, Object>> TaskIdWithObject, String str, Map<String, Lead> PhoneWithLead){

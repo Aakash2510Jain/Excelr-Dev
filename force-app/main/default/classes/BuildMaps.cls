@@ -6,12 +6,14 @@ public without Sharing class BuildMaps{
     public static map<string, Integer> mapofMemIdByMaxLeadCountByGroupPerDay = new map<String, integer>();
     public static map<string, Integer> mapofMemidbyMaxleadCountFromUser = new map<string, integer>();
     public static map<string, Integer> mapofMemidByPendingLeads = new map<string, integer>();
-    public static map<string, Integer> mapofMemidByMinLeadsCount = new map<string, integer>();
     public static map<string, integer> mapofMemidByTodayNewLead = new map<string, integer>();
     public static map<string, integer> mapofMemidByAssignedLead = new map<string, integer>();
     public static map<string, integer> mapofMemidByMaxLeadPerMonthFromUser = new map<string, integer>();
     public static map<string, integer> mapofMemidByMaxLeadPerDayFromAG = new map<string, integer>();
-    
+    public static map<string, integer> mapofMemidByLeadAssignedThisMonth = new map<string, integer>();
+    public static map<string, integer> mapofMemidByLeadsAssignedInThisTransaction = new map<string, integer>();
+    public static map<string, Integer> mapofMemidByLeadsToAssignInSIngleShot = new map<string, integer>();
+
     /* Condition map end*/
     public static boolean CheckBusinessHours(){
         Datetime toBeChecked = System.now();
@@ -19,100 +21,30 @@ public without Sharing class BuildMaps{
                                FROM BusinessHours
                                WHERE IsDefault = true];
         Datetime targetTime = Datetime.newInstance(toBeChecked.year(), toBeChecked.month(), toBeChecked.day(), toBeChecked.hour(), toBeChecked.minute(), toBeChecked.second());
-        
-        
+
+
         if (BusinessHours.isWithin(hours.id, targetTime)){
             system.debug('inside ');
             return true;
         }
         return false;
     }
-    
+
     public static Map<String, Integer> makeQNameToLastAssignedQmemberRRid(){
         Map<String, Integer> qNameToLastAssignedQmemberRRid = new Map<String, Integer>();
-        List<Assignment_Group__c> allExistingQueue = new List<Assignment_Group__c>([SELECT id, name,name__c, Last_Allocated_RRid__c
-                                                                                    from Assignment_Group__c]);
+        List<Assignment_Group__c> allExistingQueue = new List<Assignment_Group__c>([SELECT id, name, name__c, Last_Allocated_RRid__c
+                                                                                    from Assignment_Group__c where isActive__C = true]);
         for (Assignment_Group__c q : allExistingQueue){
             if (q.Last_Allocated_RRid__c != null){
                 qNameToLastAssignedQmemberRRid.put(q.name__c, Integer.valueOf(q.Last_Allocated_RRid__c));
             } else
                 qNameToLastAssignedQmemberRRid.put(q.name__c, null);
         }
-        system.debug('qNameToLastAssignedQmemberRRid-->'+qNameToLastAssignedQmemberRRid);
+        system.debug('qNameToLastAssignedQmemberRRid-->' + qNameToLastAssignedQmemberRRid);
         return qNameToLastAssignedQmemberRRid;
     }
-    
-    public static void validateUserCapacityForRM(String groupName, set<String> leadIdList){
-        system.debug('groupName::' + groupName);
-        list<Assignment_Group_Member__c> listOfGroupMember = new list<Assignment_Group_Member__c>();
-        list<lead> listOfTodayLeads = new list<lead>();
-        list<lead> listOfNewLeads = new list<lead>();
-        list<lead> listOfAssignedTodayLeads = new list<lead>();
-        
-        
-        listOfGroupMember = [select id, Max_Lead_Per_Day__c, Assignment_Group__r.Minimum_Lead_Volume__c, Assignment_Group__r.name__c, Group_Member__r.Id, Group_Member__r.Max_Lead_Per_Day__c,Group_Member__r.Max_Lead_Per_Month__c, Assignment_Group__r.Max_Lead_Per_Day__c, Assignment_Group__r.Lead_Stage__c, Assignment_Group__r.Lead_Stage_Exceed_Count__c
-                             from Assignment_Group_Member__c
-                             where active__c = true and Assignment_Group__r.name__c = :groupName];
-        listOfTodayLeads = [select id, Lead_Assigned_Date__c, ownerId, status
-                            from lead
-                            where Lead_Assigned_Date__c = today];
-        listOfNewLeads = [select id, Lead_Assigned_Date__c, ownerId, status
-                          from lead
-                          where status = 'Open'];
-        listOfAssignedTodayLeads = [select id, Lead_Assigned_Date__c, ownerId, status
-                                    from lead
-                                    where Lead_Assigned_Date__c = today];
-        if (!listOfNewLeads.isEmpty()){
-            for (lead ld : listOfNewLeads){
-                if (mapofMemidByPendingLeads.containsKey(ld.OwnerId)){
-                    integer count = mapofMemidByPendingLeads.get(ld.OwnerId);
-                    mapofMemidByPendingLeads.put(ld.OwnerId, count + 1);
-                } else{
-                    mapofMemidByPendingLeads.put(ld.OwnerId, 1);
-                }
-            }
-        }
-        for (Assignment_Group_Member__c agm : listOfGroupMember){
-            mapofMemIdByExceedCount.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Assignment_Group__r.Lead_Stage_Exceed_Count__c));
-            mapofMemIdByMaxLeadCountPerDay.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Max_Lead_Per_Day__c));
-            mapofMemIdByMaxLeadCountByGroupPerDay.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Max_Lead_Per_Day__c));
-            mapofMemidbyMaxleadCountFromUser.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Group_Member__r.Max_Lead_Per_Day__c));
-            mapofMemidByMinLeadsCount.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Assignment_Group__r.Minimum_Lead_Volume__c));
-            mapofMemidByMaxLeadPerMonthFromUser.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Group_Member__r.Max_Lead_Per_Month__c));
-            mapofMemidByMaxLeadPerDayFromAG.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Assignment_Group__r.Max_Lead_Per_Day__c));
-        }
-        
-        if (!listOfAssignedTodayLeads.isEmpty()){
-            for (lead ld : listOfAssignedTodayLeads){
-                if (mapofMemidByAssignedLead.containsKey(ld.ownerId)){
-                    integer count = mapofMemidByAssignedLead.get(ld.ownerId);
-                    mapofMemidByAssignedLead.put(ld.ownerId, count + 1);
-                } else{
-                    mapofMemidByAssignedLead.put(ld.ownerId, 1);
-                }
-                
-                
-            }
-        }
-        
-        for (lead ld : listOfTodayLeads){
-            if (mapofMemidByTodayLeadCount.containsKey(ld.ownerId)){
-                integer count = mapofMemidByTodayLeadCount.get(ld.ownerId);
-                mapofMemidByTodayLeadCount.put(ld.ownerId, count + 1);
-            } else{
-                mapofMemidByTodayLeadCount.put(ld.ownerId, 1);
-            }
-            if (ld.status == 'New'){
-                if (mapofMemidByTodayNewLead.containsKey(ld.ownerId)){
-                    integer count = mapofMemidByTodayNewLead.get(ld.ownerId);
-                    mapofMemidByTodayNewLead.put(ld.ownerId, count + 1);
-                } else{
-                    mapofMemidByTodayNewLead.put(ld.ownerId, 1);
-                }
-            }
-        }
-    }
-    
+
+   
     public static void validateUserCapacity(String groupName, string courseName){
         system.debug('courseName::' + courseName);
         system.debug('groupName::' + groupName);
@@ -120,20 +52,24 @@ public without Sharing class BuildMaps{
         list<lead> listOfTodayLeads = new list<lead>();
         list<lead> listOfNewLeads = new list<lead>();
         list<lead> listOfAssignedTodayLeads = new list<lead>();
-        
-        
-        listOfGroupMember = [select id, Max_Lead_Per_Day__c, Assignment_Group__r.Minimum_Lead_Volume__c, Assignment_Group__r.name__c, Group_Member__r.Id, Group_Member__r.Max_Lead_Per_Day__c, Assignment_Group__r.Max_Lead_Per_Day__c, Assignment_Group__r.Lead_Stage__c, Assignment_Group__r.Lead_Stage_Exceed_Count__c
+        list<lead> listOfAssignedThisMonth = new list<lead>();
+
+
+        listOfGroupMember = [select id, Max_Lead_Per_Day__c, Group_Member__r.Max_Lead_Per_Month__c, Assignment_Group__r.Minimum_Lead_Volume__c, Assignment_Group__r.name__c, Group_Member__r.Id, Group_Member__r.Max_Lead_Per_Day__c, Assignment_Group__r.Max_Lead_Per_Day__c, Assignment_Group__r.Lead_Stage__c, Assignment_Group__r.Lead_Stage_Exceed_Count__c
                              from Assignment_Group_Member__c
                              where active__c = true and Assignment_Group__r.name__c = :groupName];
-        listOfTodayLeads = [select id, Lead_Assigned_Date__c,Status, ownerId
+        listOfTodayLeads = [select id, Lead_Assigned_Date__c, Status, ownerId
                             from lead
                             where Lead_Assigned_Date__c = today];
-        listOfNewLeads = [select id, Lead_Assigned_Date__c,Status, ownerId
+        listOfNewLeads = [select id, Lead_Assigned_Date__c, Status, ownerId
                           from lead
                           where Status = 'Open'];
-        listOfAssignedTodayLeads = [select id, Lead_Assigned_Date__c, Status,ownerId 
+        listOfAssignedTodayLeads = [select id, Lead_Assigned_Date__c, Status, ownerId
                                     from lead
                                     where Lead_Assigned_Date__c = today];
+        listOfAssignedThisMonth = [select id, Lead_Assigned_Date__c, ownerId, status
+                                   from lead
+                                   where Lead_Assigned_Date__c = This_Month];
         if (!listOfNewLeads.isEmpty()){
             for (lead ld : listOfNewLeads){
                 if (mapofMemidByPendingLeads.containsKey(ld.OwnerId)){
@@ -144,14 +80,18 @@ public without Sharing class BuildMaps{
                 }
             }
         }
-        for (Assignment_Group_Member__c agm : listOfGroupMember){
-            mapofMemIdByExceedCount.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Assignment_Group__r.Lead_Stage_Exceed_Count__c));
-            mapofMemIdByMaxLeadCountPerDay.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Max_Lead_Per_Day__c));
-            mapofMemIdByMaxLeadCountByGroupPerDay.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Max_Lead_Per_Day__c));
-            mapofMemidbyMaxleadCountFromUser.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Group_Member__r.Max_Lead_Per_Day__c));
-            mapofMemidByMinLeadsCount.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Assignment_Group__r.Minimum_Lead_Volume__c));
+        if (!listOfGroupMember.isEmpty()){
+            for (Assignment_Group_Member__c agm : listOfGroupMember){
+                mapofMemIdByExceedCount.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Assignment_Group__r.Lead_Stage_Exceed_Count__c));
+                mapofMemIdByMaxLeadCountPerDay.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Max_Lead_Per_Day__c));
+                mapofMemIdByMaxLeadCountByGroupPerDay.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Max_Lead_Per_Day__c));
+                mapofMemidbyMaxleadCountFromUser.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Group_Member__r.Max_Lead_Per_Day__c));
+                mapofMemidByLeadsToAssignInSIngleShot.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Assignment_Group__r.Minimum_Lead_Volume__c));
+                mapofMemidByMaxLeadPerMonthFromUser.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Group_Member__r.Max_Lead_Per_Month__c));
+                mapofMemidByMaxLeadPerDayFromAG.put(agm.Group_Member__r.Id, Integer.valueOf(agm.Assignment_Group__r.Max_Lead_Per_Day__c));
+            }
         }
-        
+
         if (!listOfAssignedTodayLeads.isEmpty()){
             for (lead ld : listOfAssignedTodayLeads){
                 if (mapofMemidByAssignedLead.containsKey(ld.ownerId)){
@@ -160,36 +100,48 @@ public without Sharing class BuildMaps{
                 } else{
                     mapofMemidByAssignedLead.put(ld.ownerId, 1);
                 }
-                
-                
+
+
             }
         }
-        
-        for (lead ld : listOfTodayLeads){
-            if (mapofMemidByTodayLeadCount.containsKey(ld.ownerId)){
-                integer count = mapofMemidByTodayLeadCount.get(ld.ownerId);
-                mapofMemidByTodayLeadCount.put(ld.ownerId, count + 1);
-            } else{
-                mapofMemidByTodayLeadCount.put(ld.ownerId, 1);
-            }
-            if (ld.status == 'Open'){
-                if (mapofMemidByTodayNewLead.containsKey(ld.ownerId)){
-                    integer count = mapofMemidByTodayNewLead.get(ld.ownerId);
-                    mapofMemidByTodayNewLead.put(ld.ownerId, count + 1);
+
+        if (!listOfTodayLeads.isEmpty()){
+            for (lead ld : listOfTodayLeads){
+                if (mapofMemidByTodayLeadCount.containsKey(ld.ownerId)){
+                    integer count = mapofMemidByTodayLeadCount.get(ld.ownerId);
+                    mapofMemidByTodayLeadCount.put(ld.ownerId, count + 1);
                 } else{
-                    mapofMemidByTodayNewLead.put(ld.ownerId, 1);
+                    mapofMemidByTodayLeadCount.put(ld.ownerId, 1);
+                }
+                if (ld.status == 'Open'){
+                    if (mapofMemidByTodayNewLead.containsKey(ld.ownerId)){
+                        integer count = mapofMemidByTodayNewLead.get(ld.ownerId);
+                        mapofMemidByTodayNewLead.put(ld.ownerId, count + 1);
+                    } else{
+                        mapofMemidByTodayNewLead.put(ld.ownerId, 1);
+                    }
+                }
+            }
+        }
+        if (!listOfAssignedThisMonth.isEmpty()){
+            for (Lead ld : listOfAssignedThisMonth){
+                if (mapofMemidByLeadAssignedThisMonth.containsKey(ld.OwnerId)){
+                    integer count = mapofMemidByLeadAssignedThisMonth.get(ld.ownerId);
+                    mapofMemidByLeadAssignedThisMonth.put(ld.ownerId, count + 1);
+                } else{
+                    mapofMemidByLeadAssignedThisMonth.put(ld.ownerId, 1);
                 }
             }
         }
     }
-    
+
     public static void makeAllMemberOOF(){
-        
+
         list<Assignment_Group_Member__c> agmList = new list<Assignment_Group_Member__c>();
         agmList = [select id, Out_Of_Office__c
                    from Assignment_Group_Member__c
                    where active__c = true and Out_Of_Office__c = false];
-        
+
         if (!agmList.isEmpty()){
             for (Assignment_Group_Member__c agm : agmList){
                 agm.Out_Of_Office__c = true;
@@ -197,4 +149,5 @@ public without Sharing class BuildMaps{
             update agmList;
         }
     }
+
 }

@@ -273,10 +273,10 @@ public without sharing class Utility{
         return applicationId;
     }
 
-Public static void API_ErrorORSuccess(List<String> ErrorFields, String ErrorMsg, Integer ErrorStatus, string ErrOrSuccId, STring ClassName, String MethodName){
+Public static void API_ErrorORSuccess(List<String> ErrorFields, String ErrorMsg, Integer ErrorStatus, string ErrOrSuccId, STring ClassName, String MethodName, string JSONString){
         try {
             API_Log__c APILog = new API_Log__c();
-            if (ErrorFields.size()>0) {
+            if (ErrorFields !=null) {
                 APILog.Error_Fields__c = String.join(ErrorFields, ',');
             }
             APILog.Class_Name__c = ClassName;
@@ -289,6 +289,9 @@ Public static void API_ErrorORSuccess(List<String> ErrorFields, String ErrorMsg,
             }
             if (ErrOrSuccId != null) {
                 APILog.Error_Success_Id_if_Any__c = ErrOrSuccId;
+            }
+            if (JSONString != null) {
+                APILog.JSON_String__c = JSONString;
             }
             insert APILog;
 

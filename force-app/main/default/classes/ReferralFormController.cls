@@ -23,11 +23,15 @@ public without sharing class ReferralFormController{
                     NewLeadTobeCreated.Email = Email;
                     NewLeadTobeCreated.Phone = Phone;
                     NewLeadTobeCreated.OwnerId = UserInfo.getUserId();
+                    NewLeadTobeCreated.CID_of_Referer__c = CID_of_Referer;
+                    NewLeadTobeCreated.Course__c = Coursevalue;
+                    NewLeadTobeCreated.Type_of_Course__c = type_of_Course;
                     NewLeadTobeCreated.Referral_Email__c = LeadList[0].Email;
                     NewLeadTobeCreated.Referral_Phone__c = LeadList[0].Phone;
                     NewLeadTobeCreated.referrer__c = LeadList[0].id;
                     NewLeadTobeCreated.LeadSource = 'Reference';
                     NewLeadTobeCreated.Lead_Gen_Path__c = 'Reference';
+                    NewLeadTobeCreated.City__c = location_of_reference;
 
                     insert NewLeadTobeCreated;
                     System.debug('=======> ' + NewLeadTobeCreated);
@@ -46,5 +50,21 @@ public without sharing class ReferralFormController{
             throw new AuraHandledException(e.getMessage());
         }
     }
+
+    /*@AuraEnabled(Cacheable=true)
+    public static List<string> QueryCityList(){
+        List<String> CityList = new List<String>();
+        try {
+            List<City_State_Country__c> CityCustomSettings = [SELECT City__c,Country__c,Id,Name,State__c FROM City_State_Country__c];
+            if (!CityCustomSettings.isEmpty()) {
+                for (City_State_Country__c CSCs : CityCustomSettings) {
+                    CityList.add(CSCs.City__c);
+                }
+            }
+            return CityList;
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }*/
 
 }
