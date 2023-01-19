@@ -809,12 +809,19 @@ export default class voiceForm extends LightningElement {
     }
 
     async handleConfirm(message) {
-        const result = await LightningConfirm.open({
+        /*const result = await LightningConfirm.open({
             message: message,
             theme: "success",
             label: "Success"
         });
-        console.log("🚀 ~ result", result);
+        console.log("🚀 ~ result", result);*/
+        await LightningAlert.open({
+            message: message,
+            theme: "SUCCESS",
+            label: "SUCCESS"
+        }).then(() => {
+            console.log("###Alert Closed");
+        });
     }
 
     lookupRecord(event) {

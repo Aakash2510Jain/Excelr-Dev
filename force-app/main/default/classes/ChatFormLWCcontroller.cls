@@ -1,4 +1,4 @@
-public with sharing class ChatFormLWCcontroller {
+public without sharing class ChatFormLWCcontroller {
     @auraenabled(cacheable = true)
     public static list<lead> getLead(String EmailOrPhone){
         list<lead> leadList = new list<lead>();
@@ -144,7 +144,7 @@ public with sharing class ChatFormLWCcontroller {
         return GmList;
     }
 
-    @auraenabled
+    @auraenabled(cacheable=true)
     public static List<Application__c> getApplication(String lid){
         System.debug('lid ====> ' +lid);
         List<Application__c> AppList = [SELECT Course__c, Id, Name,LID__c,Applied_Date_Time__c, Lead__c
@@ -226,7 +226,7 @@ public with sharing class ChatFormLWCcontroller {
                                 where name ='Notify ISM'];
             
             if ( leadRec != null && leadRec.Owner.email != null ){
-                Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage(  );
+                Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
                 String[] toAddresses = new String[]{ ownerMail };
                 mail.setSubject('Lead assignment ');
                 mail.setPlainTextBody('Lead has been assign to you..!');

@@ -822,13 +822,22 @@ export default class chatForm extends LightningElement {
     }
 
     async handleConfirm(message) {
-        const result = await LightningConfirm.open({
+        /*const result = await LightningConfirm.open({
             message: message,
             theme: "success",
             label: "Success"
         });
-        console.log("🚀 ~ result", result);
+        console.log("🚀 ~ result", result);*/
+
+        await LightningAlert.open({
+            message: message,
+            theme: "SUCCESS",
+            label: "SUCCESS"
+        }).then(() => {
+            console.log("###Alert Closed");
+        });
     }
+    //success
 
     lookupRecord(event) {
         debugger;
@@ -921,7 +930,9 @@ export default class chatForm extends LightningElement {
         this.HandleCreateDisable=true;
         debugger;
         this.isLoadedApplication=true;
-        createApplication({ Course: this.courseforApp, LeadId: this.recordId })
+        if (this.courseforApp != null) {
+           // this.handleClick();
+            createApplication({ Course: this.courseforApp, LeadId: this.recordId })
             .then(data => {
                 debugger;
                 
@@ -930,9 +941,8 @@ export default class chatForm extends LightningElement {
                 this.handleConfirm('Application Created Successfully');
                 this.isLoadedApplication=false;
                 this.appbtndisAble = true;
+                //this.handleClick();
                 refreshApex(this.dataForApp);
-                
-                
                 
                 
             })
@@ -941,6 +951,13 @@ export default class chatForm extends LightningElement {
                 this.isLoadedApplication=false;
                 this.handleAlert('Error updating or reloading records');
             })
+            
+        }
+        else {
+            alert('Course is Empty. Please Provide Course');
+            this.HandleCreateDisable=false;
+            this.handleClick();
+        }
 
             
 

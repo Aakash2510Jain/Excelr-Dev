@@ -89,7 +89,7 @@ public class CaseTriggerHeper {
                     
                     if(csRec.Severity__c == 'L3'){
                         Id caseOwnersRoleId = freshCaseMap.get(csRec.Id).Account.Owner.UserRoleId;
-                        system.debug('caseOwnersRoleId :: ' + freshCaseMap.get(csRec.Id).Account.OwnerId);
+                        system.debug('caseOwnersRoleId :: ' + caseOwnersRoleId);
                         Id BHId = approvalBHWrapper.smToManagerMap.containsKey(caseOwnersRoleId) && approvalBHWrapper.managerRoleToUserIdMap.containsKey(approvalBHWrapper.smToManagerMap.get(caseOwnersRoleId)) ? approvalBHWrapper.managerRoleToUserIdMap.get(approvalBHWrapper.smToManagerMap.get(caseOwnersRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
                         system.debug('BHId :: ' + BHId);
                         if(BHId!= null){ 
