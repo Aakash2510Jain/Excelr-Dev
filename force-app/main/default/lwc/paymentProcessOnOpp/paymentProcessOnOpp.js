@@ -70,7 +70,7 @@ export default class PaymentProcessOnOpp extends LightningElement {
         debugger;
         this.PaymentType=event.detail.value;
 
-        if(this.PaymentType=='razorpay'){
+        if(this.PaymentType=='RazorPay'){
             this.HandleRazorPay();
         }
         else if(this.PaymentType=='CC Avenue'){

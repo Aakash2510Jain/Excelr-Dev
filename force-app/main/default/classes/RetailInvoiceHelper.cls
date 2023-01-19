@@ -7,6 +7,7 @@ global class RetailInvoiceHelper {
     global Decimal PercentageTotal {get;set;}
     global Decimal TotalAmountWithPercentage {get;set;}
     global Decimal TotalTaXAmount {get;set;}
+    global String TotalTaXAmountInword {get;set;}
     global String AmountTotalAmountWithPercentageInWords {get;set;}
     global Integer wordAmount {get;set;}
     global List<GST_State_Code__c> gstdata {get;set;}
@@ -14,8 +15,8 @@ global class RetailInvoiceHelper {
     global String currentState {get;set;}
     
     global String getOLIDataName {get;set;}
-    global Decimal getOLIDataQuantity {get;set;}
-    global Decimal getOLIDataTotalPrice {get;set;}
+    global Decimal getInvoiceQuantity {get;set;}
+    global Decimal getInvoiceTotalPrice {get;set;}
      
     global RetailInvoiceHelper(ApexPages.StandardController controller) {
         String recordId = '';
@@ -27,8 +28,22 @@ global class RetailInvoiceHelper {
         recordId = ApexPages.currentPage().getParameters().get('Id');
 
         getcustomData=[Select Name,Address__c,City__c,Pin_Code__c,State_Code__c,GSTIN__c,State_Name__c,EMail__c,Central_GST__c,State_GST__c,HSN_SAC__c,Rate__c from CustomInformation__c LIMIT 1];
-        getinvoiceData = [Select Id,Name,Initiated_Date__c,Opportunity__c,Delivery_Note__c,Mode_Terms_of_Payment__c,Reference_No__c,Other_References__c from Invoice__c where Id=:recordId LIMIT 1];
+        getinvoiceData = [Select Id,Name,Initiated_Date__c,Opportunity__c,Delivery_Note__c,Mode_Terms_of_Payment__c,Reference_No__c,Other_References__c,Amount__c from Invoice__c where Id=:recordId  LIMIT 1];
         
+
+        if (getinvoiceData.Amount__c != null) {
+            getInvoiceTotalPrice = ((getinvoiceData.Amount__c) * 100)/118;
+            getInvoiceTotalPrice = getInvoiceTotalPrice.setScale(2);
+            PercentageTotal = (getInvoiceTotalPrice *9)/100;
+            PercentageTotal = PercentageTotal.setScale(2);
+            AmountTotalAmountWithPercentageInWords = NumberToText.convert(Integer.valueOf(getInvoiceTotalPrice));
+            TotalTaXAmount = (PercentageTotal * 2);
+            TotalTaXAmountInword = NumberToText.convert(Integer.valueOf(TotalTaXAmount));
+        }
+        else{
+            getInvoiceTotalPrice = 0.0;
+            getInvoiceQuantity  = 0.0;
+        }
         if(getinvoiceData.Opportunity__c != null)
             oppId= getinvoiceData.Opportunity__c;
         if(!string.isBlank(oppId) && !string.isEmpty(oppId))
@@ -54,18 +69,18 @@ global class RetailInvoiceHelper {
             if(!getOLIData.isEmpty()){
                 TotalPrice = getOLIData[0].TotalPrice;
                 Rate = getcustomData.Rate__c;
-                PercentageTotal = (TotalPrice) * (Rate) / 100;
+                //PercentageTotal = (TotalPrice) * (Rate) / 100;
                 TotalAmountWithPercentage = TotalPrice + (PercentageTotal * 2);
                 wordAmount =Integer.valueOf(TotalAmountWithPercentage);
-                AmountTotalAmountWithPercentageInWords = NumberToText.convert(wordAmount);
-                TotalTaXAmount = (PercentageTotal * 2);
+                //AmountTotalAmountWithPercentageInWords = NumberToText.convert(wordAmount);
+                //TotalTaXAmount = (PercentageTotal * 2);
                 getOLIDataName = getOLIData[0].Product2.Name;
-                getOLIDataQuantity  = getOLIData[0].Quantity;
-                getOLIDataTotalPrice = getOLIData[0].TotalPrice;
+                //getOLIDataQuantity  = getOLIData[0].Quantity;
+                //getOLIDataTotalPrice = getOLIData[0].TotalPrice;
             }else{
                 getOLIDataName = '';
-                getOLIDataQuantity  = 0.0;
-                getOLIDataTotalPrice = 0.0;
+                //getOLIDataQuantity  = 0.0;
+                //getOLIDataTotalPrice = 0.0;
             }
             
         }

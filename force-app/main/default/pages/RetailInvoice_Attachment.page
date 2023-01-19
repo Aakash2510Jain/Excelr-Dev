@@ -73,10 +73,10 @@
                     <b style="text-align: right;">{!getcustomData.Central_GST__c}</b><br/>
                     <b style="text-align: right;">{!getcustomData.State_GST__c}</b></td>
                 <td style="text-align: center;"><b>{!getcustomData.HSN_SAC__c} </b></td>
-                <td style="text-align: center;">{!getOLIDataQuantity}<br/> </td>
+                <td style="text-align: center;">1.00<br/> </td>
                 <td style="text-align: center;"><br/><br/> {!getcustomData.Rate__c} <br/> {!getcustomData.Rate__c}</td>
                 <td style="text-align: center;"><br/><br/> % <br/> % </td>
-                <td><b>{!getOLIDataTotalPrice} -- <br/><br/>{!PercentageTotal}<br/>{!PercentageTotal}</b></td> </tr> 
+                <td><b>{!getInvoiceTotalPrice} -- <br/><br/>{!PercentageTotal}<br/>{!PercentageTotal}</b></td> </tr> 
             <tr>
                 <td> </td>
                 <td style="text-align: right;">Total </td>
@@ -84,7 +84,7 @@
                 <td> </td>
                 <td> </td>
                 <td> </td> 
-                <td><b>{!TotalAmountWithPercentage}</b></td> </tr> 
+                <td><b>{!getinvoiceData.Amount__c}</b></td> </tr> 
             <table border="2" style="width: 100%;">  
                 <td>
                     <h4>
@@ -114,7 +114,7 @@
             </tr>
             <tr> 
                 <td >{!getcustomData.HSN_SAC__c}</td>
-                <td style="text-align: center;">{!getOLIDataTotalPrice}</td>
+                <td style="text-align: center;">{!getInvoiceTotalPrice}</td>
                 <td style="text-align: center;">{!getcustomData.Rate__c}%</td>
                 <td style="text-align: center;">{!PercentageTotal}</td>
                 <td style="text-align: center;">{!getcustomData.Rate__c}%</td>
@@ -123,7 +123,7 @@
             </tr>
             <tr> 
                 <td style="text-align: right;"><b>Total</b></td>
-                <td style="text-align: center;"><b>{!getOLIDataTotalPrice}</b></td>
+                <td style="text-align: center;"><b>{!getInvoiceTotalPrice}</b></td>
                 <td></td>
                 <td style="text-align: center;"><b>{!PercentageTotal}</b></td>
                 <td></td>
@@ -131,7 +131,7 @@
                 <td style="text-align: center;"><b>{!TotalTaXAmount}</b></td>  </tr>   
         </table>
         <table border="2" style="width: 100%;">
-            <tr><td> Tax amount(in words):  <b>INR Three Thousand Eight Hundred Thirteen and Fifty Six paise Only</b><br/>
+            <tr><td> Tax amount(in words):  <b>INR {!TotalTaXAmountInword}</b><br/>
                 Remarks:<br/>
                 invoice raised to {!getAccData.Contacts[0].Name}<br/>
                 {!getAccData.Email__c} <br/>

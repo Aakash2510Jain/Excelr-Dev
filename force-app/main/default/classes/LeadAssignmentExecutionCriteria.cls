@@ -1,14 +1,14 @@
 public class LeadAssignmentExecutionCriteria {
     public Static Boolean runLeadAssignment = true;
     
-    public static void validateEntryCriteria(list<Lead> newLeadList){
+    public static void validateEntryCriteria(){
         //Getting the Validated Leads : 
-        List<Lead> leadListToBeProcessed = validatemanuallyCreatedLead(newLeadList);
-        Set<Lead> assignedLead = new Set<Lead>();
+        /*List<Lead> leadListToBeProcessed = validatemanuallyCreatedLead(newLeadList);
+        
         if(leadListToBeProcessed != Null){
             system.debug('leadListToBeProcessed'+leadListToBeProcessed.size());
-        }
-        
+        }*/
+        Set<Lead> assignedLead = new Set<Lead>();
         Boolean IsLeadAssigned = False;
         list<lead> newLeadListTemp 												= new list<lead>();
         list<lead> DefaultQueueList 												= new list<lead>();
@@ -37,20 +37,43 @@ public class LeadAssignmentExecutionCriteria {
         map<string,Decimal> allotedMarksbySequence = new Map<String,Decimal>();
         set<String> newLeadsSet = new set<String>();
         
-        if(leadListToBeProcessed != null){
+        /*if(leadListToBeProcessed != null){
             for(Lead leadRec:leadListToBeProcessed){
                 newLeadListTemp.add(leadRec);
                 newLeadsSet.add(leadRec.Id);
             }
-        }
+        }*/
         
         string queueId = [SELECT Id, Type FROM Group WHERE Type = 'Queue' AND Name = 'Excelr Default Queue' limit 1].Id;
         list<Default_Assignment_Group__mdt> defaultGroupName = [select id,Group_Name__c from Default_Assignment_Group__mdt];
         List<Execution_Criteria__c> AvailableCriterias = [SELECT Enabled__c,Evaluation_Expression_For_Execution__c,Id,Name ,(SELECT Execution_Criteria__c,serial__c,Field_Name__c,Field_Type__c,Matching_Type__c,Matching_Value__c,Related_Object__c,Scorecard_Execution_Criteria_Name__c,Scorecard__c,Sequence__c FROM Execution_Criteria_Entry__r WHERE Execution_Criteria__c != null ORDER BY Sequence__c ASC)FROM Execution_Criteria__c where Enabled__c = true];
         
-        list<lead> queueLeads = [SELECT Activity_On__c,Address,AdGroup__c,AD_Set_Id__c,AD_Set_Name__c,Assignment_Group__c,Branch__c,Capture_NBFC_Partner__c,Capture_Tenure__c,Capture_Upfront_payment__c,CID_of_Referer__c,CID__c,City,City__c,Comments__c,Company,Confidence_Level__c,Conversation_Comments__c,ConvertedAccountId,ConvertedContactId,ConvertedDate,ConvertedOpportunityId,Country,Country__c,Course_Interested_Rating__c,Course__c,CreatedById,CreatedDate,Current_Domain__c,Date_of_Enrollment__c,Description,Designation__c,Do_you__c,Email,EmailBouncedDate,EmailBouncedReason,Email_Conversation_Done__c,Enquired_Course__c,Enter_UTM_Link__c,ExcelR_Training_User__c,Facebook_Ad_Id__c,Facebook_Ad_Name__c,Facebook_Platform__c,FirstName,Form_Names__c,Form_Source__c,GCLID__c,GeocodeAccuracy,Id,Industry,IsConverted,IsDeleted,ISM_Name__c,ISM__c,IsUnreadByOwner,Is_Email_Invalid__c,Is_Phone_Invalid__c,Jigsaw,JigsawContactId,Keyword__c,Landing_Page_URL__c,LastActivityDate,LastModifiedById,LastModifiedDate,LastName,LastReferencedDate,LastViewedDate,Latitude,LeadSource,Lead_Assigned_Date_TIme__c,Lead_Assigned_Date__c,Lead_Assigned_Time__c,Lead_Create_Date__c,Lead_Generation_Method__c,Lead_Generation_Team_Member_Name__c,Lead_Gen_Form_Id__c,Lead_Gen_Path__c,Lead_Id_FB__c,Lead_Name__c,Location__c,Longitude,MasterRecordId,Match_Type__c,Medium__c,MiddleName,MobilePhone,Name,Next_follow_up_date_time__c,NumberOfEmployees,OwnerId,Owner_Email__c,Owner_ManagerId__c,Payment_Initiated_Date_Time__c,Payment_Type__c,Phone,PhotoUrl,Platform__c,PostalCode,Prior_Status__c,Product__c,Profession__c,Qualification__c,Quality_of_Lead__c,Quantity__c,Rating,Reason_For_Dead__c,Reason_for_On_Hold__c,Referral_Email__c,Referral_Phone__c,referrer__c,Refree_Mob_No__c,Relevant_Experience__c,Salutation,sfleadcaphfprod__External_Lead_ID__c,Should_be_Converted__c,Specialization__c,State,State__c,Status,Street,Suffix,SyncedInCallyzer__c,SystemModstamp,Telephonic_Conversation__c,Title,Total_Amount__c,Total_Applications_Submitted__c,Total_Calls__c,Total_Call_Duration__c,Total_Connected_Call__c,Total_Conversation_Duration__c,Total_Course_Interests__c,Total_Emails__c,Transcript__c,Type_of_Course__c,UTM_AdGroup__c,UTM_Campaign__c,UTM_Channel__c,UTM_Content__c,UTM_Device__c,UTM_Experiment__c,UTM_link__c,UTM_Location__c,UTM_Medium__c,UTM_Term__c,UTM_Type__c,UTM_Variety__c,Visitor_ID__c,Website,Whatsapp_Opt_in__c,Why_This_Course__c,Year_of_Experience__c,Year_of_Graduation__c FROM Lead where id not in: newLeadsSet and ownerId =: queueId];
+        list<lead> queueLeads = [SELECT Activity_On__c,Address,AdGroup__c,AD_Set_Id__c,AD_Set_Name__c,Assignment_Group__c,
+                                 Branch__c,Capture_NBFC_Partner__c,Capture_Tenure__c,Capture_Upfront_payment__c,
+                                 CID_of_Referer__c,CID__c,City,City__c,Comments__c,Company,Confidence_Level__c,Conversation_Comments__c
+                                 ,ConvertedAccountId,ConvertedContactId,ConvertedDate,ConvertedOpportunityId,Country,Country__c,
+                                 Course_Interested_Rating__c,Course__c,CreatedById,CreatedDate,Current_Domain__c,Date_of_Enrollment__c,
+                                 Description,Designation__c,Do_you__c,Email,EmailBouncedDate,EmailBouncedReason,Email_Conversation_Done__c,
+                                 Enquired_Course__c,Enter_UTM_Link__c,ExcelR_Training_User__c,Facebook_Ad_Id__c,Facebook_Ad_Name__c,Facebook_Platform__c,
+                                 FirstName,Form_Names__c,Form_Source__c,GCLID__c,GeocodeAccuracy,Id,Industry,IsConverted,IsDeleted,ISM_Name__c,ISM__c,
+                                 IsUnreadByOwner,Is_Email_Invalid__c,Is_Phone_Invalid__c,Jigsaw,JigsawContactId,Keyword__c,Landing_Page_URL__c,
+                                 LastActivityDate,LastModifiedById,LastModifiedDate,LastName,LastReferencedDate,LastViewedDate,Latitude,LeadSource,
+                                 Lead_Assigned_Date_TIme__c,Lead_Assigned_Date__c,Lead_Assigned_Time__c,Lead_Create_Date__c,Lead_Generation_Method__c,
+                                 Lead_Generation_Team_Member_Name__c,Lead_Gen_Form_Id__c,Lead_Gen_Path__c,Lead_Id_FB__c,Lead_Name__c,Location__c,Longitude,
+                                 MasterRecordId,Match_Type__c,Medium__c,MiddleName,MobilePhone,Name,Next_follow_up_date_time__c,NumberOfEmployees,OwnerId,
+                                 Owner_Email__c,Owner_ManagerId__c,Payment_Initiated_Date_Time__c,Payment_Type__c,Phone,PhotoUrl,Platform__c,PostalCode,
+                                 Prior_Status__c,Product__c,Profession__c,Qualification__c,Quality_of_Lead__c,Quantity__c,Rating,Reason_For_Dead__c,
+                                 Reason_for_On_Hold__c,Referral_Email__c,Referral_Phone__c,referrer__c,Refree_Mob_No__c,Relevant_Experience__c,Salutation,
+                                 sfleadcaphfprod__External_Lead_ID__c,Should_be_Converted__c,Specialization__c,State,State__c,Status,Street,Suffix,
+                                 SyncedInCallyzer__c,SystemModstamp,Telephonic_Conversation__c,Title,Total_Amount__c,Total_Applications_Submitted__c,
+                                 Total_Calls__c,Total_Call_Duration__c,Total_Connected_Call__c,Total_Conversation_Duration__c,Total_Course_Interests__c,
+                                 Total_Emails__c,Transcript__c,Type_of_Course__c,UTM_AdGroup__c,UTM_Campaign__c,UTM_Channel__c,UTM_Content__c,UTM_Device__c,
+                                 UTM_Experiment__c,UTM_link__c,UTM_Location__c,UTM_Medium__c,UTM_Term__c,UTM_Type__c,UTM_Variety__c,Visitor_ID__c,Website,
+                                 Whatsapp_Opt_in__c,Why_This_Course__c,Year_of_Experience__c,Year_of_Graduation__c 
+                                 FROM Lead 
+                                 where ownerId =: queueId];
         if(!queueLeads.isEmpty()){
-            //newLeadListTemp.addAll(queueLeads);
+            newLeadListTemp.addAll(queueLeads);
             System.debug(queueLeads.size()); 
         }
         
@@ -63,7 +86,7 @@ public class LeadAssignmentExecutionCriteria {
             map<string,String>fieldByFieldTypeMap                                 = new map<string,String>();
             map<String,Map<String,String>> matchingTypeAndValuesByField 			= new map<String,Map<String,String>>();
             List<String> allFields 													= new List<String>();  
-        
+            
             for(Execution_Criteria_Entry__c exe:scr.Execution_Criteria_Entry__R){
                 
                 if(mapofFieldsWithPossibleValues.containsKey(exe.Field_Name__c)){
@@ -115,18 +138,21 @@ public class LeadAssignmentExecutionCriteria {
         system.debug('mapofFieldsWithPossibleValues'+mapofFieldsWithPossibleValues);
         system.debug('expectedValuebyCriteria'+expectedValuebyCriteria);
         system.debug('newLeadListTemp::'+newLeadListTemp);
+        system.debug('newLeadListTemp.size()--->'+newLeadListTemp.size());
         system.debug('mapByallFields::'+mapByallFields);
         system.debug('criteriaNameById::'+criteriaNameById);
         system.debug('multipleCriteriasForFields::'+multipleCriteriasForFields);
         system.debug('matchingTypeFieldByCriteria::'+matchingTypeFieldByCriteria);
-        
+        system.debug('expectedValuebyCriteria.keyset()---->'+expectedValuebyCriteria.keyset());
         String logicalValues = '';
         
         for(Lead ld:newLeadListTemp){
+            system.debug('ld---->'+ld);
+            
             boolean leadTemp = false;
             List<String> matchedCriteriasName = new List<String>();
             for(String criteriaName : expectedValuebyCriteria.keyset()){
-                system.debug('criteriaName'+criteriaName);
+                system.debug('criteriaName---->'+criteriaName);
                 String Booleanvalues = mapofExeIdByEvaluaationExp.get(criteriaName);
                 system.debug('Booleanvalues'+Booleanvalues);
                 integer matchedValues = 0;
@@ -135,7 +161,7 @@ public class LeadAssignmentExecutionCriteria {
                 
                 system.debug('expectedValuebyCriteria.get(criteriaName).Keyset()::'+expectedValuebyCriteria.get(criteriaName).Keyset());
                 for(String field:mapByallFields.get(criteriaName))  {
-                    
+                    system.debug('field---->'+field);
                     recursionValue = allotedFieldbySequence.get(criteriaName).get(field);
                     system.debug('recursionValue'+recursionValue);
                     system.debug('matchingTypeFieldByCriteria'+matchingTypeFieldByCriteria);
@@ -144,11 +170,14 @@ public class LeadAssignmentExecutionCriteria {
                         system.debug('allotedFieldbySequence.get(field);'+allotedFieldbySequence.get(criteriaName).get(field));
                         system.debug('fieldByFieldType.get(field)'+fieldByFieldType.get(criteriaName).get(field));
                         if(fieldByFieldType.get(criteriaName).get(field) == 'Number'){
+                            system.debug('field type -->'+fieldByFieldType.get(criteriaName).get(field));
                             system.debug('fieldByMatchingType.get(field)::'+fieldByMatchingType.get(field));
                             system.debug('field::'+field);
                             for(String str : fieldByMatchingType.get(criteriaName).get(field)){
+                                system.debug('str----->'+str);
                                 system.debug('field::'+field +'str'+str+'recursionValue'+recursionValue);
                                 if(str == '<' || str == '<='){
+                                    system.debug('String Type --->'+str);
                                     if(Integer.valueOf(expectedValuebyCriteria.get(criteriaName).get(field)) >= Integer.valueOf(ld.get(field))){
                                         matchedValues++;
                                         Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'True');
@@ -157,6 +186,7 @@ public class LeadAssignmentExecutionCriteria {
                                         Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'False');
                                     } 
                                 }else if(str == '>' || str == '>='){
+                                    system.debug('String Type --->'+str);
                                     if(Integer.valueOf(expectedValuebyCriteria.get(criteriaName).get(field)) <= Integer.valueOf(ld.get(field))){
                                         matchedValues++;
                                         Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'True');
@@ -165,6 +195,7 @@ public class LeadAssignmentExecutionCriteria {
                                         Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'False');
                                     }
                                 }else{
+                                    system.debug('String Type --->'+str);
                                     if(Integer.valueOf(expectedValuebyCriteria.get(criteriaName).get(field)) == Integer.valueOf(ld.get(field))){
                                         matchedValues++;
                                         Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'True');
@@ -176,6 +207,8 @@ public class LeadAssignmentExecutionCriteria {
                             }
                         }
                         else if(fieldByFieldType.get(criteriaName).get(field) == 'Checkbox'){
+                            system.debug('field type -->'+fieldByFieldType.get(criteriaName).get(field));
+
                             if(ld.get(field) == Boolean.valueOf(expectedValuebyCriteria.get(criteriaName).get(field))){
                                 matchedValues++;
                                 Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'True');
@@ -185,17 +218,36 @@ public class LeadAssignmentExecutionCriteria {
                             }
                         }
                         else{
+                            system.debug('field type -->'+fieldByFieldType.get(criteriaName).get(field));
+
                             for(String str : fieldByMatchingType.get(criteriaName).get(field)){
+                                system.debug('String Type --->'+str);
                                 if(str == '=='){
                                     if(expectedValuebyCriteria.get(criteriaName).get(field).contains(',')){
+                                        system.debug('expectedValuebyCriteria.get(criteriaName).get(field)--->'+expectedValuebyCriteria.get(criteriaName).get(field));
                                         List<String> commaSeparatedValues = expectedValuebyCriteria.get(criteriaName).get(field).split(',');
+                                        system.debug('commaSeparatedValues--->'+commaSeparatedValues);
                                         for(String Str1:commaSeparatedValues){
+                                            system.debug('Str1--->'+Str1);
+                                            system.debug('String.valueOf(ld.get(field))--->'+String.valueOf(ld.get(field)));
+                                            system.debug('criteriaNamecriteriaName::::'+criteriaName);
+                                            system.debug('field::Name::'+field);
+                                            system.debug('recursionValue::recursionValue::'+recursionValue);
+                                            system.debug('Lead Name::'+String.valueOf(ld.Name));
                                             if(Str1 == String.valueOf(ld.get(field))){
                                                 matchedValues++;
+                                                system.debug('matchedValues---->'+matchedValues);
+                                                system.debug('Values Matched===='+Str1 +' === '+String.valueOf(ld.get(field)));
+                                                system.debug('kishan::'+Booleanvalues.replace(string.valueOf(recursionValue),'kishan'));    
                                                 Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'True');
                                                 matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
+                                                system.debug('matchedCriteriasName----->'+matchedCriteriasName);
+                                                system.debug('kishan::'+Booleanvalues.replace(string.valueOf(recursionValue),'kishan')); 
+                                                break;
                                             } 
                                         }
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'false');
+                                        system.debug('Booleanvalues::Booleanvalues::'+Booleanvalues);
                                     }else{
                                         
                                         if(expectedValuebyCriteria.get(criteriaName).get(field) == String.valueOf(ld.get(field))){
@@ -367,7 +419,7 @@ public class LeadAssignmentExecutionCriteria {
                                     }else{
                                         Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'False');
                                     }
-
+                                    
                                 }
                                 else if(str == 'DOES NOT CONTAIN'){
                                     if(!matchingTypeFieldByCriteria.get(criteriaName).get(field).get(str).contains(String.valueOf(ld.get(field)))){
@@ -385,12 +437,18 @@ public class LeadAssignmentExecutionCriteria {
                         }
                     }
                 }
+                    system.debug('criteriaNamecriteriaName::::'+criteriaName);
+                                            system.debug('recursionValue::recursionValue::'+recursionValue);
+                                            system.debug('Lead Name::'+String.valueOf(ld.Name));
                 system.debug('Booleanvalues'+Booleanvalues);
                 if(Booleanvalues == 'false'){
+                    system.debug('boolean value is false');
                     leadTemp = False;
                 }else if(Booleanvalues == 'true'){
+                    system.debug('boolean value is true');
                     leadTemp = True;
                 }else{
+                    system.debug('boolean value is neither true nor false');
                     leadTemp = BooleanExpressionCalculation.evaluateExpression(Booleanvalues);    
                 }
                 
@@ -399,24 +457,31 @@ public class LeadAssignmentExecutionCriteria {
                 system.debug('matchedValues'+matchedValues);
                 
                 if(leadTemp == true){
+                    system.debug('assignedLead--->'+assignedLead);
                     assignedLead.add(ld);
+                    system.debug('assignedLead---->'+assignedLead);
+                    system.debug('criteriaName-->'+criteriaName);
                     matchedCriterias.add(criteriaName);
-                    /*if(mapofExecutionIdByListLead.containsKey(criteriaNameById.get(criteriaName))){
-                        //mapofExecutionIdByListLead.get(criteriaNameById.get(criteriaName)).add(ld);
+                    system.debug('matchedCriterias-->'+matchedCriterias);
+                    if(mapofExecutionIdByListLead.containsKey(criteriaNameById.get(criteriaName))){
+                        mapofExecutionIdByListLead.get(criteriaNameById.get(criteriaName)).add(ld);
                     }else{
                         mapofExecutionIdByListLead.put(criteriaNameById.get(criteriaName),new list<lead>{ld});
-                    }*/ 
+                    }
+                    system.debug('mapofExecutionIdByListLead--->'+mapofExecutionIdByListLead);
                 }
             }
+            system.debug('lead id ----->'+ld);
             if(assignedLead.contains(ld)){
                 system.debug('assignedLead'+assignedLead);   
             }else{
+                system.debug('inside default queue');
                 DefaultQueueList.add(ld);    
             }
-            if(matchedCriterias.size() > 0){
+            /*if(matchedCriterias.size() > 0){
                 system.debug('matchedCriterias'+matchedCriterias);
                 mapofExecutionIdByListLead.put(criteriaNameById.get(matchedCriterias[0]),new list<lead>(assignedLead));    
-            }
+            }*/
             
         }
         
@@ -435,7 +500,7 @@ public class LeadAssignmentExecutionCriteria {
     public static void getGroupNameByLeads(map<string,list<lead>> mapofExecutionIdByLeadList,map<String,List<Lead>> mapofGlobalGroupNameByLeadList){
         system.debug('mapofExecutionIdByLeadList::'+mapofExecutionIdByLeadList);
         system.debug('mapofFBGroupNameByLeadList::'+mapofGlobalGroupNameByLeadList);
-       
+        
         list<Assignment_Group__c> agList = [SELECT id,name,Lead_Assigning_Criteria__c from assignment_group__c where Lead_Assigning_Criteria__c in: mapofExecutionIdByLeadList.keySet()];
         map<string,list<lead>> mapOfGroupNameByListLead = new map<string,list<lead>>();
         
@@ -447,6 +512,8 @@ public class LeadAssignmentExecutionCriteria {
             list<String> leadIdList = new list<String>();
             map<string,list<String>> mapofGroupnameByLeadIdList = new map<String,list<String>>();
             for(String mapKey : mapOfGroupNameByListLead.keySet()){
+                system.debug('mapKey-->'+mapKey);
+                system.debug('mapOfGroupNameByListLead.get(mapKey)-->'+mapOfGroupNameByListLead.get(mapKey).size());
                 for(lead ld : mapOfGroupNameByListLead.get(mapKey)){
                     if(mapofGroupnameByLeadIdList.containsKey(mapKey)){
                         mapofGroupnameByLeadIdList.get(mapKey).add(ld.Id);
@@ -455,6 +522,8 @@ public class LeadAssignmentExecutionCriteria {
                     }
                 }
                 Set<string> tempId = new Set<String>(mapofGroupnameByLeadIdList.get(mapKey));
+                system.debug('mapKey--->'+mapKey);
+                system.debug('tempId-->'+tempId);
                 RoundRobinLeadAssignment.assignLeadsToBDS(mapKey,tempId);
             }
         }
@@ -462,9 +531,12 @@ public class LeadAssignmentExecutionCriteria {
         if(!mapofGlobalGroupNameByLeadList.isEmpty()){
             set<String> tempId = new set<String>();
             for(string mapKey : mapofGlobalGroupNameByLeadList.keySet()){
+                system.debug('mapKey-->'+mapKey);
                 for(Lead ld : mapofGlobalGroupNameByLeadList.get(mapKey)){
                     tempId.add(ld.id);
                 }
+                system.debug('mapKey--->'+mapKey);
+                system.debug('tempId-->'+tempId);
                 RoundRobinLeadAssignment.assignLeadsToBDS(mapKey,tempId);
             }
         }
@@ -473,9 +545,9 @@ public class LeadAssignmentExecutionCriteria {
     public  static List<Lead> validatemanuallyCreatedLead(List<Lead> newLeads){
         List<Lead> leadsToBeProcessedForAssignment = new List<Lead>();
         for(Lead ld:newLeads){
-           // if(ld.IsManuallyCreated__c == false){
-            //    leadsToBeProcessedForAssignment.add(ld);
-            //}
+            if(true){
+                leadsToBeProcessedForAssignment.add(ld);
+            }
         }
         if(!leadsToBeProcessedForAssignment.isEmpty()){
             return leadsToBeProcessedForAssignment;

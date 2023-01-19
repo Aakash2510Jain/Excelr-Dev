@@ -6,8 +6,9 @@ public without sharing class  RoundRobinLeadAssignment{
     @future
     public static void assignLeadsToBDS(String courseName,set<String> leadIdList){
         system.debug('courseName::'+ courseName);
+        system.debug('leadIdList::'+leadIdList.size());
         boolean withinWorkingHour = false;
-        string queueId = [SELECT Id, Type FROM Group WHERE Type = 'Queue' AND Name = 'Lead Default Queue' limit 1].Id;
+        string queueId = [SELECT Id, Type FROM Group WHERE Type = 'Queue' AND Name = 'Excelr Default Queue' limit 1].Id;
         List<lead> updateLeadList = new List<lead>();
         List<lead> DefaultQueueLeadList = new List<lead>();
         List<Assignment_Group__c> QtoBeUpdated = new List<Assignment_Group__c>();
@@ -22,7 +23,7 @@ public without sharing class  RoundRobinLeadAssignment{
         //withinWorkingHour = BuildMaps.CheckBusinessHours();
         //Getting the Leads which are in default queue from this List Lead..
         If(leadIdList.size() > 0){
-            List<Lead> LeadData =  [SELECT ID,Lead_Assigned_Date__c,OWNERID,Status FROM Lead WHERE  id IN:leadIdList and status != null limit 50000];
+            List<Lead> LeadData =  [SELECT ID,Lead_Assigned_Date__c,OWNERID,Status FROM Lead WHERE  id IN:leadIdList limit 50000];
             qNameToListOfLeadsMap.put(courseName,LeadData);//makeQueueNameToListOfAssignedLeadsMap(courseName,leadIdList);//Group wise leads based on source intent
         }
         system.debug('qNameToListOfLeadsMap::'+qNameToListOfLeadsMap);
@@ -141,9 +142,9 @@ public without sharing class  RoundRobinLeadAssignment{
     public static boolean assignmentConditionSatisfied(string qName,string qMemberID,string learnerUid){
         
         boolean isconditionapproved = false;
-        if(qMemberID != null && learnerUid.contains(qMemberID) != null && learnerUid.contains(qMemberID)){
+        /*if(qMemberID != null && learnerUid.contains(qMemberID) != null && learnerUid.contains(qMemberID)){
             return false;
-        }
+        }*/
         system.debug('BuildMaps.mapofMemidByAssignedLead.get(qMemberID)::'+BuildMaps.mapofMemidByAssignedLead.get(qMemberID));
         system.debug('BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID)::'+BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID));
         if(BuildMaps.mapofMemidByAssignedLead.get(qMemberID) == null){

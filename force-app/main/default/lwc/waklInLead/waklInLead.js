@@ -543,7 +543,7 @@ export default class WaklInLead extends LightningElement {
                         this.CourceLead = '';
                     }
                     else if (data == 'FAIL') {
-                        this.HandleLeadCreatedisable = true;
+                        this.HandleLeadCreatedisable=false;
                         this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
                     }
 

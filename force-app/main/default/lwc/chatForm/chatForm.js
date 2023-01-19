@@ -799,7 +799,7 @@ export default class chatForm extends LightningElement {
                         }
                         else if (data == 'FAIL') {
                             this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
-                            this.HandleLeadCreatedisable=true;
+                            this.HandleLeadCreatedisable=false;
                         }
                     })
                     .catch(error => {

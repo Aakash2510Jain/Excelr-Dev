@@ -4,8 +4,8 @@ public without sharing class BooleanExpressionCalculation {
         expression = expression.toLowerCase(expression);
         system.debug('expression""'+expression);
         system.debug(expression.containsIgnoreCase('false')+'__'+expression.containsIgnoreCase('true'));
-        if(expression.containsIgnoreCase('false') == false){ return true;}
-        if(expression.containsIgnoreCase('true') == false){ return false;}
+        //if(expression.containsIgnoreCase('false') == false){ return true;}
+        //if(expression.containsIgnoreCase('true') == false){ return false;}
         expression = runeval(expression);
         if(expression == 'true') return true;
         return false;

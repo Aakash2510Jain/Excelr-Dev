@@ -764,7 +764,7 @@ export default class voiceForm extends LightningElement {
                 createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, Course: this.CourceLead, agentid: this.agentrecid, city: this.cityValue, LdGenPath: this.Leadvalue, source: this.SourceValue, medium: this.MediumValue, country: this.CountryValue, state: this.StateValue, comments: this.commentsValue })
                     .then(data => {
 
-                        if (data == 'SUCCES') {
+                        if (data == 'SUCCESS') {
                             this.handleConfirm('Lead Created Successfully');
                             this.HandleLeadCreatedisable = false;
                             console.log(data)
@@ -782,7 +782,7 @@ export default class voiceForm extends LightningElement {
 
                         }
                         else if (data == 'FAIL') {
-                            this.HandleLeadCreatedisable = true;
+                            this.HandleLeadCreatedisable=false;
                             this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
                         }
 
