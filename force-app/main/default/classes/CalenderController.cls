@@ -13,7 +13,16 @@ public without sharing class CalenderController {
 
             return responseMap;
         } catch (Exception e) {
+            Exceptions__c Exc = new Exceptions__c();
+            Exc.Class_Name__c = 'CalenderController';
+			Exc.Error_Message__c = e.getMessage();     
+            Exc.Error_Line_No__c = e.getLineNumber();
+            Exc.Error_Stack_Trace__c = e.getStackTraceString();
+            Exc.Error_Type__c = e.getTypeName();
+            Exc.Method_Name__c = 'getUserEvents';
+            insert Exc;
             throw new AuraHandledException(e.getMessage());
+            
         }
     }
 
@@ -31,6 +40,14 @@ public without sharing class CalenderController {
 
             return responseMap;
         } catch (Exception e) {
+            Exceptions__c Exc = new Exceptions__c();
+            Exc.Class_Name__c = 'CalenderController';
+			Exc.Error_Message__c = e.getMessage();     
+            Exc.Error_Line_No__c = e.getLineNumber();
+            Exc.Error_Stack_Trace__c = e.getStackTraceString();
+            Exc.Error_Type__c = e.getTypeName();
+            Exc.Method_Name__c = 'getCalendarType';
+            insert Exc;
             throw new AuraHandledException(e.getMessage());
         }
     }
@@ -40,6 +57,14 @@ public without sharing class CalenderController {
         try {
             return getCalendarType(userId);
         } catch (Exception e) {
+            Exceptions__c Exc = new Exceptions__c();
+            Exc.Class_Name__c = 'CalenderController';
+			Exc.Error_Message__c = e.getMessage();     
+            Exc.Error_Line_No__c = e.getLineNumber();
+            Exc.Error_Stack_Trace__c = e.getStackTraceString();
+            Exc.Error_Type__c = e.getTypeName();
+            Exc.Method_Name__c = 'getCalendarsUserInfo';
+            insert Exc;
             throw new AuraHandledException(e.getMessage());
         }
     }

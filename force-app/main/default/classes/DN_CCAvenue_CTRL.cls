@@ -38,6 +38,14 @@ public class DN_CCAvenue_CTRL {
 
             return paymentURL;
         }catch(Exception e){
+            Exceptions__c Exc = new Exceptions__c();
+            Exc.Class_Name__c = 'DN_CCAvenue_CTRL';
+			Exc.Error_Message__c = e.getMessage();     
+            Exc.Error_Line_No__c = e.getLineNumber();
+            Exc.Error_Stack_Trace__c = e.getStackTraceString();
+            Exc.Error_Type__c = e.getTypeName();
+            Exc.Method_Name__c = 'createPaymentURL';
+            insert Exc;
             return null;
         }
     }
@@ -100,6 +108,14 @@ public class DN_CCAvenue_CTRL {
 
             System.debug('URL-----'+postURL);
         }catch(Exception ex){
+            Exceptions__c Exc = new Exceptions__c();
+            Exc.Class_Name__c = 'DN_CCAvenue_CTRL';
+			Exc.Error_Message__c = ex.getMessage();     
+            Exc.Error_Line_No__c = ex.getLineNumber();
+            Exc.Error_Stack_Trace__c = ex.getStackTraceString();
+            Exc.Error_Type__c = ex.getTypeName();
+            Exc.Method_Name__c = 'DN_CCAvenue_CTRL';
+            insert Exc;
             System.debug('Exception----'+ex);
         }
     }

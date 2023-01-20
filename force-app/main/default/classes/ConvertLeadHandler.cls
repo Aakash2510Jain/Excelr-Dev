@@ -76,6 +76,14 @@ public class ConvertLeadHandler {
             
         } catch(Exception e){
             system.debug('Error' +e.getMessage()+' Line Number' +e.getLineNumber());
+            Exceptions__c Exc = new Exceptions__c();
+            Exc.Class_Name__c = 'ConvertLeadHandler';
+			Exc.Error_Message__c = e.getMessage();     
+            Exc.Error_Line_No__c = e.getLineNumber();
+            Exc.Error_Stack_Trace__c = e.getStackTraceString();
+            Exc.Error_Type__c = e.getTypeName();
+            Exc.Method_Name__c = 'convertLeadOnLead';
+            insert Exc;
         }
     }   
 }
