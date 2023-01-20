@@ -35,7 +35,7 @@ global without sharing class API_ExposeProduct {
         }catch(Exception e){
             System.debug(' --- Error Msg '+ e.getMessage());
             System.debug(' --- Error LineNo '+ e.getLineNumber());
-            HandleBusinessException.captureError('API_ExposeProduct','getAllProducts', e);
+           HandleBusinessException.captureError('API_ExposeProduct','getAllProducts', e, null);
             return null;
         }
     }

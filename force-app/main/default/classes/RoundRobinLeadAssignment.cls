@@ -68,7 +68,9 @@ public without sharing class  RoundRobinLeadAssignment{
                             if(userIdToUserAvailablityMap.get(qMemberID) == true){
                                 ld.ownerId = Id.valueOf(qMemberID);
                                 ld.Lead_Assigned_Date__c = system.today();
-                                ld.status = 'New';
+                                ld.Lead_Assigned_Date_TIme__c = system.now();
+                                ld.Lead_Assigned_Time__c = Time.newInstance(Datetime.now().hour(), Datetime.now().minute(), Datetime.now().second(), 0);
+                                ld.status = 'Open';
                                 updateLeadList.add(ld); 
                                 isAssigned = true;
                                 if(BuildMaps.mapofMemidByTodayLeadCount.get(qMemberID) == null)
@@ -83,6 +85,16 @@ public without sharing class  RoundRobinLeadAssignment{
                                 if(BuildMaps.mapofMemidByAssignedLead.get(qMemberID) == null)
                                     BuildMaps.mapofMemidByAssignedLead.put(qMemberID,0);
                                 BuildMaps.mapofMemidByAssignedLead.put(qMemberID,BuildMaps.mapofMemidByAssignedLead.get(qMemberID) + 1);
+                                if(BuildMaps.mapofMemidByMaxLeadPerMonthFromUser.get(qMemberID) == null)
+                                    BuildMaps.mapofMemidByMaxLeadPerMonthFromUser.put(qMemberID,0);
+                                BuildMaps.mapofMemidByMaxLeadPerMonthFromUser.put(qMemberID,BuildMaps.mapofMemidByMaxLeadPerMonthFromUser.get(qMemberID) + 1);
+                                if(BuildMaps.mapofMemidByMaxLeadPerDayFromAG.get(qMemberID) == null)
+                                    BuildMaps.mapofMemidByMaxLeadPerDayFromAG.put(qMemberID,0);
+                                BuildMaps.mapofMemidByMaxLeadPerDayFromAG.put(qMemberID,BuildMaps.mapofMemidByMaxLeadPerDayFromAG.get(qMemberID) + 1);
+                                if (BuildMaps.mapofMemidByLeadsAssignedInThisTransaction.get(qMemberID) == null)
+                                    BuildMaps.mapofMemidByLeadsAssignedInThisTransaction.put(qMemberID, 0);
+                                BuildMaps.mapofMemidByLeadsAssignedInThisTransaction.put(qMemberID, BuildMaps.mapofMemidByLeadsAssignedInThisTransaction.get(qMemberID) + 1);
+
                             }else{
                                 ld.OwnerId = queueId;
                                 DefaultQueueLeadList.add(ld);
@@ -121,7 +133,9 @@ public without sharing class  RoundRobinLeadAssignment{
                 system.debug('updateLeadList'+updateLeadList.size());
                 update updateLeadList;  
             }catch(exception e){
-                system.debug('Exception'+ e.getMessage() +'@@@@'+e.getLineNumber());
+                System.debug(' the Error has occured due to =====> ' + e.getMessage());
+                System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+                HandleBusinessException.captureError('RoundRobinLeadAssignment','assignLeadsToBDS', e, null);
             }
         }
         
@@ -142,14 +156,37 @@ public without sharing class  RoundRobinLeadAssignment{
     public static boolean assignmentConditionSatisfied(string qName,string qMemberID,string learnerUid){
         
         boolean isconditionapproved = false;
-        /*if(qMemberID != null && learnerUid.contains(qMemberID) != null && learnerUid.contains(qMemberID)){
-            return false;
-        }*/
+       
         system.debug('BuildMaps.mapofMemidByAssignedLead.get(qMemberID)::'+BuildMaps.mapofMemidByAssignedLead.get(qMemberID));
         system.debug('BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID)::'+BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID));
         if(BuildMaps.mapofMemidByAssignedLead.get(qMemberID) == null){
             isconditionapproved = true;
-        }else if(BuildMaps.mapofMemidByAssignedLead.get(qMemberID) != null && BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID) != null &&  BuildMaps.mapofMemidByAssignedLead.get(qMemberID) < BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID)){
+        }else{
+            if (BuildMaps.mapofMemidByMaxLeadPerMonthFromUser.get(qMemberID) != null && BuildMaps.mapofMemidByLeadAssignedThisMonth.get(qMemberID) < BuildMaps.mapofMemidByMaxLeadPerMonthFromUser.get(qMemberID)){
+                system.debug('BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID)-->'+BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID));
+                system.debug('BuildMaps.mapofMemidByAssignedLead.get(qMemberID)--->'+BuildMaps.mapofMemidByAssignedLead.get(qMemberID));
+                if (BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID) != null && BuildMaps.mapofMemidByAssignedLead.get(qMemberID) < BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID)){
+                    system.debug('BuildMaps.mapofMemidByMaxLeadPerDayFromAG.get(qMemberID)--->'+BuildMaps.mapofMemidByMaxLeadPerDayFromAG.get(qMemberID));
+                    if (BuildMaps.mapofMemidByMaxLeadPerDayFromAG.get(qMemberID) != null && BuildMaps.mapofMemidByAssignedLead.get(qMemberID) < BuildMaps.mapofMemidByMaxLeadPerDayFromAG.get(qMemberID)){
+                        system.debug('BuildMaps.mapofMemIdByMaxLeadCountByGroupPerDay.get(qMemberID)--->'+BuildMaps.mapofMemIdByMaxLeadCountByGroupPerDay.get(qMemberID));
+                        if (BuildMaps.mapofMemIdByMaxLeadCountByGroupPerDay.get(qMemberID) != null && BuildMaps.mapofMemidByAssignedLead.get(qMemberID) < BuildMaps.mapofMemIdByMaxLeadCountByGroupPerDay.get(qMemberID)){
+                            System.debug('BuildMaps.mapofMemidByLeadsToAssignInSIngleShot.get(qMemberID)-->'+BuildMaps.mapofMemidByLeadsToAssignInSIngleShot.get(qMemberID));
+                            system.debug('BuildMaps.mapofMemidByAssignedLead.get(qMemberID)-->'+BuildMaps.mapofMemidByAssignedLead.get(qMemberID));
+                            system.debug('BuildMaps.mapofMemidByLeadsAssignedInThisTransaction.get(qMemberID)-->'+BuildMaps.mapofMemidByLeadsAssignedInThisTransaction.get(qMemberID));
+                            if(BuildMaps.mapofMemidByLeadsAssignedInThisTransaction.get(qMemberID) == null)
+                                BuildMaps.mapofMemidByLeadsAssignedInThisTransaction.put(qMemberID, 0);
+                            if(BuildMaps.mapofMemidByLeadsToAssignInSIngleShot.get(qMemberID) != null && BuildMaps.mapofMemidByLeadsAssignedInThisTransaction.get(qMemberID) < BuildMaps.mapofMemidByLeadsToAssignInSIngleShot.get(qMemberID)){
+                                system.debug('Finally inside true');
+                                isconditionapproved = true;
+                                }
+                        }
+                    }
+                } 
+            }
+        }
+        
+        
+        /*else if(BuildMaps.mapofMemidByAssignedLead.get(qMemberID) != null && BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID) != null &&  BuildMaps.mapofMemidByAssignedLead.get(qMemberID) < BuildMaps.mapofMemidbyMaxleadCountFromUser.get(qMemberID)){
             if(BuildMaps.mapofMemidByPendingLeads.get(qMemberID) == null || (BuildMaps.mapofMemidByPendingLeads.get(qMemberID) != null && BuildMaps.mapofMemIdByExceedCount.get(qMemberID) != null && BuildMaps.mapofMemidByPendingLeads.get(qMemberID) < BuildMaps.mapofMemIdByExceedCount.get(qMemberID))){
                 if(BuildMaps.mapofMemidByTodayNewLead.get(qMemberID) == null ||(BuildMaps.mapofMemidByTodayNewLead.get(qMemberID) != null && BuildMaps.mapofMemidByMinLeadsCount.get(qMemberID) != null && BuildMaps.mapofMemidByTodayNewLead.get(qMemberID) < BuildMaps.mapofMemidByMinLeadsCount.get(qMemberID) && BuildMaps.mapofMemidByTodayLeadCount.get(qMemberID) != null && BuildMaps.mapofMemIdByMaxLeadCountPerDay.get(qMemberID) != null && BuildMaps.mapofMemidByTodayLeadCount.get(qMemberID) < BuildMaps.mapofMemIdByMaxLeadCountPerDay.get(qMemberID))){
                     isconditionapproved = true;
@@ -161,7 +198,7 @@ public without sharing class  RoundRobinLeadAssignment{
             }else{
                 isconditionapproved = false;
             }
-        }
+        }*/
         return isconditionapproved;
     }
     

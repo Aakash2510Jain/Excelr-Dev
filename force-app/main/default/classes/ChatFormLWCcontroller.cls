@@ -72,9 +72,10 @@ public without sharing class ChatFormLWCcontroller {
             }
             //return message;
         }
-        catch ( Exception ex ){
-            system.debug('Error-->' + ex.getMessage());
-            system.debug('Error@@-->' + ex.getLineNumber());
+        catch ( Exception e ){
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('ChatFormLWCcontroller','createLead', e, null);
             message = 'FAIL';
             //return null;
         }
@@ -102,8 +103,9 @@ public without sharing class ChatFormLWCcontroller {
             return 'Success';
             
         } catch (Exception e) {
-            system.debug('Error Message'+e.getMessage());
-            System.debug('Error Line Number'+e.getLineNumber());
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('ChatFormLWCcontroller','createTaskForVoice', e, null);
             return 'error';
         }
     }
@@ -132,6 +134,9 @@ public without sharing class ChatFormLWCcontroller {
             return app;
 
         } catch (Exception e) {
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('ChatFormLWCcontroller','CreateApplication', e, null);
             throw new AuraHandledException(e.getMessage());
         }
     }
@@ -237,8 +242,9 @@ public without sharing class ChatFormLWCcontroller {
             return message;
         }
         catch ( Exception e ){
-            System.debug('the error has occured due to =====> ' + e.getMessage());
-            System.debug('the error has occured at line number ======> ' + e.getLineNumber());
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('ChatFormLWCcontroller','EmailIsm', e, null);
             return null;
         }
         //return message;
@@ -256,7 +262,9 @@ public without sharing class ChatFormLWCcontroller {
 
              return PastLeadRecords;                           
         } catch (Exception e) {
-
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('ChatFormLWCcontroller','QueryPastLeads', e, null);
             throw new AuraHandledException(e.getMessage());
         }
     }

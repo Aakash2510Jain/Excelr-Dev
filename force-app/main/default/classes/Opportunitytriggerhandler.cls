@@ -73,8 +73,9 @@ public with sharing class Opportunitytriggerhandler{
 
         }
         catch ( Exception e ){
-            System.debug('the error has occured due to =====> ' + e.getMessage());
-            System.debug('the error has occured at line =====> ' + e.getLineNumber());
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('Opportunitytriggerhandler','createtaskForIsm', e, null);
             System.debug('error stack trace ======> ' + e.getStackTraceString());
         }
     }

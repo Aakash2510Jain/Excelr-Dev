@@ -118,6 +118,9 @@ public class LeadAssigningCompController {
             upsert secList;
             System.debug('secList @@@@'+secList);
         }catch(Exception e){
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('LeadAssigningCompController','createExcRecord', e, null);
             system.debug('error=='+e.getLineNumber()+' message ==='+e.getMessage());
         }
         return scorecardObj.Id;//(ids);
@@ -163,7 +166,9 @@ public class LeadAssigningCompController {
             }
             upsert secList;
         }catch(Exception e){
-            system.debug('error=='+e.getLineNumber()+' message ==='+e.getMessage());
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('LeadAssigningCompController','createWeightRecord', e, null);
         }
         //return [select id,name,Related_Object__c,Field_Name__c,Matching_Type__c,Matching_Value__c,Weight__c,Score__c from Scorecard_Weight_Criteria__c where id=:sec.id];
         return getRelatedweight(ids);
@@ -182,8 +187,10 @@ public class LeadAssigningCompController {
                     optionMap.put(pvObj.getValue(),pvObj.getLabel());
                 }
                 return optionMap;
-            }catch(Exception ex){
-                System.debug('Exception ::'+ ex.getMessage() +'Line Number ::'+ex.getLineNumber());    
+            }catch(Exception e){
+                System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('LeadAssigningCompController','getPickListValue', e, null);   
             }
         }
         return optionMap;
@@ -234,7 +241,9 @@ public class LeadAssigningCompController {
                 return lstwrp;
             }
         }catch(Exception e){
-            system.debug('error=='+e.getLineNumber()+' message ==='+e.getMessage());
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('LeadAssigningCompController','getRelated', e, null);   
         }
         System.debug('lstwrp @@@@'+lstwrp);
         return null;
@@ -286,7 +295,9 @@ public class LeadAssigningCompController {
                 return lstWrpExcWeight;
             }
         }catch(Exception e){
-            system.debug('error=='+e.getLineNumber()+' message ==='+e.getMessage());
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('LeadAssigningCompController','getRelatedweight', e, null);  
         }
         return null;
         
@@ -341,8 +352,11 @@ public class LeadAssigningCompController {
                 }
                 upsert scorecardObj;
                 return getScoreCardDetail(scorecardObj.Id);
-            }catch(Exception ex){
-                System.debug('Exception :::'+ex.getStackTraceString());    
+            }catch(Exception e){
+                System.debug('Exception :::'+e.getStackTraceString());    
+                System.debug(' the Error has occured due to =====> ' + e.getMessage());
+                System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+                HandleBusinessException.captureError('LeadAssigningCompController','saveScoreCardDetail', e, null); 
             }    
         }
         return null;
@@ -352,8 +366,10 @@ public class LeadAssigningCompController {
             try{
                 Scorecard__c scoreCardParent = [Select Id,Name,Object_Type__c,Roll_Up_Summary_Field__c from Scorecard__c where Object_Type__c =: objectType AND Scorecard__c =null];
                 return scoreCardParent;    
-            }catch(Exception ex){
-                System.debug('Exception ::'+ ex.getMessage() + 'Line Number ::'+ ex.getLineNumber());    
+            }catch(Exception e){
+                System.debug(' the Error has occured due to =====> ' + e.getMessage());
+                System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+                HandleBusinessException.captureError('LeadAssigningCompController','saveScoreCardDetail', e, null);     
             }
         }
         return null;

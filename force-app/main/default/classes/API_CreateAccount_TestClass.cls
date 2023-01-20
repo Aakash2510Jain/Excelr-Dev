@@ -42,11 +42,11 @@ public class API_CreateAccount_TestClass {
             req.requestURI =  '/services/apexrest/DemoUrl'; 
             req.httpMethod = 'POST';
             req.requestBody = Blob.valueOf(JsonMsg);
-            
+            string Jsonbody = '';
             RestContext.request =  req;
             RestContext.response= res;
             API_CreateAccount.doPost();
-            API_CreateAccount.insertLead(ld);
+            API_CreateAccount.insertLead(ld, Jsonbody);
             API_CreateAccount.updateLead(ld);
             insert TestOpp;
             update ld;

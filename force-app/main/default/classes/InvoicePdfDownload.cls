@@ -18,9 +18,10 @@ public class InvoicePdfDownload {
                 insert attachmentList;
                 system.debug('attachmentList==>' +attachmentList);
             }
-        }Catch(Exception ex){
-                    system.debug('Error -->'+ex.getMessage());
-                    system.debug('Error -->'+ex.getLineNumber());
-                }
+        }Catch(Exception e){
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('InvoicePdfDownload','getInvoicePdf', e, null);
+        }
     }
 }

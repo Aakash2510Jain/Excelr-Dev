@@ -11,7 +11,7 @@ public class ServiceTestClass {
         RestContext.request 				= 	request;
         RestContext.response				= 	res;
         API_CreateAccount.doPost();
-        API_CreateAccount.insertLead(null);
+        API_CreateAccount.insertLead(null, null);
         API_CreateAccount.updateLead(null);
         API_CreateAccount.insertApplication(null);
     }  

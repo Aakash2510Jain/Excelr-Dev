@@ -12,7 +12,7 @@ public class ApplicationTriggerHelper {
         try{
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-            HandleBusinessException.captureError('LeadTriggerHandler', 'Before Lead Insert', e);
+          HandleBusinessException.captureError('LeadTriggerHandler', 'Before Lead Insert', e , null);
         }
     }
 }

@@ -59,6 +59,9 @@ global without sharing class RazorpayWebhookHandler{
 
             return 'Success';
         } catch (Exception e){
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('RazorpayWebhookHandler','webhookListener', e, null);
             return 'Error - ' + e.getMessage();
         }
     }

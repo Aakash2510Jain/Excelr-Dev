@@ -132,16 +132,16 @@ public without sharing class Utility{
 
                 leadRec.GCLID__c = parameters.get('gclid');
 
-               // leadRec.Source__c = parameters.get('source');
+                // leadRec.Source__c = parameters.get('source');
                 //leadRec.Medium__c = parameters.get('medium');
-              //  leadRec.Campaign__c = parameters.get('campaign');
+                //  leadRec.Campaign__c = parameters.get('campaign');
                 leadRec.AdGroup__c = parameters.get('adgroup');
                 leadRec.Keyword__c = parameters.get('keyword');
                 leadRec.Match_Type__c = parameters.get('matchtype');
             }
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-            HandleBusinessException.captureError('Utility', 'UTMLinkParams', e);
+            HandleBusinessException.captureError('Utility', 'UTMLinkParams', e, null);
         }
     }
 
@@ -179,7 +179,7 @@ public without sharing class Utility{
                                                  from Invoice__c
                                                  Where LeadInvoice__c = :convertedLeadRec.Id
                                                  order by createdDate Desc];
-                    applicationsListAttachedToLead = [Select Id, Account__c,Course__c
+                    applicationsListAttachedToLead = [Select Id, Account__c, Course__c
                                                       From Application__c
                                                       Where Lead__c = :convertedLeadRec.Id];
                     List<PricebookEntry> priceBookEntryList = [Select Id, Product2Id
@@ -260,47 +260,53 @@ public without sharing class Utility{
         }
     }
 
-    public static string createApplicationInstance(string leadId, string courseName){
+    public static string createApplicationInstance(string leadId, string courseName, string requestString){
         string applicationId = '';
-        Application__c appRec = new Application__c();
-        appRec.Applied_Date_Time__c = system.now();
-        appRec.Course__c = courseName;
-        if (leadId.startsWith('00Q'))
-            appRec.Lead__c = leadid;
-        if (leadId.startsWith('001'))
-            appRec.Account__c = leadid;
-        applicationId = API_CreateAccount.insertApplication(appRec);
+        try{
+            Application__c appRec = new Application__c();
+            appRec.Applied_Date_Time__c = system.now();
+            appRec.Course__c = courseName;
+            if (leadId.startsWith('00Q'))
+                appRec.Lead__c = leadid;
+            if (leadId.startsWith('001'))
+                appRec.Account__c = leadid;
+            applicationId = API_CreateAccount.insertApplication(appRec, requestString);
+
+        } catch(Exception e) {
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('Utility','createApplicationInstance', e, null);
+
+        }
         return applicationId;
     }
 
-Public static void API_ErrorORSuccess(List<String> ErrorFields, String ErrorMsg, Integer ErrorStatus, string ErrOrSuccId, STring ClassName, String MethodName, string JSONString){
-        try {
+    Public static void API_ErrorORSuccess(List<String> ErrorFields, String ErrorMsg, Integer ErrorStatus, string ErrOrSuccId, STring ClassName, String MethodName, string JSONString){
+        try{
             API_Log__c APILog = new API_Log__c();
-            if (ErrorFields !=null) {
+            if (ErrorFields != null){
                 APILog.Error_Fields__c = String.join(ErrorFields, ',');
             }
             APILog.Class_Name__c = ClassName;
             APILog.Method_Name__c = MethodName;
-            if (ErrorMsg != null) {
+            if (ErrorMsg != null){
                 APILog.Error_Message__c = ErrorMsg;
             }
-            if (ErrorStatus != null) {
+            if (ErrorStatus != null){
                 APILog.Error_Status__c = ErrorStatus;
             }
-            if (ErrOrSuccId != null) {
+            if (ErrOrSuccId != null){
                 APILog.Error_Success_Id_if_Any__c = ErrOrSuccId;
             }
-            if (JSONString != null) {
+            if (JSONString != null){
                 APILog.JSON_String__c = JSONString;
             }
             insert APILog;
 
-        } catch (Exception e) {
+        } catch (Exception e){
             System.debug('the error has occured due to ===> ' + e.getMessage());
             System.debug('the error has occured at ===> ' + e.getLineNumber());
         }
     }
-    
-    
 
 }

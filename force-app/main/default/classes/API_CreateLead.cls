@@ -10,7 +10,7 @@ global without sharing class API_CreateLead {
             Lead newLead = (Lead)JSON.deserialize(requestString, Lead.class);
             if(newLead != null) {
                 //system.debug('insertLead :: ' + insertLead(leadWrapper));
-                String leadId = insertLead(newLead);
+                String leadId = insertLead(newLead, requestString);
                 if(leadId != null)
                     RestContext.response.responseBody = Blob.valueOf(JSON.serialize(new IntegrationWrapper.APIResponseWrapper('Success', 'Lead created successfully ref Id:'+leadId)));
                 else
@@ -22,7 +22,7 @@ global without sharing class API_CreateLead {
         }
     }
     
-    private static String insertLead(Lead leadRec){
+    private static String insertLead(Lead leadRec, string requestString){
         try {
             system.debug('--- leadRec ' + leadRec);
             insert leadRec;
@@ -30,7 +30,7 @@ global without sharing class API_CreateLead {
         }catch(Exception e){
             System.debug(' --- Error Msg '+ e.getMessage());
             System.debug(' --- Error LineNo '+ e.getLineNumber());
-            HandleBusinessException.captureError('API_CreateLead','insertLead', e);
+            HandleBusinessException.captureError('API_CreateLead','insertLead', e, requestString);
             return null;
         }
     }

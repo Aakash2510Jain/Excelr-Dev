@@ -27,7 +27,7 @@ public without sharing class OverdueTasksBatch implements Database.Batchable <So
         }
         catch(Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-            HandleBusinessException.captureError('OverdueTasksBatch', 'Execute', e);
+          HandleBusinessException.captureError('OverdueTasksBatch', 'Execute', e, null);
         }
     }
     

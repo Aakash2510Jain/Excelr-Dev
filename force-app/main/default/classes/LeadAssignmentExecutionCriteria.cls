@@ -487,7 +487,7 @@ public class LeadAssignmentExecutionCriteria {
         
         system.debug('DefaultQueueList-Size :::'+DefaultQueueList.size()+'@@@The List :::::'+DefaultQueueList);
         map<String,List<Lead>> mapofGlobalGroupNameByLeadList = new map<String,List<Lead>>();
-        DefaultGroupAssignment__c dgc = [Select id,Name,Group_Id__c from DefaultGroupAssignment__c where name = 'TLM Lead'][0];
+        DefaultGroupAssignment__c dgc = [Select id,Name,Group_Id__c from DefaultGroupAssignment__c where name = 'TLM'][0];
         
         if(DefaultQueueList.size() > 0 && DefaultQueueList != null){
             mapofGlobalGroupNameByLeadList.put(dgc.Name,DefaultQueueList);

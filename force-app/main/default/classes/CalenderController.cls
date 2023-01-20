@@ -13,14 +13,9 @@ public without sharing class CalenderController {
 
             return responseMap;
         } catch (Exception e) {
-            Exceptions__c Exc = new Exceptions__c();
-            Exc.Class_Name__c = 'CalenderController';
-			Exc.Error_Message__c = e.getMessage();     
-            Exc.Error_Line_No__c = e.getLineNumber();
-            Exc.Error_Stack_Trace__c = e.getStackTraceString();
-            Exc.Error_Type__c = e.getTypeName();
-            Exc.Method_Name__c = 'getUserEvents';
-            insert Exc;
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('CalenderController','getUserEvents', e, null);
             throw new AuraHandledException(e.getMessage());
             
         }
@@ -40,14 +35,9 @@ public without sharing class CalenderController {
 
             return responseMap;
         } catch (Exception e) {
-            Exceptions__c Exc = new Exceptions__c();
-            Exc.Class_Name__c = 'CalenderController';
-			Exc.Error_Message__c = e.getMessage();     
-            Exc.Error_Line_No__c = e.getLineNumber();
-            Exc.Error_Stack_Trace__c = e.getStackTraceString();
-            Exc.Error_Type__c = e.getTypeName();
-            Exc.Method_Name__c = 'getCalendarType';
-            insert Exc;
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('CalenderController','getCalendarType', e, null);
             throw new AuraHandledException(e.getMessage());
         }
     }
@@ -57,14 +47,9 @@ public without sharing class CalenderController {
         try {
             return getCalendarType(userId);
         } catch (Exception e) {
-            Exceptions__c Exc = new Exceptions__c();
-            Exc.Class_Name__c = 'CalenderController';
-			Exc.Error_Message__c = e.getMessage();     
-            Exc.Error_Line_No__c = e.getLineNumber();
-            Exc.Error_Stack_Trace__c = e.getStackTraceString();
-            Exc.Error_Type__c = e.getTypeName();
-            Exc.Method_Name__c = 'getCalendarsUserInfo';
-            insert Exc;
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('CalenderController','getCalendarsUserInfo', e, null);
             throw new AuraHandledException(e.getMessage());
         }
     }
@@ -89,6 +74,9 @@ public without sharing class CalenderController {
 
             return respMap;
         } catch (Exception e) {
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('CalenderController','checkAvailibility', e, null);
             throw new AuraHandledException(e.getMessage());
         }
     }
@@ -116,6 +104,9 @@ public without sharing class CalenderController {
             return 'Success';
 
         } catch (Exception e) {
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('CalenderController','createBookSlot', e, null);
             throw new AuraHandledException(e.getMessage());
         }
     }
@@ -141,6 +132,9 @@ public without sharing class CalenderController {
             Calender_Type__c cType = [Select Id,Name,Start_Time__c,End_Time__c,Calendar_Link__c,Slot_Duration__c,Before_Gap__c,After_Gap__c,Owner.Name,OwnerId From Calender_Type__c Where Id=:cId];
             return [Select Id,Name,Date__c,Start_Time__c,End_Time__c From Booked_Slot__c Where OwnerId=:cType.OwnerId And Date__c =: lookingOn];
         } catch (Exception e) {
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('CalenderController','getBookedSlotForParticularDate', e, null);
             throw new AuraHandledException(e.getMessage());
         }
     }
@@ -159,6 +153,9 @@ public without sharing class CalenderController {
             insert ct;
             return 'Success';
         } catch (Exception e) {
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('CalenderController','createEvent', e, null);
             throw new AuraHandledException(e.getMessage());
         }
     }
@@ -174,6 +171,9 @@ public without sharing class CalenderController {
             }
             return fieldMap;
         } catch (Exception e) {
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('CalenderController','getPicklistFieldsValues', e, null);
             throw new AuraHandledException(e.getMessage());
         }
     }

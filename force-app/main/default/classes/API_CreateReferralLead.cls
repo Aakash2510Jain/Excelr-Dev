@@ -18,7 +18,7 @@ global with sharing class API_CreateReferralLead{
                     if ( LeadList.size() > 0 ){
                         newLead.referrer__c = LeadList[0].Id;
                         newLead.OwnerId = LeadList[0].OwnerId;
-                        String leadId = insertLead(newLead);
+                        String leadId = insertLead(newLead, requestString);
                         if ( leadId != null ){
                             RestContext.response.responseBody = Blob.valueOf(JSON.serialize(new IntegrationWrapper.APIResponseWrapper('Success', 'Lead created successfully ref Id:' + leadId)));
                         }
@@ -47,7 +47,7 @@ global with sharing class API_CreateReferralLead{
         }
     }
 
-    private static String insertLead(Lead leadRec){
+    private static String insertLead(Lead leadRec, String requestString){
         try{
             system.debug('--- leadRec ' + leadRec);
             insert leadRec;
@@ -56,7 +56,7 @@ global with sharing class API_CreateReferralLead{
         catch ( Exception e ){
             System.debug(' --- Error Msg ' + e.getMessage());
             System.debug(' --- Error LineNo ' + e.getLineNumber());
-            HandleBusinessException.captureError('API_CreateReferralLead', 'insertLead', e);
+           HandleBusinessException.captureError('API_CreateReferralLead', 'insertLead', e, requestString);
             return null;
         }
     }

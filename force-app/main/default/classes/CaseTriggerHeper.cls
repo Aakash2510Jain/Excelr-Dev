@@ -26,7 +26,7 @@ public class CaseTriggerHeper {
         }
         catch(Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-            HandleBusinessException.captureError('CaseTriggerHeper', 'onAfterInsert', e);
+            HandleBusinessException.captureError('CaseTriggerHeper', 'onAfterInsert', e, null);
         }
     }
     
@@ -145,7 +145,7 @@ public class CaseTriggerHeper {
         }
         catch(Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-            HandleBusinessException.captureError('CaseTriggerHeper', 'onAfterUpdate', e);
+            HandleBusinessException.captureError('CaseTriggerHeper', 'onAfterUpdate', e, null);
         }
     }
     
@@ -168,7 +168,7 @@ public class CaseTriggerHeper {
         }
         catch(Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-            HandleBusinessException.captureError('CaseTriggerHeper', 'sendEmail', e);
+            HandleBusinessException.captureError('CaseTriggerHeper', 'sendEmail', e, null);
         }        
     }
     
@@ -187,7 +187,7 @@ public class CaseTriggerHeper {
         }
         catch(Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-            HandleBusinessException.captureError('CaseTriggerHeper', 'createTask', e);
+            HandleBusinessException.captureError('CaseTriggerHeper', 'createTask', e, null);
         }           
     }
     
@@ -206,7 +206,7 @@ public class CaseTriggerHeper {
         }
         catch(Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-            HandleBusinessException.captureError('CaseTriggerHeper', 'doApproval', e);
+            HandleBusinessException.captureError('CaseTriggerHeper', 'doApproval', e, null);
         }           
     }
 }

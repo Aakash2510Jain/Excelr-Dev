@@ -42,7 +42,7 @@ public class RefundProcessHelper {
         }
         catch(Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-            HandleBusinessException.captureError('RefundProcessHelper', 'createCase', e);
+           HandleBusinessException.captureError('RefundProcessHelper', 'createCase', e, null);
             return 'error';
         }
     }

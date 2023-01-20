@@ -176,7 +176,7 @@ public class PaymentProcessOnLeadController{
             
             insert invRec;
             
-            Utility.createApplicationInstance(recordId,leadCourse);
+            Utility.createApplicationInstance(recordId,leadCourse,null);
             
             if (paymentType == 'razorpay'){
                 
@@ -191,8 +191,9 @@ public class PaymentProcessOnLeadController{
             
             return 'Success';
         }catch(exception e){
-            system.debug('Error -->'+e.getMessage());
-            system.debug('Error@@ -->'+e.getLineNumber());
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('PaymentProcessOnLeadController','leadUpdateOnPartialLoan', e, null);
             return 'Error';
         }
     }

@@ -66,6 +66,9 @@ public with sharing class RazorpayPaymentHandler {
                 return 'Success';     
             }
             catch (Exception e) {
+                System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('RazorpayPaymentHandler','sendPaymentLink', e, null);
                 throw new AuraHandledException(e.getMessage());
             }
         }else{
@@ -146,6 +149,9 @@ public with sharing class RazorpayPaymentHandler {
            // return 'Success';     
         }
         catch (Exception e) {
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('RazorpayPaymentHandler','sendPaymentLink', e, null);
             throw new AuraHandledException(e.getMessage());
         }
     }

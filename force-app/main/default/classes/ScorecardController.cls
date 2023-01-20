@@ -114,7 +114,9 @@ public class ScorecardController {
             upsert secList;
             System.debug('secList @@@@'+secList);
         }catch(Exception e){
-            system.debug('error=='+e.getLineNumber()+' message ==='+e.getMessage());
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('ScorecardController','createExcRecord', e, null);
         }
         return scorecardObj.Id;//(ids);
         
@@ -159,7 +161,9 @@ public class ScorecardController {
             }
             upsert secList;
         }catch(Exception e){
-            system.debug('error=='+e.getLineNumber()+' message ==='+e.getMessage());
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('ScorecardController','createWeightRecord', e, null);
         }
         //return [select id,name,Related_Object__c,Field_Name__c,Matching_Type__c,Matching_Value__c,Weight__c,Score__c from Scorecard_Weight_Criteria__c where id=:sec.id];
         return getRelatedweight(ids);
@@ -178,8 +182,10 @@ public class ScorecardController {
                     optionMap.put(pvObj.getValue(),pvObj.getLabel());
                 }
                 return optionMap;
-            }catch(Exception ex){
-                System.debug('Exception ::'+ ex.getMessage() +'Line Number ::'+ex.getLineNumber());    
+            }catch(Exception e){
+                System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('ScorecardController','getPickListValue', e, null);    
             }
         }
         return optionMap;
@@ -230,7 +236,9 @@ public class ScorecardController {
                 return lstwrp;
             }
         }catch(Exception e){
-            system.debug('error=='+e.getLineNumber()+' message ==='+e.getMessage());
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('ScorecardController','getRelated', e, null); 
         }
         System.debug('lstwrp @@@@'+lstwrp);
         return null;
@@ -282,7 +290,9 @@ public class ScorecardController {
                 return lstWrpExcWeight;
             }
         }catch(Exception e){
-            system.debug('error=='+e.getLineNumber()+' message ==='+e.getMessage());
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('ScorecardController','getRelatedweight', e, null); 
         }
         return null;
         
@@ -359,8 +369,11 @@ public class ScorecardController {
                 }
                 upsert scorecardObj;
                 return getScoreCardDetail(scorecardObj.Id);
-            }catch(Exception ex){
-            	System.debug('Exception :::'+ex.getStackTraceString());    
+            }catch(Exception e){
+            	System.debug('Exception :::'+e.getStackTraceString());   
+                System.debug(' the Error has occured due to =====> ' + e.getMessage());
+                System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+                HandleBusinessException.captureError('ScorecardController','saveScoreCardDetail', e, null); 
             }    
         }
         return null;
@@ -370,8 +383,10 @@ public class ScorecardController {
             try{
                 Scorecard__c scoreCardParent = [Select Id,Name,Object_Type__c,Roll_Up_Summary_Field__c from Scorecard__c where Object_Type__c =: objectType AND Scorecard__c =null];
                 return scoreCardParent;    
-            }catch(Exception ex){
-                System.debug('Exception ::'+ ex.getMessage() + 'Line Number ::'+ ex.getLineNumber());    
+            }catch(Exception e){
+                System.debug(' the Error has occured due to =====> ' + e.getMessage());
+                System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+                HandleBusinessException.captureError('ScorecardController','getScoreCardParent', e, null);     
             }
         }
         return null;

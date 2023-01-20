@@ -6,12 +6,14 @@ global without sharing class WebEngageWebhookHandler{
     public static string phone;
     public static String description;
     public static String course;
+    public static string requestString;
     @HttpPost
     global static String engageWebhookListener(){
         try{
             RestRequest req = RestContext.request;
             RestResponse res = RestContext.response;
             String body = req.requestBody.toString();
+            requestString = body;
             system.debug('body-->'+body);
             Map<String,object> bodyMap = (Map<String,object>) JSON.deserializeUntyped(body);
             system.debug('bodymap ===> ' + bodyMap);
@@ -94,7 +96,7 @@ global without sharing class WebEngageWebhookHandler{
         } catch (Exception e){
             system.debug('error due to ' + e.getMessage());
             system.debug('at line number ' + e.getLineNumber());
-            HandleBusinessException.captureError('WebEngageWebhookHandler','engageWebhookListener', e);
+           HandleBusinessException.captureError('WebEngageWebhookHandler','engageWebhookListener', e, requestString);
             return 'Error - ' + e.getMessage();
         }
     }

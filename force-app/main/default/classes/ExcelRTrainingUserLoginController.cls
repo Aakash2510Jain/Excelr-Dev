@@ -29,15 +29,10 @@ public without sharing class ExcelRTrainingUserLoginController {
                 return null; 
             }
         }catch(exception e){
-            system.debug(e.getLineNumber()+'---error Message---'+e.getMessage());
-            Exceptions__c Exc = new Exceptions__c();
-            Exc.Class_Name__c = 'ExcelRTrainingUserLoginController';
-			Exc.Error_Message__c = e.getMessage();     
-            Exc.Error_Line_No__c = e.getLineNumber();
-            Exc.Error_Stack_Trace__c = e.getStackTraceString();
-            Exc.Error_Type__c = e.getTypeName();
-            Exc.Method_Name__c = 'excelRTrainerLogIn';
-            insert Exc;
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('ExcelRTrainingUserLoginController','excelRTrainerLogIn', e, null);
+            //insert Exc;
             
             return null;
         }   

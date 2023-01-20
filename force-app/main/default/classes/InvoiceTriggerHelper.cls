@@ -25,7 +25,7 @@ public class InvoiceTriggerHelper{
             system.debug('Errror-->' + ex.getMessage());
             system.debug('Errror-->' + ex.getCause());
             system.debug('Errror-->' + ex.getLineNumber());
-            HandleBusinessException.captureError('InvoiceTriggerHelper', 'Tax Invoice', ex);
+           HandleBusinessException.captureError('InvoiceTriggerHelper', 'Tax Invoice', ex, null);
         }
     }
     
@@ -79,7 +79,7 @@ public class InvoiceTriggerHelper{
             system.debug('Errror-->' + ex.getMessage());
             system.debug('Errror-->' + ex.getCause());
             system.debug('Errror-->' + ex.getLineNumber());
-            HandleBusinessException.captureError('InvoiceTriggerHelper', 'Tax Invoice', ex);
+            HandleBusinessException.captureError('InvoiceTriggerHelper', 'Tax Invoice', ex, null);
         }
     }
     
@@ -113,7 +113,7 @@ List<Approval.ProcessResult> result = Approval.process( InvoiceToapprovalRequest
         }
         catch ( Exception e ){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-            HandleBusinessException.captureError('CaseTriggerHeper', 'doApproval', e);
+           HandleBusinessException.captureError('CaseTriggerHeper', 'doApproval', e, null);
         }
     }
     
@@ -139,6 +139,8 @@ List<Approval.ProcessResult> result = Approval.process( InvoiceToapprovalRequest
             }
         }
         catch ( Exception e ){
+            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+           HandleBusinessException.captureError('CaseTriggerHeper', 'doApproval', e, null);
             
         }
     }

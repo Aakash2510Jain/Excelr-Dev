@@ -35,18 +35,18 @@ public class LeadTriggerHandler{
             }
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-            HandleBusinessException.captureError('LeadTriggerHandler', 'Before Lead Insert', e);
+            HandleBusinessException.captureError('LeadTriggerHandler', 'Before Lead Insert', e, null);
         }
     }
 
     public void afterInsert(List<Lead> leadList){
         try{
             for (Lead ld : leadList){
-                Utility.createApplicationInstance(ld.Id, ld.Course__c);
+                Utility.createApplicationInstance(ld.Id, ld.Course__c,null);
             }
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-            HandleBusinessException.captureError('LeadTriggerHandler', 'After Lead Insert', e);
+            HandleBusinessException.captureError('LeadTriggerHandler', 'After Lead Insert', e, null);
         }
     }
 
@@ -73,7 +73,7 @@ public class LeadTriggerHandler{
             }
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-            HandleBusinessException.captureError('LeadTriggerHandler', 'Before Lead Update', e);
+            HandleBusinessException.captureError('LeadTriggerHandler', 'Before Lead Update', e, null);
         }
     }
 
@@ -86,7 +86,7 @@ public class LeadTriggerHandler{
             }
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-            HandleBusinessException.captureError('LeadTriggerHandler', 'After Lead Update', e);
+            HandleBusinessException.captureError('LeadTriggerHandler', 'After Lead Update', e, null);
         }
     }
 

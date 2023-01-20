@@ -78,9 +78,10 @@ global without sharing class TaxInvoiceHelper{
                 }
             }
 
-        } catch (exception ex){
-            system.debug('Error-->' + ex.getLineNumber());
-            system.debug('Error-->>' + ex.getMessage());
+        } catch (exception e){
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('TaxInvoiceHelper','attachPdf', e, null); 
         }
     }
 

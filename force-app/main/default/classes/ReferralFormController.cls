@@ -47,6 +47,9 @@ public without sharing class ReferralFormController{
 
 
         } catch (Exception e){
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('ReferralFormController','SubmitReferralDetails', e, null);
             throw new AuraHandledException(e.getMessage());
         }
     }

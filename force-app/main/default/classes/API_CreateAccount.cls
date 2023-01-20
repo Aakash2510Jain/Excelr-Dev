@@ -45,7 +45,7 @@ global class API_CreateAccount{
                                         limit 1];
 
                 if (!convertedLeadByEmail.isEmpty()){
-                    Utility.createApplicationInstance(string.valueOf(convertedLeadByEmail[0].ConvertedAccountId), newAccount.Course__c);
+                    Utility.createApplicationInstance(string.valueOf(convertedLeadByEmail[0].ConvertedAccountId), newAccount.Course__c,requestString);
                     Opportunity opportunityRec = new Opportunity(Name = newAccount.Course__c, AccountId = convertedLeadByEmail[0].ConvertedAccountId, CloseDate = Date.today().addDays(2), StageName = 'Proposal');
                     insert opportunityRec;
 
@@ -55,7 +55,7 @@ global class API_CreateAccount{
                         //update Lead course
                         //Insert application
 
-                        Utility.createApplicationInstance(existingLeadByEmail[0].Id, newAccount.Course__c);
+                        Utility.createApplicationInstance(existingLeadByEmail[0].Id, newAccount.Course__c, requestString);
 
                     } else{
                         //Insert Lead
@@ -83,7 +83,7 @@ global class API_CreateAccount{
                         leadRec.UTM_Medium__c = newAccount.UTM_Medium__c;
                         leadRec.Type_of_Course__c = newAccount.Type_of_Course__c;
                         
-                        String leadid = insertLead(leadRec);
+                        String leadid = insertLead(leadRec, requestString);
                         system.debug('leadRec-->'+leadRec);
                         system.debug('leadid-->'+leadid);
                         if (leadRec != null){
@@ -104,7 +104,7 @@ global class API_CreateAccount{
         }
     }
 
-    public static string insertLead(Lead leadRec){
+    public static string insertLead(Lead leadRec, string requestString){
         try{
             system.debug('--- leadRec ' + leadRec);
             insert leadRec;
@@ -112,12 +112,12 @@ global class API_CreateAccount{
         } catch (Exception e){
             System.debug(' --- Error Msg ' + e.getMessage());
             System.debug(' --- Error LineNo ' + e.getLineNumber());
-            HandleBusinessException.captureError('API_CreateAccount', 'insertAccount', e);
+            HandleBusinessException.captureError('API_CreateAccount', 'insertAccount', e, requestString);
             return null;
         }
     }
 
-    public static string updateLead(Lead leadRec){
+    public static string updateLead(Lead leadRec ){
         try{
             system.debug('--- leadRec ' + leadRec);
             update leadRec;
@@ -125,12 +125,12 @@ global class API_CreateAccount{
         } catch (Exception e){
             System.debug(' --- Error Msg ' + e.getMessage());
             System.debug(' --- Error LineNo ' + e.getLineNumber());
-            HandleBusinessException.captureError('API_CreateAccount', 'insertAccount', e);
+            HandleBusinessException.captureError('API_CreateAccount', 'insertAccount', e, null);
             return null;
         }
     }
 
-    public static string insertApplication(Application__c appRec){
+    public static string insertApplication(Application__c appRec, String requestString){
         try{
             system.debug('--- leadRec ' + appRec);
             insert appRec;
@@ -138,7 +138,7 @@ global class API_CreateAccount{
         } catch (Exception e){
             System.debug(' --- Error Msg ' + e.getMessage());
             System.debug(' --- Error LineNo ' + e.getLineNumber());
-            HandleBusinessException.captureError('API_CreateAccount', 'insertAccount', e);
+            HandleBusinessException.captureError('API_CreateAccount', 'insertAccount', e, requestString);
             return null;
         }
     }

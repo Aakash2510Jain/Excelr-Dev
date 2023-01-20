@@ -30,6 +30,7 @@ public class ccAvenueLwcController {
         catch(exception e){
             
              System.debug('The following exception has occurred: ' + e.getMessage());
+             HandleBusinessException.captureError('ccAvenueLwcController','GettingPaymentLink', e, null);
             
              return e.getMessage();
         }
@@ -130,6 +131,9 @@ public class ccAvenueLwcController {
             sendPaymentLink(email,templateId,emailBody);
             return 'Success';
         }catch(Exception e){
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('ccAvenueLwcController','prepareTemplateAndSendEmail', e, null);
             return e.getMessage();
         }
     }

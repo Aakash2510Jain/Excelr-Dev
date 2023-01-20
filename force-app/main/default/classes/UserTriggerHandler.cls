@@ -22,15 +22,10 @@ public class UserTriggerHandler {
                 CreateAvailibility(UpdatedUser);
             }   
         }catch(Exception e){
-            Exceptions__c Exc = new Exceptions__c();
-            Exc.Class_Name__c = 'UserTriggerHandler';
-			Exc.Error_Message__c = e.getMessage();     
-            Exc.Error_Line_No__c = e.getLineNumber();
-            Exc.Error_Stack_Trace__c = e.getStackTraceString();
-            Exc.Error_Type__c = e.getTypeName();
-            Exc.Method_Name__c = 'UserAfterUpdate';
-            insert Exc;
-            System.debug('Exception----'+e.getMessage());
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('UserTriggerHandler','UserAfterUpdate', e, null);
+            
         }
          
     }

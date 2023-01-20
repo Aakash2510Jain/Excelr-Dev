@@ -22,6 +22,8 @@ global class API_CreateContact {
     }
     
     public static string insertContacts(List<string> emailIds){
+
+        
         if(emailIds.size() <= 0)
             return 'no email id\'s recieved';
         List<contact> contactList = [select name,id from contact where email In: emailIds];
