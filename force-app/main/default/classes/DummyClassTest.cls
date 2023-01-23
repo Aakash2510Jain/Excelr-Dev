@@ -2,7 +2,7 @@
 public class DummyClassTest {
 	static testMethod void validateAllApexCode(){
         test.startTest();
-        
+                
         DummyClass.firstTestMethod();
         DummyClass.firstTestMethod1();
         DummyClass.firstTestMethod2();

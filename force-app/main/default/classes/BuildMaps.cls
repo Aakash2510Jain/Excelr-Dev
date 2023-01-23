@@ -55,7 +55,7 @@ public without Sharing class BuildMaps {
         
         listOfGroupMember = [select id,Max_Lead_Per_Day__c,Assignment_Group__r.Minimum_Lead_Volume__c,Assignment_Group__r.Name,Group_Member__r.Id,Group_Member__r.Max_Lead_Per_Month__c,Group_Member__r.Max_Lead_Per_Day__c,Assignment_Group__r.Max_Lead_Per_Day__c,Assignment_Group__r.Lead_Stage__c,Assignment_Group__r.Lead_Stage_Exceed_Count__c from Assignment_Group_Member__c where active__c = true and assignment_group__r.name =: groupName];
         listOfTodayLeads = [select id,Lead_Assigned_Date__c,ownerId,status from lead where Lead_Assigned_Date__c = today];
-        listOfNewLeads = [select id,Lead_Assigned_Date__c,ownerId,status from lead where status = 'New'];
+        listOfNewLeads = [select id,Lead_Assigned_Date__c,ownerId,status from lead where status = 'Open'];
         listOfAssignedTodayLeads = [select id,Lead_Assigned_Date__c,ownerId,status from lead where Lead_Assigned_Date__c = today];
         listOfAssignedThisMonth = [select id, Lead_Assigned_Date__c, ownerId, status from lead where Lead_Assigned_Date__c = This_Month];
 

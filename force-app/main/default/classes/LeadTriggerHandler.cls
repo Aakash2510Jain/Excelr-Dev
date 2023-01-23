@@ -1,26 +1,35 @@
 public class LeadTriggerHandler{
     static LeadTriggerHandler handlerInstance;
-
+    
     public static LeadTriggerHandler getInstance(){
         if (handlerInstance == null)
             handlerInstance = new LeadTriggerHandler();
         return handlerInstance;
     }
-
+    
     public void beforeInsert(List<Lead> leadList){
         try{
             set<String> leadQuality = new set<String>();
-
+            Map<String, String> mapOfStateByCity = new Map<String, String>();
+            Map<String, String> mapOfCountryByCity = new Map<String, String>();
+            
+            //Custom Setting
+            List<City_State_Country__c> cityStateCountryList = [ Select City__c,Country__c,State__c From City_State_Country__c];
+            
+            if(!cityStateCountryList.isEmpty()){
+                for(City_State_Country__c CSC_Rec : cityStateCountryList){
+                    mapOfStateByCity.put(CSC_Rec.City__c, CSC_Rec.State__c);
+                    mapOfCountryByCity.put(CSC_Rec.City__c, CSC_Rec.Country__c);
+                }    
+            }
+            
             for (Lead ld : leadList){
                 if (ld.ExcelR_Training_User__c == null && (ld.LeadSource != 'Reference' || ld.Lead_Gen_Path__c != 'Reference')){
                     system.debug('Owner is Queue');
                     ld.OwnerId = constants.queueId;
                 }
-                if (ld.Enter_UTM_Link__c != null){
-                    //Utility.UTMLinkParams(ld);
-                }
-                if (string.isEmpty(ld.Company) || string.isBlank(ld.Company)){
-                    ld.Company = 'NA';
+                if (ld.Enter_UTM_Link__c != null && ld.Lead_Generation_Method__c != null && (ld.Lead_Generation_Method__c == 'Chat Form' || ld.Lead_Generation_Method__c == 'Generic Form' )){
+                    Utility.UTMLinkParams(ld);
                 }
                 // quality of Leads
                 if (ld.LeadSource != null && ld.UTM_Medium__c != null){
@@ -32,13 +41,40 @@ public class LeadTriggerHandler{
                         ld.Quality_of_Lead__c = 'TLM';
                     }
                 }
+                if(ld.City__c != null){
+                    if(mapOfStateByCity.containsKey(ld.City__c)){
+                        ld.State__c = mapOfStateByCity.get(ld.City__c);
+                    }
+                    if(mapOfCountryByCity.containsKey(ld.City__c)){
+                        ld.Country__c = mapOfCountryByCity.get(ld.City__c);
+                    }
+                }
+                //handle necessary fields
+                if (string.isEmpty(ld.Company) || string.isBlank(ld.Company)){
+                    ld.Company = 'NA';
+                }
+                if (string.isEmpty(ld.City__c) || string.isBlank(ld.City__c)){
+                    ld.City__c = 'NA';
+                }
+                if (string.isEmpty(ld.LeadSource) || string.isBlank(ld.LeadSource)){
+                    ld.LeadSource = 'NA';
+                }
+                if (string.isEmpty(ld.UTM_Medium__c) || string.isBlank(ld.UTM_Medium__c)){
+                    ld.UTM_Medium__c = 'NA';
+                }
+                if (string.isEmpty(ld.Lead_Gen_Path__c) || string.isBlank(ld.Lead_Gen_Path__c)){
+                    ld.Lead_Gen_Path__c = 'NA';
+                }
+                if (string.isEmpty(ld.Course__c) || string.isBlank(ld.Course__c)){
+                    ld.Course__c = 'NA';
+                }
             }
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
             HandleBusinessException.captureError('LeadTriggerHandler', 'Before Lead Insert', e, null);
         }
     }
-
+    
     public void afterInsert(List<Lead> leadList){
         try{
             for (Lead ld : leadList){
@@ -49,10 +85,23 @@ public class LeadTriggerHandler{
             HandleBusinessException.captureError('LeadTriggerHandler', 'After Lead Insert', e, null);
         }
     }
-
+    
     public void beforeUpdate(Map<Id, Lead> newLeadMap, Map<Id, Lead> oldLeadMap){
         try{
             system.debug('Before Update');
+            Map<String, String> mapOfStateByCity = new Map<String, String>();
+            Map<String, String> mapOfCountryByCity = new Map<String, String>();
+            
+            //Custom Setting
+            List<City_State_Country__c> cityStateCountryList = [ Select City__c,Country__c,State__c From City_State_Country__c];
+            
+            if(!cityStateCountryList.isEmpty()){
+                for(City_State_Country__c CSC_Rec : cityStateCountryList){
+                    mapOfStateByCity.put(CSC_Rec.City__c, CSC_Rec.State__c);
+                    mapOfCountryByCity.put(CSC_Rec.City__c, CSC_Rec.Country__c);
+                }    
+            }
+            
             for (Lead ld : newLeadMap.values()){
                 if (ld.Enter_UTM_Link__c != null && ld.Enter_UTM_Link__c != oldLeadMap.get(ld.Id).Enter_UTM_Link__c){
                     //Utility.UTMLinkParams(ld);
@@ -69,6 +118,14 @@ public class LeadTriggerHandler{
                         ld.Quality_of_Lead__c = 'TLM';
                     }
                 }
+                if(ld.City__c != null && ld.City__c != oldLeadMap.get(ld.Id).City__c ){
+                    if(mapOfStateByCity.containsKey(ld.City__c)){
+                        ld.State__c = mapOfStateByCity.get(ld.City__c);
+                    }
+                    if(mapOfCountryByCity.containsKey(ld.City__c)){
+                        ld.Country__c = mapOfCountryByCity.get(ld.City__c);
+                    }
+                }
                 system.debug('ld.Quality_of_Lead__c-->' + ld.Quality_of_Lead__c);
             }
         } catch (Exception e){
@@ -76,18 +133,18 @@ public class LeadTriggerHandler{
             HandleBusinessException.captureError('LeadTriggerHandler', 'Before Lead Update', e, null);
         }
     }
-
+    
     public void afterUpdate(Map<Id, Lead> newLeadMap, Map<Id, Lead> oldLeadMap){
         try{
             system.debug('After Update');
             set<String> leadQuality = new set<String>();
             for (Lead ld : newLeadMap.values()){
-
+                
             }
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
             HandleBusinessException.captureError('LeadTriggerHandler', 'After Lead Update', e, null);
         }
     }
-
+    
 }
