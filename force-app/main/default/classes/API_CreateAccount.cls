@@ -82,8 +82,9 @@ global class API_CreateAccount{
                         leadRec.UTM_Experiment__c = newAccount.UTM_Experiment__c;
                         leadRec.UTM_Medium__c = newAccount.UTM_Medium__c;
                         leadRec.Type_of_Course__c = newAccount.Type_of_Course__c;
+                        leadRec.Lead_Gen_Path__c = newAccount.Lead_Gen_Path__c != null ? newAccount.Lead_Gen_Path__c:'NA';
                         
-                        String leadid = insertLead(leadRec, requestString);
+                            String leadid = insertLead(leadRec, requestString);
                         system.debug('leadRec-->'+leadRec);
                         system.debug('leadid-->'+leadid);
                         if (leadRec != null){
