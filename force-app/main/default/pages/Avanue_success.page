@@ -16,7 +16,7 @@
 
             updateRecord();
             function updateRecord(){
-                CCAvenueCatchResponse.updatePaymentStatus($scope.recordId,$scope.status,function(res,evt){
+                CCAvenueCatchResponse.updatePaymentStatus($scope.recordId,'Success',function(res,evt){
                     console.log('Status Updated');
                 })
             }

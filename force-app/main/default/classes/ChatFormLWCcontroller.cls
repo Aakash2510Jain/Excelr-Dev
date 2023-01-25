@@ -1,13 +1,15 @@
-public without sharing class ChatFormLWCcontroller {
+public without sharing class ChatFormLWCcontroller{
     @auraenabled(cacheable = true)
     public static list<lead> getLead(String EmailOrPhone){
         list<lead> leadList = new list<lead>();
-        String Phonestring = '%'+ EmailOrPhone;
+        String Phonestring = '%' + EmailOrPhone;
 
-        if (EmailOrPhone != null) {
-            leadList = [Select id, firstName, LastName, Owner_Email__c,OwnerId,Owner.LastName,Owner.FirstName,Owner.Name, Email, Phone
+        if (EmailOrPhone != null){
+            leadList = [Select id, firstName, LastName, Owner_Email__c, OwnerId, Owner.LastName, Owner.FirstName, Owner.Name, Email, Phone
                         from Lead
-                        where Email = :EmailOrPhone OR Phone LIKE:Phonestring Order By CreatedDate Asc LIMIT 1];
+                        where Email = :EmailOrPhone OR Phone LIKE:Phonestring
+                        Order By CreatedDate Asc
+                        LIMIT 1];
         }
         System.debug('leadList ======> ' + leadList);
         // if ( EmailOrPhone.contains('@') ){
@@ -26,8 +28,8 @@ public without sharing class ChatFormLWCcontroller {
     }
 
     @auraenabled
-    public static String createLead(String firstname, string Lastname, string email, string phone,  string Course,  string agentid,string city,string state,string country,string source,string medium,string VisitorId,string Transcript,string LandingPageURL,string comments){
-       // System.debug('userId ====> ' + userId);
+    public static String createLead(String firstname, string Lastname, string email, string phone, string Course, string agentid, string city, string state, string country, string source, string medium, string VisitorId, string Transcript, string LandingPageURL, string comments){
+        // System.debug('userId ====> ' + userId);
         System.debug('agentid ====> ' + agentid);
         lead leadRec = new lead();
         list<ExcelR_Training_User__c> existingTrainingUser = new list<ExcelR_Training_User__c>();
@@ -35,47 +37,56 @@ public without sharing class ChatFormLWCcontroller {
         string message = '';
         try{
 
-            if ( agentid != null ){
+            if (agentid != null){
                 existingTrainingUser = [SELECT Email__c, First_Name__c, HashCode__c, Id, Last_Name__c, Name, Password__c, Username__c
                                         FROM ExcelR_Training_User__c
                                         Where id = :agentid];
             }
+            List<Lead> LeadRceordlist = [Select id, firstName, LastName, Owner_Email__c, OwnerId, Owner.LastName, Owner.FirstName, Owner.Name, Email, Phone
+                                         from Lead
+                                         where Email = :email OR Phone LIKE:phone
+                                         Order By CreatedDate Asc
+                                         LIMIT 1];
+            if (LeadRceordlist.size() > 0){
+                message = 'Lead Already exist';
 
-            system.debug(firstname + ' : ' + Lastname + ' : ' + email + ' : ' + phone + ' : ' + Lastname );
-            leadRec.FirstName = firstname;
-            leadRec.LastName = Lastname;
-            leadRec.Email = email;
-            leadRec.Phone = phone;
-            //leadRec.OwnerId = userId;
-            leadRec.Course__c = Course;
-            leadRec.City__c=city;
-            leadRec.State__c=state;
-            leadRec.Country__c=country;
-            leadRec.LeadSource=source;
-            leadRec.UTM_Medium__c=medium;
-            leadRec.Visitor_ID__c=VisitorId;
-            leadRec.Transcript__c=Transcript;
-           // leadRec.Lead_Gen_Path__c=leadGenPath;
-           // leadRec.LGE__c=LGE;
-            leadRec.Landing_Page_URL__c=LandingPageURL;
-            leadRec.Lead_Generation_Method__c = 'Chat Form';
-            leadRec.Comments__c = comments;
-            if ( !existingTrainingUser.isEmpty() ){
-                leadRec.ExcelR_Training_User__c = existingTrainingUser[0].id;
-            }
-            leadRec.Company = '--';
-            system.debug('leadRec===========================' + leadRec);
-            insert leadRec;
-            System.debug('lead rec Id =====> ' + leadRec.Id);
-            if (leadRec.id != null) {
-                message = 'SUCCESS';
+            } else{
+                system.debug(firstname + ' : ' + Lastname + ' : ' + email + ' : ' + phone + ' : ' + Lastname);
+                leadRec.FirstName = firstname;
+                leadRec.LastName = Lastname;
+                leadRec.Email = email;
+                leadRec.Phone = phone;
+                //leadRec.OwnerId = userId;
+                leadRec.Course__c = Course;
+                leadRec.City__c = city;
+                leadRec.State__c = state;
+                leadRec.Country__c = country;
+                leadRec.LeadSource = source;
+                leadRec.UTM_Medium__c = medium;
+                leadRec.Visitor_ID__c = VisitorId;
+                leadRec.Transcript__c = Transcript;
+                // leadRec.Lead_Gen_Path__c=leadGenPath;
+                // leadRec.LGE__c=LGE;
+                leadRec.Landing_Page_URL__c = LandingPageURL;
+                leadRec.Lead_Generation_Method__c = 'Chat Form';
+                leadRec.Comments__c = comments;
+                if (!existingTrainingUser.isEmpty()){
+                    leadRec.ExcelR_Training_User__c = existingTrainingUser[0].id;
+                }
+                leadRec.Company = '--';
+                system.debug('leadRec===========================' + leadRec);
+                insert leadRec;
+                System.debug('lead rec Id =====> ' + leadRec.Id);
+                if (leadRec.id != null){
+                    message = 'SUCCESS';
+                }
+
             }
             //return message;
-        }
-        catch ( Exception e ){
+        } catch (Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());
             System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
-            HandleBusinessException.captureError('ChatFormLWCcontroller','createLead', e, null);
+            HandleBusinessException.captureError('ChatFormLWCcontroller', 'createLead', e, null);
             message = 'FAIL';
             //return null;
         }
@@ -83,16 +94,16 @@ public without sharing class ChatFormLWCcontroller {
     }
 
     @AuraEnabled
-    public static String createTaskForVoice (String subject,string assignto,string priority,string status,Date duedate,string comments,DateTime followupDate, string leadId){
-        system.debug('assignto-->'+assignto);
-        system.debug('leadId-->'+leadId);
+    public static String createTaskForVoice(String subject, string assignto, string priority, string status, Date duedate, string comments, DateTime followupDate, string leadId){
+        system.debug('assignto-->' + assignto);
+        system.debug('leadId-->' + leadId);
         system.debug('');
         Task taskRec = new Task();
-        try {
-           // Lead lRec = [select Id, OwnerId from Lead where id =''];
-           // Task taskRec = new Task();
+        try{
+            // Lead lRec = [select Id, OwnerId from Lead where id =''];
+            // Task taskRec = new Task();
             taskRec.Subject = subject;
-            taskRec.OwnerId = assignto; 
+            taskRec.OwnerId = assignto;
             taskRec.WhoId = leadId;      // lead---Name
             taskRec.Priority = priority;
             taskRec.Status = status;
@@ -101,42 +112,44 @@ public without sharing class ChatFormLWCcontroller {
             taskRec.Followup_Date_Time__c = followupDate;
             insert taskRec;
             return 'Success';
-            
-        } catch (Exception e) {
+
+        } catch (Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());
             System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
-            HandleBusinessException.captureError('ChatFormLWCcontroller','createTaskForVoice', e, null);
+            HandleBusinessException.captureError('ChatFormLWCcontroller', 'createTaskForVoice', e, null);
             return 'error';
         }
     }
 
     @AuraEnabled
-    public static Application__c CreateApplication(string Course, string LeadId ){
+    public static Application__c CreateApplication(string Course, string LeadId){
         System.debug('Course =====> ' + Course);
         //System.debug('Course =====> ' + userId);
         System.debug('LeadId =====> ' + LeadId);
         List<Lead> leadlist = new List<Lead>();
-        try {
-            if (LeadId != null) {
-                leadlist = [Select id, ownerId from Lead Where Id =: LeadId];
+        try{
+            if (LeadId != null){
+                leadlist = [Select id, ownerId
+                            from Lead
+                            Where Id = :LeadId];
             }
             System.debug('leadlist ===> ' + leadlist);
             Application__c app = new Application__c();
             app.Course__c = course;
             app.Applied_Date_Time__c = system.now();
             app.Lead__c = LeadId;
-            if (!leadlist.isEmpty()) {
+            if (!leadlist.isEmpty()){
                 app.OwnerId = leadlist[0].ownerId;
-                
+
             }
             System.debug('app ====> ' + app);
             insert app;
             return app;
 
-        } catch (Exception e) {
+        } catch (Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());
             System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
-            HandleBusinessException.captureError('ChatFormLWCcontroller','CreateApplication', e, null);
+            HandleBusinessException.captureError('ChatFormLWCcontroller', 'CreateApplication', e, null);
             throw new AuraHandledException(e.getMessage());
         }
     }
@@ -149,10 +162,10 @@ public without sharing class ChatFormLWCcontroller {
         return GmList;
     }
 
-    @auraenabled(cacheable=true)
+    @auraenabled(cacheable = true)
     public static List<Application__c> getApplication(String lid){
-        System.debug('lid ====> ' +lid);
-        List<Application__c> AppList = [SELECT Course__c, Id, Name,LID__c,Applied_Date_Time__c, Lead__c
+        System.debug('lid ====> ' + lid);
+        List<Application__c> AppList = [SELECT Course__c, Id, Name, LID__c, Applied_Date_Time__c, Lead__c
                                         FROM Application__c
                                         WHERE Lead__c = :lid];
         system.debug('AppList' + AppList);
@@ -169,7 +182,7 @@ public without sharing class ChatFormLWCcontroller {
         Map<String, Schema.SObjectField> fields = r.fields.getMap();
         Schema.DescribeFieldResult fieldResult = fields.get(fieldName).getDescribe();
         List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
-        for ( Schema.PicklistEntry pickListVal : ple ){
+        for (Schema.PicklistEntry pickListVal : ple){
             System.debug(pickListVal.getLabel() + ' ' + pickListVal.getValue());
             getLablePick.put(pickListVal.getLabel(), pickListVal.getValue());
         }
@@ -187,7 +200,7 @@ public without sharing class ChatFormLWCcontroller {
         Map<String, Schema.SObjectField> fields = r.fields.getMap();
         Schema.DescribeFieldResult fieldResult = fields.get(fieldName).getDescribe();
         List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
-        for ( Schema.PicklistEntry pickListVal : ple ){
+        for (Schema.PicklistEntry pickListVal : ple){
             System.debug(pickListVal.getLabel() + ' ' + pickListVal.getValue());
             getLablePick.put(pickListVal.getLabel(), pickListVal.getValue());
         }
@@ -205,14 +218,13 @@ public without sharing class ChatFormLWCcontroller {
         Map<String, Schema.SObjectField> fields = r.fields.getMap();
         Schema.DescribeFieldResult fieldResult = fields.get(fieldName).getDescribe();
         List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
-        for ( Schema.PicklistEntry pickListVal : ple ){
+        for (Schema.PicklistEntry pickListVal : ple){
             System.debug(pickListVal.getLabel() + ' ' + pickListVal.getValue());
             getLablePick.put(pickListVal.getLabel(), pickListVal.getValue());
         }
         system.debug('getLablePick::' + getLablePick);
         return getLablePick;
     }
-
 
     @auraEnabled
     Public Static string EmailIsm(String LiD, String ownerMail){
@@ -225,12 +237,12 @@ public without sharing class ChatFormLWCcontroller {
                        FROM Lead
                        WHERE Owner.Email = :ownerMail AND Id = :LiD
                        limit 1];
-            
+
             EmailTemplate et = [Select id, Name, Body, HtmlValue
                                 from EmailTemplate
-                                where name ='Notify ISM'];
-            
-            if ( leadRec != null && leadRec.Owner.email != null ){
+                                where name = 'Notify ISM'];
+
+            if (leadRec != null && leadRec.Owner.email != null){
                 Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
                 String[] toAddresses = new String[]{ ownerMail };
                 mail.setSubject('Lead assignment ');
@@ -240,46 +252,49 @@ public without sharing class ChatFormLWCcontroller {
                 message = 'Success';
             }
             return message;
-        }
-        catch ( Exception e ){
+        } catch (Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());
             System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
-            HandleBusinessException.captureError('ChatFormLWCcontroller','EmailIsm', e, null);
+            HandleBusinessException.captureError('ChatFormLWCcontroller', 'EmailIsm', e, null);
             return null;
         }
         //return message;
     }
 
-
     @AuraEnabled(cacheable = true)
-    public static List<Lead> QueryPastLeads(string ExcelRagentid ){
+    public static List<Lead> QueryPastLeads(string ExcelRagentid){
         System.debug(' ExcelRagentid =========> ' + ExcelRagentid);
-        try {
-            List<Lead> PastLeadRecords = [SELECT Course__c,Email,ExcelR_Training_User__c,Name,OwnerId,Owner.Name,Phone,Product__c,Product__r.Name,Status,Total_Calls__c,Total_Connected_Call__c 
-                                            FROM Lead 
-                                            Where ExcelR_Training_User__c =: ExcelRagentid ANd isconverted = false Order by createdDate Desc ];
+        try{
+            List<Lead> PastLeadRecords = [SELECT Course__c, Email, ExcelR_Training_User__c, Name, OwnerId, Owner.Name, Phone, Product__c, Product__r.Name, Status, Total_Calls__c, Total_Connected_Call__c
+                                          FROM Lead
+                                          Where ExcelR_Training_User__c = :ExcelRagentid ANd isconverted = false
+                                          Order by createdDate Desc];
             System.debug('PastLeadRecords ======> ' + PastLeadRecords);
 
-             return PastLeadRecords;                           
-        } catch (Exception e) {
+            return PastLeadRecords;
+        } catch (Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());
             System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
-            HandleBusinessException.captureError('ChatFormLWCcontroller','QueryPastLeads', e, null);
+            HandleBusinessException.captureError('ChatFormLWCcontroller', 'QueryPastLeads', e, null);
             throw new AuraHandledException(e.getMessage());
         }
     }
-    
-     @AuraEnabled(Cacheable=True)
+
+    @AuraEnabled(Cacheable = True)
     Public Static List<City_State_Country__c> FetchStateCounty(){
-        List<City_State_Country__c> cityStateCountry=[Select City__c,Country__c,State__c From City_State_Country__c ];
-        
+        List<City_State_Country__c> cityStateCountry = [Select City__c, Country__c, State__c
+                                                        From City_State_Country__c];
+
         return cityStateCountry;
     }
 
-    @AuraEnabled(Cacheable=True)
+    @AuraEnabled(Cacheable = True)
     Public Static List<City_State_Country__c> Fetchcities(){
-        List<City_State_Country__c> cityValues=[Select City__c,Order_Number__c From City_State_Country__c ORDER BY Order_Number__c ASC];
-        
+        List<City_State_Country__c> cityValues = [Select City__c, Order_Number__c
+                                                  From City_State_Country__c
+                                                  ORDER BY Order_Number__c ASC];
+
         return cityValues;
     }
+
 }

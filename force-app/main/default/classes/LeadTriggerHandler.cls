@@ -1,4 +1,4 @@
-public class LeadTriggerHandler{
+public without sharing class LeadTriggerHandler{
     static LeadTriggerHandler handlerInstance;
     
     public static LeadTriggerHandler getInstance(){
@@ -103,8 +103,8 @@ public class LeadTriggerHandler{
             }
             
             for (Lead ld : newLeadMap.values()){
-                if (ld.Enter_UTM_Link__c != null && ld.Enter_UTM_Link__c != oldLeadMap.get(ld.Id).Enter_UTM_Link__c){
-                    //Utility.UTMLinkParams(ld);
+                if (ld.Enter_UTM_Link__c != null && ld.Lead_Generation_Method__c != null && (ld.Lead_Generation_Method__c == 'Chat Form' || ld.Lead_Generation_Method__c == 'Generic Form' )){
+                    Utility.UTMLinkParams(ld);
                 }
                 if (ld.LeadSource != null && ld.UTM_Medium__c != null){
                     if ((ld.LeadSource == 'Reference' && ld.UTM_Medium__c == 'NA' && ld.Lead_Gen_Path__c == 'NA') || (ld.LeadSource == 'Walkin' && ld.UTM_Medium__c == 'NA' && ld.Lead_Gen_Path__c == 'NA') || (ld.LeadSource == 'LMS References' && ld.UTM_Medium__c == 'NA' && ld.Lead_Gen_Path__c == 'NA') || (ld.LeadSource == 'GoogleAds' && ld.UTM_Medium__c == 'Search') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'GoogleOrganic') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'GoogleLocal') || (ld.LeadSource == 'BingAds' && ld.UTM_Medium__c == 'Search') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'BingOrganic') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'BingLocal') || (ld.LeadSource == 'NA' && ld.UTM_Medium__c == 'Direct')){
@@ -119,6 +119,11 @@ public class LeadTriggerHandler{
                     }
                 }
                 if(ld.City__c != null && ld.City__c != oldLeadMap.get(ld.Id).City__c ){
+                    system.debug('ld.City__c--->'+ld.City__c);
+                    system.debug('mapOfStateByCity.containsKey(ld.City__c)--->'+mapOfStateByCity.containsKey(ld.City__c));
+                    
+                    system.debug('mapOfCountryByCity.containsKey(ld.City__c)--->'+mapOfCountryByCity.containsKey(ld.City__c));
+
                     if(mapOfStateByCity.containsKey(ld.City__c)){
                         ld.State__c = mapOfStateByCity.get(ld.City__c);
                     }
@@ -126,7 +131,7 @@ public class LeadTriggerHandler{
                         ld.Country__c = mapOfCountryByCity.get(ld.City__c);
                     }
                 }
-                system.debug('ld.Quality_of_Lead__c-->' + ld.Quality_of_Lead__c);
+                
             }
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());

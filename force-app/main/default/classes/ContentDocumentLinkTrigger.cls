@@ -15,10 +15,10 @@ public class ContentDocumentLinkTrigger {
             for ( ContentDocumentLink cdl : cdlList ) {
                 parentIds.add( cdl.LinkedEntityId );
             }
-            List<Invoice__c> invList = [SELECT Id, LeadInvoice__c, LeadInvoice__r.Payment_Type__c, Opportunity__c, Opportunity__r.Owner.managerid, Lead_ManagerId__c, ( SELECT Id FROM ContentDocumentLinks LIMIT 1 ) FROM Invoice__c WHERE Id IN :parentIds];
+            List<Invoice__c> invList = [SELECT Id, LeadInvoice__c, LeadInvoice__r.Payment_Type__c, Opportunity__c, Opportunity__r.Owner.managerid,Opportunity__r.Payment_Type__c, Lead_ManagerId__c, ( SELECT Id FROM ContentDocumentLinks LIMIT 1 ) FROM Invoice__c WHERE Id IN :parentIds];
             system.debug('invList :: ' + invList);
             for (Invoice__c iRec : invList) {
-                if(iRec.LeadInvoice__r.Payment_Type__c == 'Cash' || iRec.LeadInvoice__r.Payment_Type__c == 'Cheque' || iRec.LeadInvoice__r.Payment_Type__c == 'POS'){
+                if(iRec.Opportunity__r.Payment_Type__c == 'Cash' || iRec.Opportunity__r.Payment_Type__c == 'Cheque' || iRec.Opportunity__r.Payment_Type__c == 'POS'){
                     Approval.ProcessSubmitRequest approvalRequest = new Approval.ProcessSubmitRequest();
                     approvalRequest.setComments('Submitting for Manager Approval');
                     approvalRequest.setObjectId(iRec.Id);

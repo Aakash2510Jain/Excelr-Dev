@@ -21,15 +21,15 @@ public class DN_CCAvenue_CTRL {
             String WORKING_KEY = ccDetails.Non_FCRA_Working_Key__c;
             String TRANSACTION_URL = ccDetails.CCAvenue_Transaction_URL__c;
 
-            String AVENUE_CANCEL_URL = DN_ServiceConstants.AVENUE_CANCEL_URL;
-            String AVENUE_SUCCESS_URL = DN_ServiceConstants.AVENUE_SUCCESS_URL;
+            String AVENUE_CANCEL_URL = DN_ServiceConstants.AVENUE_CANCEL_URL+'?order_id='+oppId;
+            String AVENUE_SUCCESS_URL = DN_ServiceConstants.AVENUE_SUCCESS_URL+'?order_id='+oppId;
             
 
             Opportunity opp = getOpportunity(oppId);
 
             Long tstamp = System.now().getTime();
 
-            String params = 'tid='+opp.Name+tstamp+'&merchant_id='+MERCHANT_ID+'&order_id='+opp.Name+'&amount='+opp.Amount+'&currency='+'INR'+'&redirect_url='   +AVENUE_SUCCESS_URL+'&cancel_url='+AVENUE_CANCEL_URL+'&language=EN&billing_name='+opp.Name+'&billing_address='+opp.Account.BillingStreet+'&billing_city='+opp.Account.BillingCity+'&billing_state='+opp.Account.BillingState+'&billing_zip='+opp.Account.BillingPostalCode+'&billing_country='+opp.Account.BillingCountry+'&billing_tel='+opp.Account.Phone+'&billing_email='+opp.Account.Email__c+'&delivery_name='+opp.Name+'&delivery_address='+opp.Account.ShippingStreet+'&delivery_city='+opp.Account.ShippingCity+'&delivery_state='+opp.Account.ShippingState+'&delivery_zip='+opp.Account.ShippingPostalCode+'&delivery_country='+opp.Account.ShippingCountry+'&delivery_tel='+opp.Account.Phone;
+                  String params = 'tid='+opp.Name+tstamp+'&merchant_id='+MERCHANT_ID+'&order_id='+opp.Name+'&amount='+opp.Amount+'&currency='+'INR'+'&redirect_url='   +AVENUE_SUCCESS_URL+'&cancel_url='+AVENUE_CANCEL_URL+'&language=EN&billing_name='+opp.Name+'&billing_address='+opp.Account.BillingStreet+'&billing_city='+opp.Account.BillingCity+'&billing_state='+opp.Account.BillingState+'&billing_zip='+opp.Account.BillingPostalCode+'&billing_country='+opp.Account.BillingCountry+'&billing_tel='+opp.Account.Phone+'&billing_email='+opp.Account.Email__c+'&delivery_name='+opp.Name+'&delivery_address='+opp.Account.ShippingStreet+'&delivery_city='+opp.Account.ShippingCity+'&delivery_state='+opp.Account.ShippingState+'&delivery_zip='+opp.Account.ShippingPostalCode+'&delivery_country='+opp.Account.ShippingCountry+'&delivery_tel='+opp.Account.Phone;
 
             String encRequest = CCAvenueUtilClass.encryptString(params, WORKING_KEY);
 
@@ -59,8 +59,9 @@ public class DN_CCAvenue_CTRL {
         String WORKING_KEY = ccDetails.Non_FCRA_Working_Key__c;
         String TRANSACTION_URL = ccDetails.CCAvenue_Transaction_URL__c;
 
-        String AVENUE_CANCEL_URL = DN_ServiceConstants.AVENUE_CANCEL_URL;
-        String AVENUE_SUCCESS_URL = DN_ServiceConstants.AVENUE_SUCCESS_URL;
+           String AVENUE_CANCEL_URL = DN_ServiceConstants.AVENUE_CANCEL_URL+'?order_id='+iv.Opportunity__c+'&order_status=Fail';
+            String AVENUE_SUCCESS_URL = DN_ServiceConstants.AVENUE_SUCCESS_URL+'?order_id='+iv.Opportunity__c+'&order_status=Success';
+            
 
         Long tstamp = System.now().getTime();
 

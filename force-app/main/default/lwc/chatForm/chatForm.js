@@ -801,6 +801,10 @@ export default class chatForm extends LightningElement {
                             this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
                             this.HandleLeadCreatedisable=false;
                         }
+                        else if (data == 'Lead Already exist') {
+                            this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
+                            
+                        }
                     })
                     .catch(error => {
                         this.handleAlert('Error updating or reloading records');
