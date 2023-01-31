@@ -5,6 +5,13 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "java",
+      "name": "Launch ShopSeSignatureTest",
+      "request": "launch",
+      "mainClass": "manifest.ShopSeSignatureTest",
+      "projectName": "Excelr Dev_ab1ad6e4"
+    },
+    {
       "name": "Launch Apex Replay Debugger",
       "type": "apex-replay",
       "request": "launch",

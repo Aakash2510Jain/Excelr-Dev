@@ -11,9 +11,9 @@ public without sharing class ReferralFormController{
         string message = '';
         try{
             if (CID_of_Referer != null){
-                List<Lead> LeadList = [Select id, CID__c, ownerId, email, Phone
+                List<Lead> LeadList = [Select id, ownerId, email, Phone
                                        From Lead
-                                       Where CID__c = :CID_of_Referer
+                                       
                                        LIMIT 1];
                 System.debug('LeadList  ====> ' + LeadList);
                 if (LeadList.size() > 0){

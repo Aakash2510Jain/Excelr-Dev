@@ -26,8 +26,8 @@ public without sharing class voiceFormLWCcontroller{
     }
 
     @auraenabled
-    public static String createLead(String firstname, string Lastname, string email, string phone, string Course, string agentid,string city,string LdGenPath,string state,string country,string source,string medium,string comments){
-       // System.debug('userId ====> ' + userId);
+    public static String createLead(string Lastname, string email, string phone, string Course, string agentid,string city,string LdGenPath,string state,string country,string source,string medium,string comments){
+       // System.debug('userId ====> ' + userId); String firstname, 
         System.debug('agentid ====> ' + agentid);
         lead leadRec = new lead();
         string message = '';
@@ -40,8 +40,8 @@ public without sharing class voiceFormLWCcontroller{
                                         Where id = :agentid];
             }
 
-            system.debug(firstname + ' : ' + Lastname + ' : ' + email + ' : ' + phone + ' : ' + Lastname);
-            leadRec.FirstName = firstname;
+            system.debug(Lastname + ' : ' + email + ' : ' + phone + ' : ' + Lastname);
+            //leadRec.FirstName = firstname;
             leadRec.LastName = Lastname;
             leadRec.Email = email;
             leadRec.Phone = phone;
@@ -276,6 +276,76 @@ public without sharing class voiceFormLWCcontroller{
         List<City_State_Country__c> cityValues=[Select City__c,Order_Number__c From City_State_Country__c ORDER BY Order_Number__c ASC];
         
         return cityValues;
+    }
+
+
+    // ============================================ This is check Whether hashcode is existing in Cookies as well as in user Record hashcode =============================
+
+    public PageReference checkExistingHashKeyMatching(){
+
+        //String LoginPageBaseurl = 'https://whitemart--partial.sandbox.my.salesforce-sites.com/Abasoft_LoginPage';
+        //String CustomerDetailPageBaseUrl = 'https://whitemart--partial.sandbox.my.salesforce-sites.com/CusomerDetailAURA_IN_VFPage';
+
+        String LoginPageBaseurl = System.Label.LoginPageBaseurl;
+        String ExistingHashcode = '';
+        string FinalPageToRedirect = '';
+        Boolean redirecttoLoginPage;
+
+        String LoginHashcode = Apexpages.currentPage().getparameters().get('hascode'); //IsReloading
+        String LGEMemberRecordid = Apexpages.currentPage().getparameters().get('id');
+        String Reloading = Apexpages.currentPage().getparameters().get('IsReloading');
+        string headerdata = ApexPages.currentPage().getHeaders().get('Host');
+        string urlvalue = Apexpages.currentPage().getUrl();
+
+        List<ExcelR_Training_User__c> ExcelRTrainUser = [SELECT Departments__c, Email__c, First_Name__c, HashCode__c, Id, Last_Name__c, Name, Password__c, Username__c
+                                                         FROM ExcelR_Training_User__c
+                                                         WHERE id = :LGEMemberRecordid
+                                                         LIMIT 1]; 
+
+
+        List<String> DepartmentArr = ExcelRTrainUser[0].Departments__c.split(';');
+
+        System.debug('hashCode ======> ' + Apexpages.currentPage().getparameters().get('hascode'));
+        System.debug('Reloading ====> ' + Reloading);
+
+        Cookie userHashCodeCookie = ApexPages.currentPage().getCookies().get('userHashCodeCookie');
+        System.debug('userHashCodeCookie ==> ' + userHashCodeCookie);
+
+        if (userHashCodeCookie != null && LoginHashcode != null){
+            ExistingHashcode = String.valueOf(userHashCodeCookie.getValue());
+            if (LoginHashcode == ExistingHashcode && ExcelRTrainUser[0].HashCode__c == ExistingHashcode){
+                if (Reloading == '' || Reloading == null){
+
+                    if (urlvalue.contains('apex')) {
+                        urlvalue = urlvalue.replace('apex', 'Loginpage');
+                    }
+                    FinalPageToRedirect = 'https://' + headerdata + urlvalue + '&IsReloading=true';
+                    // FinalPageToRedirect = LoginHashcode+ '?id='+ExistingHashcode +'&IsReloading=true';
+                    System.debug('FinalPageToRedirect ====> ' + FinalPageToRedirect);
+
+
+                    PageReference LGEMemberFormPage = new PageReference(FinalPageToRedirect);
+                    LGEMemberFormPage.setRedirect(true);
+                    return LGEMemberFormPage;
+                }
+
+            }
+        } else if(userHashCodeCookie == null && LoginHashcode != null){
+            System.debug('Redirect to Login Page');
+            FinalPageToRedirect = LoginPageBaseurl;
+            System.debug('FinalPageToRedirect ====> ' + FinalPageToRedirect);
+
+            PageReference LoginPage = new PageReference(FinalPageToRedirect);
+            LoginPage.setRedirect(true);
+            return LoginPage;
+            /*FinalPageToRedirect = 'https://' + headerdata + urlvalue + '&IsReloading=true';
+            //FinalPageToRedirect = LoginPageBaseurl + '?id='+ LoginHashcode +'&hascode=' +LoginHashcode ;
+            System.debug('FinalPageToRedirect =====> ' + FinalPageToRedirect);
+            PageReference CustomerDetailPage = new PageReference(FinalPageToRedirect);
+            CustomerDetailPage.setRedirect(true);
+            return CustomerDetailPage;*/
+        }
+        return null;
     }
 
 }

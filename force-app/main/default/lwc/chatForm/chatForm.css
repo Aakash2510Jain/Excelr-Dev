@@ -69,3 +69,21 @@
     }
 
 }
+
+.textAreaClass {
+    height:10rem;
+}
+
+.slds-textarea{
+    height:5rem;
+
+}
+
+.exampleHolder{
+    position: relative;
+    display: inline-block;
+    margin-left: 15px;
+    width: 55px;
+    vertical-align: middle;
+    white-space: nowrap;
+}

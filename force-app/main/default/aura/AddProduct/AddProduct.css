@@ -1,0 +1,21 @@
+.THIS .tableHeader {
+    text-align: center;
+}
+.THIS .tablerowData {
+    padding-left:2%;
+    padding-right:2%;
+    padding-bottom:1%;
+}
+.THIS table {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.THIS td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+.THIS th {
+    border: 1px solid black;
+    border-collapse: collapse;
+}

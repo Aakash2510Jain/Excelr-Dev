@@ -23,6 +23,7 @@ import LEAD_SOURCE from '@salesforce/schema/Lead.LeadSource';
 import LEAD_MEDIUM from '@salesforce/schema/Lead.UTM_Medium__c';
 import FetchStateCounty from '@salesforce/apex/voiceFormLWCcontroller.FetchStateCounty';
 import Fetchcities from '@salesforce/apex/voiceFormLWCcontroller.Fetchcities';
+import fetchCountryAndCountryCode from '@salesforce/apex/GenericLeadLWCcontroller.fetchCountryAndCountryCode';
 
 
 
@@ -87,6 +88,7 @@ export default class voiceForm extends LightningElement {
     @api selectedrecordDetails;
     @api agentrecid;
     @api DepartmentListstring;
+    @api hashcode;
     @track DepartmentList = [];
     @track mapData = [];
     @track showFromOrEmpty = false;
@@ -138,6 +140,7 @@ export default class voiceForm extends LightningElement {
             }  
            }
            this.Picklistvalue=arr;
+           this.Picklistvalue.sort((a, b) => (a.label > b.label) ? 1 : -1);
            console.log('Picklistvalue=',this.Picklistvalue);
         }
         else {
@@ -167,6 +170,7 @@ export default class voiceForm extends LightningElement {
               arr.push({label:data.values[i].label,value:data.values[i].value});
            }
            this.LeadSourcePicklist=arr;
+           this.LeadSourcePicklist.sort((a, b) => (a.label > b.label) ? 1 : -1);
            console.log('Picklistvalue=',this.LeadSourcePicklist);
         }
         else {
@@ -198,6 +202,7 @@ export default class voiceForm extends LightningElement {
               arr.push({label:data.values[i].label,value:data.values[i].value});
            }
            this.LeadMediumPicklist=arr;
+           this.LeadMediumPicklist.sort((a, b) => (a.label > b.label) ? 1 : -1);
            console.log('Picklistvalue=',this.LeadMediumPicklist);
         }
         else {
@@ -432,6 +437,7 @@ export default class voiceForm extends LightningElement {
             else{
                 this.StateDisable=true;
                 this.CountryDisable=true;
+                this.InputCity = false;
             }
 
             if(TempValue){
@@ -452,12 +458,40 @@ export default class voiceForm extends LightningElement {
                 this.StateValue='';
                 this.CountryValue='';
             }
+
+            if (this.CountryValue) {
+                //countrycode = this.countryCodeList.find(item => item.Name == this.CountryValue);
+                //this.countrycodevalue = countrycode.CountryCode__c;
+                this.handleCountrycode(this.CountryValue);
+            }
            
 
             
             console.log('state=',this.StateValue);
         }
         
+    }
+
+    @track countryCodeList = [];
+    @wire(fetchCountryAndCountryCode)
+    wiredcountryCountrycode({ data, error }) {
+        debugger;
+        if (data) {
+           this.countryCodeList = data;
+        }
+        else if (error) {
+            console.log('error=', error);
+        }
+    }
+
+    handleCountrycode(country){
+        debugger;
+        let countrycode;
+        country = country.toLowerCase();
+        country = country.charAt(0).toUpperCase() + country.slice(1);
+        countrycode = this.countryCodeList.find(item => item.Name == this.CountryValue);
+        this.countrycodevalue = countrycode.CountryCode__c;
+
     }
 
     @track UserInputCity
@@ -481,6 +515,9 @@ export default class voiceForm extends LightningElement {
            if(event.target.name=="Country"){
     
             this.CountryValue=value;
+            if (this.CountryValue) {
+                this.handleCountrycode(this.CountryValue);
+            }
            }
         }
           
@@ -672,6 +709,7 @@ export default class voiceForm extends LightningElement {
                 console.log(`${key}: ${value}`);
             }
             this.courssweList = options;
+            this.courssweList.sort((a, b) => (a.label > b.label) ? 1 : -1);
             console.log(data)
         }
         if (error) {
@@ -694,6 +732,7 @@ export default class voiceForm extends LightningElement {
                 console.log(`${key}: ${value}`);
             }
             this.StatusList = options;
+            this.StatusList.sort((a, b) => (a.label > b.label) ? 1 : -1);
             console.log(data);
             console.log('statusList--',this.StatusList);
         }
@@ -714,6 +753,7 @@ export default class voiceForm extends LightningElement {
                 console.log(`${key}: ${value}`);
             }
             this.priorityList = options;
+            this.priorityList.sort((a, b) => (a.label > b.label) ? 1 : -1);
             console.log(data)
         }
         if (error) {
@@ -744,8 +784,8 @@ export default class voiceForm extends LightningElement {
      }
     HandleLeadCreatedisable=false;
     createNewLead() {
-        debugger;
-        if((this.namValue!=undefined && this.namValue!=null && this.namValue!='' ) && (this.lNameValue!=undefined && this.lNameValue!=null && this.lNameValue!='') && (this.emailValue!=undefined && this.emailValue!=null && this.emailValue!='' ) && (this.phoneValue!=undefined && this.phoneValue!=null  && this.phoneValue!='' ) 
+        debugger; //(this.namValue!=undefined && this.namValue!=null && this.namValue!='' ) &&
+        if( (this.lNameValue!=undefined && this.lNameValue!=null && this.lNameValue!='') && (this.emailValue!=undefined && this.emailValue!=null && this.emailValue!='' ) && (this.phoneValue!=undefined && this.phoneValue!=null  && this.phoneValue!='' ) 
         && (this.CourceLead!=undefined && this.CourceLead!=null && this.CourceLead!='' ) && (this.cityValue!=undefined && this.cityValue!=null && this.cityValue!='' ) && (this.SourceValue!=undefined && this.SourceValue!=null && this.SourceValue!='') && (this.MediumValue!=undefined && this.MediumValue!=null  && this.MediumValue!='') && 
             (this.Leadvalue!=undefined && this.Leadvalue!=null  && this.Leadvalue!=''))
            {
@@ -760,8 +800,8 @@ export default class voiceForm extends LightningElement {
             var returnvalue = this.handleIncorrectEmail(this.emailValue)
             var phoneregexreturnvalue = this.handleCorrectPhone(this.phoneValue)
             console.log('returnVALUE=', returnvalue);
-            if (returnvalue == true && this.handleCorrectPhone(this.phoneValue)) {
-                createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, Course: this.CourceLead, agentid: this.agentrecid, city: this.cityValue, LdGenPath: this.Leadvalue, source: this.SourceValue, medium: this.MediumValue, country: this.CountryValue, state: this.StateValue, comments: this.commentsValue })
+            if (returnvalue == true && this.handleCorrectPhone(this.phoneValue)) { // firstname: this.namValue, 
+                createLead({Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, Course: this.CourceLead, agentid: this.agentrecid, city: this.cityValue, LdGenPath: this.Leadvalue, source: this.SourceValue, medium: this.MediumValue, country: this.CountryValue, state: this.StateValue, comments: this.commentsValue })
                     .then(data => {
 
                         if (data == 'SUCCESS') {
@@ -945,21 +985,20 @@ export default class voiceForm extends LightningElement {
         debugger;
         var selectedVal = event.detail.value;
         if (selectedVal == 'Walk-In') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring+ '&hascode=' + this.hashcode;
             window.open(urlString, "_self");
-            
         }
         if (selectedVal == 'Voice') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring+ '&hascode=' + this.hashcode;
             window.open(urlString, "_self");
             
         }
         if (selectedVal == 'Generic') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring+ '&hascode=' + this.hashcode;
             window.open(urlString, "_self");
         }
         if (selectedVal == 'Chat') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring+ '&hascode=' + this.hashcode;
             window.location.replace(urlString, "_self");
         }
     }

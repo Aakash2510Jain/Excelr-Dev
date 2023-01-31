@@ -1,0 +1,91 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" controller="AddProductHelper" access="global" >
+    <aura:attribute name="type" type="List" />
+    <aura:attribute name="mode" type="List" />
+    <aura:attribute name="modeClassroom" type="boolean" default="false" />
+    <aura:attribute name="typeCombo" type="boolean" default="false" />
+    <aura:attribute name="typeSingle" type="boolean" default="true" />
+    
+    <aura:handler  name="init" value="{!this}" action="{!c.doinit}"/>
+    
+    <div style="margin:2%"> 
+        
+        <table>
+            <thead>
+                <th class="tableHeader">
+                    Type
+                </th>
+                <aura:renderIf isTrue="{!v.typeCombo}">
+                    <th class="tableHeader">
+                        Course
+                    </th>
+                </aura:renderIf>
+                <th class="tableHeader">
+                    Mode
+                </th>
+                <aura:renderIf isTrue="{!v.modeClassroom}">
+                    <th class="tableHeader">
+                        City
+                    </th>
+                </aura:renderIf>
+                <aura:renderIf isTrue="{!v.typeSingle}">
+                    <th class="tableHeader">
+                        Course
+                    </th>
+                </aura:renderIf>
+                <th class="tableHeader">
+                    Discount
+                </th>
+                <th class="tableHeader">
+                    Price
+                </th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="tablerowData">
+                        <lightning:select name="type" label="" aura:id="type" onchange="{!c.onTypeChange}" >
+                            <option value="">choose one...</option>
+                            <aura:iteration items="{!v.type}" var="typeVal">
+                                <option text="{!typeVal}" value="{!typeVal}" />
+                            </aura:iteration>
+                        </lightning:select>
+                    </td>
+                    <aura:renderIf isTrue="{!v.typeCombo}">
+                        <td class="tablerowData">
+                            Course
+                        </td>
+                    </aura:renderIf>
+                    <td class="tablerowData">
+                        <lightning:select name="mode" label="" aura:id="type" onchange="{!c.onModeChange}" >
+                            <option value="">choose one...</option>
+                            <aura:iteration items="{!v.mode}" var="modeVal">
+                                <option text="{!modeVal}" value="{!modeVal}" />
+                            </aura:iteration>
+                        </lightning:select>
+                    </td>
+                    <aura:renderIf isTrue="{!v.modeClassroom}">
+                        <td class="tablerowData">
+                            city
+                        </td>
+                    </aura:renderIf>
+                    <aura:renderIf isTrue="{!v.typeSingle}">
+                        <td class="tablerowData">
+                            single course
+                        </td>
+                    </aura:renderIf>
+                    <td class="tablerowData">
+                        <lightning:input type="number" name="discount" label="" max="60"/>
+                    </td>
+                    <td class="tablerowData">
+                        100
+                    </td>
+                    
+                </tr>
+            </tbody>
+        </table>
+        
+        
+        
+        
+        
+    </div>
+</aura:component>

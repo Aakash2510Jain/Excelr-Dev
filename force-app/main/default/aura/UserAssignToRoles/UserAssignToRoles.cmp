@@ -1,0 +1,57 @@
+<aura:component controller="UserAssignToRolesHandler" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="newUser" type="User" default="{ 'sobjectType': 'User' }" />
+    <aura:attribute name="userList" type="User[]"/>
+      <aura:attribute name="userId" type="Id" /> 
+    <aura:attribute name="maxLeadPerDay" type="Integer"/>
+    <aura:attribute name="maxLeadPerMonth" type="Integer"/>
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <div class="container-fluid">        
+        <table class="slds-table slds-table_bordered slds-table_cell-buffer"> 
+            <thead>               
+                <tr class="slds-text-title_caps">  
+                    <th scope="col">
+                        <div class="slds-truncate">First Name</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" >Last Name</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" >Max Lead Per Day</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" >Max Lead Per Month</div>
+                    </th>    
+                </tr>            
+            </thead>            
+            <tbody>            
+                <aura:iteration items="{!v.userList}" var="user" indexVar="index">                 
+                    <tr class="slds-hint-parent">
+                      <td >                        
+                            <div class="slds-truncate" title="firstName">
+                                {!user.FirstName} 
+                            </div>
+                        </td>
+                        <td>
+                            <div class="slds-truncate" title="lastName">
+                                {!user.LastName}
+                            </div>
+                        </td>
+                        <td >
+                            <div class="slds-truncate" title="MaxLeadPerDay"> 
+                                <lightning:input value="{!user.maxLeadPerDay}"/>
+                            </div>
+                        </td>
+                        <td >
+                            <div class="slds-truncate" title="MaxLeadPerMonth"> <lightning:input value="{!user.maxLeadPerMonth}"/>      
+                        </div>
+                        </td>                                                 
+                    </tr>
+                </aura:iteration>
+          </tbody>  
+        </table>
+    </div>   
+   
+    <lightning:button iconPosition="left" variant="brand" onclick="{!c.doSave}" name="save" label="Save" />
+    <lightning:button iconPosition="right" variant="destructive" onclick="{!c.docancel}" name="cancel" label="Cancel" />
+  
+</aura:component>

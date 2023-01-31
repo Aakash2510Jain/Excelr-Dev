@@ -23,6 +23,7 @@ import LEAD_SOURCE from '@salesforce/schema/Lead.LeadSource';
 import LEAD_MEDIUM from '@salesforce/schema/Lead.UTM_Medium__c';
 import FetchStateCounty from '@salesforce/apex/ChatFormLWCcontroller.FetchStateCounty';
 import Fetchcities from '@salesforce/apex/ChatFormLWCcontroller.Fetchcities';
+import fetchCountryAndCountryCode from '@salesforce/apex/GenericLeadLWCcontroller.fetchCountryAndCountryCode';
 
 import QueryPastLeads from '@salesforce/apex/ChatFormLWCcontroller.QueryPastLeads';
 import LightningAlert from 'lightning/alert';
@@ -84,6 +85,7 @@ export default class chatForm extends LightningElement {
     @api selectedrecordDetails;
     @api agentrecid;
     @api DepartmentListstring;
+    @api hashcode;
     @track DepartmentList = [];
     @track mapData = [];
     @track showFromOrEmpty = false;
@@ -207,6 +209,36 @@ export default class chatForm extends LightningElement {
 
     }
 
+    @track countryCodeList = [];
+    @wire(fetchCountryAndCountryCode)
+    wiredcountryCountrycode({ data, error }) {
+        debugger;
+        if (data) {
+           this.countryCodeList = data;
+        }
+        else if (error) {
+            console.log('error=', error);
+        }
+
+    }
+
+
+    handleCountrycode(country){
+        debugger;
+        let countrycode;
+        country = country.toLowerCase();
+        country = country.charAt(0).toUpperCase() + country.slice(1);
+        countrycode = this.countryCodeList.find(item => item.Name == country);
+        if (countrycode != undefined) {
+            this.countrycodevalue = countrycode.CountryCode__c;            
+        }
+        else{
+            this.countrycodevalue = '';
+        }
+        
+
+    }
+
     // Picklistvalue=[];
     @wire(getObjectInfo, {objectApiName:LEAD_OBJECT})
     objectInfo
@@ -246,11 +278,13 @@ export default class chatForm extends LightningElement {
         if(data){
            console.log('data=',data);
            console.log('dataValues=',data.values);
+           
            let arr=[];
            for(let i=0;i<data.values.length;i++){
               arr.push({label:data.values[i].label,value:data.values[i].value});
            }
            this.LeadSourcePicklist=arr;
+           this.LeadSourcePicklist.sort((a, b) => (a.label > b.label) ? 1 : -1);
            console.log('Picklistvalue=',this.LeadSourcePicklist);
         }
         else {
@@ -282,6 +316,7 @@ export default class chatForm extends LightningElement {
               arr.push({label:data.values[i].label,value:data.values[i].value});
            }
            this.LeadMediumPicklist=arr;
+           this.LeadMediumPicklist.sort((a, b) => (a.label > b.label) ? 1 : -1);
            console.log('Picklistvalue=',this.LeadMediumPicklist);
         }
         else {
@@ -352,6 +387,7 @@ export default class chatForm extends LightningElement {
             else{
                 this.StateDisable=true;
                 this.CountryDisable=true;
+                this.InputCity = false;
             }
 
             if(TempValue){
@@ -372,6 +408,12 @@ export default class chatForm extends LightningElement {
             else{
                 this.StateValue='';
                 this.CountryValue='';
+            }
+
+            if (this.CountryValue) {
+                //countrycode = this.countryCodeList.find(item => item.Name == this.CountryValue);
+                //this.countrycodevalue = countrycode.CountryCode__c;
+                this.handleCountrycode(this.CountryValue);
             }
 
             
@@ -404,6 +446,9 @@ export default class chatForm extends LightningElement {
            if(event.target.name=="Country"){
     
             this.CountryValue=value;
+            if (this.CountryValue) {
+                this.handleCountrycode(this.CountryValue);
+            }
            }
         }
           
@@ -691,6 +736,8 @@ export default class chatForm extends LightningElement {
                 console.log(`${key}: ${value}`);
             }
             this.courssweList = options;
+            this.courssweList.sort((a, b) => (a.label > b.label) ? 1 : -1);
+            
             console.log(data)
         }
         if (error) {
@@ -713,6 +760,7 @@ export default class chatForm extends LightningElement {
                  console.log(`${key}: ${value}`);
              }
              this.StatusList = options;
+             this.StatusList.sort((a, b) => (a.label > b.label) ? 1 : -1);
              console.log(data);
              console.log('statusList--',this.StatusList);
          }
@@ -733,6 +781,7 @@ export default class chatForm extends LightningElement {
                  console.log(`${key}: ${value}`);
              }
              this.priorityList = options;
+             this.priorityList.sort((a, b) => (a.label > b.label) ? 1 : -1);
              console.log(data)
          }
          if (error) {
@@ -763,8 +812,10 @@ export default class chatForm extends LightningElement {
    @track HandleLeadCreatedisable=false;
 
     createNewLead() {
-       
-        if((this.namValue!=undefined && this.namValue!=null && this.namValue!=''  ) && (this.lNameValue!=undefined && this.lNameValue!=null && this.lNameValue!='') && (this.emailValue!=undefined && this.emailValue!=null && this.emailValue!='') && (this.phoneValue!=undefined && this.phoneValue!=null && this.phoneValue!='') 
+       console.log('transcript', this.TranscriptValue);
+       console.log('lNameValue', this.lNameValue);
+        //(this.namValue!=undefined && this.namValue!=null && this.namValue!=''  ) && 
+        if((this.lNameValue!=undefined && this.lNameValue!=null && this.lNameValue!='') && (this.emailValue!=undefined && this.emailValue!=null && this.emailValue!='') && (this.phoneValue!=undefined && this.phoneValue!=null && this.phoneValue!='') 
              && (this.CourceLead!=undefined && this.CourceLead!=null && this.CourceLead!='') && (this.cityValue!=undefined && this.cityValue!=null && this.cityValue!='') && (this.sourceValue!=undefined && this.sourceValue!=null && this.sourceValue!='') && (this.MediumValue!=undefined && this.MediumValue!=null && this.MediumValue!='') && 
                 (this.VisitorIdValue!=undefined && this.VisitorIdValue!=null && this.VisitorIdValue!='' ) && (this.TranscriptValue!=undefined && this.TranscriptValue!=null&& this.TranscriptValue!='') && (this.PageUrlValue!=undefined && this.PageUrlValue!=null && this.PageUrlValue!='' ) )
                 {
@@ -776,8 +827,10 @@ export default class chatForm extends LightningElement {
                     
             debugger;
             var returnvalue = this.handleIncorrectEmail(this.emailValue)
-            if (returnvalue == true && this.handleCorrectPhone(this.phoneValue)) {
-                createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, Course: this.CourceLead, agentid:this.agentrecid ,city:this.cityValue,source:this.sourceValue,medium:this.MediumValue,VisitorId:this.VisitorIdValue,Transcript:this.TranscriptValue,state:this.StateValue,country:this.CountryValue,LandingPageURL:this.PageUrlValue,comments:this.commentsValue})
+
+            this.handleSpinner();
+            if (returnvalue == true && this.handleCorrectPhone(this.phoneValue)) {  // firstname: this.namValue, 
+                createLead({Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, Course: this.CourceLead, agentid:this.agentrecid ,city:this.cityValue,source:this.sourceValue,medium:this.MediumValue,VisitorId:this.VisitorIdValue,Transcript:this.TranscriptValue,state:this.StateValue,country:this.CountryValue,LandingPageURL:this.PageUrlValue,comments:this.commentsValue})
                     .then(data => {
 
                         if (data == 'SUCCESS') {
@@ -795,18 +848,22 @@ export default class chatForm extends LightningElement {
                         this.CountryValue = '';
                         this.cityValue = '';
                         this.Leadvalue = '';
+                        this.handleSpinner();
                             
                         }
                         else if (data == 'FAIL') {
+                            this.handleSpinner();
                             this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
                             this.HandleLeadCreatedisable=false;
                         }
                         else if (data == 'Lead Already exist') {
+                            this.handleSpinner();
                             this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
                             
                         }
                     })
                     .catch(error => {
+                        this.handleSpinner();
                         this.handleAlert('Error updating or reloading records');
                         this.HandleLeadCreatedisable=false;
                         this.handleCancel();
@@ -823,6 +880,11 @@ export default class chatForm extends LightningElement {
         }  
        
 
+    }
+
+    @track spinnerLoading = false;
+    handleSpinner() {
+        this.spinnerLoading = !this.spinnerLoading;
     }
 
     async handleConfirm(message) {
@@ -988,21 +1050,21 @@ export default class chatForm extends LightningElement {
         debugger;
         var selectedVal = event.detail.value;
         if (selectedVal == 'Walk-In') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring+ '&hascode=' + this.hashcode;
             window.open(urlString, "_self");
             
         }
         if (selectedVal == 'Voice') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring+ '&hascode=' + this.hashcode;
             window.open(urlString, "_self");
             
         }
         if (selectedVal == 'Generic') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring+ '&hascode=' + this.hashcode;
             window.open(urlString, "_self");
         }
         if (selectedVal == 'Chat') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring+ '&hascode=' + this.hashcode;
             window.location.replace(urlString, "_self");
         }
     }

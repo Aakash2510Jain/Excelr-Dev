@@ -1,4 +1,4 @@
-<apex:page >
+<apex:page action="{!checkExistingHashKeyMatching}" controller="voiceFormLWCcontroller">
     <apex:includeLightning />
     <apex:includeScript value="/lightning/lightning.out.js" />
     <div id="lightningapp" />
@@ -6,11 +6,13 @@
     debugger;
     var Departments = "{!$CurrentPage.parameters.departments}";
     var agentrecordId = "{!$CurrentPage.parameters.id}";
+    var urlhashcode = "{!$CurrentPage.parameters.hascode}";
     
     $Lightning.use("c:voiceFormAPP", function () {
         $Lightning.createComponent("c:voiceForm",
                                    {'agentrecid' : agentrecordId,
-                                   'DepartmentListstring' : Departments},
+                                   'DepartmentListstring' : Departments,
+                                   'hashcode' : urlhashcode},
                                    "lightningapp",
                                    function (cmp) {
                                        console.log("Customer Detail is loaded in Vf page");

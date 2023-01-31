@@ -50,7 +50,7 @@ public class LeadAssignmentExecutionCriteria {
         
         list<lead> queueLeads = [SELECT Activity_On__c,Address,AdGroup__c,AD_Set_Id__c,AD_Set_Name__c,Assignment_Group__c,
                                  Branch__c,Capture_NBFC_Partner__c,Capture_Tenure__c,Capture_Upfront_payment__c,
-                                 CID_of_Referer__c,CID__c,City,City__c,Comments__c,Company,Confidence_Level__c,Conversation_Comments__c
+                                 CID_of_Referer__c,City,City__c,Comments__c,Company,Confidence_Level__c,Conversation_Comments__c
                                  ,ConvertedAccountId,ConvertedContactId,ConvertedDate,ConvertedOpportunityId,Country,Country__c,
                                  Course_Interested_Rating__c,Course__c,CreatedById,CreatedDate,Current_Domain__c,Date_of_Enrollment__c,
                                  Description,Designation__c,Do_you__c,Email,EmailBouncedDate,EmailBouncedReason,Email_Conversation_Done__c,
@@ -69,7 +69,7 @@ public class LeadAssignmentExecutionCriteria {
                                  Total_Calls__c,Total_Call_Duration__c,Total_Connected_Call__c,Total_Conversation_Duration__c,Total_Course_Interests__c,
                                  Total_Emails__c,Transcript__c,Type_of_Course__c,UTM_AdGroup__c,UTM_Campaign__c,UTM_Channel__c,UTM_Content__c,UTM_Device__c,
                                  UTM_Experiment__c,UTM_link__c,UTM_Location__c,UTM_Medium__c,UTM_Term__c,UTM_Type__c,UTM_Variety__c,Visitor_ID__c,Website,
-                                 Whatsapp_Opt_in__c,Why_This_Course__c,Year_of_Experience__c,Year_of_Graduation__c 
+                                 Whatsapp_Opt_in__c,Why_This_Course__c,Year_of_Experience__c 
                                  FROM Lead 
                                  where ownerId =: queueId];
         if(!queueLeads.isEmpty()){

@@ -19,6 +19,15 @@ import LightningAlert from 'lightning/alert';
 import LightningConfirm from "lightning/confirm";
 import { refreshApex } from '@salesforce/apex';
 
+import { getObjectInfo } from 'lightning/uiObjectInfoApi';
+import LEAD_OBJECT from '@salesforce/schema/Lead';
+
+import { getPicklistValues } from 'lightning/uiObjectInfoApi';
+import TYPE_OF_COURSE_FIELD from '@salesforce/schema/Lead.Type_of_Course__c';
+
+import FetchStateCounty from '@salesforce/apex/GenericLeadLWCcontroller.FetchStateCounty';
+import Fetchcities from '@salesforce/apex/GenericLeadLWCcontroller.Fetchcities';
+import fetchCountryAndCountryCode from '@salesforce/apex/GenericLeadLWCcontroller.fetchCountryAndCountryCode';
 
 
 const applicationcolumns = [{ label: 'Name', fieldName: 'Name' },
@@ -74,6 +83,7 @@ export default class WaklInLead extends LightningElement {
     @api selectedrecordDetails;
     @api agentrecid;
     @api DepartmentListstring;
+    @api hashcode;
     @track DepartmentList = [];
     @track mapData = [];
     @track showFromOrEmpty = false;
@@ -96,12 +106,190 @@ export default class WaklInLead extends LightningElement {
 
     }
 
+    @wire(getObjectInfo, { objectApiName: LEAD_OBJECT })
+    objectInfo
+
+    @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: TYPE_OF_COURSE_FIELD })
+    TypeofCoursePicklistValues
+
     convertStringtoList(){
         this.DepartmentList = this.DepartmentListstring.split(';');
         for (var key in this.DepartmentList) {
             this.mapData.push({ label: this.DepartmentList[key], value: this.DepartmentList[key] }); //Here we are creating the array to show on UI.
         }
     }
+
+
+    // =========================== Handle city state Country Starts ===================================================
+
+    @track CityPicklistValue = [];
+    @track cityValue;
+    @wire(Fetchcities)
+    WiredResponsecities({ data, error }) {
+        debugger;
+        if (data) {
+            console.log('CityValuedata=', data);
+            let arr = [];
+            for (let i = 0; i < data.length; i++) {
+                arr.push({ label: data[i].City__c, value: data[i].City__c });
+            }
+            this.CityPicklistValue = arr;
+            console.log('Picklistvalue=', this.CityPicklistValue);
+        }
+        else if (error) {
+            console.log('error=', error);
+        }
+
+    }
+
+    get CityOptions() {
+        return this.CityPicklistValue;
+    }
+
+
+    @track CountryDisable = true;
+    @track StateDisable = true;
+    @track StateValue;
+    @track CountryValue;
+    @track InputCity = false;
+    HandleCityStatus(event) {
+
+        debugger;
+        let city = event.detail.value;
+        if (city) {
+            this.cityValue = city;
+            let state;
+            let TempValue;
+            let country;
+            TempValue = city;
+
+            console.log('Tempstate=', TempValue);
+
+            if (TempValue == "Other") {
+                this.StateDisable = false;
+                this.CountryDisable = false;
+                this.InputCity = true;
+                alert('Please Type Your State and Country');
+            }
+            else {
+                this.StateDisable = true;
+                this.CountryDisable = true;
+                this.InputCity = false;
+            }
+
+            if (TempValue) {
+                TempValue = TempValue.charAt(0).toUpperCase() + TempValue.slice(1);
+                console.log('Tempstate2=', TempValue);
+                state = this.StateCountryValue.find(item => item.City__c == TempValue);
+                country = this.StateCountryValue.find(item => item.City__c == TempValue);
+                console.log('state=', state);
+
+            }
+            if (state) {
+                this.StateValue = state.State__c;
+                this.CountryValue = country.Country__c;
+                console.log('StateValue=', this.StateValue);
+
+            }
+            else {
+                this.StateValue = '';
+                this.CountryValue = '';
+            }
+
+            if (this.CountryValue) {
+                //countrycode = this.countryCodeList.find(item => item.Name == this.CountryValue);
+                //this.countrycodevalue = countrycode.CountryCode__c;
+                this.handleCountrycode(this.CountryValue);
+            }
+
+            console.log('state=', this.StateValue);
+        }
+
+    }
+
+
+    @track UserInputCity
+    HandleUserCityStatus(event) {
+        let value = event.target.value;
+        if (this.cityValue == 'Other') {
+            this.UserInputCity = value;
+        }
+
+    }
+
+
+    HandleChangeStateCountry(event) {
+        if (this.cityValue == 'Other') {
+            debugger;
+            let value = event.target.value;
+
+            if (event.target.name == "State") {
+
+                this.StateValue = value;
+            }
+            if (event.target.name == "Country") {
+
+                this.CountryValue = value;
+                if (this.CountryValue) {
+                    this.handleCountrycode(this.CountryValue);
+                }
+            }
+        }
+
+    }
+
+
+    @track StateCountryValue = [];
+    @wire(FetchStateCounty)
+    WiredResponse({ data, error }) {
+        debugger;
+        if (data) {
+            console.log('StateCountryValuedata=', data);
+            this.StateCountryValue = data;
+            console.log('StateCountryValue=', this.StateCountryValue);
+        }
+        else if (error) {
+            console.log('error=', error);
+        }
+
+    }
+
+    @track countryCodeList = [];
+    @wire(fetchCountryAndCountryCode)
+    wiredcountryCountrycode({ data, error }) {
+        debugger;
+        if (data) {
+           this.countryCodeList = data;
+        }
+        else if (error) {
+            console.log('error=', error);
+        }
+
+    }
+
+    handleCountrycode(country){
+        debugger;
+        let countrycode;
+        country = country.toLowerCase();
+        country = country.charAt(0).toUpperCase() + country.slice(1);
+        countrycode = this.countryCodeList.find(item => item.Name == this.CountryValue);
+        this.countrycodevalue = countrycode.CountryCode__c;
+
+    }
+
+
+
+
+
+    // =========================== Handle city state Country Ends ===================================================
+
+    @track typeofCoursevalue;
+    typeofcourseHandler(event){
+        debugger;
+        this.typeofCoursevalue = event.target.value;
+    }
+
+
     emailHandler(Event) {
         debugger;
         let EmailOrPhone = Event.target.value;
@@ -442,6 +630,7 @@ export default class WaklInLead extends LightningElement {
                 console.log(`${key}: ${value}`);
             }
             this.courssweList = options;
+            this.courssweList.sort((a, b) => (a.label > b.label) ? 1 : -1);
             console.log(data)
         }
         if (error) {
@@ -464,6 +653,7 @@ export default class WaklInLead extends LightningElement {
                   console.log(`${key}: ${value}`);
               }
               this.StatusList = options;
+              this.StatusList.sort((a, b) => (a.label > b.label) ? 1 : -1);
               console.log(data);
               console.log('statusList--',this.StatusList);
           }
@@ -484,6 +674,7 @@ export default class WaklInLead extends LightningElement {
                   console.log(`${key}: ${value}`);
               }
               this.priorityList = options;
+              this.priorityList.sort((a, b) => (a.label > b.label) ? 1 : -1);
               console.log(data)
           }
           if (error) {
@@ -515,7 +706,9 @@ export default class WaklInLead extends LightningElement {
     createNewLead() {
         debugger;
 
-        if((this.namValue!=undefined && this.namValue!=null && this.namValue!='') && (this.lNameValue!=undefined && this.lNameValue!=null && this.lNameValue!='' ) && (this.emailValue!=undefined && this.emailValue!=null && this.emailValue!='' ) && (this.phoneValue!=undefined && this.phoneValue!=null && this.phoneValue!='' ) 
+        //(this.namValue!=undefined && this.namValue!=null && this.namValue!='') && 
+
+        if((this.lNameValue!=undefined && this.lNameValue!=null && this.lNameValue!='' ) && (this.emailValue!=undefined && this.emailValue!=null && this.emailValue!='' ) && (this.phoneValue!=undefined && this.phoneValue!=null && this.phoneValue!='' ) 
         && (this.CourceLead!=undefined && this.CourceLead!=null && this.CourceLead!='' ) && (this.selectedrecordDetails!=undefined && this.selectedrecordDetails!=null && this.selectedrecordDetails!='' )) 
             
            {
@@ -525,8 +718,9 @@ export default class WaklInLead extends LightningElement {
         var returnvalue = this.handleIncorrectEmail(this.emailValue)
         var phoneregexreturnvalue = this.handleCorrectPhone(this.phoneValue)
         this.agentrecid;
+        this.handleSpinner();
         if (returnvalue == true && this.handleCorrectPhone(this.phoneValue)) {
-            createLead({ firstname: this.namValue, Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, Course: this.CourceLead, userId: this.selectedrecordDetails.Id, agentid: this.agentrecid,comments:this.commentsValue })
+            createLead({Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, Course: this.CourceLead, typeofcour: this.typeofCoursevalue, userId: this.selectedrecordDetails.Id, agentid: this.agentrecid,comments:this.commentsValue })
                 .then(data => {
 
                     if (data == 'SUCCESS') {
@@ -535,20 +729,24 @@ export default class WaklInLead extends LightningElement {
                         console.log(data)
                         //alert('Lead Record created successfully');
                         this.handleCancel();
-                        this.namValue = '';
                         this.lNameValue = '';
                         this.commentsValue = '';
                         this.emailValue = '';
                         this.phoneValue = '';
                         this.CourceLead = '';
+                        this.typeofCoursevalue = '';
+                        this.handleSpinner();
                     }
                     else if (data == 'FAIL') {
+                        this.handleSpinner();
                         this.HandleLeadCreatedisable=false;
                         this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
+                        
                     }
 
                 })
                 .catch(error => {
+                    this.handleSpinner();
                     this.handleAlert('Error updating or reloading records');
                     this.handleCancel();
                     this.HandleLeadCreatedisable=false;
@@ -605,6 +803,12 @@ export default class WaklInLead extends LightningElement {
     handleClick() {
         this.isLoaded = !this.isLoaded;
     }
+
+    @track spinnerLoading = false;
+    handleSpinner() {
+        this.spinnerLoading = !this.spinnerLoading;
+    }
+
 
     ShowPastLeadPage() {
         debugger;
@@ -707,22 +911,22 @@ export default class WaklInLead extends LightningElement {
         var selectedVal = event.detail.value;
         //var selectedVal = event.currentTarget.dataset.id;
         if (selectedVal == 'Walk-In') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
             window.open(urlString, "_self");
             
         }
         if (selectedVal == 'Voice') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring+ '&hascode=' + this.hashcode;
             window.open(urlString, "_self");
             
         }
         if (selectedVal == 'Generic') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring+ '&hascode=' + this.hashcode;
             window.open(urlString, "_self");
             
         }
         if (selectedVal == 'Chat') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage'+'?id='+ this.agentrecid + '&departments=' + this.DepartmentListstring+ '&hascode=' + this.hashcode;
                                     window.location.replace(urlString, "_self");
         }
     }

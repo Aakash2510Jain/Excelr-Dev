@@ -341,6 +341,35 @@
                                                         </div>
 
                                                     </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name="City__c"
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name="State__c"
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name="Country__c"
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
+                                                    
+                                                    <lightning-layout-item padding="around-small" size="6">
+                                                        <div class="slds-border_bottom">
+                                                            <lightning-output-field field-name="Createddatetime_Form__c"
+                                                                style="font-weight: bold;"> </lightning-output-field>
+                                                        </div>
+
+                                                    </lightning-layout-item>
                                                 </lightning-layout>
                                             </div>
                                         </div>
@@ -402,18 +431,12 @@
                             </header>
                             <!-- Modal/Popup Box LWC body starts here -->
                             <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" >
-                                <lightning-input label="First Name" onchange={FnameChange} required="true"></lightning-input>
-                                <lightning-input label="Last Name" required="true"
+                                <!--lightning-input label="First Name" onchange={FnameChange} required="true"></lightning-input -->
+                                <lightning-input label="Name" required="true"
                                     onchange={LnameChange}></lightning-input>
                                 <lightning-input label="Email" required="true" onchange={EmailChange}></lightning-input>
-                                <lightning-input label="Phone" type="tel" min-length="10" onchange={PhoneChange}
-                                    max-length="10" required="true"></lightning-input>
-                                <lightning-combobox name="course" label="Course" value={value}
-                                    placeholder="Select Course" options={courssweList} onchange={courceHandler} required="true">
-                                </lightning-combobox>
-                                <lightning-combobox name="Lead Gen Path" label="Lead Gen Path" value={Leadvalue}
-                                    placeholder="Select Lead Gen Path" options={ldGenPath} onchange={ldGenPathValue} required="true">
-                                </lightning-combobox >
+                                
+                                
 
                                 <lightning-combobox name="City" label="City" value={cityValue}
                                     placeholder="Select Your City" options={CityOptions} onchange={HandleCityStatus} required="true">
@@ -426,6 +449,31 @@
                                 <!--lightning-input type="text" label="City" name="City" value={cityValue} onchange={HandleCityStatus}></lightning-input-->
                                 <lightning-input type="text" label="State"  name="State" value={StateValue} disabled={StateDisable} onchange={HandleChangeStateCountry}></lightning-input>
                                 <lightning-input type="text" label="Country" name="Country" value={CountryValue}  disabled={CountryDisable} onchange={HandleChangeStateCountry}></lightning-input>
+
+                                <label class="slds-form-element__label" for="textarea-id-01"><abbr class="slds-required"
+                                    title="required">*</abbr>Mobile</label>
+                                <div class="slds-grid slds-wrap">
+                                    <div class="slds-col slds-size_1-of-12">
+                                        <span>
+                                            <lightning-input  value={countrycodevalue} disabled="true"></lightning-input>
+                                        </span>
+                                      </div>
+                                    <div class="slds-col slds-size_11-of-12">
+                                        <span>
+                                            <lightning-input type="tel" min-length="10" onchange={PhoneChange}
+                                    max-length="10"></lightning-input>
+
+                                        </span>
+                                      </div>
+
+                                </div>
+                                <lightning-combobox name="course" label="Course" value={value}
+                                    placeholder="Select Course" options={courssweList} onchange={courceHandler} required="true">
+                                </lightning-combobox>
+                                <lightning-combobox name="Lead Gen Path" label="Lead Gen Path" value={Leadvalue}
+                                    placeholder="Select Lead Gen Path" options={ldGenPath} onchange={ldGenPathValue} required="true">
+                                </lightning-combobox >
+
 
                                 <lightning-combobox name="Source" label="Source" value={SourceValue}
                                     placeholder="Select Your Source" options={leadSource} onchange={HandleSource} required="true" >

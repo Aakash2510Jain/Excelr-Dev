@@ -1,4 +1,4 @@
-<apex:page sidebar="false" showHeader="false" standardStylesheets="false" controller="ExcelRTrainingUserLoginController">
+<apex:page sidebar="false" showHeader="false" standardStylesheets="false" controller="ExcelRTrainingUserLoginController" action="{!checkExistingHashKey}">
     <html>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
         
@@ -10,6 +10,35 @@
 
             <c:libraries ></c:libraries>
             <style>
+                .inputField {
+    
+                            box-sizing: border-box;
+                            padding: 7px;
+                            border-radius: 5px;
+                            border-color: rgb(0, 0, 0);
+                            width: 300px;
+                            margin-left: 30px
+                }
+                .btn{
+
+                    padding: 5px 10px;
+                    background: #0b51a3;
+                    color: #fff;
+                    font-size: 13px;
+                    font-weight: 600;
+                    font-family: arial, sans-serif;
+                    text-align: center;
+                    text-decoration: none;
+                    border: none;
+                    border-radius: 0;
+                    transition: 0.5s ease-in-out;
+                    cursor: pointer;
+                }
+
+                .btn:hover{
+                        color: #fff;
+                        text-decoration: none;
+                        background: #074894}
              .leftColm{
                 height: 100vh;
                 background-color:#0464b3; 
@@ -76,9 +105,46 @@
 
             
             <script>
+
+
+debugger;
+                var LoginHascode = "{!$CurrentPage.parameters.id}";
+                var PhoneNumber = "{!$CurrentPage.parameters.phone}";
+                var agentCode = "{!$CurrentPage.parameters.AgentId}";
+                var CurrentState = "{!$CurrentPage.parameters.State}";
+                if (CurrentState == 'Invalid') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Opps....!',
+                        text: 'Please Enter the Correct Username & Password !'
+                    })
+                    //$scope.$apply();
+                }
+                
+                function loginUserOnclick() {
+                    debugger;
+                    var LoginHascode = "{!$CurrentPage.parameters.id}";
+                    var PhoneNumber = "{!$CurrentPage.parameters.phone}";
+                    var agentCode = "{!$CurrentPage.parameters.AgentId}";
+                    var uName = document.getElementById("{!$Component.frm.txt1}").value;
+                    var paswor = document.getElementById("{!$Component.frm.txt2}").value;
+                    //var pWord = document.getElementById("{!$Component.frm.txt2}").value;
+                    call(uName, paswor, PhoneNumber, agentCode);
+                    //return true;
+                }
+                function saveHandler(){
+                    var CurrentState = "{!$CurrentPage.parameters.State}";
+                    if (CurrentState == 'Invalid') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Opps....!',
+                            text: 'Please Enter the Correct Username & Password !'
+                        })
+                    }
+                }
             
             debugger;
-            var app = angular.module('myApp', []);
+            /*var app = angular.module('myApp', []);
             app.controller('myController', function ($scope) {
                 $scope.userName;
                 $scope.showSpinner = false;
@@ -97,7 +163,7 @@
                             })
                             return;
                     }*/
-                    $scope.userPassword;
+                    /*$scope.userPassword;
                     $scope.showSpinner = true;
                     $scope.loginPage = false;
                     debugger;
@@ -163,7 +229,7 @@
                             //     $scope.$apply();
                             // }
                             
-                            debugger;
+                           /* debugger;
                             
                         } else {
                             Swal.fire({
@@ -176,135 +242,152 @@
                     $scope.showSpinner = false;
                     $scope.$apply();
                 }
-            });
+            });*/
             </script>
         </head>
-        
-        <body ng-app="myApp" ng-controller="myController" >
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6 leftColm">
-                        <div class="ImageLeftSide">
-                            <apex:image url="{!$Resource.ExcelRTheme}" style="height:100%; width:100%;"/>
+        <apex:form id="frm">
+            <body ng-app="myApp" ng-controller="myController" >
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6 leftColm">
+                            <div class="ImageLeftSide">
+                                <apex:image url="{!$Resource.ExcelRTheme}" style="height:100%; width:100%;"/>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="row d-flex justify-content-center">
-                            <div class="col-sm-2"></div>
-                            <div class="col-sm-8">
-
-                                <div class="rightSideContent">
-                                    <div class="mt-5">
-                                        <div class="mt-3">
-                                            <div class="logoUtill d-flex justify-content-center mt-5" >
-                                                <apex:image url="{!$Resource.ExcelRLogo}" style="height:70px; widht:150px;"/>
+                        <div class="col-sm-6">
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-sm-2"></div>
+                                <div class="col-sm-8">
+    
+                                    <div class="rightSideContent">
+                                        <div class="mt-5">
+                                            <div class="mt-3">
+                                                <div class="logoUtill d-flex justify-content-center mt-5" >
+                                                    <apex:image url="{!$Resource.ExcelRLogo}" style="height:70px; widht:150px;"/>
+                                                </div>
+                                            </div>
+                                            <div class="logintoAccount text-center mt-5">
+                                                <h4 class="mt-3">Login To Your Account</h4>
+                                            </div>
+                                            <div class="mt-5 headrow" >
+                                                <!--div class="row forinnerRow" style=" background-color:#ffffff; box-shadow: 5px 5px 10px 10px rgb(230, 228, 228); border-radius:5px; color: #3888CA; font-weight: bold;">
+                                                    <div class="col-sm d-flex justify-content-center" >
+                                                        <div class="">
+                                                            <input style="margin: 11px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Walk-In')" value="Walk-In">Walk-In</input>
+                                                            <input style="margin: 11px;"  type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Voice')" value="Voice">Voice</input>
+                                                            <input style="margin: 11px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Chat')" value="Chat">Chat</input>
+                                                            <input style="margin: 11px;"  type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Generic')" value="Generic">Generic</input>
+                                                        </div>
+                                                    </div>
+                                                </div -->
+                                                <!--div  class="mt-5"  style=" background-color:#ffffff; box-shadow: 5px 5px 10px 10px rgb(230, 228, 228); border-radius:5px; color: #3888CA; font-weight: bold;">
+                                                    <div class="formclass mt-5 radioGol d-inline">
+                                                        <div class="d-inline">
+                                                            <input style="margin: 16px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Walk-In')" value="Walk-In">Walk-In</input>
+                                                        </div>
+                                                        <div class="d-inline">
+                                                            <input style="margin: 16px;"  type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Voice')" value="Voice">Voice</input>
+                                                        </div>
+                                                        <div class="d-inline">
+                                                            <input style="margin: 16px;"  type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Generic')" value="Generic">Generic</input>
+                                                        </div>
+                                                        <div class="d-inline">
+                                                            <input style="margin: 16px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Chat')" value="Chat">Chat</input>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                </div -->
+                                            </div>
+                                            <div class="formclass form-group mt-5" style="margin-top:4rem; color: #3888CA;">
+                                                <!--label for="exampleInputEmail1">Email</label>
+                                                <input ng-model="userName" type="email" class="form-control input-lg" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter your email" style=" border-radius: 10px;"/ -->
+    
+                                                <div class="form-floating mb-3">
+                                                    Enter Username :
+                                                    <apex:inputText id="txt1" value="{!userName}" styleClass="inputField"/>
+                                                </div>
+                                            </div>
+                                            <div class="formclass form-group mt-5"  style="margin-top:3rem; color: #3888CA;">
+                                                <!--label for="exampleInputEmail1">Password</label>
+                                                <input ng-model="userPassword" type="password" class="form-control input-lg" id="exampleInputEmail1" aria-describedby="emailHelp" style=" border-radius: 10px; " placeholder="*********"/ -->
+                                                <div class="form-floating mb-3">
+                                                    <br /> Enter Password :
+                                                    <apex:inputSecret id="txt2" value="{!password}" styleClass="inputField"/>
+                                                </div>
+                                            </div>
+                                            <div class="text-center">
+                                                <apex:pageBlock > 
+                                                    <apex:commandButton status="busy" value="Login" styleClass="btn" action="{!loginUser}"></apex:commandButton><!--onclick="loginUserOnclick()"-->
+                                                    <!-- button class="btn btn-lg btn-primary btn-login fw-bold text-uppercase" type="button" ng-click="loginUserOnclick()">Login</button -->
+                                                </apex:pageBlock>
+                                                <!--button class="btn  btn-primary btn-lg" ng-click="loginEmployee()">Login</button -->
                                             </div>
                                         </div>
-                                        <div class="logintoAccount text-center mt-5">
-                                            <h4 class="mt-3">Login To Your Account</h4>
-                                        </div>
-                                        <div class="mt-5 headrow" >
-                                            <!--div class="row forinnerRow" style=" background-color:#ffffff; box-shadow: 5px 5px 10px 10px rgb(230, 228, 228); border-radius:5px; color: #3888CA; font-weight: bold;">
-                                                <div class="col-sm d-flex justify-content-center" >
-                                                    <div class="">
-                                                        <input style="margin: 11px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Walk-In')" value="Walk-In">Walk-In</input>
-                                                        <input style="margin: 11px;"  type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Voice')" value="Voice">Voice</input>
-                                                        <input style="margin: 11px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Chat')" value="Chat">Chat</input>
-                                                        <input style="margin: 11px;"  type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Generic')" value="Generic">Generic</input>
-                                                    </div>
-                                                </div>
-                                            </div -->
-                                            <!--div  class="mt-5"  style=" background-color:#ffffff; box-shadow: 5px 5px 10px 10px rgb(230, 228, 228); border-radius:5px; color: #3888CA; font-weight: bold;">
-                                                <div class="formclass mt-5 radioGol d-inline">
-                                                    <div class="d-inline">
-                                                        <input style="margin: 16px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Walk-In')" value="Walk-In">Walk-In</input>
-                                                    </div>
-                                                    <div class="d-inline">
-                                                        <input style="margin: 16px;"  type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Voice')" value="Voice">Voice</input>
-                                                    </div>
-                                                    <div class="d-inline">
-                                                        <input style="margin: 16px;"  type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Generic')" value="Generic">Generic</input>
-                                                    </div>
-                                                    <div class="d-inline">
-                                                        <input style="margin: 16px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Chat')" value="Chat">Chat</input>
-                                                    </div>
-                                                    
-                                                </div>
-                                            </div -->
-                                        </div>
-                                        <div class="formclass form-group mt-5" style="margin-top:4rem; color: #3888CA;">
-                                            <label for="exampleInputEmail1">Email</label>
-                                            <input ng-model="userName" type="email" class="form-control input-lg" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter your email" style=" border-radius: 10px;"/>
-                                        </div>
-                                        <div class="formclass form-group mt-5"  style="margin-top:3rem; color: #3888CA;">
-                                            <label for="exampleInputEmail1">Password</label>
-                                            <input ng-model="userPassword" type="password" class="form-control input-lg" id="exampleInputEmail1" aria-describedby="emailHelp" style=" border-radius: 10px; " placeholder="*********"/>
-                                        </div>
-                                        <div class="text-center">
-                                            <button class="btn  btn-primary btn-lg" ng-click="loginEmployee()">Login</button>
-                                        </div>
                                     </div>
+    
+    
                                 </div>
-
-
+                                <div class="col-sm-2"></div>
                             </div>
-                            <div class="col-sm-2"></div>
-                        </div>
-
-                       
-                    </div>
-                </div>
-            </div>
-
-
-
-
-
-
-
-
-
-
-            <!-- <div class="container-fluid justify-content-center " style="width: 100%;padding: 0px;margin: 0px;">
-                <div  class="col-sm-6 bg-light text-dark justify-content-center" style="height: 100vh;">
-                    
-                    <div class="d-flex" style="background-color: #79BCEC ; background-image: linear-gradient(#79BCEC, #3888CA); height:100%;">
-                        <apex:image url="{!$Resource.ExcelRTheme}"/>
-                    </div>
-                </div>
-                <div class="col-sm-6 text-dark justify-content-center" style="height: 100vh; background-color:#ffffff;">
-                    <div class="form-section">
-                        <div>
-                            <div class="logoUtill d-flex justify-content-center" >
-                                <apex:image url="{!$Resource.ExcelRLogo}"/>
-                            </div>
-                            <div class="formclass" style="margin-top:4rem; background-color:#ffffff; box-shadow: 5px 5px 10px 10px rgb(230, 228, 228); border-radius:5px; color: #3888CA; font-weight: bold; max-width:auto; width:700px;">
-                                
-                                    <input style="margin: 20px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Walk-In')" value="Walk-In">Walk-In</input>
-                                    <input style="margin: 20px;"  type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Voice')" value="Voice">Voice</input>
-                                    <input style="margin: 20px;"  type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Generic')" value="Generic">Generic</input>
-                                    <input style="margin: 20px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Chat')" value="Chat">Chat</input>
-                                
-                            </div>
-                            <div class="formclass form-group" style="margin-top:4rem; color: #3888CA;">
-                                <label for="exampleInputEmail1">Email</label>
-                                <input ng-model="userName" type="email" class="form-control input-lg" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter your email" style=" border-radius: 10px;"/>
-                            </div>
-                            
-                            <div class="formclass form-group"  style="margin-top:3rem; color: #3888CA;">
-                                <label for="exampleInputEmail1">Password</label>
-                                <input ng-model="userPassword" type="password" class="form-control input-lg" id="exampleInputEmail1" aria-describedby="emailHelp" style=" border-radius: 10px; " placeholder="*********"/>
-                            </div>
-                            <div class="formclass">
-                                <button type="button" ng-click="loginEmployee()" class="btn btn-lg formclass" style="background-color:#3888CA; color: white;padding-left: 40px;padding-right: 40px;border-radius: 15px; margin-top:3rem;max-width: auto; width:700px;">Login</button>    
-                            </div>
+    
+                           
                         </div>
                     </div>
-                    
                 </div>
-            </div> -->
-            
-        </body>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+                <!-- <div class="container-fluid justify-content-center " style="width: 100%;padding: 0px;margin: 0px;">
+                    <div  class="col-sm-6 bg-light text-dark justify-content-center" style="height: 100vh;">
+                        
+                        <div class="d-flex" style="background-color: #79BCEC ; background-image: linear-gradient(#79BCEC, #3888CA); height:100%;">
+                            <apex:image url="{!$Resource.ExcelRTheme}"/>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 text-dark justify-content-center" style="height: 100vh; background-color:#ffffff;">
+                        <div class="form-section">
+                            <div>
+                                <div class="logoUtill d-flex justify-content-center" >
+                                    <apex:image url="{!$Resource.ExcelRLogo}"/>
+                                </div>
+                                <div class="formclass" style="margin-top:4rem; background-color:#ffffff; box-shadow: 5px 5px 10px 10px rgb(230, 228, 228); border-radius:5px; color: #3888CA; font-weight: bold; max-width:auto; width:700px;">
+                                    
+                                        <input style="margin: 20px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Walk-In')" value="Walk-In">Walk-In</input>
+                                        <input style="margin: 20px;"  type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Voice')" value="Voice">Voice</input>
+                                        <input style="margin: 20px;"  type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Generic')" value="Generic">Generic</input>
+                                        <input style="margin: 20px;" type="radio" id="FormType" ng-model="SForm" ng-change="RadioChange('Chat')" value="Chat">Chat</input>
+                                    
+                                </div>
+                                <div class="formclass form-group" style="margin-top:4rem; color: #3888CA;">
+                                    <label for="exampleInputEmail1">Email</label>
+                                    <input ng-model="userName" type="email" class="form-control input-lg" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter your email" style=" border-radius: 10px;"/>
+                                </div>
+                                
+                                <div class="formclass form-group"  style="margin-top:3rem; color: #3888CA;">
+                                    <label for="exampleInputEmail1">Password</label>
+                                    <input ng-model="userPassword" type="password" class="form-control input-lg" id="exampleInputEmail1" aria-describedby="emailHelp" style=" border-radius: 10px; " placeholder="*********"/>
+                                </div>
+                                <div class="formclass">
+                                    <button type="button" ng-click="loginEmployee()" class="btn btn-lg formclass" style="background-color:#3888CA; color: white;padding-left: 40px;padding-right: 40px;border-radius: 15px; margin-top:3rem;max-width: auto; width:700px;">Login</button>    
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div> -->
+                
+            </body>
+
+
+        </apex:form>
+        
         
     </html>
 </apex:page>
