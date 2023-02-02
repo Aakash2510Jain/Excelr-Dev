@@ -8,7 +8,6 @@ public class API_CreateAccount_TestClass {
             newAcc.Phone = '2345678';
             newAcc.Email__c ='shubham@gmail.com';
             newAcc.Source__c ='Corporate';
-            newAcc.Form_Source__c = 'Webinar';
             newAcc.Enter_UTM_Link__c = 'sadsfdg';
             newAcc.Course__c = 'Core Python Training';  
             // acclist.add(newAcc);
@@ -27,7 +26,6 @@ public class API_CreateAccount_TestClass {
             ld.Phone = newAcc.Phone;
             ld.Email = newAcc.Email__c;
             ld.LeadSource = newAcc.Source__c;
-            ld.Form_Source__c = newAcc.Form_Names__c;
             ld.Enter_UTM_Link__c = newAcc.Enter_UTM_Link__c;
             // ldlist.add(ld);
             insert ld;
@@ -52,10 +50,10 @@ public class API_CreateAccount_TestClass {
             update ld;
             test.stopTest();
             
-            
-            
         }catch(Exception e){
             System.debug('ERROR ::'+e.getMessage() +' LINE ::'+e.getLineNumber());
+            HandleBusinessException.captureError('API_CreateAccount_TestClass', 'testRequstRecord', e, null);
+
         }
         
     }

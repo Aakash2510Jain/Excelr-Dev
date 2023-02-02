@@ -1,6 +1,7 @@
 public without sharing class BooleanExpressionCalculation {
     
     public static boolean evaluateExpression(String expression){
+        try{
         expression = expression.toLowerCase(expression);
         system.debug('expression""'+expression);
         system.debug(expression.containsIgnoreCase('false')+'__'+expression.containsIgnoreCase('true'));
@@ -9,9 +10,15 @@ public without sharing class BooleanExpressionCalculation {
         expression = runeval(expression);
         if(expression == 'true') return true;
         return false;
+        }catch (Exception e){
+            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+          HandleBusinessException.captureError('BooleanExpressionCalculation', 'evaluateExpression', e , null);
+          return null;
+        }
     }
     
     public static string runeval(String expression){
+        try{
         system.debug('expression::'+expression);
         if(expression.contains('true and true')||expression.contains('true and false')||expression.contains('false and true')||expression.contains('false and false')){
             expression = BooleanExpressionCalculation.replaceANDLogic(expression);
@@ -33,25 +40,43 @@ public without sharing class BooleanExpressionCalculation {
            }
         system.debug(expression+'___final');
         return expression;
+        }catch (Exception e){
+            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+          HandleBusinessException.captureError('BooleanExpressionCalculation', 'runeval', e , null);
+          return null;
+        }
     }
     
     public static string replaceleftBrackets(string expression){
+        try{
         expression = expression.replaceAll('\\(true\\)', 'true');
         if(expression.contains('(true)')){
             expression = replaceRightBrackets(expression);
         }
         return expression;
+    }catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('BooleanExpressionCalculation', 'replaceleftBrackets', e , null);
+      return null;
+    }
     }
     
     public static string replaceRightBrackets(string expression){
+        try{
         expression = expression.replaceAll('\\(false\\)', 'false');
         if(expression.contains('(false)')){
             expression = replaceRightBrackets(expression);
         }
         return expression;
+    }catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('BooleanExpressionCalculation', 'replaceRightBrackets', e , null);
+      return null;
+    }
     }
     
     public static string replaceANDLogic(String exp){
+        try{
         exp = exp.replaceAll('true and true', 'true');
         exp = exp.replaceAll('false and true', 'false');
         exp = exp.replaceAll('true and false', 'false');
@@ -60,11 +85,17 @@ public without sharing class BooleanExpressionCalculation {
             exp = replaceANDLogic(exp);
         }        
         return exp;
+    }catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('BooleanExpressionCalculation', 'replaceANDLogic', e , null);
+      return null;
+    }
     }
     
     public static string replaceORLogic(String exp){
         //exp = exp.toLowerCase(exp);
         //system.debug('exp::'+exp);
+        try{
         exp = exp.replaceAll('true or true', 'true');
         exp = exp.replaceAll('false or true', 'true');
         exp = exp.replaceAll('true or false', 'true');
@@ -74,6 +105,11 @@ public without sharing class BooleanExpressionCalculation {
             exp = replaceORLogic(exp);
         }
         return exp;
+    }catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('BooleanExpressionCalculation', 'replaceORLogic', e , null);
+      return null;
+    }
     }
     
 }

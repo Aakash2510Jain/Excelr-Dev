@@ -1,6 +1,7 @@
 public with sharing class bankDetaklsLwcContrroler {
     @auraenabled
     public static void createBankDetails(String AcNum,String Bname,String ifseCode,String CandidateEmail, String Phone){
+        try{
         List<Account> accList = new List<Account>();
 
         accList = [Select Id From Account where Email__c = : CandidateEmail limit 1];
@@ -56,5 +57,10 @@ bankRec.Candidate_Phone__c=Phone;
 system.debug('bankRec:::'+bankRec);
 insert bankRec;
 }*/
+    }catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('bankDetaklsLwcContrroler', 'createBankDetails', e , null);
+      
     }
+}
 }

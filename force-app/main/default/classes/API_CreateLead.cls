@@ -2,6 +2,7 @@
 global without sharing class API_CreateLead {
     @HttpPost
     global static void doPost() {
+        try{
         RestRequest req = RestContext.request;
         Blob body = req.requestBody;
         String requestString = body.toString();
@@ -20,7 +21,13 @@ global without sharing class API_CreateLead {
             RestContext.response.responseBody = Blob.valueOf(JSON.serialize(new IntegrationWrapper.APIResponseWrapper('Error', 'Bad Request')));
             RestContext.response.statusCode = 400;
         }
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+        HandleBusinessException.captureError('API_CreateLead', 'doPost', e, null);
+         
     }
+
+}
     
     private static String insertLead(Lead leadRec, string requestString){
         try {

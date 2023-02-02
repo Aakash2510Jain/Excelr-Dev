@@ -180,6 +180,7 @@ public without sharing class CalenderController {
 
 
     public static List<String> getPicklistValues(String ObjectApi_name,String Field_name){ 
+        try{
         
         List<String> lstPickvals                        = new List<String>();
         Schema.SObjectType targetType                   = Schema.getGlobalDescribe().get(ObjectApi_name);
@@ -194,5 +195,11 @@ public without sharing class CalenderController {
             lstPickvals.add(String.ValueOf(a.getValue()));  
         }
         return lstPickvals;
+    }catch (Exception e) {
+        System.debug(' the Error has occured due to =====> ' + e.getMessage());
+        System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+        HandleBusinessException.captureError('CalenderController','getPicklistValues', e, null);
+         return null;
     }
+}
 }

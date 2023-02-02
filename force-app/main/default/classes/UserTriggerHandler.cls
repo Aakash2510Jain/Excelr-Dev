@@ -1,20 +1,20 @@
 public class UserTriggerHandler {
     
-   
+    
     Public Static Void UserAfterUpdate(Map<Id,User> NewMap,Map<Id,User>OldMap ){
         
         try{
-         	Map<Id,User> UpdatedUser=new Map<Id,User>();
-        
+            Map<Id,User> UpdatedUser=new Map<Id,User>();
+            
             For(User Users:NewMap.Values()){
                 if((NewMap.get(Users.id).Working_Days__c!=OldMap.get(Users.id).Working_Days__c) || 
-                    (NewMap.get(Users.id).Working_Start_Time__c!=OldMap.get(Users.id).Working_Start_Time__c)||
-                      (NewMap.get(Users.id).Working_End_Time__c!=OldMap.get(Users.id).Working_End_Time__c)||
-                        (NewMap.get(Users.id).Start_Date__c!=OldMap.get(Users.id).Start_Date__c) || 
-                          (NewMap.get(Users.id).End_Date__c!=OldMap.get(Users.id).End_Date__c)){
-                              
-                              UpdatedUser.put(Users.Id,Users);
-                          }
+                   (NewMap.get(Users.id).Working_Start_Time__c!=OldMap.get(Users.id).Working_Start_Time__c)||
+                   (NewMap.get(Users.id).Working_End_Time__c!=OldMap.get(Users.id).Working_End_Time__c)||
+                   (NewMap.get(Users.id).Start_Date__c!=OldMap.get(Users.id).Start_Date__c) || 
+                   (NewMap.get(Users.id).End_Date__c!=OldMap.get(Users.id).End_Date__c)){
+                       
+                       UpdatedUser.put(Users.Id,Users);
+                   }
             }
             
             if(!UpdatedUser.isEmpty()){
@@ -27,7 +27,7 @@ public class UserTriggerHandler {
             HandleBusinessException.captureError('UserTriggerHandler','UserAfterUpdate', e, null);
             
         }
-         
+        
     }
     
     Public Static Void DeleteAvailibility(Map<Id,User>UserMap){
@@ -36,7 +36,7 @@ public class UserTriggerHandler {
         if(!AvailableRecList.isEmpty()){
             delete AvailableRecList;
         }
-  
+        
     }
     
     Public Static Void CreateAvailibility(Map<Id,User>UserMap){
@@ -47,11 +47,11 @@ public class UserTriggerHandler {
             Date startDate = U.Start_Date__c;
             Date endDate = U.End_Date__c;
             
-            Integer AvailableDays=startDate.daysBetween(endDate)+1;
+            Integer AvailableDays= startDate.daysBetween(endDate)+1;
             
             for(Integer i=0;i<AvailableDays;i++){
                 
-                 Date currentDate = startDate.addDays(i);
+                Date currentDate = startDate.addDays(i);
                 
                 Availability__c AvailableRec=new Availability__c();
                 AvailableRec.Name=U.firstName+'-'+currentDate.format();
@@ -64,14 +64,14 @@ public class UserTriggerHandler {
                 String DayofWeek=dt.format('EEEE');
                 
                 if(!String.isEmpty(u.Working_Days__c) && u.Working_Days__c.containsIgnoreCase(DayofWeek)){
-                      Av.add(AvailableRec);
+                    Av.add(AvailableRec);
                 }
             }
             
             System.debug('Av----'+Av);
             insert Av;
-    
+            
         }
     }
-
+    
 }

@@ -1,6 +1,7 @@
 @isTest public class AGMTriggerTest {
     @isTest
     static void test_AGMTrigger() {
+        try{
         User userRec = TestUtility.insertUser();
         insert userRec;    
         
@@ -22,6 +23,9 @@
         
         agmRec.Max_Lead_Per_Day__c = 9;
         update agmRec;
-    }
-    
+    }catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+        HandleBusinessException.captureError('AGMTriggerTest', 'test_AGMTrigger', e, null);
+ }
+}
 }

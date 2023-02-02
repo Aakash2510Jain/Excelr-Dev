@@ -1,19 +1,47 @@
 <template>
-    <lightning-card>
+    <lightning-card style="width: 100%;">
+        <div class="card">
+            <div class="container">
+        <lightning-card variant="narrow" icon-name="standard:client" >
+            <h1 slot="title" >
+                <lightning-record-view-form object-api-name="Customers__c" record-id={recordId}>
+                   <lightning-output-field field-name="Name__c"  variant="label-hidden"></lightning-output-field>
+                </lightning-record-view-form>
+            </h1>
+            <div class="slds-card__body slds-card__body_inner c-container">
+                <lightning-layout multiple-rows>
+                <template for:each={customerData} for:item="Acc">
+                    
+                        <lightning-layout-item size="2" padding="around-small" key={Acc.key}>
+                            <template if:true={Acc.value}>
+                                <div class="custom-box slds-box slds-p-around_medium slds-text-align_center" style="background-color: #8ad3e0;">
+                                    <b style="font-size:small;">{Acc.value}</b>
+                                </div>
+                            </template>
+                            <template if:false={Acc.value}>
+                                <div class="custom-box slds-box slds-p-around_medium slds-text-align_center" style="background-color: #8ad3e0;">
+                                    <b style="font-size: small;">{Acc.key}</b>
+                                </div>
+                            </template>
+                            
+                        </lightning-layout-item>
 
-        <lightning-card variant="narrow" icon-name="standard:opportunity">
-            <h1 slot="title">This is a title</h1>
-            <h1>This is the body</h1>
+                </template>
+            </lightning-layout>
+            </div>
             <div slot="actions">
-                <lightning-button label="Edit" onclick={HandleEdit}></lightning-button>
+                <lightning-button label="Edit" type="sumbit" variant="brand" onclick={HandleEdit}></lightning-button>
             </div>
         </lightning-card>
-
-        <lightning-card title="Leads">
-            
-           <table>
-              <thead>
-                 <tr>
+            </div>
+        </div>
+          <br/>
+        <lightning-card>
+            <div class="card">
+                <div class="container">
+           <table class="slds-table slds-table_cell-buffer slds-table_bordered" style="width:100%;">
+              <thead style="border-radius:5px;">
+                 <tr >
                     <th>ID</th>
                     <th>Status</th>
                     <th>CreatedDate</th>
@@ -34,10 +62,10 @@
                             {led.Status}
                         </td>
                         <td>
-                            {led.CreatedDate}
+                            <lightning-formatted-date-time value={led.CreatedDate} year="numeric" month="numeric" day="numeric"> </lightning-formatted-date-time > 
                         </td>
                         <td>
-                            {led.MobilePhone}
+                            {led.Phone}
                         </td>
                         <td>
                             {led.Email}
@@ -56,6 +84,9 @@
                 </template>
               </tbody>
            </table>
+                </div>
+            </div>
         </lightning-card>
+        <br/>
     </lightning-card>
 </template>

@@ -8,6 +8,7 @@ global class BatchForOverdueTasks implements Database.Batchable<sObject>{
     }
     
     global void execute(Database.BatchableContext BC, List<Task> taskList) {
+        try{
         List<Case> caseList = new List<Case>();
         
         if(!taskList.isEmpty()){
@@ -21,7 +22,12 @@ global class BatchForOverdueTasks implements Database.Batchable<sObject>{
                 insert caseList;
             }
         }
-    }   
+    }  catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('BatchForOverdueTasks', 'execute', e , null);
+      
+    } 
+}
     
     global void finish(Database.BatchableContext BC) {
         

@@ -2,6 +2,7 @@ public class CallyzerAPIHandler
 {
     public Static void processHistory(List<String> clientNums)
     {
+        try{
         List<Contact> contacts = [Select Id,FirstName,LastName,Phone,OwnerId from Contact where Phone IN :clientNums];
         System.debug('Contacts'+contacts);
         List<Lead> leads = [select Id,Name,Phone,OwnerId from Lead where Phone IN :clientNums];
@@ -28,10 +29,16 @@ public class CallyzerAPIHandler
         }
         insert leadTask;
         System.debug('Lead Tasks'+leadTask);
+    }  catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('CallyzerAPIHandler', 'processHistory', e , null);
+       
     }
+}
     
     public Static void saveLead(String recordId)
     {
+        try{
         Lead l = [select Id,Name,LastName,Status,Email,Company,Address,City,State,Country,PostalCode,LeadSource,Description,Phone from Lead where Id=:recordId];
         CallyzerLeadWrapper clw = new CallyzerLeadWrapper();
         clw.firstName = l.Name ;
@@ -66,9 +73,15 @@ public class CallyzerAPIHandler
             l.SyncedInCallyzer__c = true;
             update l;
         }
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('CallyzerAPIHandler', 'saveLead', e , null);
+       
+    }
     }    
     public static void getEmployeeId(List<String> userIds,CallyzerEmployeeWrapper s)
-    {
+    { 
+        try{
         List<Callyzer_Sales_User__c> updateCallyzer = new List<Callyzer_Sales_User__c>();
         List<Callyzer_Sales_User__c> InsertCallyzer = new List<Callyzer_Sales_User__c>();
         
@@ -118,7 +131,12 @@ public class CallyzerAPIHandler
             insert InsertCallyzer;
         System.debug('UpdatedCallyzer---'+updateCallyzer);
         System.debug('InsertedCallyzer---'+InsertCallyzer);
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('CallyzerAPIHandler', 'getEmployeeId', e , null);
+       
     }
+}
     
     //}
 }

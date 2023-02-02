@@ -22,9 +22,8 @@ global class API_CreateContact {
     }
     
     public static string insertContacts(List<string> emailIds){
-
-        
-        if(emailIds.size() <= 0)
+      try{
+       if(emailIds.size() <= 0)
             return 'no email id\'s recieved';
         List<contact> contactList = [select name,id from contact where email In: emailIds];
         Map<string,string> emailXconId = New Map<string,string>();
@@ -40,6 +39,12 @@ global class API_CreateContact {
         }
         insert contactsToInsert;
         return 'contacts inserted';
+    }  catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+        HandleBusinessException.captureError('API_CreateContact', 'insertContacts', e, null);
+        return Null;
     }
+    }
+    
     
 }

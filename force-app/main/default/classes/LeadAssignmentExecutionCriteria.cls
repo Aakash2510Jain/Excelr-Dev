@@ -55,7 +55,7 @@ public class LeadAssignmentExecutionCriteria {
                                  Course_Interested_Rating__c,Course__c,CreatedById,CreatedDate,Current_Domain__c,Date_of_Enrollment__c,
                                  Description,Designation__c,Do_you__c,Email,EmailBouncedDate,EmailBouncedReason,Email_Conversation_Done__c,
                                  Enquired_Course__c,Enter_UTM_Link__c,ExcelR_Training_User__c,Facebook_Ad_Id__c,Facebook_Ad_Name__c,Facebook_Platform__c,
-                                 FirstName,Form_Names__c,Form_Source__c,GCLID__c,GeocodeAccuracy,Id,Industry,IsConverted,IsDeleted,ISM_Name__c,ISM__c,
+                                 FirstName,Form_Names__c,GCLID__c,GeocodeAccuracy,Id,Industry,IsConverted,IsDeleted,ISM_Name__c,ISM__c,
                                  IsUnreadByOwner,Is_Email_Invalid__c,Is_Phone_Invalid__c,Jigsaw,JigsawContactId,Keyword__c,Landing_Page_URL__c,
                                  LastActivityDate,LastModifiedById,LastModifiedDate,LastName,LastReferencedDate,LastViewedDate,Latitude,LeadSource,
                                  Lead_Assigned_Date_TIme__c,Lead_Assigned_Date__c,Lead_Assigned_Time__c,Lead_Create_Date__c,Lead_Generation_Method__c,

@@ -2,6 +2,7 @@
 global with sharing class API_CreateReferralLead{
     @HttpPost
     global static void InsertreferralLead(){
+        try{
         RestRequest req = RestContext.request;
         Blob body = req.requestBody;
         String requestString = body.toString();
@@ -44,6 +45,11 @@ global with sharing class API_CreateReferralLead{
         else{
             RestContext.response.responseBody = Blob.valueOf(JSON.serialize(new IntegrationWrapper.APIResponseWrapper('Error', 'Bad Request')));
             RestContext.response.statusCode = 400;
+        }
+        }catch (Exception e){
+            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+            HandleBusinessException.captureError('API_CreateReferralLead', 'InsertreferralLead', e, null);
+             
         }
     }
 

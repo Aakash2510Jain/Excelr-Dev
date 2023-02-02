@@ -11,6 +11,7 @@
                 
                 component.set("v.type",response.getReturnValue().pickValByField.Type__c);
                 component.set("v.mode",response.getReturnValue().pickValByField.Mode__c);
+                component.set("v.city",response.getReturnValue().pickValByField.City__c);
             }            
         });
         $A.enqueueAction(action);

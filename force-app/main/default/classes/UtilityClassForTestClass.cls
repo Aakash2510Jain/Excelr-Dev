@@ -6,7 +6,6 @@ public class UtilityClassForTestClass {
                                            newAcc.Phone = phone;
                                            newAcc.Email__c =email;
                                            //newAcc.UTM_Source__c =source;
-                                           newAcc.Form_Source__c = formsource;
                                            newAcc.Enter_UTM_Link__c = utmlink;
                                            newAcc.Course__c = cource; 
                                            newAcc.City__c = city;
@@ -31,7 +30,6 @@ public class UtilityClassForTestClass {
                                       leadRec.Email = email;
                                       leadRec.Phone = phone;
                                       //leadRec.UTM_Source__c = source;
-                                      leadRec.Form_Source__c = formsource;
                                       leadRec.Enter_UTM_Link__c = utmlink;   
                                       leadRec.City__c = city;
                                       leadRec.Course__c = cource;

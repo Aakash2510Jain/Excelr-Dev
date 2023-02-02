@@ -18,6 +18,7 @@ public without Sharing class BuildMaps {
     /* Condition map end*/
     
     public static boolean CheckBusinessHours(){
+        try{
         Datetime toBeChecked =  System.now();
         BusinessHours hours = [SELECT ID,TimeZoneSidKey FROM BusinessHours WHERE IsDefault=true];
         Datetime targetTime = Datetime.newInstance(toBeChecked.year(), toBeChecked.month(), toBeChecked.day(), toBeChecked.hour(), toBeChecked.minute(), toBeChecked.second());
@@ -28,9 +29,15 @@ public without Sharing class BuildMaps {
             return true;
         }
         return false;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('BuildMaps', 'CheckBusinessHours', e , null);
+      return null;
+    }
     }
     
     public static Map<String, Integer> makeQNameToLastAssignedQmemberRRid(){
+        try{
         Map<String, Integer> qNameToLastAssignedQmemberRRid = new Map<String, Integer>();
         List<Assignment_Group__c> allExistingQueue = new List<Assignment_Group__c>([SELECT id, name, Last_Allocated_RRid__c from Assignment_Group__c]);
         for(Assignment_Group__c q: allExistingQueue)
@@ -43,9 +50,15 @@ public without Sharing class BuildMaps {
                 qNameToLastAssignedQmemberRRid.put(q.name, null);
         }
         return qNameToLastAssignedQmemberRRid;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('BuildMaps', 'makeQNameToLastAssignedQmemberRRid', e , null);
+      return null;
+    }
     }
     
     public static void validateUserCapacity(String groupName,set<String> leadIdList){
+        try{
         system.debug('groupName::'+groupName);
         list<Assignment_Group_Member__c> listOfGroupMember = new list<Assignment_Group_Member__c>();
         list<lead> listOfTodayLeads = new list<lead>();
@@ -126,10 +139,15 @@ public without Sharing class BuildMaps {
             }
         }
         
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('BuildMaps', 'validateUserCapacity', e , null);
+       
     }
+}
     
     public static void makeAllMemberOOF(){
-        
+        try{
         list<Assignment_Group_Member__c> agmList = new list<Assignment_Group_Member__c>();
         agmList = [select id,Out_Of_Office__c from Assignment_Group_Member__c where active__c = true and Out_Of_Office__c = false];
         if(!agmList.isEmpty()){
@@ -139,5 +157,10 @@ public without Sharing class BuildMaps {
             
             update agmList;
         }
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('BuildMaps', 'makeAllMemberOOF', e , null);
+      
     }
+}
 }

@@ -1,6 +1,7 @@
 <aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" controller="AddProductHelper" access="global" >
     <aura:attribute name="type" type="List" />
     <aura:attribute name="mode" type="List" />
+    <aura:attribute name="city" type="List" />
     <aura:attribute name="modeClassroom" type="boolean" default="false" />
     <aura:attribute name="typeCombo" type="boolean" default="false" />
     <aura:attribute name="typeSingle" type="boolean" default="true" />
@@ -64,7 +65,12 @@
                     </td>
                     <aura:renderIf isTrue="{!v.modeClassroom}">
                         <td class="tablerowData">
-                            city
+                            <lightning:select name="type" label="" aura:id="type" >
+                                <option value="">choose one...</option>
+                                <aura:iteration items="{!v.city}" var="cityVal">
+                                    <option text="{!cityVal}" value="{!cityVal}" />
+                                </aura:iteration>
+                            </lightning:select>
                         </td>
                     </aura:renderIf>
                     <aura:renderIf isTrue="{!v.typeSingle}">
@@ -78,14 +84,8 @@
                     <td class="tablerowData">
                         100
                     </td>
-                    
                 </tr>
             </tbody>
-        </table>
-        
-        
-        
-        
-        
+        </table>  
     </div>
 </aura:component>

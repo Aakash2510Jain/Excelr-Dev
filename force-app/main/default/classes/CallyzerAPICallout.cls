@@ -3,7 +3,7 @@ public class CallyzerAPICallout
 
     public static void getUserDetails(String phone,String callStartDate,String callEndDate)
     {
-       
+       try{
         Map<String, Object> obj = new Map<String, Object>();
                obj.put('callStartDate', callStartDate);
                obj.put('callEndDate', callEndDate);
@@ -26,10 +26,16 @@ public class CallyzerAPICallout
         }
           CallyzerAPIHandler.processHistory(clientNums);
    
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('CallyzerAPICallout', 'getUserDetails', e , null);
+       
     }
+}
     
     public Static void saveLead(String recordId)
     {
+        try{
         Lead leadRec = [select Id,Name,LastName,Status,Email,Company,Address,City,State,Country,PostalCode,LeadSource,Description,Phone from Lead where Id=:recordId];
          CallyzerLeadWrapper clw = new CallyzerLeadWrapper();
         clw.firstName = leadRec.Name ;
@@ -64,9 +70,15 @@ public class CallyzerAPICallout
             leadRec.SyncedInCallyzer__c = true;
             update leadRec;
         }
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('CallyzerAPICallout', 'saveLead', e , null);
+       
+    }
     }    
     public static void getEmployeeDetails()
     {
+        try{
         String body = '{}';
         HttpResponse response = HTTPUtility.sendRequest('https://api1.callyzer.co/admin/api/employee/manageEmployeeData', '924651b1-dd36-4481-b5c4-9294ac873484', body, 'POST');
         String resBody =  response.getBody();
@@ -87,4 +99,10 @@ public class CallyzerAPICallout
         CallyzerAPIHandler.getEmployeeId(userIds,s);
        
     }
+    catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('CallyzerAPICallout', 'getEmployeeDetails', e , null);
+       
+    }
+}
 }
