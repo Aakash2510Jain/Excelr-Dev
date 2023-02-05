@@ -1,6 +1,7 @@
 public class PaymentProcessOnLeadController{
     @AuraEnabled(Cacheable = True)
     Public Static Map<String, List<Decimal>> ShowNbfcPartners(){
+        try{
         Map<String, List<Decimal>> nbfcName = new Map<String, List<Decimal>>();
 
         list<NBFC__c> NBFCList = [Select NBFC_Name__c, Tenure__c
@@ -24,7 +25,12 @@ public class PaymentProcessOnLeadController{
         system.debug('nbfcName=' + nbfcName);
 
         return nbfcName;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('PaymentProcessOnLeadController', 'ShowNbfcPartners', e , null);
+       return null;
     }
+}
 
     @AuraEnabled(Cacheable = True)
     Public Static Decimal ShowAmount(String ProductName){
@@ -43,7 +49,7 @@ public class PaymentProcessOnLeadController{
 
     @AuraEnabled
     Public Static Decimal ShowPriceIncludingGST(String NbfcValue, integer tenure, Decimal originalAmount){
-
+    try{
         system.debug('originalAmount='+originalAmount);
         Decimal finalPriceWithGST;
         NBFC__c nbfcRec = [Select Processing_Fee__c, Interest_Rate__c, GST_on_Subvention__c
@@ -67,10 +73,16 @@ public class PaymentProcessOnLeadController{
         }
 
         return finalPriceWithGST.setScale(2);
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('PaymentProcessOnLeadController', 'ShowPriceIncludingGST', e , null);
+       return null;
     }
+}
 
     @AuraEnabled
     Public Static string InsertProduct(string recordId, Integer Quantity, String ProductName, integer Amount, String paymentType){
+        try{
         system.debug('Inserting Product');
         Product2 PrdRec = [Select Id, Name, (Select Id, Name, UnitPrice
                                              From PricebookEntries)
@@ -105,11 +117,16 @@ public class PaymentProcessOnLeadController{
         }
 
         return 'Success';
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('PaymentProcessOnLeadController', 'InsertProduct', e , null);
+       return null;
     }
+}
 
     @AuraEnabled
     Public Static string LeadUpdateOnFullLoan(string recordId, integer FullTenureValue, String FullNBFCValue, Integer Quantity, String ProductName, Decimal Amount){
-        
+       try{
         product2 PrdRec = [Select Id, Name, (Select Id, Name, UnitPrice
                                              From PricebookEntries)
                            From Product2 
@@ -139,7 +156,12 @@ public class PaymentProcessOnLeadController{
         insert invRec;
 
         return 'success';
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('PaymentProcessOnLeadController', 'LeadUpdateOnFullLoan', e , null);
+       return null;
     }
+}
 
     @AuraEnabled
     Public Static String leadUpdateOnPartialLoan(string recordId, integer PartialTenureValue, String partialNBFCValue, Integer PartialUpfrontValue, Integer Quantity, String ProductName, Decimal Amount, String paymentType){
@@ -200,7 +222,7 @@ public class PaymentProcessOnLeadController{
 
     @AuraEnabled
     Public Static String CreateInvoice(String recordId, Decimal FinalAmount, integer PartialTenureValue, String partialNBFCValue, Integer PartialUpfrontValue, Integer Quantity, String ProductName, Decimal Amount, String paymentType){
-
+      try{
         System.debug('FinalAmount ===> ' + FinalAmount);
         System.debug('PartialTenureValue ===> ' + PartialTenureValue);
         System.debug('partialNBFCValue ===> ' + partialNBFCValue);
@@ -268,5 +290,11 @@ public class PaymentProcessOnLeadController{
 
         return 'Success';
     }
+    catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('CallyzerAPICallout', 'getEmployeeDetails', e , null);
+       return null;
+    }
+}
 
 }

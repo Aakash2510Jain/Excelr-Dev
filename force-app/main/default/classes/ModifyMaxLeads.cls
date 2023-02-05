@@ -3,7 +3,7 @@ public class ModifyMaxLeads
     @AuraEnabled
     public Static List<User> getUser()
     {
-        
+      try{   
         Id userId = UserInfo.getUserId();
         System.debug('UserId'+userId);
         User userRecord = [select Id,Max_Lead_Per_Day__c,Max_Lead_Per_Month__c,UserRoleId from User where Id =:userId];
@@ -17,11 +17,16 @@ public class ModifyMaxLeads
         System.debug('Usersssss'+users);
        // ModifyMaxLeads.getAllSubRoleIds(allSubRoleIds);
         return users.values() ;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('ModifyMaxLeads', 'getUser', e , null);
+       return null;
     }
-    
+}
     
     public Static Set<ID> getAllSubRoleIds(set<Id> roleIds)
-    {
+    { 
+        try{
          Set<ID> currentRoleIds = new Set<ID>();
          
         //Get all of the roles below the passed roles
@@ -32,7 +37,12 @@ public class ModifyMaxLeads
         }
         System.debug('currentRoleIds'+currentRoleIds);
         return currentRoleIds;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('ModifyMaxLeads', 'getAllSubRoleIds', e , null);
+       return null;
     }
+}
 
     @AuraEnabled
     public static boolean updaterecord(List<User> userList){

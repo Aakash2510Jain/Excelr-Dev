@@ -272,10 +272,10 @@ public without sharing class Utility{
                 appRec.Account__c = leadid;
             applicationId = API_CreateAccount.insertApplication(appRec, requestString);
 
-        } catch(Exception e) {
+        } catch (Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());
             System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
-            HandleBusinessException.captureError('Utility','createApplicationInstance', e, null);
+            HandleBusinessException.captureError('Utility', 'createApplicationInstance', e, null);
 
         }
         return applicationId;
@@ -309,16 +309,67 @@ public without sharing class Utility{
         }
     }
 
-
     public static String generateRandomString(){
         Integer len = 10;
         final String chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
         String randStr = '';
-        while (randStr.length() < len) {
+        while (randStr.length() < len){
             Integer idx = Math.mod(Math.abs(Crypto.getRandomInteger()), chars.length());
-            randStr += chars.substring(idx, idx+1);
+            randStr += chars.substring(idx, idx + 1);
         }
-        return randStr+string.ValueOf(system.now().getTime()); 
+        return randStr + string.ValueOf(system.now().getTime());
+    }
+
+    public static Lead insertLeadViaAPI(Account newAccount){
+        Lead leadRec = new Lead();
+        leadRec.Email = newAccount.Email__c;
+        leadRec.Phone = newAccount.Phone;
+        leadRec.LastName = newAccount.Name;
+        leadRec.LeadSource = newAccount.Source__c;
+        leadRec.Enter_UTM_Link__c = newAccount.Enter_UTM_Link__c;
+        leadRec.Course__c = newAccount.Course__c != null ? newAccount.Course__c : 'NA';
+        leadRec.City__c = newAccount.City__c != null ? newAccount.City__c : 'NA';
+        leadRec.Form_Names__c = newAccount.Form_Names__c;
+        leadRec.UTM_Campaign__c = newAccount.UTM_Campaign__c;
+        leadRec.UTM_Device__c = newAccount.UTM_Device__c;
+        leadRec.UTM_AdGroup__c = newAccount.UTM_AdGroup__c;
+        leadRec.UTM_Term__c = newAccount.UTM_Term__c;
+        leadRec.UTM_Channel__c = newAccount.UTM_Channel__c;
+        leadRec.UTM_Type__c = newAccount.UTM_Type__c;
+        leadRec.UTM_Location__c = newAccount.Location_UTM__c;
+        leadRec.UTM_Variety__c = newAccount.UTM_Variety__c;
+        leadRec.UTM_Experiment__c = newAccount.UTM_Experiment__c;
+        leadRec.UTM_Medium__c = newAccount.UTM_Medium__c;
+        leadRec.Type_of_Course__c = newAccount.Type_of_Course__c;
+        leadRec.Lead_Gen_Path__c = newAccount.Lead_Gen_Path__c != null ? newAccount.Lead_Gen_Path__c : 'NA';
+        leadRec.GCLID__c = newAccount.GCLID__c;
+        return leadRec;
+    }
+
+    public static String createTaskViaLeadCreationAPI(Lead leadRec){
+        Task taskRec = new Task();
+        taskRec.Subject = Constants.taskSubjectViaLeadCreationAPI;
+        taskRec.WhoId = leadRec.Id;
+        taskRec.OwnerId = leadRec.OwnerId;
+        insert taskRec;
+        return taskRec.Id;
+    }
+
+    public static String createApplicationViaLeadCreationAPI(Lead leadRec){
+        Application__c appRec = new Application__c();
+        appRec.Lead__c = leadRec.Id;
+        appRec.Applied_Date_Time__c = System.now();
+        appRec.Status__c = 'Open';
+        appRec.Course__c = leadRec.course__c;
+        insert appRec;
+        return appRec.Id;
+    }
+
+    public static String createCustomerViaLeadCreationAPI(Account accRec){
+        Customers__c customerRec = new Customers__c();
+        customerRec.Name__c = accRec.Name;
+        insert customerRec;
+        return customerRec.id;
     }
 
 }

@@ -1,6 +1,7 @@
 public without sharing class walkInLeadLWCcontroller{
     @auraenabled(cacheable = true)
     public static list<lead> getLead(String EmailOrPhone){
+        try{
         list<lead> leadList = new list<lead>();
         String Phonestring = '%' + EmailOrPhone;
 
@@ -26,10 +27,16 @@ public without sharing class walkInLeadLWCcontroller{
         // System.debug('leadList ====> ' + leadList);
         // system.debug('leadList::' + leadList);
         return leadList;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('walkInLeadLWCcontroller', 'getLead', e , null);
+       return null;
     }
+}
 
     @auraenabled
     public static String createLead(string Lastname, string email, string phone, string Course, string typeofcour, string userId, string agentid, string comments){
+        
         System.debug('userId ====> ' + userId);
         System.debug('agentid ====> ' + agentid);
         lead leadRec = new lead();
@@ -138,24 +145,37 @@ public without sharing class walkInLeadLWCcontroller{
 
     @auraenabled(cacheable = true)
     public static List<Assignment_Group_Member__c> getMember(){
+        try{
         List<Assignment_Group_Member__c> GmList = [SELECT Name, Group_Member__c, Group_Member__r.Name, Id
                                                    FROM Assignment_Group_Member__c];
         system.debug('GmList' + GmList);
         return GmList;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('walkInLeadLWCcontroller', 'getMember', e , null);
+       return null;
     }
+}
 
     @auraenabled(cacheable = true)
     public static List<Application__c> getApplication(String lid){
+        try{
         System.debug('lid ====> ' + lid);
         List<Application__c> AppList = [SELECT Course__c, Id, Name, LID__c, Applied_Date_Time__c, Lead__c
                                         FROM Application__c
                                         WHERE Lead__c = :lid];
         system.debug('AppList' + AppList);
         return AppList;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('walkInLeadLWCcontroller', 'getApplication', e , null);
+       return null;
     }
+}
 
     @auraenabled(cacheable = true)
     Public Static map<String, String> getPuckistOflead(){
+        try{
         String objectName = 'Lead';
         String fieldName = 'Course__c';
         map<String, String> getLablePick = new map<String, String>();
@@ -170,10 +190,16 @@ public without sharing class walkInLeadLWCcontroller{
         }
         system.debug('getLablePick::' + getLablePick);
         return getLablePick;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('walkInLeadLWCcontroller', 'getPuckistOflead', e , null);
+       return null;
     }
+}
 
     @auraenabled(cacheable = true)
     Public Static map<String, String> getPickiststatusOfTask(){
+        try{
         String objectName = 'Task';
         String fieldName = 'Status';
         map<String, String> getLablePick = new map<String, String>();
@@ -188,7 +214,12 @@ public without sharing class walkInLeadLWCcontroller{
         }
         system.debug('getLablePick::' + getLablePick);
         return getLablePick;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('walkInLeadLWCcontroller', 'getPickiststatusOfTask', e , null);
+       return null;
     }
+}
 
     @auraenabled(cacheable = true)
     Public Static map<String, String> getPickistpriorityOfTask(){
@@ -267,7 +298,7 @@ public without sharing class walkInLeadLWCcontroller{
 
         //String LoginPageBaseurl = 'https://whitemart--partial.sandbox.my.salesforce-sites.com/Abasoft_LoginPage';
         //String CustomerDetailPageBaseUrl = 'https://whitemart--partial.sandbox.my.salesforce-sites.com/CusomerDetailAURA_IN_VFPage';
-
+      try{
         String LoginPageBaseurl = System.Label.LoginPageBaseurl;
         String ExistingHashcode = '';
         string FinalPageToRedirect = '';
@@ -318,6 +349,11 @@ public without sharing class walkInLeadLWCcontroller{
             return LoginPage;
         }
         return null;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('walkInLeadLWCcontroller', 'checkExistingHashKeyMatching', e , null);
+       return null;
     }
+}
 
 }

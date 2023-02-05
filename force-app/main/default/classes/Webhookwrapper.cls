@@ -19,6 +19,12 @@ public with sharing class Webhookwrapper {
     }
 
     public static Webhookwrapper parse(String json) {
+		try{
 		return (Webhookwrapper) System.JSON.deserialize(json, Webhookwrapper.class);
-	}
+	} catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('Webhookwrapper', 'parse', e , null);
+       return null;
+    }
+}
 }

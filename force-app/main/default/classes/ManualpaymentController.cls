@@ -33,6 +33,7 @@ public class ManualpaymentController {
     
     @AuraEnabled
     public static Id SaveFile(Id parentId, String fileName, String base64Data, String contentType) {
+        try{
         base64Data = EncodingUtil.urlDecode(base64Data, 'UTF-8');
         Attachment attach = new Attachment();
         attach.parentId = parentId;
@@ -41,10 +42,16 @@ public class ManualpaymentController {
         attach.ContentType = contentType;
         Insert attach;
         return attach.Id;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('ManualpaymentcreateInvoice', 'SaveFile', e , null);
+       return null;
     }
+}
     
     @AuraEnabled
     public static  Invoice__c insertInvoiceBasedOppAmount(Decimal insertingInvAmount,String oppId,  String description){
+        try{
         List<Invoice__c> invoiceListToInsert = new List<Invoice__c>();
         Invoice__c invoiceRecToReturn = new Invoice__c();
         Decimal remaingAmount = 0.0;
@@ -95,5 +102,10 @@ public class ManualpaymentController {
             }
         }
         return invoiceRecToReturn;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('ManualpaymentcreateInvoice', 'insertInvoiceBasedOppAmount', e , null);
+       return null;
     }
+}
 }

@@ -15,6 +15,7 @@ public class UserAssignToRolesHandler {
              return userlst;
         }catch(Exception e){ 
             system.debug('Error' +e.getMessage()+' Line Number' +e.getLineNumber());
+            HandleBusinessException.captureError('UserAssignToRolesHandler', 'fetchUser', e , null);
         }
         return null;
     }
@@ -33,6 +34,7 @@ public class UserAssignToRolesHandler {
        return user;
               }catch(Exception e){ 
             system.debug('Error' +e.getMessage()+' Line Number' +e.getLineNumber());
+            HandleBusinessException.captureError('UserAssignToRolesHandler', 'fetchUser', e , null);
         }
        return null;
    }

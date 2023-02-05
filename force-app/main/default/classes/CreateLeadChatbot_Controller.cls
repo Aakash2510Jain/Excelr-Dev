@@ -10,6 +10,8 @@ public class CreateLeadChatbot_Controller {
 
     
  public static List<String> getPicklistValues(String ObjectApi_name,String Field_name){
+     
+    try{
        
         List<String> lstPickvals                        = new List<String>();
         Schema.SObjectType targetType                   = Schema.getGlobalDescribe().get(ObjectApi_name);
@@ -24,16 +26,28 @@ public class CreateLeadChatbot_Controller {
             lstPickvals.add(String.ValueOf(a.getLabel()).trim());  
         }
         return lstPickvals;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('CreateLeadChatbot_Controller', 'getPicklistValues', e , null);
+       return null;
     }
+}
     
     @RemoteAction
     public static string saveLeadDetails (lead lead){
+        try{
         insert lead;
         return lead.Id;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('CreateLeadChatbot_Controller', 'saveLeadDetails', e , null);
+       return null;
     }
+}
     
      @RemoteAction
     public Static List<String> getAllCities(){
+        try{
         List<String> cityList = new List<String>();
        List<City_State_Country__c> custSetList = [SELECT Id,Country__c,City__c,State__c FROM City_State_Country__c];
         for(City_State_Country__c cus : custSetList){
@@ -42,11 +56,16 @@ public class CreateLeadChatbot_Controller {
         System.debug('cityList 1 :'+cityList);
         getCityList = cityList;
         return cityList;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('CreateLeadChatbot_Controller', 'getAllCities', e , null);
+       return null;
     }
+}
     
      @RemoteAction
     public Static Map<String,String> getStateCustomSetting( String cityName){
-        
+        try{
        List<City_State_Country__c> custSetList = [SELECT Id,Country__c,City__c,State__c FROM City_State_Country__c Where City__c =:cityName];
         Map<String,String> StateCounytyMap = new Map<String,String>();
         for(City_State_Country__c cus : custSetList){
@@ -55,5 +74,10 @@ public class CreateLeadChatbot_Controller {
         System.debug(' State ::'+StateCounytyMap.keySet() + ' Country ::'+StateCounytyMap.values());
         pageMap = StateCounytyMap;
         return StateCounytyMap;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('CreateLeadChatbot_Controller', 'getStateCustomSetting', e , null);
+       return null;
     }
+}
 }

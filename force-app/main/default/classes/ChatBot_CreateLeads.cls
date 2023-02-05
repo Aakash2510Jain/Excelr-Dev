@@ -1,6 +1,7 @@
 public class ChatBot_CreateLeads {
-    @InvocableMethod(label='Create Lead')
+   /* @InvocableMethod(label='Create Lead')
     public static List<string> getProductlist(List<TranscriptInput> transcripts){
+        
         system.debug('transcripts--'+transcripts);
         List<string> transcriptIdList = New List<string>();
         string transcriptId;
@@ -23,11 +24,12 @@ public class ChatBot_CreateLeads {
         if(leadsToInsert.size() > 0)
         	insert leadsToInsert;
         Return New List<string>{string.valueOf(lead.Name)};
-    }
+    }  
+    
     public class TranscriptInput {
         @InvocableVariable(required=true)
         public ID routableID;
         @InvocableVariable(required=true)
         public string selectedCourse;
-    }
+    }*/
 }

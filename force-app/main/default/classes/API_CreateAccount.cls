@@ -25,7 +25,7 @@
 global class API_CreateAccount{
     @HttpPost
     global static void doPost(){
-         
+        
         RestRequest req = RestContext.request;
         Blob body = req.requestBody;
         String requestString = body.toString();
@@ -35,66 +35,59 @@ global class API_CreateAccount{
         
         if (!String.isEmpty(requestString)){
             Account newAccount = (Account) JSON.deserialize(requestString, Account.class);
+            system.debug('newAccount-->'+newAccount);
             if (newAccount != null){
-                existingLeadByEmail = [Select Id, Email
+                existingLeadByEmail = [Select Id, Email, status, course__c, Customers__c,OwnerId
                                        From Lead
-                                       where Email = :newAccount.Email__c and isConverted = false
-                                       limit 1];
+                                       where Email = :newAccount.Email__c and isConverted = false order by CreatedDate Desc limit 1                                       ];
+                system.debug('existingLeadByEmail-->'+existingLeadByEmail);
                 convertedLeadByEmail = [Select Id, Email
                                         From Lead
                                         where Email = :newAccount.Email__c and isConverted = true
                                         limit 1];
-                
+                system.debug('convertedLeadByEmail-->'+convertedLeadByEmail);
                 if (!convertedLeadByEmail.isEmpty()){
-                    Utility.createApplicationInstance(string.valueOf(convertedLeadByEmail[0].ConvertedAccountId), newAccount.Course__c,requestString);
+                    Utility.createApplicationInstance(string.valueOf(convertedLeadByEmail[0].ConvertedAccountId), newAccount.Course__c, requestString);
                     Opportunity opportunityRec = new Opportunity(Name = newAccount.Course__c, AccountId = convertedLeadByEmail[0].ConvertedAccountId, CloseDate = Date.today().addDays(2), StageName = 'Proposal');
                     insert opportunityRec;
                     
                 } else{
-                    
+                    system.debug('Non-Converted Lead doesnot exist');
                     if (!existingLeadByEmail.isEmpty()){
-                        //update Lead course
-                        //Insert application
-                        
-                        Utility.createApplicationInstance(existingLeadByEmail[0].Id, newAccount.Course__c, requestString);
-                        
-                    } else{
-                        //Insert Lead
-                        //Insert Application
-                        Lead leadRec = new Lead();
-                        leadRec.Email = newAccount.Email__c;
-                        leadRec.Phone = newAccount.Phone;
-                        leadRec.LastName = newAccount.Name;
-                        leadRec.LeadSource = newAccount.Source__c;
-                        //leadRec.Form_Source__c = newAccount.Form_Source__c;
-                        leadRec.Enter_UTM_Link__c = newAccount.Enter_UTM_Link__c;
-                        
-                        leadRec.Course__c = newAccount.Course__c != null ? newAccount.Course__c : 'NA';
-                        leadRec.City__c = newAccount.City__c != null ? newAccount.City__c : 'NA';
-                        leadRec.Form_Names__c = newAccount.Form_Names__c;                        
-                        leadRec.UTM_Campaign__c = newAccount.UTM_Campaign__c;
-                        leadRec.UTM_Device__c = newAccount.UTM_Device__c;
-                        leadRec.UTM_AdGroup__c = newAccount.UTM_AdGroup__c;
-                        leadRec.UTM_Term__c = newAccount.UTM_Term__c;
-                        leadRec.UTM_Channel__c = newAccount.UTM_Channel__c;
-                        leadRec.UTM_Type__c = newAccount.UTM_Type__c;
-                        leadRec.UTM_Location__c = newAccount.Location_UTM__c;
-                        leadRec.UTM_Variety__c = newAccount.UTM_Variety__c;
-                        leadRec.UTM_Experiment__c = newAccount.UTM_Experiment__c;
-                        leadRec.UTM_Medium__c = newAccount.UTM_Medium__c;
-                        leadRec.Type_of_Course__c = newAccount.Type_of_Course__c;
-                        leadRec.Lead_Gen_Path__c = newAccount.Lead_Gen_Path__c != null ? newAccount.Lead_Gen_Path__c:'NA';
-                        leadRec.GCLID__c = newAccount.GCLID__c;
-                        
-                        String leadid = insertLead(leadRec, requestString);
-                        system.debug('leadRec-->'+leadRec);
-                        system.debug('leadid-->'+leadid);
-                        if (leadRec != null){
-                            system.debug('Inside If');
-                            system.debug('leadid-->'+leadid);
+                        for (Lead leadRec : existingLeadByEmail){
+                            system.debug('leadRec.Status--->'+leadRec.Status);
+                            system.debug('leadRec.Course__c--->'+leadRec.Course__c);
+                            system.debug('newAccount.Course__c---->'+newAccount.Course__c);
                             
-                            RestContext.response.responseBody = Blob.valueOf(JSON.serialize(new IntegrationWrapper.APIResponseWrapper('Success', 'Account created successfully ref Id:' + leadId)));
-                        }else{
+                            if ((leadRec.Status == 'Dead' || leadRec.Status == 'Junk') && leadRec.Course__c == newAccount.Course__c){
+                                system.debug('dead or junk and course is same');
+                                system.debug('Create new Lead');
+                                Lead insertedLeadRec = insertLead(Utility.insertLeadViaAPI(newAccount), requestString, leadRec.Customers__c);
+                            } else if ((leadRec.Status == 'Dead' || leadRec.Status == 'Junk') && leadRec.Course__c != newAccount.Course__c){
+                                system.debug('dead or junk and course is different');    
+                                system.debug('Create new Lead');
+                                Lead insertedLeadRec = insertLead(Utility.insertLeadViaAPI(newAccount), requestString, leadRec.Customers__c);
+                            } else if ((leadRec.Status != 'Dead' && leadRec.Status != 'Junk') && leadRec.Course__c == newAccount.Course__c){
+                                system.debug('Status is not Dead/Junk and course is same');
+                                system.debug('Create Task');
+                                string taskId = Utility.createTaskViaLeadCreationAPI(leadRec);
+                            } else if ((leadRec.Status != 'Dead' && leadRec.Status != 'Junk') && leadRec.Course__c != newAccount.Course__c){
+                                system.debug('Status is not Dead/Junk and course is different');
+                                system.debug('Create Application');
+                                string applicationId = Utility.createApplicationViaLeadCreationAPI(leadRec);
+                            }
+                        }
+                    } else{
+                        String customerId = Utility.createCustomerViaLeadCreationAPI(newAccount);
+                        Lead insertedLeadRec = insertLead(Utility.insertLeadViaAPI(newAccount), requestString, customerId);
+                        string applicationId = Utility.createApplicationViaLeadCreationAPI(insertedLeadRec);
+                        system.debug('leadid-->' + insertedLeadRec.Id);
+                        if (insertedLeadRec.Id != null){
+                            system.debug('Inside If');
+                            system.debug('insertedLeadRec.Id-->' + insertedLeadRec.Id);
+                            
+                            RestContext.response.responseBody = Blob.valueOf(JSON.serialize(new IntegrationWrapper.APIResponseWrapper('Success', 'Account created successfully ref Id:' + insertedLeadRec.Id)));
+                        } else{
                             system.debug('Inside Else');
                             RestContext.response.responseBody = Blob.valueOf(JSON.serialize(new IntegrationWrapper.APIResponseWrapper('Error', 'Could not create Account')));
                         }
@@ -105,14 +98,14 @@ global class API_CreateAccount{
             RestContext.response.responseBody = Blob.valueOf(JSON.serialize(new IntegrationWrapper.APIResponseWrapper('Error', 'Bad Request')));
             RestContext.response.statusCode = 400;
         }
-    
     }
     
-    public static string insertLead(Lead leadRec, string requestString){
+    public static Lead insertLead(Lead leadRec, string requestString, string customerId){
         try{
             system.debug('--- leadRec ' + leadRec);
+            leadRec.Customers__c = customerId;
             insert leadRec;
-            return leadRec.id;
+            return leadRec;
         } catch (Exception e){
             System.debug(' --- Error Msg ' + e.getMessage());
             System.debug(' --- Error LineNo ' + e.getLineNumber());
@@ -121,7 +114,7 @@ global class API_CreateAccount{
         }
     }
     
-    public static string updateLead(Lead leadRec ){
+    public static string updateLead(Lead leadRec){
         try{
             system.debug('--- leadRec ' + leadRec);
             update leadRec;

@@ -1,6 +1,7 @@
 public without sharing class voiceFormLWCcontroller{
     @auraenabled(cacheable = true)
     public static list<lead> getLead(String EmailOrPhone){
+        try{
         list<lead> leadList = new list<lead>();
         String Phonestring = '%'+ EmailOrPhone;
 
@@ -23,11 +24,17 @@ public without sharing class voiceFormLWCcontroller{
         // System.debug('leadList ====> ' + leadList);
         // system.debug('leadList::' + leadList);
         return leadList;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('voiceFormLWCcontroller', 'getLead', e , null);
+       return null;
     }
+}
 
     @auraenabled
     public static String createLead(string Lastname, string email, string phone, string Course, string agentid,string city,string LdGenPath,string state,string country,string source,string medium,string comments){
        // System.debug('userId ====> ' + userId); String firstname, 
+       
         System.debug('agentid ====> ' + agentid);
         lead leadRec = new lead();
         string message = '';
@@ -156,6 +163,7 @@ public without sharing class voiceFormLWCcontroller{
 
     @auraenabled(cacheable = true)
     Public Static map<String, String> getPuckistOflead(){
+        try{
         String objectName = 'Lead';
         String fieldName = 'Course__c';
         map<String, String> getLablePick = new map<String, String>();
@@ -170,10 +178,16 @@ public without sharing class voiceFormLWCcontroller{
         }
         system.debug('getLablePick::' + getLablePick);
         return getLablePick;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('voiceFormLWCcontroller', 'getPuckistOflead', e , null);
+       return null;
     }
+}
     
     @auraenabled(cacheable = true)
     Public Static map<String, String> getPickiststatusOfTask(){
+        try{
         String objectName = 'Task';
         String fieldName = 'Status';
         map<String, String> getLablePick = new map<String, String>();
@@ -188,10 +202,16 @@ public without sharing class voiceFormLWCcontroller{
         }
         system.debug('getLablePick::' + getLablePick);
         return getLablePick;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('voiceFormLWCcontroller', 'getPickiststatusOfTask', e , null);
+       return null;
     }
+}
 
     @auraenabled(cacheable = true)
     Public Static map<String, String> getPickistpriorityOfTask(){
+        try{
         String objectName = 'Task';
         String fieldName = 'Priority';
         map<String, String> getLablePick = new map<String, String>();
@@ -206,11 +226,17 @@ public without sharing class voiceFormLWCcontroller{
         }
         system.debug('getLablePick::' + getLablePick);
         return getLablePick;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('voiceFormLWCcontroller', 'getPickistpriorityOfTask', e , null);
+       return null;
     }
+}
 
 
     @auraEnabled
     Public Static string EmailIsm(String LiD, String ownerMail){
+     
         System.debug('LiD =========> ' + LiD);
         System.debug('ownerMail =======> ' + ownerMail);
         string message = '';
@@ -285,7 +311,7 @@ public without sharing class voiceFormLWCcontroller{
 
         //String LoginPageBaseurl = 'https://whitemart--partial.sandbox.my.salesforce-sites.com/Abasoft_LoginPage';
         //String CustomerDetailPageBaseUrl = 'https://whitemart--partial.sandbox.my.salesforce-sites.com/CusomerDetailAURA_IN_VFPage';
-
+      try{
         String LoginPageBaseurl = System.Label.LoginPageBaseurl;
         String ExistingHashcode = '';
         string FinalPageToRedirect = '';
@@ -346,6 +372,11 @@ public without sharing class voiceFormLWCcontroller{
             return CustomerDetailPage;*/
         }
         return null;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('voiceFormLWCcontroller', 'checkExistingHashKeyMatching', e , null);
+       return null;
     }
+}
 
 }

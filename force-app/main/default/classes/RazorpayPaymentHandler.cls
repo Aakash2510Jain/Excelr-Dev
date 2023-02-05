@@ -79,6 +79,7 @@ public with sharing class RazorpayPaymentHandler {
 
     
     public static String initateRazorpayPament(String recId){
+        try{
         Invoice__c iv = [Select Id,Name,Amount__c,Opportunity__c,Opportunity__r.Account.Name,Opportunity__r.Account.Email__c,Opportunity__r.Account.Phone,LeadInvoice__c,LeadInvoice__r.Name,LeadInvoice__r.Phone,LeadInvoice__r.Email From Invoice__c Where Id=:recId];
 
         String email;
@@ -114,7 +115,12 @@ public with sharing class RazorpayPaymentHandler {
         razorpayPaymentHandler(triggeredRecordId,name,contact,email,amount,objName);
 
         return 'Success';
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('RazorpayPaymentHandler', 'initateRazorpayPament', e , null);
+       return null;
     }
+}
 
 
     @future(callout=true)

@@ -2,7 +2,7 @@ public class LeadAssigningCompController {
     
     @AuraEnabled
     public static Map<String,String> getAllSObjects(){
-        
+        try{
         Map<String,String> mapOfSobject = new Map<String,String>();
         for(Schema.SObjectType objType : Schema.getGlobalDescribe().Values()){
             if(objType.getDescribe().isQueryable() && objType.getDescribe().isSearchable() && !objType.getDescribe().isCustomSetting() && objType.getDescribe().isDeletable()){
@@ -14,10 +14,16 @@ public class LeadAssigningCompController {
         }
         system.debug('mapOfSobject'+mapOfSobject);
         return mapOfSobject;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('LeadAssigningCompController', 'getAllSObjects', e , null);
+       return null;
     }
+}
     
     @AuraEnabled
     public static List<WrapperFields> getFieldList(String objName){
+        try{
         objName = 'Lead';
         Map<string, String> mapOfFields = new Map<string, String>();
         List<WrapperFields> listOfWrapperFields = new List<WrapperFields>();
@@ -59,9 +65,15 @@ public class LeadAssigningCompController {
         }
         System.debug('List of Wrapper class'+JSON.serialize(listOfWrapperFields));
         return listOfWrapperFields;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('LeadAssigningCompController', 'getFieldList', e , null);
+       return null;
     }
+}
     
     public static Map<String,String> getObjectFields(String  objName){
+        try{
         system.debug('objName'+objName);
         Map<String,String> mapToBeReurned = new Map<String,String>();
         Map<String, Schema.SObjectField> objectFields = Schema.getGlobalDescribe().get(objName).getDescribe().fields.getMap();
@@ -72,7 +84,12 @@ public class LeadAssigningCompController {
             
         }
         return mapToBeReurned;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('LeadAssigningCompController', 'getObjectFields', e , null);
+       return null;
     }
+}
     @AuraEnabled
     public static String createExcRecord(string objlist,string ids,Execution_Criteria__c scorecardObj){
         
@@ -376,6 +393,7 @@ public class LeadAssigningCompController {
     }
     @AuraEnabled
     public static ScoreCard_Details getScoreCardDetail(String ids){
+        try{
         system.debug('ids'+ids);
         if(ids !=null && ids !=''){
             Execution_Criteria__c scorecardObj = [Select Id,Name,Evaluation_Expression_For_Execution__c,Enabled__c from Execution_Criteria__c where Id =:ids];
@@ -395,7 +413,12 @@ public class LeadAssigningCompController {
             }
         }
         return null;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('LeadAssigningCompController', 'getScoreCardDetail', e , null);
+       return null;
     }
+}
     public class WrapperExcWeight{
         @AuraEnabled
         public string Name {get;set;}

@@ -41,6 +41,7 @@ public class ccAvenueLwcController {
 
     @AuraEnabled
     public static String initateCCAvenuePayment(String recId){
+        try{
         String name,email;
 
         Invoice__c iv = getInvoice(recId);
@@ -61,16 +62,34 @@ public class ccAvenueLwcController {
         String paymentURL = DN_CCAvenue_CTRL.createPaymentURLFromInvoice(iv,reqMap);
 
         return prepareTemplateAndSendEmail(templateMap,paymentURL,email,name);
-    }
+
+    } catch(exception e){
+            
+        System.debug('The following exception has occurred: ' + e.getMessage());
+        HandleBusinessException.captureError('ccAvenueLwcController','initateCCAvenuePayment', e, null);
+       
+        return null;
+   }
+}
 
     public static Invoice__c getInvoice(String recId){
+        try{
 
         return [Select Id,Name,Amount__c,Opportunity__c,Opportunity__r.Account.Name,Opportunity__r.Account.Email__c,Opportunity__r.Account.Phone,Opportunity__r.Account.BillingAddress,Opportunity__r.Account.Billingcity,Opportunity__r.Account.BillingStreet,Opportunity__r.Account.BillingState,Opportunity__r.Account.BillingCountry,Opportunity__r.Account.BillingPostalCode,
                                    Opportunity__r.Account.Shippingcity,Opportunity__r.Account.ShippingStreet,Opportunity__r.Account.ShippingAddress,Opportunity__r.Account.ShippingCountry,Opportunity__r.Account.ShippingPostalCode,Opportunity__r.Account.ShippingState,
                                    LeadInvoice__c,LeadInvoice__r.Name,LeadInvoice__r.Phone,LeadInvoice__r.Email,LeadInvoice__r.Street,LeadInvoice__r.city,LeadInvoice__r.Country,LeadInvoice__r.State,LeadInvoice__r.PostalCode,LeadInvoice__r.Address From Invoice__c Where Id=:recId];
-    }
+    }catch(exception e){
+            
+        System.debug('The following exception has occurred: ' + e.getMessage());
+        HandleBusinessException.captureError('ccAvenueLwcController','getInvoice', e, null);
+       
+        return null;
+   }
+}
+
 
     public static Map<String,String> getRequestMap(Invoice__c iv){
+        try{
         Map<String,String> reqMap = new Map<String,String>();
 
         if(iv.Opportunity__c!=null){
@@ -109,8 +128,17 @@ public class ccAvenueLwcController {
 
         return reqMap;
     }
+     catch(exception e){
+            
+        System.debug('The following exception has occurred: ' + e.getMessage());
+        HandleBusinessException.captureError('ccAvenueLwcController','getInvoice', e, null);
+       
+        return null;
+   }
+}
 
     public static Map<String,String> getPaymentLinkTemplateId(){
+        try{
         Map<String,String> respMap = new Map<String,String>();
 
         EmailTemplate eTemplate = [Select id,body from EmailTemplate where name = 'Cc Avenue Payment Link'];
@@ -118,7 +146,14 @@ public class ccAvenueLwcController {
         respMap.put('body',eTemplate.body);
 
         return respMap;
-    }
+    }catch(exception e){
+            
+        System.debug('The following exception has occurred: ' + e.getMessage());
+        HandleBusinessException.captureError('ccAvenueLwcController','getPaymentLinkTemplateId', e, null);
+       
+        return null;
+   }
+}
 
     public static String prepareTemplateAndSendEmail(Map<String,String> templateMap, String paymentUrl,String email, String name){
         try{
@@ -134,17 +169,25 @@ public class ccAvenueLwcController {
             System.debug(' the Error has occured due to =====> ' + e.getMessage());
             System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
             HandleBusinessException.captureError('ccAvenueLwcController','prepareTemplateAndSendEmail', e, null);
-            return e.getMessage();
+            return  null;
         }
     }
 
    
     Public Static void sendPaymentLink( String email,String templateId,String body){
+        try{
         Messaging.SingleEmailMessage EmailMessage = new Messaging.SingleEmailMessage();
         EmailMessage.toAddresses = new String[] {email};
         EmailMessage.subject = 'CcAvenue Payment Initiated';
         EmailMessage.plainTextBody = body;
         EmailMessage.setTemplateId(templateId);
         Messaging.sendEmail(new Messaging.SingleEmailMessage[]{EmailMessage});
+    }catch(Exception e){
+        System.debug(' the Error has occured due to =====> ' + e.getMessage());
+        System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+        HandleBusinessException.captureError('ccAvenueLwcController','sendPaymentLink', e, null);
+        
     }
+}
+
 }

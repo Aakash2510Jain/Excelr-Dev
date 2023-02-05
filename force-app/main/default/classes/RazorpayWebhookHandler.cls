@@ -24,7 +24,7 @@ global without sharing class RazorpayWebhookHandler{
 
                 if (objName == 'Lead'){
                     //Convert Lead
-                    Lead ld = new Lead(Id = recId, Should_be_Converted__c = true);
+                    Lead ld = new Lead(Id = recId);
                     update ld;
                     system.debug('Lead After Updation :: ' + ld);
                     

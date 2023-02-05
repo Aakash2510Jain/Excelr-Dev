@@ -19,6 +19,7 @@ global class RetailInvoiceHelper {
     global Decimal getInvoiceTotalPrice {get;set;}
      
     global RetailInvoiceHelper(ApexPages.StandardController controller) {
+        try{
         String recordId = '';
         String oppId = '';
         String AccId = '';
@@ -84,7 +85,12 @@ global class RetailInvoiceHelper {
             }
             
         }
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('RetailInvoiceHelper', 'RetailInvoiceHelper', e , null);
+       
     }
+}
     @future(callout = true)
     global static void attachPdf(string recordId){
         

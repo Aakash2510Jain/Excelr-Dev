@@ -1,7 +1,7 @@
 public class ScorecardController {
     @AuraEnabled
     public static Map<String,String> getAllSObjects(){
-        
+        try{
         Map<String,String> mapOfSobject = new Map<String,String>();
         for(Schema.SObjectType objType : Schema.getGlobalDescribe().Values()){
             if(objType.getDescribe().isQueryable() && objType.getDescribe().isSearchable() && !objType.getDescribe().isCustomSetting() && objType.getDescribe().isDeletable()){
@@ -13,9 +13,16 @@ public class ScorecardController {
         }
         system.debug('mapOfSobject'+mapOfSobject);
         return mapOfSobject;
+    } catch(Exception e){
+        System.debug(' the Error has occured due to =====> ' + e.getMessage());
+    System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+    HandleBusinessException.captureError('ScorecardController','getAllSObjects', e, null);    
+    return null;
     }
+}
     @AuraEnabled
     public static List<WrapperFields> getFieldList(String objName){
+        try{
         system.debug('objName'+objName);
         Map<string, String> mapOfFields = new Map<string, String>();
         List<WrapperFields> listOfWrapperFields = new List<WrapperFields>();
@@ -57,8 +64,15 @@ public class ScorecardController {
         }
         System.debug('List of Wrapper class'+JSON.serialize(listOfWrapperFields));
         return listOfWrapperFields;
+    } catch(Exception e){
+        System.debug(' the Error has occured due to =====> ' + e.getMessage());
+    System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+    HandleBusinessException.captureError('ScorecardController','getFieldList', e, null);    
+    return null;
     }
+}
     public static Map<String,String> getObjectFields(String  objName){
+        try{
         system.debug('objName'+objName);
         Map<String,String> mapToBeReurned = new Map<String,String>();
          Map<String, Schema.SObjectField> objectFields = Schema.getGlobalDescribe().get(objName).getDescribe().fields.getMap();
@@ -68,7 +82,13 @@ public class ScorecardController {
             
         }
         return mapToBeReurned;
+    } catch(Exception e){
+        System.debug(' the Error has occured due to =====> ' + e.getMessage());
+    System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+    HandleBusinessException.captureError('ScorecardController','getObjectFields', e, null);    
+    return null;
     }
+}
     @AuraEnabled
     public static String createExcRecord(string objlist,string ids,Scorecard__c scorecardObj){
         
@@ -299,22 +319,35 @@ public class ScorecardController {
     }
     @AuraEnabled
     public static void deleteRowExc(String ids){
+        try{
         if(ids !=null && ids !=''){
             Execution_Criteria_Entry__c ScoreExcobj = [select id from Execution_Criteria_Entry__c where id=:ids];
             if(ScoreExcobj !=null)
                 delete ScoreExcobj;    
         }
-    }
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+        HandleBusinessException.captureError('ScorecardController', 'deleteRowExc', e , null);
+          
+      }
+}
     @AuraEnabled
     public static void deleteRowWeight(String ids){
+        try{
         if(ids !=null && ids !=''){
             Scorecard_Weight_Criteria__c weightCriteriaObj = [select id from Scorecard_Weight_Criteria__c where id=:ids];
             if(weightCriteriaObj !=null)
                 delete weightCriteriaObj;    
         }
-    }
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+        HandleBusinessException.captureError('ScorecardController', 'deleteRowWeight', e , null);
+          
+      }
+}
     @AuraEnabled
     public static List<String> getMatchList(String name){
+        try{
         List<String> listOfString = new List<String>();
         if(name !=null && name !=''){
        		String matchingValue = Matching_Type_Operator__c.getValues(name).Field_Name__c;
@@ -328,10 +361,16 @@ public class ScorecardController {
             return listOfString;
         }
         return null;
-    }
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+        HandleBusinessException.captureError('ScorecardController', 'getMatchList', e , null);
+         return null;
+      }
+}
     
     @AuraEnabled
     public static ScoreCard_Details saveScoreCardDetail(String objectList){
+        try{
         System.debug('objectList @@@'+objectList);
         ScoreCard_Details scoreCardDetailsObj = (ScoreCard_Details)JSON.deserialize(objectList, ScoreCard_Details.class);
         if(scoreCardDetailsObj !=null){
@@ -374,11 +413,18 @@ public class ScorecardController {
                 System.debug(' the Error has occured due to =====> ' + e.getMessage());
                 System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
                 HandleBusinessException.captureError('ScorecardController','saveScoreCardDetail', e, null); 
+                return null;
             }    
         }
         return null;
-     }
+     } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+        HandleBusinessException.captureError('ScorecardController', 'getScoreCardParent', e , null);
+         return null;
+      }
+}
     public static Scorecard__c getScoreCardParent(String objectType){
+        try{
         if(objectType !=null && objectType !=''){
             try{
                 Scorecard__c scoreCardParent = [Select Id,Name,Object_Type__c,Roll_Up_Summary_Field__c from Scorecard__c where Object_Type__c =: objectType AND Scorecard__c =null];
@@ -390,9 +436,15 @@ public class ScorecardController {
             }
         }
         return null;
-    }
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+        HandleBusinessException.captureError('ScorecardController', 'getScoreCardParent', e , null);
+         return null;
+      }
+}
     @AuraEnabled
     public static ScoreCard_Details getScoreCardDetail(String ids){
+        try{
         system.debug('ids'+ids);
         if(ids !=null && ids !=''){
             Scorecard__c scorecardObj = [Select Id,Name,Scorecard__c,Scorecard__r.Object_Type__c,Scorecard__r.Roll_Up_Summary_Field__c,Total_Weight__c,Evaluation_Expression_For_Execution__c,Enabled__c from Scorecard__c where Id =:ids];
@@ -421,7 +473,12 @@ public class ScorecardController {
             }
         }
         return null;
+    } catch (Exception e){
+      system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('ScorecardController', 'getScoreCardDetail', e , null);
+       return null;
     }
+}
     public class WrapperExcWeight{
         @AuraEnabled
         public string Name {get;set;}

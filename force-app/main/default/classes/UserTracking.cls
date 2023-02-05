@@ -4,6 +4,7 @@ public without sharing class UserTracking{
     
     @AuraEnabled(cacheable = true)
     public static UserTrack OnpageLoad(string userId){
+        try{
         UserTrack usr = new UserTrack();
         
         User xUser = [Select Name
@@ -29,12 +30,17 @@ public without sharing class UserTracking{
         usr.username = xUser.Name;
         
         return usr;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('UserTracking', 'OnpageLoad', e , null);
+       return null;
     }
+}
     
     @AuraEnabled
     public static String UserCheckin(string userId){
         
-        
+       try{ 
         List<Lead> leadList = new List<Lead>();
         String eventStatus = 'Something went wrong';
         string groupName = '';
@@ -95,10 +101,16 @@ public without sharing class UserTracking{
         
         
         return eventStatus;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('UserTracking', 'UserCheckin', e , null);
+       return null;
     }
+}
     
     @AuraEnabled
     public static String UserCheckout(string userId){
+        try{
         String eventStatus = 'Something went wrong';
         if (userId != null){
             list<User_Tracking__c> userTracking = new list<User_Tracking__c>();
@@ -134,10 +146,16 @@ public without sharing class UserTracking{
         
         
         return eventStatus;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('UserTracking', 'UserCheckout', e , null);
+       return null;
     }
+}
     
     @AuraEnabled
     public static void manageBreakTime(string userId){
+        try{
         UserTrack usr = new UserTrack();
         List<Assignment_Group_Member__c> agmListToBeUpdated = new List<Assignment_Group_Member__c>();
         list<User_Tracking__c> userTracking = [select id, BreakTime_Started__c, Checkin_Datetime__c, Checkout_Datetime__c, Member__c
@@ -162,7 +180,12 @@ public without sharing class UserTracking{
                 update agmListToBeUpdated;
             }
         }
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('UserTracking', 'manageBreakTime', e , null);
+      
     }
+}
     
     public class UserTrack{
         @AuraEnabled

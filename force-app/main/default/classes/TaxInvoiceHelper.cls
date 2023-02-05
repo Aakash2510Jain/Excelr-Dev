@@ -10,6 +10,7 @@ global without sharing class TaxInvoiceHelper{
     public Lead leadDetails{ get; set; }
 
     global TaxInvoiceHelper(){
+        try{
         InvoiceId = ApexPages.CurrentPage().getparameters().get('id');
         system.debug('InvoiceId-->' + InvoiceId);
 
@@ -32,7 +33,12 @@ global without sharing class TaxInvoiceHelper{
 
         }
         system.debug('oppDetails-->' + oppDetails);
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('TaxInvoiceHelper', 'TaxInvoiceHelper', e , null);
+       
     }
+}
 
     @future(callout = true)
     global static void attachPdf(string recordId){

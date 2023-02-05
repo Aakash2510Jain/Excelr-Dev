@@ -1,6 +1,7 @@
 public without sharing class ChatFormLWCcontroller{
     @auraenabled(cacheable = true)
     public static list<lead> getLead(String EmailOrPhone){
+        try{
         list<lead> leadList = new list<lead>();
         String Phonestring = '%' + EmailOrPhone;
 
@@ -25,7 +26,12 @@ public without sharing class ChatFormLWCcontroller{
         // System.debug('leadList ====> ' + leadList);
         // system.debug('leadList::' + leadList);
         return leadList;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('ChatFormLWCcontroller', 'getLead', e , null);
+       return null;
     }
+}
 
     @auraenabled
     public static String createLead(string Lastname, string email, string phone, string Course, string agentid, string city, string state, string country, string source, string medium, string VisitorId, string Transcript, string LandingPageURL, string comments){
@@ -306,7 +312,7 @@ public without sharing class ChatFormLWCcontroller{
 
         //String LoginPageBaseurl = 'https://whitemart--partial.sandbox.my.salesforce-sites.com/Abasoft_LoginPage';
         //String CustomerDetailPageBaseUrl = 'https://whitemart--partial.sandbox.my.salesforce-sites.com/CusomerDetailAURA_IN_VFPage';
-
+        try{
         String LoginPageBaseurl = System.Label.LoginPageBaseurl;
         String ExistingHashcode = '';
         string FinalPageToRedirect = '';
@@ -366,6 +372,11 @@ public without sharing class ChatFormLWCcontroller{
             return CustomerDetailPage;*/
         }
         return null;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('ChatFormLWCcontroller', 'checkExistingHashKeyMatching', e , null);
+       return null;
     }
+}
 
 }

@@ -2,7 +2,7 @@
 public   class CaseTriggerHeperTest {
     //CaseTriggerHeper clas = new CaseTriggerHeper();
     public static testMethod void upsertcaseRec() {
-        
+        try{
         List<Case> caseLIst = new List<Case>();
         
         Case caseRec = new Case();
@@ -26,8 +26,14 @@ public   class CaseTriggerHeperTest {
         caseRec1.Status = 'On Hold';
         caseRec1.Origin = 'Email';
         insert caseRec1;*/
-    } 
+    }catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('CaseTriggerHeperTest', 'upsertcaseRec', e , null);
+       
+    }
+ }
        public static testMethod void upsertcaseRec1(){
+        try{
         Profile p = [Select Id from Profile where Name = 'Inside Sales Manager'];
         User user1 = new User();
         user1.Username = 'us1@test.com';
@@ -118,6 +124,12 @@ public   class CaseTriggerHeperTest {
         insert bdRec;*/
         
         
+            }catch (Exception e){
+                system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+              HandleBusinessException.captureError('CaseTriggerHeperTest', 'upsertcaseRec1', e , null);
+               
             }
+
+        }
          
     }

@@ -31,15 +31,23 @@ public class UserTriggerHandler {
     }
     
     Public Static Void DeleteAvailibility(Map<Id,User>UserMap){
+        try{
         System.debug('UserMapDelete----'+UserMap);
         List<Availability__c> AvailableRecList=[Select Id,Name From Availability__c Where OwnerId IN:UserMap.keySet()];
         if(!AvailableRecList.isEmpty()){
             delete AvailableRecList;
         }
         
+    } catch(Exception e){
+        System.debug(' the Error has occured due to =====> ' + e.getMessage());
+        System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+        HandleBusinessException.captureError('UserTriggerHandler','DeleteAvailibility', e, null);
+        
     }
+}
     
     Public Static Void CreateAvailibility(Map<Id,User>UserMap){
+        try{
         System.debug('UserMap----'+UserMap);
         List<Availability__c> Av=new List<Availability__c>();
         for(User U:UserMap.values()){
@@ -72,6 +80,12 @@ public class UserTriggerHandler {
             insert Av;
             
         }
+    } catch(Exception e){
+        System.debug(' the Error has occured due to =====> ' + e.getMessage());
+        System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+        HandleBusinessException.captureError('UserTriggerHandler','CreateAvailibility', e, null);
+        
     }
+}
     
 }

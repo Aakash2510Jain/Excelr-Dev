@@ -1,7 +1,7 @@
 public class HTTPUtility 
 {
      public static HttpResponse sendRequest(String endPoint, String token, String body, String methodType){
-        
+         try{
          Http http = new Http();
          HttpRequest request = new HttpRequest();
          request.setEndpoint(endpoint);
@@ -13,5 +13,11 @@ public class HTTPUtility
       //   String returnValue =  response.getBody();
          return response ;
          
-     }
+     } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('HTTPUtility', 'sendRequest', e , null);
+      return null;
+       
+    }
+    }
 }

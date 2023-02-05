@@ -1,5 +1,6 @@
 public class opportunityLineItemTriggerHelper {
     public static void fireApprovalAfterInsert(Map<Id, OpportunityLineItem> oldMap, Map<Id, OpportunityLineItem> newMap){
+   try{ 
         Map<Id, Approval.ProcessSubmitRequest> cdToapprovalRequestMap = new Map<Id, Approval.ProcessSubmitRequest>();
         
         for(OpportunityLineItem OLIRec : newMap.values()){
@@ -20,5 +21,10 @@ public class opportunityLineItemTriggerHelper {
                     List<Approval.ProcessResult> result = Approval.process(cdToapprovalRequestMap.values());
             }
         }
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('opportunityLineItemTriggerHelper', 'fireApprovalAfterInsert', e , null);
+       
     }
+}
 }

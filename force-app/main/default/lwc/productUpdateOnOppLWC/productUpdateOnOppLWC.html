@@ -1,0 +1,276 @@
+<template>
+    <lightning-progress-indicator
+        current-step={currentStep}
+        type="base"
+        variant="base"
+    >
+        <lightning-progress-step
+            label="Apply Filter"
+            value="1"
+        ></lightning-progress-step>
+        <lightning-progress-step
+            label="Choose Product"
+            value="2"
+        ></lightning-progress-step>
+        <lightning-progress-step
+            label="Step 3"
+            value="3"
+        ></lightning-progress-step>
+    </lightning-progress-indicator>
+          <br/>
+    <lightning-card >
+
+        <template if:true={FirstScreen}>
+           <div class="stepOne"></div>
+        <div class="slds-var-m-left_large slds-var-m-right_large">
+            <lightning-combobox
+            name="Select Type"
+            label="Select Type"
+            value={Typevalue}
+            placeholder="Select Type"
+            options={Typeoptions}
+            onchange={handleChangeType} ></lightning-combobox>
+            <br/>
+            <lightning-combobox
+            name="Select Mode"
+            label="Select Mode"
+            value={Modevalue}
+            placeholder="Select Mode"
+            options={Modeoptions}
+            onchange={handleChangeMode} ></lightning-combobox>
+             <br/>
+           <lightning-combobox
+            name="Select City"
+            label="Select City"
+            value={Cityvalue}
+            placeholder="Select City"
+            options={Cityoptions}
+            onchange={handleChangeCity} ></lightning-combobox>
+        </div>
+        <div slot="footer">
+             <div style="float:right;">
+                <lightning-button type="Sumbit" label="Next" variant="success" onclick={HandleClick}></lightning-button>
+             </div>
+             <br/>
+             <br/>
+             
+        </div>
+    </template>
+
+
+ <template if:true={SecondScreen}>
+    <div class="stepTwo slds-hide"></div>
+                    <div style="background-color: gray;">
+                        <lightning-input type="search" placeholder="Search Product" onchange={HandleProduct}> </lightning-input>
+                        <br/>
+                    </div>
+                  <!--div style="height:400px;"--> 
+                    <lightning-card> 
+                                <template if:true={FirstTable}>                                   
+                                    <div class="slds-scrollable" style="height: 400px; ">
+                                    <!--lightning-datatable
+                                            key-field="id"
+                                            data={data}
+                                            columns={columns}
+                                            show-row-number-column="true"
+                                            onrowselection={getSelectedRowFirst}
+                                            </lightning-datatable>-->
+                                            <table class="slds-table slds-table_bordered slds-no-row-hover slds-table_cell-buffer " role="grid">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col" height="22" style="width: 3rem"> Select</th>
+                                                    <th scope="col" height="22">Name</th>
+                                                    <th scope="col" height="22">Mode</th>
+                                                    <th scope="col" height="22">Type #</th>
+                                                    <th scope="col" height="22">Code #</th>
+                                                    <th scope="col" height="22">City #</th>
+                                                    <th scope="col" height="22">Description #</th>
+                                                    <th scope="col" height="22">Price #</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <template for:each={data} for:item="rec">
+                                                    <template for:each={rec.PricebookEntries} for:item="recp">
+                                                    <tr key={rec.Id} class="slds-hint-parent">
+                                                        <td>
+                                                            <lightning-input class="slds-p-left_xx-large" type="checkbox" data-index="checkbox" data-id={rec.Id} value={checkedvalue} onchange={changeHandler}></lightning-input>
+                                                        </td>
+                                                        <td>
+                                                            <lightning-input type="text"  name="Name" data-id={rec.Id} value={rec.Name} disabled></lightning-input>
+                                                            <br/>
+                                                        </td>
+                                                        <td>
+                                                            <lightning-input type="text" variant="label-hidden" label="" data-id={rec.Id}  name="Mode__c" value={rec.Mode__c} disabled></lightning-input>
+                                                        </td>
+                                                        <td>
+                                                            <lightning-input type="text" variant="label-hidden" label=""  data-id={rec.Id} name="Type__c" value={rec.Type__c} disabled></lightning-input>
+                                                        </td>
+                                                        <td>
+                                                            <lightning-input type="text" variant="label-hidden" label="" data-id={rec.Id} name="ProductCode" value={rec.ProductCode} disabled></lightning-input>
+                                                        </td>
+                                                        <td>
+                                                            <lightning-input type="text" variant="label-hidden" label="" data-id={rec.Id}  name="City" value={rec.City__c} disabled></lightning-input>
+                                                        </td>
+                                                        <td>
+                                                            <lightning-textarea  variant="label-hidden" label=""   name="Description" data-id={rec.Id} value={rec.Description} disabled></lightning-textarea>
+                                                        </td>
+                                                        <td>
+                                                            <lightning-input type="number"  name="Price" label="" data-id={rec.Id} value={recp.UnitPrice} disabled></lightning-input>
+                                                            <br/>
+                                                        </td>
+                                                    </tr>
+                                                </template>
+                                            </template>
+                                                </tbody>
+                                            </table>
+                                      </div>    
+                               </template>
+                            
+                        
+                               
+                                <template if:true={TempArray.length}>
+                                    <div class="slds-scrollable" style="height: 400px;">
+                                    <!--lightning-datatable
+                                            key-field="id"
+                                            data={TempArray}
+                                            columns={Tempcolumns}
+                                            show-row-number-column="true"
+                                            onrowselection={getSelectedNameRowSecond}>
+                                    </lightning-datatable-->
+                                    <table class="slds-table slds-table_bordered slds-no-row-hover slds-table_cell-buffer " role="grid">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" height="22" style="width: 3rem"> Select</th>
+                                            <th scope="col" height="22">Name</th>
+                                            <th scope="col" height="22">Mode</th>
+                                            <th scope="col" height="22">Type #</th>
+                                            <th scope="col" height="22">Code #</th>
+                                            <th scope="col" height="22">City #</th>
+                                            <th scope="col" height="22">Description #</th>
+                                            <th scope="col" height="22">Price #</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <template for:each={TempArray} for:item="rec">
+                                            <template for:each={rec.PricebookEntries} for:item="recp">
+                                            <tr key={rec.Id} class="slds-hint-parent">
+                                                <td>
+                                                    <lightning-input class="slds-p-left_xx-large" type="checkbox" data-index="checkbox" data-id={rec.Id} value={checkedvalue} onchange={changeHandler}></lightning-input>
+                                                </td>
+                                                <td>
+                                                    <lightning-input type="text"  name="Name" data-id={rec.Id} value={rec.Name} disabled></lightning-input>
+                                                    <br/>
+                                                </td>
+                                                <td>
+                                                    <lightning-input type="text" variant="label-hidden" label="" data-id={rec.Id}  name="Mode__c" value={rec.Mode__c} disabled></lightning-input>
+                                                </td>
+                                                <td>
+                                                    <lightning-input type="text" variant="label-hidden" label=""  data-id={rec.Id} name="Type__c" value={rec.Type__c} disabled></lightning-input>
+                                                </td>
+                                                <td>
+                                                    <lightning-input type="text" variant="label-hidden" label="" data-id={rec.Id} name="ProductCode" value={rec.ProductCode} disabled></lightning-input>
+                                                </td>
+                                                <td>
+                                                    <lightning-input type="text" variant="label-hidden" label="" data-id={rec.Id}  name="City" value={rec.City__c} disabled></lightning-input>
+                                                </td>
+                                                <td>
+                                                    <lightning-textarea  variant="label-hidden" label=""   name="Description" data-id={rec.Id} value={rec.Description} disabled></lightning-textarea>
+                                                </td>
+                                                <td>
+                                                    <lightning-input type="number"  name="Price" label="" data-id={rec.Id} value={recp.UnitPrice} disabled></lightning-input>
+                                                    <br/>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                </template>
+                           
+                        
+                        <!--template if:false={TempArray}>
+                            <lightning-datatable
+                                    key-field="id"
+                                    data={Firstdata}
+                                    columns={Firstcolumns}
+                                    onrowselection={getSelectedName}></lightning-datatable>
+                        </template-->
+                     <div slot="footer">
+                        <div style="float:right;padding-right:15px;">
+                            <lightning-button type="Sumbit" label="Next" variant="success" onclick={HandleClickNext}></lightning-button>
+                        </div>
+                        <div style="float:left;padding-left:15px;">
+                            <lightning-button type="Sumbit" label="Previous" variant="success" onclick={HandlePrevious}></lightning-button>
+                        </div>
+                        <br/>
+                        <br/>
+                    </div> 
+                    </lightning-card>
+                <!--/div-->
+    </template>
+
+    <template if:true={ThirdScreen}>
+          <div class="stepThree slds-hide"></div>
+          <lightning-card>
+          <div class="slds-scrollable" style="height:400px;">
+                <table class="slds-table slds-table_bordered slds-no-row-hover slds-table_cell-buffer" role="grid">
+                    <thead>
+                    <tr>
+                        <th scope="col" height="22">Name</th>
+                        <th scope="col" height="22">Mode</th>
+                        <th scope="col" height="22">Type #</th>
+                        <th scope="col" height="22">Discount #</th>
+                        <th scope="col" height="22">Price #</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <template for:each={selectedRecords} for:item="rec">
+                        <template for:each={rec.PricebookEntries} for:item="recp" for:index="checkbox">
+                        <tr key={rec.Id} class="slds-hint-parent">
+                            <td>
+                                <lightning-input type="text" data-id={rec.Id} name="Name" value={rec.Name} disabled></lightning-input>
+                                <br/>
+                            </td>
+                            <td>
+                                <lightning-input type="text" variant="label-hidden" label="" data-id={rec.Id} name="Mode__c" value={rec.Mode__c} disabled></lightning-input>
+                            </td>
+                            <td>
+                                <lightning-input type="text" variant="label-hidden" label="" data-id={rec.Id} name="Type__c" value={rec.Type__c} disabled></lightning-input>
+                            </td>
+                            <td>
+                                <lightning-input type="number" variant="label-hidden" label="" data-id={rec.Id} name="Discount" value={DiscountPrice} onchange={handleInputChange}></lightning-input>
+                            </td>
+                            <td>
+                                <lightning-input type="number" data-id={rec.Id} name="Amount__c" label="" value={recp.UnitPrice} disabled></lightning-input>
+                                <br/>
+                            </td>
+                            <td>
+                                <lightning-button-icon icon-name="utility:delete" alternative-text="Remove" title="Remove" data-id={rec.Id}  onclick={removeRow}></lightning-button-icon>
+                                <!--data-index="checkbox" data-id={rec.Id}-->
+                            </td>
+                        </tr>
+                    </template>
+                </template>
+                    </tbody>
+                </table>
+            </div>
+                <br/>
+                <div slot="footer">
+                    <div style="float:right;padding-right:15px;">
+                        <lightning-button type="Sumbit" label="Save" variant="success" onclick={HandleClickSave}></lightning-button>
+                    </div>
+                    <div style="float:left;padding-left:15px;">
+                        <lightning-button type="Sumbit" label="Previous" variant="success" onclick={HandlePreviousThird}></lightning-button>
+                    </div>
+                    <br/>
+                    <br/>
+               </div>
+          
+        </lightning-card>
+    </template>
+       
+    </lightning-card>
+
+    
+</template>

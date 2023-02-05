@@ -123,6 +123,7 @@ public without sharing class ExcelRTrainingUserLoginController{
     }
 
     public PageReference checkExistingHashKey(){
+        try{
 
         //String LoginPageBaseurl = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/';
         String LoginPageBaseurl = System.Label.LoginPageBaseurl;
@@ -256,6 +257,11 @@ public without sharing class ExcelRTrainingUserLoginController{
 
         // https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage
         return null;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('ExcelRTrainingUserLoginController', 'checkExistingHashKey', e , null);
+       return null;
     }
+}
 
 }

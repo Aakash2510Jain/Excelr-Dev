@@ -8,6 +8,7 @@ public class LeadAssignmentExecutionCriteria {
         if(leadListToBeProcessed != Null){
             system.debug('leadListToBeProcessed'+leadListToBeProcessed.size());
         }*/
+   try{
         Set<Lead> assignedLead = new Set<Lead>();
         Boolean IsLeadAssigned = False;
         list<lead> newLeadListTemp 												= new list<lead>();
@@ -48,7 +49,7 @@ public class LeadAssignmentExecutionCriteria {
         list<Default_Assignment_Group__mdt> defaultGroupName = [select id,Group_Name__c from Default_Assignment_Group__mdt];
         List<Execution_Criteria__c> AvailableCriterias = [SELECT Enabled__c,Evaluation_Expression_For_Execution__c,Id,Name ,(SELECT Execution_Criteria__c,serial__c,Field_Name__c,Field_Type__c,Matching_Type__c,Matching_Value__c,Related_Object__c,Scorecard_Execution_Criteria_Name__c,Scorecard__c,Sequence__c FROM Execution_Criteria_Entry__r WHERE Execution_Criteria__c != null ORDER BY Sequence__c ASC)FROM Execution_Criteria__c where Enabled__c = true];
         
-        list<lead> queueLeads = [SELECT Activity_On__c,Address,AdGroup__c,AD_Set_Id__c,AD_Set_Name__c,Assignment_Group__c,
+        list<lead> queueLeads = [SELECT Address,AdGroup__c,AD_Set_Id__c,AD_Set_Name__c,Assignment_Group__c,
                                  Branch__c,Capture_NBFC_Partner__c,Capture_Tenure__c,Capture_Upfront_payment__c,
                                  CID_of_Referer__c,City,City__c,Comments__c,Company,Confidence_Level__c,Conversation_Comments__c
                                  ,ConvertedAccountId,ConvertedContactId,ConvertedDate,ConvertedOpportunityId,Country,Country__c,
@@ -64,7 +65,7 @@ public class LeadAssignmentExecutionCriteria {
                                  Owner_Email__c,Owner_ManagerId__c,Payment_Initiated_Date_Time__c,Payment_Type__c,Phone,PhotoUrl,Platform__c,PostalCode,
                                  Prior_Status__c,Product__c,Profession__c,Qualification__c,Quality_of_Lead__c,Quantity__c,Rating,Reason_For_Dead__c,
                                  Reason_for_On_Hold__c,Referral_Email__c,Referral_Phone__c,referrer__c,Refree_Mob_No__c,Relevant_Experience__c,Salutation,
-                                 sfleadcaphfprod__External_Lead_ID__c,Should_be_Converted__c,Specialization__c,State,State__c,Status,Street,Suffix,
+                                 sfleadcaphfprod__External_Lead_ID__c,Specialization__c,State,State__c,Status,Street,Suffix,
                                  SyncedInCallyzer__c,SystemModstamp,Telephonic_Conversation__c,Title,Total_Amount__c,Total_Applications_Submitted__c,
                                  Total_Calls__c,Total_Call_Duration__c,Total_Connected_Call__c,Total_Conversation_Duration__c,Total_Course_Interests__c,
                                  Total_Emails__c,Transcript__c,Type_of_Course__c,UTM_AdGroup__c,UTM_Campaign__c,UTM_Channel__c,UTM_Content__c,UTM_Device__c,
@@ -495,9 +496,15 @@ public class LeadAssignmentExecutionCriteria {
         system.debug('mapofExecutionIdByListLead'+mapofExecutionIdByListLead);
         system.debug('mapofGlobalGroupNameByLeadList'+mapofGlobalGroupNameByLeadList);
         getGroupNameByLeads(mapofExecutionIdByListLead,mapofGlobalGroupNameByLeadList);
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('LeadAssignmentExecutionCriteria', 'validateEntryCriteria', e , null);
+       
     }
+}
     
     public static void getGroupNameByLeads(map<string,list<lead>> mapofExecutionIdByLeadList,map<String,List<Lead>> mapofGlobalGroupNameByLeadList){
+        try{
         system.debug('mapofExecutionIdByLeadList::'+mapofExecutionIdByLeadList);
         system.debug('mapofFBGroupNameByLeadList::'+mapofGlobalGroupNameByLeadList);
         
@@ -540,9 +547,15 @@ public class LeadAssignmentExecutionCriteria {
                 RoundRobinLeadAssignment.assignLeadsToBDS(mapKey,tempId);
             }
         }
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('LeadAssignmentExecutionCriteria', 'getGroupNameByLeads', e , null);
+       
     }
+}
     
     public  static List<Lead> validatemanuallyCreatedLead(List<Lead> newLeads){
+        try{
         List<Lead> leadsToBeProcessedForAssignment = new List<Lead>();
         for(Lead ld:newLeads){
             if(true){
@@ -555,8 +568,13 @@ public class LeadAssignmentExecutionCriteria {
         else{
             return null;
         }
-    }
     
+       } catch (Exception e){
+    system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+  HandleBusinessException.captureError('LeadAssignmentExecutionCriteria', 'getGroupNameByLeads', e , null);
+   return null;
+}
+    }
     public static void assignDefaultQueue(list<lead> newLeadList){
         try{
             List<Lead>  LeadsToBeUpdated= new List<Lead>();
@@ -576,10 +594,16 @@ public class LeadAssignmentExecutionCriteria {
     }
     
     public static string getLabelNameOfField(string apiName){
+        try{
         String type='Lead';
         Map<String, Schema.SObjectType> schemaMap = Schema.getGlobalDescribe();
         Schema.SObjectType leadSchema = schemaMap.get(type);
         Map<String, Schema.SObjectField> fieldMap = leadSchema.getDescribe().fields.getMap();
         return fieldMap.get(apiName).getDescribe().getLabel();
+    } catch(exception ex ){
+        system.debug('Error==>'+ex.getMessage());
+        system.debug('Error==>@@'+ex.getLineNumber());
+        return null;
     }
+}
 }

@@ -2,16 +2,22 @@ public class CustomerDetailApexController {
     
     @AuraEnabled(Cacheable=True)
     Public static List<Lead> ShowAllLeads(string recordId){
+        try{
         List<Lead> LeadRecList=new List<Lead>();
         List<Lead> LeadList=[Select Name,LID__c,CreatedDate,Email,Phone,LeadSource,Course__c,Status From Lead Where Customers__c=:recordId];
         
         return LeadList;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('CustomerDetailApexController', 'ShowAllLeads', e , null);
+       return null;
     }
+}
     
     @AuraEnabled(Cacheable=True)
     Public Static Map<String,String> GetAllFieldsLabelXValue(string recordId){ //string recordId
-        
-        Customers__c CustomerRec=[Select Profession__c,Qualification__c,Branch__c,Specialization__c,Year_of_Graduation__c,Why_This_Course__c,
+       try{ 
+        Customers__c CustomerRec=[Select Profession__c,Qualification__c,CID__c,Branch__c,Specialization__c,Year_of_Graduation__c,Why_This_Course__c,
                                   Designation__c,Year_of_Experience__c,Current_Domain__c,Relevant_Experience__c,Name__c,Company__c From Customers__c Where Id=:recordId];//Where Id=:a0XN0000009rprxMAA
         Map<String, Object> customerRecMap = (Map<String, Object>) JSON.deserializeUntyped(JSON.serialize(CustomerRec));
 
@@ -31,12 +37,14 @@ public class CustomerDetailApexController {
         
         for( Schema.SObjectField Related :RelatedFields.values()){    
             system.debug('Related ====> ' + Related);
+            if(String.valueOf(Related) == 'CID__c'){
+                GetObjectFields.put('CID__c','CID__c'); 
+            }
             if(Related.getDescribe().isUpdateable()){
                 system.debug('Related +++++' + Related);
                 GetObjectFields.put(Related.getDescribe().getName(),Related.getDescribe().getLabel());  
-                
             }
-                
+            
         }
         system.debug('GetObjectFields =====> ' + GetObjectFields);
         string LabelValue;
@@ -67,5 +75,10 @@ public class CustomerDetailApexController {
         //system.debug('GetObjectFields='+GetObjectFields);
         return FieldLabelXFieldValue;
         
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('CustomerDetailApexController', 'GetAllFieldsLabelXValue', e , null);
+       return null;
     }
+}
 }

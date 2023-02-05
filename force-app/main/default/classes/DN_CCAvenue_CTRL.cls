@@ -51,6 +51,7 @@ public class DN_CCAvenue_CTRL {
     }
 
     public static String createPaymentURLFromInvoice(Invoice__c iv,Map<String,String> reqMap){
+        try{
         
         CCAvenue_Details__c ccDetails = CCAvenue_Details__c.getInstance();
             
@@ -73,7 +74,12 @@ public class DN_CCAvenue_CTRL {
         System.debug('Payment URL - '+paymentURL);
 
         return paymentURL;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('DN_CCAvenue_CTRL', 'createPaymentURLFromInvoice', e , null);
+       return null;
     }
+}
 
     public static Opportunity getOpportunity(String oppId){
         return [Select Id,Name,Amount,Account.Phone,Account.BillingStreet,Account.BillingCity,Account.BillingState,Account.BillingCountry,Account.BillingPostalCode,Account.ShippingStreet,Account.ShippingCity,Account.ShippingState,Account.ShippingCountry,Account.ShippingPostalCode,Account.Email__c From Opportunity Where Id=:oppId];

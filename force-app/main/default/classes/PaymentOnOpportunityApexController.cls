@@ -5,14 +5,19 @@ public class PaymentOnOpportunityApexController {
 
     @AuraEnabled(Cacheable=true)
     Public Static Opportunity ShowOppAmount(string recordId){
-
+     try{
         Opportunity OppRec=[Select Id, Amount From Opportunity Where Id=:recordId];
 
         return OppRec;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('PaymentOnOpportunityApexController', 'ShowOppAmount', e , null);
+       return null;
     }
-
+    }
     @AuraEnabled(Cacheable = True)
     Public Static Map<String, List<Decimal>> ShowNbfcPartners(){
+        try{
         Map<String, List<Decimal>> nbfcName = new Map<String, List<Decimal>>();
 
         list<NBFC__c> NBFCList = [Select NBFC_Name__c, Tenure__c
@@ -36,10 +41,16 @@ public class PaymentOnOpportunityApexController {
         system.debug('nbfcName=' + nbfcName);
 
         return nbfcName;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('PaymentOnOpportunityApexController', 'ShowNbfcPartners', e , null);
+       return null;
     }
+}
 
     @AuraEnabled(Cacheable = True)
     Public Static Decimal ShowAmount(String ProductName){
+        try{
         system.debug('ProductName-->'+ProductName);
         Decimal Amount;
         Product2 PrdRec = [Select Id, Name, (Select Id, Name, UnitPrice
@@ -51,11 +62,16 @@ public class PaymentOnOpportunityApexController {
         if (PrdRec == null || PrdRec.PricebookEntries != null && PrdRec.PricebookEntries.size() == 0)
             return null;
         return PrdRec.PricebookEntries[0].UnitPrice;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('PaymentOnOpportunityApexController', 'ShowAmount', e , null);
+       return null;
     }
+}
 
     @AuraEnabled
     Public Static Decimal ShowPriceIncludingGST(String NbfcValue, integer tenure, Decimal originalAmount){
-
+        try{
         system.debug('originalAmount='+originalAmount);
         Decimal finalPriceWithGST;
         NBFC__c nbfcRec = [Select Processing_Fee__c, Interest_Rate__c, GST_on_Subvention__c
@@ -79,13 +95,18 @@ public class PaymentOnOpportunityApexController {
         }
 
         return finalPriceWithGST.setScale(2);
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('PaymentOnOpportunityApexController', 'ShowPriceIncludingGST', e , null);
+       return null;
     }
+}
 
 
     
      @AuraEnabled
     Public Static string UpdateOPPforFullPayment(string recordId,Decimal Amount, String paymentType,String PaymentOptiontype){
-
+    try{
         Opportunity OppRec=new Opportunity();
         OppRec.Id=recordId;
         OppRec.Payment_Mode__c=paymentType;
@@ -115,12 +136,17 @@ public class PaymentOnOpportunityApexController {
        
         return 'Success';
        
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('PaymentOnOpportunityApexController', 'UpdateOPPforFullPayment', e , null);
+       return null;
     }
+}
 
     @AuraEnabled
     Public Static string UpdateOPPforPartialPayment(string recordId,Decimal Amount,Decimal PendingAmount, String paymentType,String PaymentOptiontype){
 
-    
+       try{
         
         Opportunity OppRec=new Opportunity();
         OppRec.Id=recordId;
@@ -159,11 +185,16 @@ public class PaymentOnOpportunityApexController {
        
         return 'Success';
        
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('PaymentOnOpportunityApexController', 'UpdateOPPforPartialPayment', e , null);
+       return null;
     }
+}
     
      @AuraEnabled
     Public Static string OppUpdateOnFullLoan(string recordId,integer FullTenureValue,String FullNBFCValue,Integer Quantity,String ProductName,Decimal Amount,String LoanType ){
-        
+        try{
         system.debug('recordId='+recordId+'FullTenureValue='+FullTenureValue);
          system.debug('FullNBFCValue='+FullNBFCValue+'Amount='+Amount);
           system.debug('Quantity='+Quantity+'Product__c='+ProductName);
@@ -203,11 +234,16 @@ public class PaymentOnOpportunityApexController {
        
         return 'success';
        
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('PaymentOnOpportunityApexController', 'OppUpdateOnFullLoan', e , null);
+       return null;
     }
+}
     
     @AuraEnabled
     Public Static String OppUpdateOnPartialLoan(string recordId,integer PartialTenureValue,String partialNBFCValue,Integer PartialUpfrontValue,Integer Quantity,String ProductName,Decimal Amount,String paymentType,String LoanType){
-             
+       try{      
         product2 PrdRec=[Select Id,Name,(Select Id,Name,UnitPrice From PricebookEntries) From Product2 where id=:ProductName ];
         
         //  OpportunityLineItem oppLineItemRec=new OpportunityLineItem();
@@ -266,7 +302,12 @@ public class PaymentOnOpportunityApexController {
         
        
         return 'Success';
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('PaymentOnOpportunityApexController', 'OppUpdateOnPartialLoan', e , null);
+       return null;
     }
+}
 
     /*@AuraEnabled
     Public Static String CreateInvoice(String recordId, Decimal FinalAmount, integer PartialTenureValue, String partialNBFCValue, Integer PartialUpfrontValue, Integer Quantity, String ProductName, Decimal Amount, String paymentType){

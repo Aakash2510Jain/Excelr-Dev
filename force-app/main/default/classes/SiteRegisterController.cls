@@ -20,6 +20,7 @@ public with sharing class SiteRegisterController {
     }
     
     public PageReference registerUser() {
+        try{
         // it's okay if password is null - we'll send the user a random password in that case
         if (!isValidPassword()) {
         	ApexPages.Message msg = new ApexPages.Message(ApexPages.Severity.ERROR, Label.site.passwords_dont_match);
@@ -46,5 +47,10 @@ public with sharing class SiteRegisterController {
             }
         }
         return null;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('SiteRegisterController', 'registerUser', e , null);
+       return null;
     }
+}
 }

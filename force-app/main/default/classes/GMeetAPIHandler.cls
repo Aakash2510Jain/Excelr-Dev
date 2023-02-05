@@ -4,7 +4,7 @@ public without sharing class GMeetAPIHandler {
 
     @future(callout=true)
     public static void generateMeetLink_V2(String bId){
-
+       try{
 
         List<Map<String,String>> emailMapList = new List<Map<String,String>>();
         Map<String,String> emailMap = new Map<String,String>();
@@ -74,5 +74,10 @@ public without sharing class GMeetAPIHandler {
 
 
 
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('GMeetAPIHandler', 'generateMeetLink_V2', e , null);
+       
     }
+}
 }

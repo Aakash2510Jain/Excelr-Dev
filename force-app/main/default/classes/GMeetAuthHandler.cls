@@ -6,6 +6,7 @@ public without sharing class GMeetAuthHandler {
     private static final String SCOPE = 'https://www.googleapis.com/auth/calendar';
     
     public static String getAccessToken(String subId) {
+      try{
     	Auth.JWT jwt = new Auth.JWT();
         jwt.setAud(AUDIENCE_CLAIM);
         jwt.setIss(GOOGLESERVICEACCOUNT);
@@ -20,5 +21,10 @@ public without sharing class GMeetAuthHandler {
         );
       
         return bearer.getAccessToken();
-  	}
+  	} catch (Exception e){
+      system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+    HandleBusinessException.captureError('GMeetAuthHandler', 'getAccessToken', e , null);
+     return null;
+  }
+  }
 }

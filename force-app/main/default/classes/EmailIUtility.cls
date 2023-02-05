@@ -110,7 +110,7 @@ public without sharing class EmailIUtility{
 
     public static void sendExceptions(Exceptions__c exceps){
         //Error Template
-
+        try{
         EmailTemplate ErrorEmailtemplate = [Select id, Name, DeveloperName, Subject, Body, HtmlValue
                                             from EmailTemplate
                                             where name = 'Error Template'];
@@ -147,6 +147,11 @@ public without sharing class EmailIUtility{
         if (!mails.isEmpty()){
             Messaging.sendEmail(mails);
         }
+    }catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('EmailIUtility', 'sendExceptions', e , null);
+       
     }
+}
 
 }

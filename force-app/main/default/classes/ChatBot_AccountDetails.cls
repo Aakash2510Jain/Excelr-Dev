@@ -1,7 +1,13 @@
 public class ChatBot_AccountDetails {
    @InvocableMethod(label='Get Account Info')
     public static List<Account> getAccountInfo(List<String> accountId){
-        List<Account> accList = [select name,id from Account where Account_Number__c IN:accountId];
-        return accList;
+        try{
+            List<Account> accList = [select name,id from Account where Account_Number__c IN:accountId];
+            return accList;
+           }catch (Exception e){
+           system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+           HandleBusinessException.captureError('ChatBot_AccountDetails', 'getAccountInfo', e , null);
+           return null;
     }
+}
 }

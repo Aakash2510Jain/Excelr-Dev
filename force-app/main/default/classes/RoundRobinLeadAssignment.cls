@@ -5,6 +5,7 @@ public without sharing class  RoundRobinLeadAssignment{
     public static map<string,string> mapofCouseByGroupName = new map<string,string>();
     @future
     public static void assignLeadsToBDS(String courseName,set<String> leadIdList){
+     try{   
         system.debug('courseName::'+ courseName);
         system.debug('leadIdList::'+leadIdList.size());
         boolean withinWorkingHour = false;
@@ -151,10 +152,15 @@ public without sharing class  RoundRobinLeadAssignment{
             result.addAll(myset);
             update result;
         }
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('RoundRobinLeadAssignment', 'assignLeadsToBDS', e , null);
+       
     }
+}
     
     public static boolean assignmentConditionSatisfied(string qName,string qMemberID,string learnerUid){
-        
+        try{
         boolean isconditionapproved = false;
        
         system.debug('BuildMaps.mapofMemidByAssignedLead.get(qMemberID)::'+BuildMaps.mapofMemidByAssignedLead.get(qMemberID));
@@ -200,9 +206,16 @@ public without sharing class  RoundRobinLeadAssignment{
             }
         }*/
         return isconditionapproved;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('RoundRobinLeadAssignment', 'assignmentConditionSatisfied', e , null);
+       return null;
     }
     
-    public static map<String,List<lead>> makeQueueNameToListOfAssignedLeadsMap(string courseName,set<String> leadId){
+    }
+    
+    public static map<String,List<lead>> makeQueueNameToListOfAssignedLeadsMap(string courseName,set<String> leadId){ 
+        try{
         system.debug('courseName::'+courseName);
         system.debug('leadId::'+leadId);
         map<String,string> sourceIntentByGroupMap = new map<String,String>();
@@ -223,9 +236,15 @@ public without sharing class  RoundRobinLeadAssignment{
         }
         System.debug('QueueNameToListOfAssignedCasesMap::'+groupNameByLeads);
         return groupNameByLeads;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('RoundRobinLeadAssignment', 'makeQueueNameToListOfAssignedLeadsMap', e , null);
+       return null;
     }
+}
     
     public static Map<String, List<String>> makeCustomQueueNameToListOfUserId(string assignmentGroupName){
+        try{
         Map<String, List<String>> customQueueNameToListOfUserId = new Map<String, List<String>>();
         List<Assignment_Group__c> queueWithQueueMembers = new List<Assignment_Group__c>();
         Map<String, Id> queueNameToQueueIdMap = new Map<String, Id> ();
@@ -248,9 +267,15 @@ public without sharing class  RoundRobinLeadAssignment{
         }
         system.debug('customQueueNameToListOfUserId::'+customQueueNameToListOfUserId);
         return customQueueNameToListOfUserId;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('RoundRobinLeadAssignment', 'makeCustomQueueNameToListOfUserId', e , null);
+       return null;
     }
+}
     
     public static Map<String, Boolean> makeuserIdToUserAvailablityMap(string assignmentGroupName){
+        try{
         /**Need to  handle leave*/ 
         Map<String, Boolean> userIdToUserAvailablityMap = new Map<String, Boolean>();   
         List<Assignment_Group_Member__c> agentAvailablity = new List<Assignment_Group_Member__c>();  
@@ -262,9 +287,14 @@ public without sharing class  RoundRobinLeadAssignment{
         }
         System.debug('userIdToUserAvailablityMap-----'+userIdToUserAvailablityMap);
         return userIdToUserAvailablityMap;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('RoundRobinLeadAssignment', 'makeuserIdToUserAvailablityMap', e , null);
+       return null;
     }
-    
-    public static Map<String, Integer> makeqNameAndMemberIdTORoundRobinIDMaP(String groupName){
+}
+    public static Map<String, Integer> makeqNameAndMemberIdTORoundRobinIDMaP(String groupName){ 
+        try{
         Map<String, Integer> qNameAndMemberIdTORoundRobinIDMaP = new Map<String, Integer>();
         list<Assignment_Group_Member__c> agmList = new list<Assignment_Group_Member__c>();
         agmList = [select id,Assignment_Group__r.name,Assignment_Id__c,Group_Member__r.Id from Assignment_Group_Member__c where Assignment_Group__r.name =: groupName];
@@ -279,9 +309,15 @@ public without sharing class  RoundRobinLeadAssignment{
             }
         }
         return qNameAndMemberIdTORoundRobinIDMaP;        
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('RoundRobinLeadAssignment', 'makeqNameAndMemberIdTORoundRobinIDMaP', e , null);
+       return null;
     }
+}
     
     public static Map<String, String> makeQnameAndRRidToMemberID(String groupName){
+        try{
         //Map<String, Map<String, Integer>> qNameAndMemberIdTORoundRobinIDMaP = new Map<String, Map<String, Integer>>();  
         Map<String, String> QnameAndRRidToMemberIDMap = new Map<String, String>();
         
@@ -303,5 +339,10 @@ public without sharing class  RoundRobinLeadAssignment{
         
         //System.debug('QnameAndRRidToMemberIDMap---'+QnameAndRRidToMemberIDMap);
         return QnameAndRRidToMemberIDMap;        
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('RoundRobinLeadAssignment', 'makeQnameAndRRidToMemberID', e , null);
+       return null;
     }
+}
 }

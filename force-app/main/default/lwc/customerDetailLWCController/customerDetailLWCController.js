@@ -3,6 +3,7 @@ import ShowAllLeads from '@salesforce/apex/CustomerDetailApexController.ShowAllL
 import GetAllFieldsLabelXValue from '@salesforce/apex/CustomerDetailApexController.GetAllFieldsLabelXValue';
 import { NavigationMixin } from 'lightning/navigation';
 import { refreshApex } from '@salesforce/apex';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 
 export default class CustomerDetailLWCController extends NavigationMixin(LightningElement) {
@@ -24,29 +25,83 @@ export default class CustomerDetailLWCController extends NavigationMixin(Lightni
 
    }
 
-   Tempboolean=false;
+   ShowForm=false;
    HandleEdit(){
-    this.Tempboolean=true;
-    debugger;
-    this[NavigationMixin.Navigate]({
-        type: 'standard__recordPage',
-        attributes: {
-            recordId: this.recordId,
-            objectApiName: 'Customers__c',
-            actionName: 'edit'
-        },
-    });
-       if(this.Tempboolean=true){
-          this.updateRecordView();
-       }
+    this.ShowForm=true;
+    // debugger;
+    // this[NavigationMixin.Navigate]({
+    //     type: 'standard__recordPage',
+    //     attributes: {
+    //         recordId: this.recordId,
+    //         objectApiName: 'Customers__c',
+    //         actionName: 'edit'
+    //     },
+    // });
+    //    if(this.Tempboolean=true){
+    //       this.updateRecordView();
+    //    }
    }
 
-   updateRecordView() {
+   HandleCancel(){
+       this.ShowForm=false;
+   }
+
+   HandleSave(){
     debugger;
-    setTimeout(() => {
-         eval("$A.get('e.force:refreshView').fire();");
-    }, 3000); 
+    var isVal = true;
+        this.template.querySelectorAll('lightning-input-field').forEach(element => {
+            isVal = isVal && element.reportValidity();
+        });
+        if (isVal) {
+            this.template.querySelectorAll('lightning-record-edit-form').forEach(element => {
+                element.submit();
+                
+            });
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Success',
+                    message: 'Contacts successfully created',
+                    variant: 'success',
+                }),
+                // this.updateRecordView(),
+                
+                 this.ShowForm=false,
+               // eval("$A.get('e.force:refreshView').fire();")
+            );
+            window.location.reload();
+           
+        } else {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error creating record',
+                    message: 'Please enter all the required fields',
+                    variant: 'error',
+                }),
+            );
+        }
+
  }
+ //onsuccess={handleSuccess}
+//  handleSuccess(event) {
+     
+//     const evt = new ShowToastEvent({
+//         title: 'Account Updated',
+//         message: 'Record ID: ' + event.detail.id,
+//         variant: 'success',
+       
+//     });
+    
+//     this.dispatchEvent(evt);
+//     this.updateRecordView();
+
+// }
+
+//    updateRecordView() {
+//     debugger;
+//     setTimeout(() => {
+//         refreshApex(this.customerData);
+//     }, 10); 
+//  }
   
 
    @track customerData=[];
@@ -65,4 +120,16 @@ export default class CustomerDetailLWCController extends NavigationMixin(Lightni
     }
 
    }
+        ShowToastMessage(){
+             
+            const evt = new ShowToastEvent({
+                title: 'Contact Created',
+                message: 'Record ID: ' + event.detail.id,
+                variant: 'success',
+            
+            });
+            
+            this.dispatchEvent(evt);
+        }
+        
 }

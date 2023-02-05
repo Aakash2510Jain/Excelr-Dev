@@ -7,6 +7,7 @@ public with sharing class ForgotPasswordController {
     public ForgotPasswordController() {}
 	
   	public PageReference forgotPassword() {
+		try{
   		boolean success = Site.forgotPassword(username);
   		PageReference pr = Page.ForgotPasswordConfirm;
   		pr.setRedirect(true);
@@ -15,5 +16,10 @@ public with sharing class ForgotPasswordController {
   			return pr;
   		}
   		return null;
-  	}
+  	} catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('ForgotPasswordController', 'forgotPassword', e , null);
+       return null;
+    }
+}
 }
