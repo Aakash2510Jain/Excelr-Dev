@@ -50,8 +50,8 @@ public without sharing class LeadTriggerHandler{
                     }
                 }
                 //handle necessary fields
-                if (string.isEmpty(ld.Company) || string.isBlank(ld.Company)){
-                    ld.Company = 'NA';
+                if (string.isEmpty(ld.Company) || string.isBlank(ld.Company) || ld.Company == '--' || ld.Company == 'NA'){
+                    ld.Company = ld.FirstName +' '+ld.LastName;
                 }
                 if (string.isEmpty(ld.City__c) || string.isBlank(ld.City__c)){
                     ld.City__c = 'NA';

@@ -29,12 +29,13 @@
 
                     </a>
                 </div>
-                
+
                 <div class="slds-p-around_medium" style=" display: inline-block;">
                     <lightning-button-menu alternative-text="Show menu" variant="border-filled"
                         onselect={handleOnselect} label="Select Form">
                         <template for:each={mapData} for:item="currentItem" for:index="index">
-                            <lightning-menu-item label={currentItem.label} value={currentItem.value} key={currentItem.value} onselect={handleOnselect}>
+                            <lightning-menu-item label={currentItem.label} value={currentItem.value}
+                                key={currentItem.value} onselect={handleOnselect}>
                             </lightning-menu-item>
 
                         </template>
@@ -66,8 +67,8 @@
                         <lightning-button title="Create Application" label="Create Application"
                             onclick={showpplicationForm} variant="brand" style="margin-left:8px;"
                             disabled={appbtndisAble}></lightning-button>
-                            <lightning-button title="New Task " label="New Task" onclick={newTaskBTN} disabled={taskBTNdisAble}
-                            variant="brand" style="margin-left:8px;"></lightning-button>
+                        <lightning-button title="New Task " label="New Task" onclick={newTaskBTN}
+                            disabled={taskBTNdisAble} variant="brand" style="margin-left:8px;"></lightning-button>
 
                     </div>
                 </div>
@@ -75,7 +76,7 @@
                     <template if:true={showFromOrEmpty}>
                         <lightning-tabset>
                             <lightning-tab label="Details">
-                                
+
                                 <template if:true={data}>
                                     <lightning-record-view-form object-api-name={objectApiName} record-id={recordId}
                                         density="comfy">
@@ -325,7 +326,7 @@
 
                                                     </lightning-layout-item>
 
-                                                   
+
                                                     <lightning-layout-item padding="around-small" size="6">
                                                         <div class="slds-border_bottom">
                                                             <lightning-output-field field-name="Phone"
@@ -362,7 +363,7 @@
                                                         </div>
 
                                                     </lightning-layout-item>
-                                                    
+
                                                     <lightning-layout-item padding="around-small" size="6">
                                                         <div class="slds-border_bottom">
                                                             <lightning-output-field field-name="Createddatetime_Form__c"
@@ -417,7 +418,7 @@
                 <template if:true={isShowModal}>
                     <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
                         aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
-                        <div class="slds-modal__container" >
+                        <div class="slds-modal__container">
                             <!-- Modal/Popup Box LWC header here -->
                             <header class="slds-modal__header">
                                 <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
@@ -430,14 +431,13 @@
                                     Lead</h2>
                             </header>
                             <!-- Modal/Popup Box LWC body starts here -->
-                            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" >
+                            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
                                 <!--lightning-input label="First Name" onchange={FnameChange} required="true"></lightning-input -->
-                                <lightning-input label="Name" required="true"
-                                    onchange={LnameChange}></lightning-input>
+                                <lightning-input label="Name" required="true" onchange={LnameChange}></lightning-input>
                                 <lightning-input label="Email" required="true" onchange={EmailChange}></lightning-input>
-                                
-                                
 
+
+                                <!--div>
                                 <lightning-combobox name="City" label="City" value={cityValue}
                                     placeholder="Select Your City" options={CityOptions} onchange={HandleCityStatus} required="true">
                                 </lightning-combobox>
@@ -445,46 +445,52 @@
                                 <template if:true={InputCity}>
                                     <lightning-input type="text" label="City" name="UserCity" placeholder="Enter Your City" onchange={HandleUserCityStatus} ></lightning-input>
                                 </template>
-
-                                <!--lightning-input type="text" label="City" name="City" value={cityValue} onchange={HandleCityStatus}></lightning-input-->
-                                <lightning-input type="text" label="State"  name="State" value={StateValue} disabled={StateDisable} onchange={HandleChangeStateCountry}></lightning-input>
-                                <lightning-input type="text" label="Country" name="Country" value={CountryValue}  disabled={CountryDisable} onchange={HandleChangeStateCountry}></lightning-input>
-
+                               
+                                <lightning-input type="text" label="State" name="State" value={StateValue}
+                                    disabled={StateDisable} onchange={HandleChangeStateCountry}></lightning-input>
+                                <lightning-input type="text" label="Country" name="Country" value={CountryValue}
+                                    disabled={CountryDisable} onchange={HandleChangeStateCountry}></lightning-input>
+                                </div-->
                                 <label class="slds-form-element__label" for="textarea-id-01"><abbr class="slds-required"
-                                    title="required">*</abbr>Mobile</label>
+                                        title="required">*</abbr>Mobile</label>
                                 <div class="slds-grid slds-wrap">
                                     <div class="slds-col slds-size_1-of-12">
                                         <span>
-                                            <lightning-input  value={countrycodevalue} disabled="true"></lightning-input>
+                                            <lightning-input value={countrycodevalue} disabled="true"></lightning-input>
                                         </span>
-                                      </div>
+                                    </div>
                                     <div class="slds-col slds-size_11-of-12">
                                         <span>
                                             <lightning-input type="tel" min-length="10" onchange={PhoneChange}
-                                    max-length="10"></lightning-input>
+                                                max-length="10"></lightning-input>
 
                                         </span>
-                                      </div>
+                                    </div>
 
                                 </div>
                                 <lightning-combobox name="course" label="Course" value={value}
-                                    placeholder="Select Course" options={courssweList} onchange={courceHandler} required="true">
+                                    placeholder="Select Course" options={courssweList} onchange={courceHandler}
+                                    required="true">
                                 </lightning-combobox>
                                 <lightning-combobox name="Lead Gen Path" label="Lead Gen Path" value={Leadvalue}
-                                    placeholder="Select Lead Gen Path" options={ldGenPath} onchange={ldGenPathValue} required="true">
-                                </lightning-combobox >
+                                    placeholder="Select Lead Gen Path" options={ldGenPath} onchange={ldGenPathValue}
+                                    required="true">
+                                </lightning-combobox>
 
 
                                 <lightning-combobox name="Source" label="Source" value={SourceValue}
-                                    placeholder="Select Your Source" options={leadSource} onchange={HandleSource} required="true" >
+                                    placeholder="Select Your Source" options={leadSource} onchange={HandleSource}
+                                    required="true">
                                 </lightning-combobox>
                                 <!--lightning-input type="text" label="Source" onchange={HandleSource} required="true"></lightning-input-->
 
                                 <lightning-combobox name="Medium" label="Medium" value={MediumValue}
-                                    placeholder="Select Your Medium" options={leadmedium} onchange={HandleMedium} required="true">
+                                    placeholder="Select Your Medium" options={leadmedium} onchange={HandleMedium}
+                                    required="true">
                                 </lightning-combobox>
-                                
-                                <lightning-textarea  label="Comments" name="Comments" value={commentsValue} onchange={HandleComments}>
+
+                                <lightning-textarea label="Comments" name="Comments" value={commentsValue}
+                                    onchange={HandleComments}>
                                 </lightning-textarea>
 
                                 <!--lightning-input type="text" label="Medium" onchange={HandleMedium} required="true"></lightning-input-->
@@ -497,7 +503,8 @@
                             <!-- Modal/Popup Box LWC footer starts here -->
                             <footer class="slds-modal__footer">
                                 <button class="slds-button slds-button_neutral" onclick={handleCancel}>Cancel</button>
-                                <button class="slds-button slds-button_brand" onclick={createNewLead}  disabled={HandleLeadCreatedisable}>Create</button>
+                                <button class="slds-button slds-button_brand" onclick={createNewLead}
+                                    disabled={HandleLeadCreatedisable}>Create</button>
                             </footer>
                         </div>
                     </section>
@@ -508,9 +515,8 @@
 
         </template>
         <div class="slds-m-around_large">
-             <div if:true={isLoaded} class="slds-is-relative">
-                <lightning-spinner
-                    alternative-text="Loading..." variant="brand">
+            <div if:true={isLoaded} class="slds-is-relative">
+                <lightning-spinner alternative-text="Loading..." variant="brand">
                 </lightning-spinner>
             </div>
         </div>
@@ -650,7 +656,8 @@
                             Application</h2>
                     </header>
                     <!-- Modal/Popup Box LWC body starts here -->
-                    <div class="slds-modal__content slds-p-around_xx-large" id="modal-content-id-2" style="height:28rem">
+                    <div class="slds-modal__content slds-p-around_xx-large" id="modal-content-id-2"
+                        style="height:28rem">
 
                         <lightning-combobox name="course" label="Course" value={value} placeholder="Select Course"
                             options={courssweList} onchange={courseforapphandler}>
@@ -658,60 +665,67 @@
 
                         <div class="slds-m-around_large">
                             <div if:true={isLoadedApplication} class="slds-is-relative">
-                               <div align="center">
-                                <div class="loader"></div>
-                                Please wait! Creating Application...
+                                <div align="center">
+                                    <div class="loader"></div>
+                                    Please wait! Creating Application...
+                                </div>
                             </div>
-                           </div>
-                       </div>
+                        </div>
 
                     </div>
                     <!-- Modal/Popup Box LWC footer starts here -->
                     <footer class="slds-modal__footer">
                         <button class="slds-button slds-button_neutral" onclick={handleappCancel}>Cancel</button>
-                        <button class="slds-button slds-button_brand" onclick={createapplicationForm} disabled={HandleCreateDisable}>Create</button>
+                        <button class="slds-button slds-button_brand" onclick={createapplicationForm}
+                            disabled={HandleCreateDisable}>Create</button>
                     </footer>
                 </div>
             </section>
             <div class="slds-backdrop slds-backdrop_open"></div>
             <!--div class="slds-backdrop slds-backdrop_open"></div -->
         </template>
-       
+
         <template if:true={showtaskModal}>
-            <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+            <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+                class="slds-modal slds-fade-in-open slds-modal_small">
                 <div class="slds-modal__container">
                     <div class="slds-modal__header">
                         <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
-                        title="Close" onclick={handleCancel}>
-                        <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
-                            size="small"></lightning-icon>
-                        <span class="slds-assistive-text">Close</span>
-                    </button>
+                            title="Close" onclick={handleCancel}>
+                            <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                                size="small"></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
                         <h1>Create New Task</h1>
-                      </div>
-                      <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
-                        <lightning-input type="text" name="subject" label="Subject" value={subjectvalue} onchange={subjectHandler} required="true"></lightning-input>
+                    </div>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
+                        <lightning-input type="text" name="subject" label="Subject" value={subjectvalue}
+                            onchange={subjectHandler} required="true"></lightning-input>
                         <lightning-combobox name="Priority" label="Priority" value={priorityValue}
-                          placeholder="Select Priority" options={priorityList} onchange={priorityHandler} required="true"></lightning-combobox> 
+                            placeholder="Select Priority" options={priorityList} onchange={priorityHandler}
+                            required="true"></lightning-combobox>
 
-                          <lightning-combobox name="Status" label="Status" value={statusValue}
-                          placeholder="Select Status" options={StatusList} onchange={statusHandler} required="true"></lightning-combobox>   
-                        
-                          <lightning-input type="date" name="Duedate" label="Due date" value={DuedateValue} onchange={duedateHandler} ></lightning-input>   
-                          <lightning-input type="datetime" name="input2" label="Followup Date/time " value={followupValue} onchange={followupHandler}></lightning-input> 
-                          <lightning-textarea  label="Comments" name="Comments" value={comValue} onchange={commentHandler}>
-                          </lightning-textarea>
-                          
+                        <lightning-combobox name="Status" label="Status" value={statusValue} placeholder="Select Status"
+                            options={StatusList} onchange={statusHandler} required="true"></lightning-combobox>
 
-                      </div>
-                      <div class="slds-modal__footer">
-                        <button class="slds-button slds-button_neutral" aria-label="Cancel and close" onclick={hideshowTaskModal}>Cancel</button>
-                        <button class="slds-button slds-button_brand" onclick={createTaskRec}>Save</button>
-                      </div>
+                        <lightning-input type="date" name="Duedate" label="Due date" value={DuedateValue}
+                            onchange={duedateHandler}></lightning-input>
+                        <lightning-input type="datetime" name="input2" label="Followup Date/time " value={followupValue}
+                            onchange={followupHandler}></lightning-input>
+                        <lightning-textarea label="Comments" name="Comments" value={comValue} onchange={commentHandler}>
+                        </lightning-textarea>
+
 
                     </div>
-                    </section>
-                    <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+                    <div class="slds-modal__footer">
+                        <button class="slds-button slds-button_neutral" aria-label="Cancel and close"
+                            onclick={hideshowTaskModal}>Cancel</button>
+                        <button class="slds-button slds-button_brand" onclick={createTaskRec}>Save</button>
+                    </div>
+
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
         </template>
     </div>
 </template>

@@ -49,7 +49,7 @@ public class LeadAssignmentExecutionCriteria {
         list<Default_Assignment_Group__mdt> defaultGroupName = [select id,Group_Name__c from Default_Assignment_Group__mdt];
         List<Execution_Criteria__c> AvailableCriterias = [SELECT Enabled__c,Evaluation_Expression_For_Execution__c,Id,Name ,(SELECT Execution_Criteria__c,serial__c,Field_Name__c,Field_Type__c,Matching_Type__c,Matching_Value__c,Related_Object__c,Scorecard_Execution_Criteria_Name__c,Scorecard__c,Sequence__c FROM Execution_Criteria_Entry__r WHERE Execution_Criteria__c != null ORDER BY Sequence__c ASC)FROM Execution_Criteria__c where Enabled__c = true];
         
-        list<lead> queueLeads = [SELECT Address,AdGroup__c,AD_Set_Id__c,AD_Set_Name__c,Assignment_Group__c,
+        list<lead> queueLeads = [SELECT Address,AD_Set_Id__c,AD_Set_Name__c,Assignment_Group__c,
                                  Branch__c,Capture_NBFC_Partner__c,Capture_Tenure__c,Capture_Upfront_payment__c,
                                  CID_of_Referer__c,City,City__c,Comments__c,Company,Confidence_Level__c,Conversation_Comments__c
                                  ,ConvertedAccountId,ConvertedContactId,ConvertedDate,ConvertedOpportunityId,Country,Country__c,
@@ -66,10 +66,10 @@ public class LeadAssignmentExecutionCriteria {
                                  Prior_Status__c,Product__c,Profession__c,Qualification__c,Quality_of_Lead__c,Quantity__c,Rating,Reason_For_Dead__c,
                                  Reason_for_On_Hold__c,Referral_Email__c,Referral_Phone__c,referrer__c,Refree_Mob_No__c,Relevant_Experience__c,Salutation,
                                  sfleadcaphfprod__External_Lead_ID__c,Specialization__c,State,State__c,Status,Street,Suffix,
-                                 SyncedInCallyzer__c,SystemModstamp,Telephonic_Conversation__c,Title,Total_Amount__c,Total_Applications_Submitted__c,
+                                 SyncedInCallyzer__c,SystemModstamp,Telephonic_Conversation__c,Title,Total_Applications_Submitted__c,
                                  Total_Calls__c,Total_Call_Duration__c,Total_Connected_Call__c,Total_Conversation_Duration__c,Total_Course_Interests__c,
-                                 Total_Emails__c,Transcript__c,Type_of_Course__c,UTM_AdGroup__c,UTM_Campaign__c,UTM_Channel__c,UTM_Content__c,UTM_Device__c,
-                                 UTM_Experiment__c,UTM_link__c,UTM_Location__c,UTM_Medium__c,UTM_Term__c,UTM_Type__c,UTM_Variety__c,Visitor_ID__c,Website,
+                                 Total_Emails__c,Transcript__c,Type_of_Course__c,UTM_AdGroup__c,UTM_Campaign__c,UTM_Channel__c,UTM_Device__c,
+                                 UTM_Experiment__c,UTM_Location__c,UTM_Medium__c,UTM_Term__c,UTM_Type__c,UTM_Variety__c,Visitor_ID__c,Website,
                                  Whatsapp_Opt_in__c,Why_This_Course__c,Year_of_Experience__c 
                                  FROM Lead 
                                  where ownerId =: queueId];

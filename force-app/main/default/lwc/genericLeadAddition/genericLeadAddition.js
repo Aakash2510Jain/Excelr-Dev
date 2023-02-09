@@ -517,7 +517,11 @@ export default class WaklInLead extends LightningElement {
     }
 
     //close modal from innner button
-
+    lookupRecord(event) {
+        debugger;
+        this.selectedrecordDetails = event.detail.selectedRecord;
+        //alert('Selected Record Value on Parent Component is ' + JSON.stringify(event.detail.selectedRecord));
+    }
     handleCancel() {
         debugger;
         this.isShowModal = false;
@@ -926,11 +930,7 @@ export default class WaklInLead extends LightningElement {
         });
     }
 
-    lookupRecord(event) {
-        debugger;
-        this.selectedrecordDetails = event.detail.selectedRecord;
-        //alert('Selected Record Value on Parent Component is ' + JSON.stringify(event.detail.selectedRecord));
-    }
+    
     async handleAlert(message) {
         await LightningAlert.open({
             message: message,

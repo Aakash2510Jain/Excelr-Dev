@@ -22,7 +22,7 @@ public without sharing class EmailIUtility{
                                   Where Id = :invoiceId
                                   limit 1];
             } else if (objName == 'Lead'){
-                leadList = [SELECT Id, Name, Email, Total_Amount__c
+                leadList = [SELECT Id, Name, Email
                             FROM Lead
                             WHERE Id = :invoiceId];
             }

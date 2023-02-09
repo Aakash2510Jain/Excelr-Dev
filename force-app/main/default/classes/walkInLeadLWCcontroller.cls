@@ -65,7 +65,7 @@ public without sharing class walkInLeadLWCcontroller{
             if (!existingTrainingUser.isEmpty()){
                 leadRec.ExcelR_Training_User__c = existingTrainingUser[0].id;
             }
-            leadRec.Company = '--';
+            leadRec.Company = Lastname;
             system.debug('leadRec===========================' + leadRec);
             insert leadRec;
             System.debug('lead rec Id =====> ' + leadRec.Id);
