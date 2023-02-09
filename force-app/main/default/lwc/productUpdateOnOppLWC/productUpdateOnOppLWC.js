@@ -66,6 +66,7 @@ export default class ProductUpdateOnOppLWC extends LightningElement {
 
     @track ModePicklistvalue=[];
     @track Modevalue;
+    @track ShowCity=false;
 
     //All Mode From Product
     @wire(getPicklistValues, { recordTypeId:'$objectInfo.data.defaultRecordTypeId', fieldApiName:MODE_FIELD})
@@ -97,6 +98,7 @@ export default class ProductUpdateOnOppLWC extends LightningElement {
         this.Modevalue=value;
   
         this.ModalPriorValue=value;
+       
 
         // if(this.Typevalue!=null && (this.Modevalue!=this.ModalPriorValue) && this.Cityvalue){
         //     ProdList({mode:this.Modevalue,typevalue:this.Typevalue,city:this.Cityvalue})

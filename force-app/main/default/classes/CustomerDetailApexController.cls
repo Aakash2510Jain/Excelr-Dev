@@ -17,8 +17,9 @@ public class CustomerDetailApexController {
     @AuraEnabled(Cacheable=True)
     Public Static Map<String,String> GetAllFieldsLabelXValue(string recordId){ //string recordId
        try{ 
-        Customers__c CustomerRec=[Select Profession__c,Qualification__c,CID__c,Branch__c,Specialization__c,Year_of_Graduation__c,Why_This_Course__c,
+        Customers__c CustomerRec=[Select CID__c,Profession__c,Qualification__c,Branch__c,Specialization__c,Year_of_Graduation__c,Why_This_Course__c,
                                   Designation__c,Year_of_Experience__c,Current_Domain__c,Relevant_Experience__c,Name__c,Company__c From Customers__c Where Id=:recordId];//Where Id=:a0XN0000009rprxMAA
+           
         Map<String, Object> customerRecMap = (Map<String, Object>) JSON.deserializeUntyped(JSON.serialize(CustomerRec));
 
                  system.debug('CustomerRec='+CustomerRec);

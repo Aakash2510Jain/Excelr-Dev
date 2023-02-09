@@ -54,7 +54,7 @@ public without sharing  class GenericLeadLWCcontroller {
             leadRec.LastName = Lastname;
             leadRec.Email = email;
             leadRec.Phone = phone;
-            leadRec.Landing_Page_URL__c = pageurllanding;
+            leadRec.Enter_UTM_Link__c = pageurllanding;
             leadRec.Course__c = Course;
             leadRec.City__c=city;
             leadRec.State__c=state;

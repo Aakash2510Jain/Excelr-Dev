@@ -18,6 +18,7 @@ export default class CustomerDetailLWCController extends NavigationMixin(Lightni
     if(data){
         console.log('data=',data);
         this.LeadData=data;
+        console.log('LeadData=',this.LeadData);
     }
     else if(error){
         console.log('error');
@@ -105,15 +106,25 @@ export default class CustomerDetailLWCController extends NavigationMixin(Lightni
   
 
    @track customerData=[];
+   @track customernewData=[];
    @wire(GetAllFieldsLabelXValue,{recordId:'$recordId'})
    GetAllFieldsLabelXValue(result){
        debugger;
     if (result.data) {
         for (var key in result.data) {
-            this.customerData.push({ key: key, value:(result.data)[key] });
-            console.log('key', this.customerData);
+            if(key!='CID__c'){
+                this.customerData.push({ key: key, value:(result.data)[key] });
+            }
+            else if(key=='CID__c'){
+                this.customernewData.push({ key: key, value:(result.data)[key] });
+            }
+            
+            console.log('key Sort', this.customerData);
+            console.log('New key Sort', this.customernewData);
            
-        }            
+        }  
+        this.customerData.unshift(this.customernewData[0]); 
+        console.log('Unshifted key Sort', this.customerData);        
     }
     else if(result.error){
         console.log('error');
@@ -124,7 +135,7 @@ export default class CustomerDetailLWCController extends NavigationMixin(Lightni
              
             const evt = new ShowToastEvent({
                 title: 'Contact Created',
-                message: 'Record ID: ' + event.detail.id,
+                message: 'Record ID: ',
                 variant: 'success',
             
             });

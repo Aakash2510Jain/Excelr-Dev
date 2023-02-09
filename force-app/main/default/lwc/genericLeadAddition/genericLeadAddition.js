@@ -24,6 +24,8 @@ import FetchStateCounty from '@salesforce/apex/GenericLeadLWCcontroller.FetchSta
 import Fetchcities from '@salesforce/apex/GenericLeadLWCcontroller.Fetchcities';
 import fetchCountryAndCountryCode from '@salesforce/apex/GenericLeadLWCcontroller.fetchCountryAndCountryCode';
 
+import COUNTRY_FIELD from '@salesforce/schema/Lead.Country';
+
 import QueryPastLeads from '@salesforce/apex/GenericLeadLWCcontroller.QueryPastLeads';
 import LightningAlert from 'lightning/alert';
 import LightningConfirm from "lightning/confirm";
@@ -117,6 +119,28 @@ export default class WaklInLead extends LightningElement {
         let EmailOrPhone = Event.target.value;
         this.inPutValue = EmailOrPhone;
     }
+
+
+    @track countryPicklist;
+    @wire(getPicklistValues, { recordTypeId:'$objectInfo.data.defaultRecordTypeId', fieldApiName:COUNTRY_FIELD})
+    wiredCountryPicklistValues({ data, error }) {
+        debugger;
+        if (data) {
+            console.log('data=', data);
+            console.log('dataValues=', data.values);
+            let arr = [];
+            for (let i = 0; i < data.values.length; i++) {
+                arr.push({ label: data.values[i].label, value: data.values[i].value });
+            }
+            this.countryPicklist = arr;
+            this.countryPicklist.sort((a, b) => (a.label > b.label) ? 1 : -1);
+            console.log('countryPicklist =======', this.countryPicklist);
+        }
+        else {
+            console.log('error=', error)
+        }
+    }
+    IndustryPicklistValues
 
     @track taskBTNdisAble = true;
     @track captureownerName;

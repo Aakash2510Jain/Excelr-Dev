@@ -366,7 +366,7 @@
                                                         </div>
 
                                                     </lightning-layout-item>
-                                                    
+
                                                     <lightning-layout-item padding="around-small" size="6">
                                                         <div class="slds-border_bottom">
                                                             <lightning-output-field field-name="Createddatetime_Form__c"
@@ -421,12 +421,12 @@
 
                     <div class="slds-m-around_large">
                         <div if:true={spinnerLoading} class="slds-is-relative">
-                           <div align="center">
-                            <div class="loader"></div>
-                            Please wait! Loading Data...
+                            <div align="center">
+                                <div class="loader"></div>
+                                Please wait! Loading Data...
+                            </div>
                         </div>
-                       </div>
-                   </div>
+                    </div>
                     <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
                         aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
                         <div class="slds-modal__container">
@@ -448,35 +448,39 @@
                                 <lightning-input label="Email" required="true" onchange={EmailChange}></lightning-input>
                                 <!--lightning-input type="tel" label="Mobile" min-length="10" onchange={PhoneChange}
                                     max-length="10" required="true"></lightning-input -->
-                                
+
 
                                 <lightning-combobox name="City" label="City" value={cityValue}
-                                    placeholder="Select Your City" options={CityOptions} onchange={HandleCityStatus} required="true">
+                                    placeholder="Select Your City" options={CityOptions} onchange={HandleCityStatus}
+                                    required="true">
                                 </lightning-combobox>
 
                                 <template if:true={InputCity}>
-                                    <lightning-input type="text" label="City" name="UserCity" placeholder="Enter Your City" onchange={HandleUserCityStatus} ></lightning-input>
+                                    <lightning-input type="text" label="City" name="UserCity"
+                                        placeholder="Enter Your City" onchange={HandleUserCityStatus}></lightning-input>
                                 </template>
 
                                 <!--lightning-input type="text" label="City" onchange={HandleCity}></lightning-input-->
-                                 <lightning-input type="text" label="State" name="State" value={StateValue} disabled={StateDisable} onchange={HandleChangeStateCountry}></lightning-input>
-                                <lightning-input type="text" label="Country" name="Country" value={CountryValue}  disabled={CountryDisable} onchange={HandleChangeStateCountry}></lightning-input>
+                                <lightning-input type="text" label="State" name="State" value={StateValue}
+                                    disabled={StateDisable} onchange={HandleChangeStateCountry}></lightning-input>
+                                <lightning-input type="text" label="Country" name="Country" value={CountryValue}
+                                    disabled={CountryDisable} onchange={HandleChangeStateCountry}></lightning-input>
 
                                 <label class="slds-form-element__label" for="textarea-id-01"><abbr class="slds-required"
-                                    title="required">*</abbr>Mobile</label>
+                                        title="required">*</abbr>Mobile</label>
                                 <div class="slds-grid slds-wrap">
                                     <div class="slds-col slds-size_1-of-12">
                                         <span>
-                                            <lightning-input  value={countrycodevalue} disabled="true"></lightning-input>
+                                            <lightning-input value={countrycodevalue} disabled="true"></lightning-input>
                                         </span>
-                                      </div>
+                                    </div>
                                     <div class="slds-col slds-size_11-of-12">
                                         <span>
                                             <lightning-input type="tel" min-length="10" onchange={PhoneChange}
-                                    max-length="10"></lightning-input>
+                                                max-length="10"></lightning-input>
 
                                         </span>
-                                      </div>
+                                    </div>
 
                                 </div>
 
@@ -486,7 +490,7 @@
                                 </lightning-combobox>
 
                                 <template if:true={TypeofCoursePicklistValues.data}>
-                                    <lightning-combobox name="TOCR" label="Type of Course Reference" value={typeofCoursevalue}
+                                    <lightning-combobox name="TOCR" label="Type of Course" value={typeofCoursevalue}
                                         placeholder="select" options={TypeofCoursePicklistValues.data.values}
                                         onchange={typeofcourseHandler}>
                                     </lightning-combobox>

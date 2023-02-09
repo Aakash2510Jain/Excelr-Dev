@@ -74,7 +74,7 @@ public without sharing class ChatFormLWCcontroller{
                 leadRec.Transcript__c = Transcript;
                 // leadRec.Lead_Gen_Path__c=leadGenPath;
                 // leadRec.LGE__c=LGE;
-                leadRec.Landing_Page_URL__c = LandingPageURL;
+                leadRec.Enter_UTM_Link__c = LandingPageURL;
                 leadRec.Lead_Generation_Method__c = 'Chat Form';
                 leadRec.Comments__c = comments;
                 if (!existingTrainingUser.isEmpty()){

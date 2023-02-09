@@ -328,6 +328,9 @@ public without sharing class walkInLeadLWCcontroller{
             ExistingHashcode = String.valueOf(userHashCodeCookie.getValue());
             if (LoginHashcode == ExistingHashcode && ExcelRTrainUser[0].HashCode__c == ExistingHashcode){
                 if (Reloading == '' || Reloading == null){
+                    if (urlvalue.contains('apex')) {
+                        urlvalue = urlvalue.replace('apex', 'Loginpage');
+                    }
                     FinalPageToRedirect = 'https://' + headerdata + urlvalue + '&IsReloading=true';
                     // FinalPageToRedirect = LoginHashcode+ '?id='+ExistingHashcode +'&IsReloading=true';
                     System.debug('FinalPageToRedirect ====> ' + FinalPageToRedirect);
