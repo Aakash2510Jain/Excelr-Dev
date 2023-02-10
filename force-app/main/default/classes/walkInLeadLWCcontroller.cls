@@ -278,7 +278,7 @@ public without sharing class walkInLeadLWCcontroller{
     public static List<Lead> QueryPastLeads(string ExcelRagentid){
         System.debug(' ExcelRagentid =========> ' + ExcelRagentid);
         try{
-            List<Lead> PastLeadRecords = [SELECT Course__c, Email, ExcelR_Training_User__c, Name, OwnerId, Owner.Name, Phone, Product__c, Product__r.Name, Status, Total_Calls__c, Total_Connected_Call__c
+            List<Lead> PastLeadRecords = [SELECT Course__c, Email, ExcelR_Training_User__c, Name, OwnerId, Owner.Name, Phone,Product__r.Name, Status, Total_Calls__c, Total_Connected_Call__c
                                           FROM Lead
                                           Where ExcelR_Training_User__c  = :ExcelRagentid ANd isconverted = false
                                           Order by createdDate Desc];

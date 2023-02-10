@@ -20,7 +20,7 @@ public class ConvertLeadHandler {
                 existingpriceBook =[ Select Id,Product2Id,Pricebook2Id,UseStandardPrice,UnitPrice from PricebookEntry limit 1 ];
                 
                 List<Lead> leadList = new  List<Lead>();
-                leadList=[Select Id,Quantity__c,Payment_Initiated_Date_Time__c,Product__c,Name, Email, isConverted  from Lead where Id=: recordId  and isConverted = false];
+                leadList=[Select Id,Payment_Initiated_Date_Time__c,Name, Email, isConverted  from Lead where Id=: recordId  and isConverted = false];
                 //[Select Id, Name, Email, isConverted from Lead Where Id = :recordId and isConverted = false]
                 for (Lead leadObj : leadList){
                     

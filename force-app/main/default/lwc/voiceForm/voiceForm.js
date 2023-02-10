@@ -23,6 +23,7 @@ import LEAD_SOURCE from '@salesforce/schema/Lead.LeadSource';
 import LEAD_MEDIUM from '@salesforce/schema/Lead.UTM_Medium__c';
 import FetchStateCounty from '@salesforce/apex/voiceFormLWCcontroller.FetchStateCounty';
 import Fetchcities from '@salesforce/apex/voiceFormLWCcontroller.Fetchcities';
+import FetchCountriesStateWithISDcode from '@salesforce/apex/voiceFormLWCcontroller.getCountryStateAndISDCode';
 import fetchCountryAndCountryCode from '@salesforce/apex/GenericLeadLWCcontroller.fetchCountryAndCountryCode';
 
 
@@ -382,8 +383,65 @@ export default class voiceForm extends LightningElement {
         else if(error){
             console.log('error=',error);
         }
+    }
+
+    // =========================================================Fetch Countries States with ISDCODe And Handle =================================================
+    @track CountriesPicklistValue=[];
+    @track countriesSateISDCodelist = [];
+    @wire(FetchCountriesStateWithISDcode)
+    wiredCounstriesStatesWithISD({data,error}){
+        debugger;
+        if(data){
+            this.countriesSateISDCodelist = data;
+            console.log('CityValuedata=',data);
+
+              let arr=[];
+              for(let i=0;i<data.length;i++){
+                 arr.push({label:data[i].MasterLabel,value:data[i].MasterLabel});
+              }
+              this.CountriesPicklistValue=arr;
+              console.log('Picklistvalue=',this.CountriesPicklistValue);
+           }
+           else if(error){
+               console.log('error=',error);
+           }
 
     }
+
+    @track SelectedCountryStateList = [];
+    @track SelectedCountryISCode;
+    HandleChangeCountry(event){
+        debugger;
+        let Selectedcountry=event.detail.value;
+        this.CountryValue = Selectedcountry;
+        var SelectedcountryStateISDCode = this.countriesSateISDCodelist.find(item => item.MasterLabel == Selectedcountry);
+        this.SelectedCountryISCode = SelectedcountryStateISDCode.Country_Code__c;
+        //this.countrycodevalue = countrycode.CountryCode__c;
+        let tempStateArr = []; 
+        var tempStateString = SelectedcountryStateISDCode.States__c;
+        var tempStateArrafterCommaSeperated = tempStateString.split(',');
+        for(let i=0;i<tempStateArrafterCommaSeperated.length;i++){
+            tempStateArr.push({label:tempStateArrafterCommaSeperated[i],value:tempStateArrafterCommaSeperated[i]});
+         }
+         this.SelectedCountryStateList = tempStateArr;
+         this.StateDisable = false;
+
+    }
+
+    HandleChangeState(event){
+        debugger;
+        let SelectedState=event.detail.value;
+        this.StateValue = SelectedState;
+        //this.StateDisable = false;
+
+    }
+
+    HandleCityValue(event){
+        this.cityValue = event.detail.value;
+    }
+
+
+    // ======================================================= Fetch Countries States with ISDCODe And Handle End Here ==================================================== 
 
     @track CityPicklistValue=[];
     @track cityValue;

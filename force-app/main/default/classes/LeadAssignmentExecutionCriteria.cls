@@ -63,7 +63,7 @@ public class LeadAssignmentExecutionCriteria {
                                  Lead_Generation_Team_Member_Name__c,Lead_Gen_Form_Id__c,Lead_Gen_Path__c,Lead_Id_FB__c,Lead_Name__c,Location__c,Longitude,
                                  MasterRecordId,Match_Type__c,Medium__c,MiddleName,MobilePhone,Name,Next_follow_up_date_time__c,NumberOfEmployees,OwnerId,
                                  Owner_Email__c,Owner_ManagerId__c,Payment_Initiated_Date_Time__c,Payment_Type__c,Phone,PhotoUrl,Platform__c,PostalCode,
-                                 Prior_Status__c,Product__c,Profession__c,Qualification__c,Quality_of_Lead__c,Quantity__c,Rating,Reason_For_Dead__c,
+                                 Prior_Status__c,Profession__c,Qualification__c,Quality_of_Lead__c,Rating,Reason_For_Dead__c,
                                  Reason_for_On_Hold__c,Referral_Email__c,Referral_Phone__c,referrer__c,Refree_Mob_No__c,Relevant_Experience__c,Salutation,
                                  sfleadcaphfprod__External_Lead_ID__c,Specialization__c,State,State__c,Status,Street,Suffix,
                                  SyncedInCallyzer__c,SystemModstamp,Telephonic_Conversation__c,Title,Total_Applications_Submitted__c,

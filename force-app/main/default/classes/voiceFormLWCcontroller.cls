@@ -52,8 +52,8 @@ public without sharing class voiceFormLWCcontroller{
             leadRec.Lead_Generation_Method__c = 'Voice Form';
             leadRec.Comments__c = comments;
             // leadRec.LGE__c=lgedata;
-            leadRec.Country__c = country;
-            leadRec.State__c = state;
+            leadRec.Country = country;
+            leadRec.State = state;
             if (!existingTrainingUser.isEmpty()){
                 leadRec.ExcelR_Training_User__c = existingTrainingUser[0].id;
             }
@@ -298,7 +298,9 @@ public without sharing class voiceFormLWCcontroller{
     }
 
     @AuraEnabled(Cacheable = True)
-    Public Static Map<String, Countries_With_States__mdt> getCountryStateAndISDCode(){
+    Public Static List<Countries_With_States__mdt>  getCountryStateAndISDCode(){
+
+        //Map<String, Countries_With_States__mdt>
         List<Countries_With_States__mdt> countryStatesMDT = [Select MasterLabel, Country_Code__c, States__c
                                                              From Countries_With_States__mdt];
         Map<String, Countries_With_States__mdt> countryByMDTRec = new Map<String, Countries_With_States__mdt>();
@@ -306,7 +308,8 @@ public without sharing class voiceFormLWCcontroller{
             countryByMDTRec.put(countryStateRec.MasterLabel, countryStateRec);
 
         }
-        return countryByMDTRec;
+        //return countryByMDTRec;
+        return countryStatesMDT;
     }
 
     // ============================================ This is check Whether hashcode is existing in Cookies as well as in user Record hashcode =============================

@@ -90,9 +90,9 @@ public class PaymentProcessOnLeadController{
                            where id = :ProductName];
 
         Lead ld = new Lead();
-        ld.Product__c = PrdRec.Id;
+        //ld.Product__c = PrdRec.Id;
         //ld.Total_Amount__c = Amount;
-        ld.Quantity__c = Quantity;
+        //ld.Quantity__c = Quantity;
         ld.Payment_Initiated_Date_Time__c = System.now();
         ld.Id = recordId;
 
@@ -137,9 +137,9 @@ public class PaymentProcessOnLeadController{
         LeadRec.Capture_Tenure__c = FullTenureValue;
         LeadRec.Capture_NBFC_Partner__c = FullNBFCValue;
         //LeadRec.Total_Amount__c = Amount;
-        LeadRec.Quantity__c = Quantity;
+        //LeadRec.Quantity__c = Quantity;
         LeadRec.Payment_Initiated_Date_Time__c = System.now();
-        LeadRec.Product__c = PrdRec.Id;
+        //LeadRec.Product__c = PrdRec.Id;
         string leadCourse = PrdRec.name.substringBefore('-');
         leadCourse = leadCourse.trim();
         LeadRec.Course__c = leadCourse;
@@ -179,10 +179,10 @@ public class PaymentProcessOnLeadController{
             LeadRec.Capture_NBFC_Partner__c = partialNBFCValue;
             LeadRec.Capture_Upfront_payment__c = PartialUpfrontValue;
             //LeadRec.Total_Amount__c = Amount;
-            LeadRec.Quantity__c = Quantity;
+            //LeadRec.Quantity__c = Quantity;
             LeadRec.Payment_Initiated_Date_Time__c = System.now();
             LeadRec.Payment_Type__c = paymentType;
-            LeadRec.Product__c = PrdRec.Id;
+            //LeadRec.Product__c = PrdRec.Id;
             string leadCourse = PrdRec.name.substringBefore('-');
             leadCourse = leadCourse.trim();
             LeadRec.Course__c = leadCourse;
@@ -258,10 +258,10 @@ public class PaymentProcessOnLeadController{
             LeadRec.Capture_NBFC_Partner__c = partialNBFCValue;
             LeadRec.Capture_Upfront_payment__c = PartialUpfrontValue;
             //LeadRec.Total_Amount__c = Amount;
-            LeadRec.Quantity__c = Quantity;
+            //LeadRec.Quantity__c = Quantity;
             LeadRec.Payment_Initiated_Date_Time__c = System.now();
             LeadRec.Payment_Type__c = paymentType;
-            LeadRec.Product__c = PrdRec.Id;
+            //LeadRec.Product__c = PrdRec.Id;
             string leadCourse = PrdRec.name.substringBefore('-');
             leadCourse = leadCourse.trim();
             LeadRec.Course__c = leadCourse;
