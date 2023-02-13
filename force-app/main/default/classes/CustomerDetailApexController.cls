@@ -5,10 +5,10 @@ public class CustomerDetailApexController{
             Customers__c customerRec = [Select Id, CID__c
                                         From Customers__c
                                         where Id = :recordId];
-            List<Lead> LeadList = [Select Name, LID__c,Lead_URL__c, CreatedDate, Email, Phone, LeadSource, Course__c, Status
+            List<Lead> LeadList = [Select Name, LID__c, CreatedDate, Email, Phone, LeadSource, Course__c, Status
                                    From Lead
                                    Where Customers__c = :recordId];
-            List<Opportunity> opportunityList = [Select Name, OID__c,Opportunity_URL__c, CID__c, CreatedDate, Account.Email__c, Account.Phone, LeadSource, Course__c, StageName
+            List<Opportunity> opportunityList = [Select Name, OID__c, CID__c, CreatedDate, Account.Email__c, Account.Phone, LeadSource, Course__c, StageName
                                                  From Opportunity
                                                  Where CID__c = :customerRec.CID__c];
             leadOpportunityWrap leadOpportunityWrapInstance = new leadOpportunityWrap(LeadList, opportunityList);

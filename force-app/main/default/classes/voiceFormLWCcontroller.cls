@@ -8,7 +8,7 @@ public without sharing class voiceFormLWCcontroller{
             if (EmailOrPhone != null){
                 leadList = [Select id, firstName, LastName, Owner_Email__c, OwnerId, Owner.LastName, Owner.FirstName, Owner.Name, Email, Phone
                             from Lead
-                            where Email = :EmailOrPhone OR Phone LIKE:Phonestring
+                            where Email = :EmailOrPhone OR Phone LIKE:Phonestring OR Alternate_Email__c = :EmailOrPhone Or Alternate_Phone__c = :EmailOrPhone
                             Order By CreatedDate Asc
                             LIMIT 1];
             }
@@ -23,7 +23,7 @@ public without sharing class voiceFormLWCcontroller{
     }
 
     @auraenabled
-    public static String createLead(string Lastname, string email, string phone, string Course, string agentid, string city, string LdGenPath, string state, string country, string source, string medium, string comments, string countrycode, string AlternateMobile, String AlternateEmail ){
+    public static String createLead(string Lastname, string email, string phone, string Course, string agentid, string city, string LdGenPath, string state, string country, string source, string medium, string comments, string countrycode, string AlternateMobile, String AlternateEmail){
         // System.debug('userId ====> ' + userId); String firstname,
 
         System.debug('agentid ====> ' + agentid);
@@ -301,7 +301,7 @@ public without sharing class voiceFormLWCcontroller{
     }
 
     @AuraEnabled(Cacheable = True)
-    Public Static List<Countries_With_States__mdt>  getCountryStateAndISDCode(){
+    Public Static List<Countries_With_States__mdt> getCountryStateAndISDCode(){
 
         //Map<String, Countries_With_States__mdt>
         List<Countries_With_States__mdt> countryStatesMDT = [Select MasterLabel, Country_Code__c, States__c

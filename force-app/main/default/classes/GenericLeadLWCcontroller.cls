@@ -8,7 +8,7 @@ public without sharing class GenericLeadLWCcontroller{
             if (EmailOrPhone != null){
                 leadList = [Select id, firstName, LastName, Owner_Email__c, OwnerId, Owner.LastName, Owner.FirstName, Owner.Name, Email, Phone
                             from Lead
-                            where Email = :EmailOrPhone OR Phone LIKE:Phonestring
+                            where Email = :EmailOrPhone OR Phone LIKE:Phonestring OR Alternate_Email__c = :EmailOrPhone Or Alternate_Phone__c = :EmailOrPhone
                             Order By CreatedDate Asc
                             LIMIT 1];
             }
@@ -34,7 +34,7 @@ public without sharing class GenericLeadLWCcontroller{
     }
 
     @auraenabled
-    public static String createLead(string Lastname, string email, string phone, string Course, string agentid, string city, string state, string country, string source, string medium, string VisitorId, string Transcript, string leadGenPath, string comments, string pageurllanding, string countrycode , string AlternateMobile, String AlternateEmail){
+    public static String createLead(string Lastname, string email, string phone, string Course, string agentid, string city, string state, string country, string source, string medium, string VisitorId, string Transcript, string leadGenPath, string comments, string pageurllanding, string countrycode, string AlternateMobile, String AlternateEmail){
         // System.debug('userId ====> ' + userId);
 
         //String firstname,
@@ -265,8 +265,8 @@ public without sharing class GenericLeadLWCcontroller{
     public static List<Lead> QueryPastLeads(string ExcelRagentid){
         System.debug(' ExcelRagentid =========> ' + ExcelRagentid);
         try{
-            List<Lead> PastLeadRecords = [SELECT Course__c, Email, ExcelR_Training_User__c, Name, OwnerId, Owner.Name, Phone,  Status, Total_Calls__c, Total_Connected_Call__c //Product__r.Name,
-                                          FROM Lead
+            List<Lead> PastLeadRecords = [SELECT Course__c, Email, ExcelR_Training_User__c, Name, OwnerId, Owner.Name, Phone, Status, Total_Calls__c, Total_Connected_Call__c //Product__r.Name,
+                                          FROM Lead 
                                           Where ExcelR_Training_User__c = :ExcelRagentid ANd isconverted = false
                                           Order by createdDate Desc];
             System.debug('PastLeadRecords ======> ' + PastLeadRecords);

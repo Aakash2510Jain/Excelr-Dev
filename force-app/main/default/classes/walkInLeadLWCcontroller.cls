@@ -2,41 +2,41 @@ public without sharing class walkInLeadLWCcontroller{
     @auraenabled(cacheable = true)
     public static list<lead> getLead(String EmailOrPhone){
         try{
-        list<lead> leadList = new list<lead>();
-        String Phonestring = '%' + EmailOrPhone;
+            list<lead> leadList = new list<lead>();
+            String Phonestring = '%' + EmailOrPhone;
 
-        System.debug('EmailOrPhone ====> ' + EmailOrPhone);
-        if (EmailOrPhone != null){
-            leadList = [Select id, firstName, LastName, Owner_Email__c, OwnerId, Owner.LastName, Owner.FirstName, Owner.Name, Email, Phone
-                        from Lead
-                        where Email = :EmailOrPhone OR Phone LIKE:Phonestring
-                        Order By CreatedDate Asc
-                        LIMIT 1];
+            System.debug('EmailOrPhone ====> ' + EmailOrPhone);
+            if (EmailOrPhone != null){
+                leadList = [Select id, firstName, LastName, Owner_Email__c, OwnerId, Owner.LastName, Owner.FirstName, Owner.Name, Email, Phone
+                            from Lead
+                            where Email = :EmailOrPhone OR Phone LIKE:Phonestring OR Alternate_Email__c = :EmailOrPhone Or Alternate_Phone__c = :EmailOrPhone
+                            Order By CreatedDate Asc
+                            LIMIT 1];
+            }
+            System.debug('leadList ======> ' + leadList);
+            // if ( EmailOrPhone.contains('@') ){
+            //     leadList = [Select id, firstName, LastName, Owner_Email__c, Email, Phone
+            //                 from Lead
+            //                 where Email = :EmailOrPhone];
+            // }
+            // else{
+            //     leadList = [Select id, firstName, LastName, Owner_Email__c, Email, Phone
+            //                 from Lead
+            //                 where Phone = :EmailOrPhone];
+            // }
+            // System.debug('leadList ====> ' + leadList);
+            // system.debug('leadList::' + leadList);
+            return leadList;
+        } catch (Exception e){
+            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+            HandleBusinessException.captureError('walkInLeadLWCcontroller', 'getLead', e, null);
+            return null;
         }
-        System.debug('leadList ======> ' + leadList);
-        // if ( EmailOrPhone.contains('@') ){
-        //     leadList = [Select id, firstName, LastName, Owner_Email__c, Email, Phone
-        //                 from Lead
-        //                 where Email = :EmailOrPhone];
-        // }
-        // else{
-        //     leadList = [Select id, firstName, LastName, Owner_Email__c, Email, Phone
-        //                 from Lead
-        //                 where Phone = :EmailOrPhone];
-        // }
-        // System.debug('leadList ====> ' + leadList);
-        // system.debug('leadList::' + leadList);
-        return leadList;
-    } catch (Exception e){
-        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-      HandleBusinessException.captureError('walkInLeadLWCcontroller', 'getLead', e , null);
-       return null;
     }
-}
 
     @auraenabled
     public static String createLead(string Lastname, string email, string phone, string Course, string typeofcour, string userId, string agentid, string comments, string city, string state, string country, string countrycode, string AlternateMobile, String AlternateEmail){
-        
+
         System.debug('userId ====> ' + userId);
         System.debug('agentid ====> ' + agentid);
         lead leadRec = new lead();
@@ -151,80 +151,80 @@ public without sharing class walkInLeadLWCcontroller{
     @auraenabled(cacheable = true)
     public static List<Assignment_Group_Member__c> getMember(){
         try{
-        List<Assignment_Group_Member__c> GmList = [SELECT Name, Group_Member__c, Group_Member__r.Name, Id
-                                                   FROM Assignment_Group_Member__c];
-        system.debug('GmList' + GmList);
-        return GmList;
-    } catch (Exception e){
-        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-      HandleBusinessException.captureError('walkInLeadLWCcontroller', 'getMember', e , null);
-       return null;
+            List<Assignment_Group_Member__c> GmList = [SELECT Name, Group_Member__c, Group_Member__r.Name, Id
+                                                       FROM Assignment_Group_Member__c];
+            system.debug('GmList' + GmList);
+            return GmList;
+        } catch (Exception e){
+            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+            HandleBusinessException.captureError('walkInLeadLWCcontroller', 'getMember', e, null);
+            return null;
+        }
     }
-}
 
     @auraenabled(cacheable = true)
     public static List<Application__c> getApplication(String lid){
         try{
-        System.debug('lid ====> ' + lid);
-        List<Application__c> AppList = [SELECT Course__c, Id, Name, LID__c, Applied_Date_Time__c, Lead__c
-                                        FROM Application__c
-                                        WHERE Lead__c = :lid];
-        system.debug('AppList' + AppList);
-        return AppList;
-    } catch (Exception e){
-        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-      HandleBusinessException.captureError('walkInLeadLWCcontroller', 'getApplication', e , null);
-       return null;
+            System.debug('lid ====> ' + lid);
+            List<Application__c> AppList = [SELECT Course__c, Id, Name, LID__c, Applied_Date_Time__c, Lead__c
+                                            FROM Application__c
+                                            WHERE Lead__c = :lid];
+            system.debug('AppList' + AppList);
+            return AppList;
+        } catch (Exception e){
+            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+            HandleBusinessException.captureError('walkInLeadLWCcontroller', 'getApplication', e, null);
+            return null;
+        }
     }
-}
 
     @auraenabled(cacheable = true)
     Public Static map<String, String> getPuckistOflead(){
         try{
-        String objectName = 'Lead';
-        String fieldName = 'Course__c';
-        map<String, String> getLablePick = new map<String, String>();
-        Schema.SObjectType s = Schema.getGlobalDescribe().get(objectName);
-        Schema.DescribeSObjectResult r = s.getDescribe();
-        Map<String, Schema.SObjectField> fields = r.fields.getMap();
-        Schema.DescribeFieldResult fieldResult = fields.get(fieldName).getDescribe();
-        List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
-        for (Schema.PicklistEntry pickListVal : ple){
-            System.debug(pickListVal.getLabel() + ' ' + pickListVal.getValue());
-            getLablePick.put(pickListVal.getLabel(), pickListVal.getValue());
+            String objectName = 'Lead';
+            String fieldName = 'Course__c';
+            map<String, String> getLablePick = new map<String, String>();
+            Schema.SObjectType s = Schema.getGlobalDescribe().get(objectName);
+            Schema.DescribeSObjectResult r = s.getDescribe();
+            Map<String, Schema.SObjectField> fields = r.fields.getMap();
+            Schema.DescribeFieldResult fieldResult = fields.get(fieldName).getDescribe();
+            List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
+            for (Schema.PicklistEntry pickListVal : ple){
+                System.debug(pickListVal.getLabel() + ' ' + pickListVal.getValue());
+                getLablePick.put(pickListVal.getLabel(), pickListVal.getValue());
+            }
+            system.debug('getLablePick::' + getLablePick);
+            return getLablePick;
+        } catch (Exception e){
+            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+            HandleBusinessException.captureError('walkInLeadLWCcontroller', 'getPuckistOflead', e, null);
+            return null;
         }
-        system.debug('getLablePick::' + getLablePick);
-        return getLablePick;
-    } catch (Exception e){
-        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-      HandleBusinessException.captureError('walkInLeadLWCcontroller', 'getPuckistOflead', e , null);
-       return null;
     }
-}
 
     @auraenabled(cacheable = true)
     Public Static map<String, String> getPickiststatusOfTask(){
         try{
-        String objectName = 'Task';
-        String fieldName = 'Status';
-        map<String, String> getLablePick = new map<String, String>();
-        Schema.SObjectType s = Schema.getGlobalDescribe().get(objectName);
-        Schema.DescribeSObjectResult r = s.getDescribe();
-        Map<String, Schema.SObjectField> fields = r.fields.getMap();
-        Schema.DescribeFieldResult fieldResult = fields.get(fieldName).getDescribe();
-        List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
-        for (Schema.PicklistEntry pickListVal : ple){
-            System.debug(pickListVal.getLabel() + ' ' + pickListVal.getValue());
-            getLablePick.put(pickListVal.getLabel(), pickListVal.getValue());
+            String objectName = 'Task';
+            String fieldName = 'Status';
+            map<String, String> getLablePick = new map<String, String>();
+            Schema.SObjectType s = Schema.getGlobalDescribe().get(objectName);
+            Schema.DescribeSObjectResult r = s.getDescribe();
+            Map<String, Schema.SObjectField> fields = r.fields.getMap();
+            Schema.DescribeFieldResult fieldResult = fields.get(fieldName).getDescribe();
+            List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
+            for (Schema.PicklistEntry pickListVal : ple){
+                System.debug(pickListVal.getLabel() + ' ' + pickListVal.getValue());
+                getLablePick.put(pickListVal.getLabel(), pickListVal.getValue());
+            }
+            system.debug('getLablePick::' + getLablePick);
+            return getLablePick;
+        } catch (Exception e){
+            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+            HandleBusinessException.captureError('walkInLeadLWCcontroller', 'getPickiststatusOfTask', e, null);
+            return null;
         }
-        system.debug('getLablePick::' + getLablePick);
-        return getLablePick;
-    } catch (Exception e){
-        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-      HandleBusinessException.captureError('walkInLeadLWCcontroller', 'getPickiststatusOfTask', e , null);
-       return null;
     }
-}
 
     @auraenabled(cacheable = true)
     Public Static map<String, String> getPickistpriorityOfTask(){
@@ -284,8 +284,8 @@ public without sharing class walkInLeadLWCcontroller{
         System.debug(' ExcelRagentid =========> ' + ExcelRagentid);
         try{
             List<Lead> PastLeadRecords = [SELECT Course__c, Email, ExcelR_Training_User__c, Name, OwnerId, Owner.Name, Phone, Status, Total_Calls__c, Total_Connected_Call__c //Product__r.Name,
-                                          FROM Lead
-                                          Where ExcelR_Training_User__c  = :ExcelRagentid ANd isconverted = false
+                                          FROM Lead 
+                                          Where ExcelR_Training_User__c = :ExcelRagentid ANd isconverted = false
                                           Order by createdDate Desc];
             System.debug('PastLeadRecords ======> ' + PastLeadRecords);
 
@@ -303,65 +303,65 @@ public without sharing class walkInLeadLWCcontroller{
 
         //String LoginPageBaseurl = 'https://whitemart--partial.sandbox.my.salesforce-sites.com/Abasoft_LoginPage';
         //String CustomerDetailPageBaseUrl = 'https://whitemart--partial.sandbox.my.salesforce-sites.com/CusomerDetailAURA_IN_VFPage';
-      try{
-        String LoginPageBaseurl = System.Label.LoginPageBaseurl;
-        String ExistingHashcode = '';
-        string FinalPageToRedirect = '';
-        Boolean redirecttoLoginPage;
+        try{
+            String LoginPageBaseurl = System.Label.LoginPageBaseurl;
+            String ExistingHashcode = '';
+            string FinalPageToRedirect = '';
+            Boolean redirecttoLoginPage;
 
-        String LoginHashcode = Apexpages.currentPage().getparameters().get('hascode'); //IsReloading
-        String LGEMemberRecordid = Apexpages.currentPage().getparameters().get('id');
-        String Reloading = Apexpages.currentPage().getparameters().get('IsReloading');
-        string headerdata = ApexPages.currentPage().getHeaders().get('Host');
-        string urlvalue = Apexpages.currentPage().getUrl();
+            String LoginHashcode = Apexpages.currentPage().getparameters().get('hascode'); //IsReloading
+            String LGEMemberRecordid = Apexpages.currentPage().getparameters().get('id');
+            String Reloading = Apexpages.currentPage().getparameters().get('IsReloading');
+            string headerdata = ApexPages.currentPage().getHeaders().get('Host');
+            string urlvalue = Apexpages.currentPage().getUrl();
 
-        List<ExcelR_Training_User__c> ExcelRTrainUser = [SELECT Departments__c, Email__c, First_Name__c, HashCode__c, Id, Last_Name__c, Name, Password__c, Username__c
-                                                         FROM ExcelR_Training_User__c
-                                                         WHERE id = :LGEMemberRecordid
-                                                         LIMIT 1]; //
+            List<ExcelR_Training_User__c> ExcelRTrainUser = [SELECT Departments__c, Email__c, First_Name__c, HashCode__c, Id, Last_Name__c, Name, Password__c, Username__c
+                                                             FROM ExcelR_Training_User__c
+                                                             WHERE id = :LGEMemberRecordid
+                                                             LIMIT 1]; //
 
 
-        List<String> DepartmentArr = ExcelRTrainUser[0].Departments__c.split(';');
+            List<String> DepartmentArr = ExcelRTrainUser[0].Departments__c.split(';');
 
-        System.debug('hashCode ======> ' + Apexpages.currentPage().getparameters().get('hascode'));
-        System.debug('Reloading ====> ' + Reloading);
+            System.debug('hashCode ======> ' + Apexpages.currentPage().getparameters().get('hascode'));
+            System.debug('Reloading ====> ' + Reloading);
 
-        Cookie userHashCodeCookie = ApexPages.currentPage().getCookies().get('userHashCodeCookie');
-        System.debug('userHashCodeCookie ==> ' + userHashCodeCookie);
+            Cookie userHashCodeCookie = ApexPages.currentPage().getCookies().get('userHashCodeCookie');
+            System.debug('userHashCodeCookie ==> ' + userHashCodeCookie);
 
-        if (userHashCodeCookie != null && LoginHashcode != null){
-            ExistingHashcode = String.valueOf(userHashCodeCookie.getValue());
-            if (LoginHashcode == ExistingHashcode && ExcelRTrainUser[0].HashCode__c == ExistingHashcode){
-                if (Reloading == '' || Reloading == null){
-                    if (urlvalue.contains('apex')) {
-                        urlvalue = urlvalue.replace('apex', 'Loginpage');
+            if (userHashCodeCookie != null && LoginHashcode != null){
+                ExistingHashcode = String.valueOf(userHashCodeCookie.getValue());
+                if (LoginHashcode == ExistingHashcode && ExcelRTrainUser[0].HashCode__c == ExistingHashcode){
+                    if (Reloading == '' || Reloading == null){
+                        if (urlvalue.contains('apex')){
+                            urlvalue = urlvalue.replace('apex', 'Loginpage');
+                        }
+                        FinalPageToRedirect = 'https://' + headerdata + urlvalue + '&IsReloading=true';
+                        // FinalPageToRedirect = LoginHashcode+ '?id='+ExistingHashcode +'&IsReloading=true';
+                        System.debug('FinalPageToRedirect ====> ' + FinalPageToRedirect);
+
+
+                        PageReference LGEMemberFormPage = new PageReference(FinalPageToRedirect);
+                        LGEMemberFormPage.setRedirect(true);
+                        return LGEMemberFormPage;
                     }
-                    FinalPageToRedirect = 'https://' + headerdata + urlvalue + '&IsReloading=true';
-                    // FinalPageToRedirect = LoginHashcode+ '?id='+ExistingHashcode +'&IsReloading=true';
-                    System.debug('FinalPageToRedirect ====> ' + FinalPageToRedirect);
 
-
-                    PageReference LGEMemberFormPage = new PageReference(FinalPageToRedirect);
-                    LGEMemberFormPage.setRedirect(true);
-                    return LGEMemberFormPage;
                 }
+            } else if (userHashCodeCookie == null && LoginHashcode != null){
+                System.debug('Redirect to Login Page');
+                FinalPageToRedirect = LoginPageBaseurl;
+                System.debug('FinalPageToRedirect ====> ' + FinalPageToRedirect);
 
+                PageReference LoginPage = new PageReference(FinalPageToRedirect);
+                LoginPage.setRedirect(true);
+                return LoginPage;
             }
-        } else if(userHashCodeCookie == null && LoginHashcode != null){
-            System.debug('Redirect to Login Page');
-            FinalPageToRedirect = LoginPageBaseurl;
-            System.debug('FinalPageToRedirect ====> ' + FinalPageToRedirect);
-
-            PageReference LoginPage = new PageReference(FinalPageToRedirect);
-            LoginPage.setRedirect(true);
-            return LoginPage;
+            return null;
+        } catch (Exception e){
+            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+            HandleBusinessException.captureError('walkInLeadLWCcontroller', 'checkExistingHashKeyMatching', e, null);
+            return null;
         }
-        return null;
-    } catch (Exception e){
-        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-      HandleBusinessException.captureError('walkInLeadLWCcontroller', 'checkExistingHashKeyMatching', e , null);
-       return null;
     }
-}
 
 }
