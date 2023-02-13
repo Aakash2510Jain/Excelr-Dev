@@ -35,6 +35,9 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
         // ------------------------------------ To Insert Task ----------------------------------------
         List<Task> TaskListTobeInserted = new List<Task>();
         
+        // ------------------------------------ Existing Leads ----------------------------------------
+
+        list<Lead> ExistingLeadwithPhone  = new List<Lead>();
         
         try{
             
@@ -81,7 +84,7 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                 System.debug('CustomerPhones ====> ' + CustomerPhones);
                 if (!CustomerPhones.isEmpty()){
                     System.debug('I am finding existing Lead');
-                    list<Lead> ExistingLeadwithPhone = [Select id, Phone, ownerId
+                    ExistingLeadwithPhone = [Select id, Phone, ownerId
                                                         From Lead
                                                         Where Phone IN:CustomerPhones And status != 'Dead' And status != 'Junk' And isConverted = false];
                     System.debug('ExistingLeadwithPhone ====> ' + ExistingLeadwithPhone);
@@ -118,59 +121,62 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                 System.debug('PhoneStringNotExistintheSystem =====> ' + PhoneStringNotExistintheSystem);
                 system.debug('TaskIdWithObject---->'+TaskIdWithObject);
                 for (String str : TaskIdWithObject.keyset()){
-                    if (!PhoneWithLead.isEmpty()){
-                        System.debug('(String) (TaskIdWithObject.get(str)).get(number)).right(10) ==== >' + ((String) (TaskIdWithObject.get(str)).get('number')));
-                        if (PhoneWithLead.containsKey('+'+((String) (TaskIdWithObject.get(str)).get('countryCode'))+((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
-                            //&& !PhoneWithContact.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))
-                            System.debug('I am inside to create task for Lead');
-                            if (!TaskCallObjectIdWithTask.isEmpty() && !TaskCallObjectIdWithTask.containsKey(str)){
-                                Task tsk = CreateTaskForLead(TaskIdWithObject, str, PhoneWithLead);
+                    for(lead leadRec : ExistingLeadwithPhone){
+                        if (!PhoneWithLead.isEmpty()){
+                            System.debug('(String) (TaskIdWithObject.get(str)).get(number)).right(10) ==== >' + ((String) (TaskIdWithObject.get(str)).get('number')));
+                            if (leadRec.Phone == ('+'+((String) (TaskIdWithObject.get(str)).get('countryCode'))+((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
+                                //&& !PhoneWithContact.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))
+                                System.debug('I am inside to create task for Lead');
+                                if (!TaskCallObjectIdWithTask.isEmpty() && !TaskCallObjectIdWithTask.containsKey(str)){
+                                    Task tsk = CreateTaskForLead(TaskIdWithObject, str, leadRec);
+                                    
+                                    if (LeadCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
+                                        string customerphone = ((String) (TaskIdWithObject.get(str)).get('number')).right(10);
+                                        String employeenumber = LeadCustomerPhoneWithEmployeePhone.get(customerphone);
+                                        if (!PhoneWithCallSalesUser.isEmpty() && PhoneWithCallSalesUser.containsKey(employeenumber)){
+                                            tsk.Callyzer_Sales_User__c = PhoneWithCallSalesUser.get(employeenumber).Id;
+                                        }
+                                    }
+                                    /*if (!PhoneWithCallSalesUser.isEmpty()){
+tsk.Callyzer_Sales_User__c = CallyzerSalesUser[0].id;
+}*/
+                                    
+                                    TaskListTobeInserted.add(tsk);
+                                } else if (!TaskCallObjectIdWithTask.isEmpty() && TaskCallObjectIdWithTask.containsKey(str)){
+                                    Task tsk = CreateTaskForLead(TaskIdWithObject, str, leadRec);
+                                    tsk.Id = TaskCallObjectIdWithTask.get(str).Id;
+                                    /*if (CallyzerSalesUser.size() > 0){
+tsk.Callyzer_Sales_User__c = CallyzerSalesUser[0].id;
+}*/
+                                    if (LeadCustomerPhoneWithEmployeePhone.containsKey( ((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
+                                        string customerphone = ((String) (TaskIdWithObject.get(str)).get('number')).right(10);
+                                        String employeenumber = LeadCustomerPhoneWithEmployeePhone.get(customerphone);
+                                        if (!PhoneWithCallSalesUser.isEmpty() && PhoneWithCallSalesUser.containsKey(employeenumber)){
+                                            tsk.Callyzer_Sales_User__c = PhoneWithCallSalesUser.get(employeenumber).Id;
+                                        }
+                                    }
+                                    TaskListTobeInserted.add(tsk);
+                                } else{
+                                    Task tsk = CreateTaskForLead(TaskIdWithObject, str, leadRec);
+                                    //tsk.Id = TaskCallObjectIdWithTask.get(str).Id;
+                                    /*if (CallyzerSalesUser.size() > 0){
+tsk.Callyzer_Sales_User__c = CallyzerSalesUser[0].id;
+}*/
+                                    if (LeadCustomerPhoneWithEmployeePhone.containsKey( ((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
+                                        string customerphone = '+91' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10);
+                                        String employeenumber = LeadCustomerPhoneWithEmployeePhone.get(customerphone);
+                                        if (!PhoneWithCallSalesUser.isEmpty() && PhoneWithCallSalesUser.containsKey(employeenumber)){
+                                            tsk.Callyzer_Sales_User__c = PhoneWithCallSalesUser.get(employeenumber).Id;
+                                        }
+                                    }
+                                    TaskListTobeInserted.add(tsk);
+                                }
                                 
-                                if (LeadCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
-                                    string customerphone = ((String) (TaskIdWithObject.get(str)).get('number')).right(10);
-                                    String employeenumber = LeadCustomerPhoneWithEmployeePhone.get(customerphone);
-                                    if (!PhoneWithCallSalesUser.isEmpty() && PhoneWithCallSalesUser.containsKey(employeenumber)){
-                                        tsk.Callyzer_Sales_User__c = PhoneWithCallSalesUser.get(employeenumber).Id;
-                                    }
-                                }
-                                /*if (!PhoneWithCallSalesUser.isEmpty()){
-tsk.Callyzer_Sales_User__c = CallyzerSalesUser[0].id;
-}*/
-                                
-                                TaskListTobeInserted.add(tsk);
-                            } else if (!TaskCallObjectIdWithTask.isEmpty() && TaskCallObjectIdWithTask.containsKey(str)){
-                                Task tsk = CreateTaskForLead(TaskIdWithObject, str, PhoneWithLead);
-                                tsk.Id = TaskCallObjectIdWithTask.get(str).Id;
-                                /*if (CallyzerSalesUser.size() > 0){
-tsk.Callyzer_Sales_User__c = CallyzerSalesUser[0].id;
-}*/
-                                if (LeadCustomerPhoneWithEmployeePhone.containsKey( ((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
-                                    string customerphone = ((String) (TaskIdWithObject.get(str)).get('number')).right(10);
-                                    String employeenumber = LeadCustomerPhoneWithEmployeePhone.get(customerphone);
-                                    if (!PhoneWithCallSalesUser.isEmpty() && PhoneWithCallSalesUser.containsKey(employeenumber)){
-                                        tsk.Callyzer_Sales_User__c = PhoneWithCallSalesUser.get(employeenumber).Id;
-                                    }
-                                }
-                                TaskListTobeInserted.add(tsk);
-                            } else{
-                                Task tsk = CreateTaskForLead(TaskIdWithObject, str, PhoneWithLead);
-                                //tsk.Id = TaskCallObjectIdWithTask.get(str).Id;
-                                /*if (CallyzerSalesUser.size() > 0){
-tsk.Callyzer_Sales_User__c = CallyzerSalesUser[0].id;
-}*/
-                                if (LeadCustomerPhoneWithEmployeePhone.containsKey( ((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
-                                    string customerphone = '+91' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10);
-                                    String employeenumber = LeadCustomerPhoneWithEmployeePhone.get(customerphone);
-                                    if (!PhoneWithCallSalesUser.isEmpty() && PhoneWithCallSalesUser.containsKey(employeenumber)){
-                                        tsk.Callyzer_Sales_User__c = PhoneWithCallSalesUser.get(employeenumber).Id;
-                                    }
-                                }
-                                TaskListTobeInserted.add(tsk);
+                                //insert tsk;
                             }
-                            
-                            //insert tsk;
                         }
                     }
+                   
                     if (!PhoneWithContact.isEmpty()){
                         System.debug('(String) (TaskIdWithObject.get(str)).get(number)).right(10) ==== >' + ((String) (TaskIdWithObject.get(str)).get('number')));
                         System.debug('phone exist in Lead or not ====> ' + PhoneWithLead.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10)));
@@ -281,14 +287,14 @@ TaskListTobeInserted.add(tsk);
         }
     }
     
-    Public static Task CreateTaskForLead(map<String, Map<string, Object>> TaskIdWithObject, String str, Map<String, Lead> PhoneWithLead){
+    Public static Task CreateTaskForLead(map<String, Map<string, Object>> TaskIdWithObject, String str, Lead PhoneWithLead){
         try{
             Task tsk = new Task();
             tsk.Subject = (String) (TaskIdWithObject.get(str)).get('callType') + ' Callyzer Call Log';
             tsk.CallObject = (String) (TaskIdWithObject.get(str)).get('id');
             //This is the default...
-            tsk.OwnerId = PhoneWithLead.get('+'+(String) (TaskIdWithObject.get(str)).get('countryCode')+ ((String) (TaskIdWithObject.get(str)).get('number')).right(10)).OwnerId;
-            tsk.whoid = PhoneWithLead.get('+'+(String) (TaskIdWithObject.get(str)).get('countryCode')+ ((String) (TaskIdWithObject.get(str)).get('number')).right(10)).Id;
+            tsk.OwnerId = PhoneWithLead.OwnerId;//PhoneWithLead.get('+'+(String) (TaskIdWithObject.get(str)).get('countryCode')+ ((String) (TaskIdWithObject.get(str)).get('number')).right(10)).OwnerId;
+            tsk.whoid = PhoneWithLead.Id;//PhoneWithLead.get('+'+(String) (TaskIdWithObject.get(str)).get('countryCode')+ ((String) (TaskIdWithObject.get(str)).get('number')).right(10)).Id;
             tsk.Status = 'Completed';
             tsk.Call_Type__c = (String) (TaskIdWithObject.get(str)).get('callType');
             tsk.CallDurationInSeconds = Integer.valueof((TaskIdWithObject.get(str)).get('duration'));
