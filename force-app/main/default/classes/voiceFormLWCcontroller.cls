@@ -23,7 +23,7 @@ public without sharing class voiceFormLWCcontroller{
     }
 
     @auraenabled
-    public static String createLead(string Lastname, string email, string phone, string Course, string agentid, string city, string LdGenPath, string state, string country, string source, string medium, string comments){
+    public static String createLead(string Lastname, string email, string phone, string Course, string agentid, string city, string LdGenPath, string state, string country, string source, string medium, string comments, string countrycode, string AlternateMobile, String AlternateEmail ){
         // System.debug('userId ====> ' + userId); String firstname,
 
         System.debug('agentid ====> ' + agentid);
@@ -42,10 +42,13 @@ public without sharing class voiceFormLWCcontroller{
             //leadRec.FirstName = firstname;
             leadRec.LastName = Lastname;
             leadRec.Email = email;
-            leadRec.Phone = phone;
+            leadRec.Alternate_Email__c = AlternateEmail;
+            leadRec.Phone = countrycode + phone;
+            leadRec.Alternate_Phone__c = countrycode + AlternateMobile;
+            System.debug('Phone ===> ' + Phone);
             //leadRec.OwnerId = userId;
             leadRec.Course__c = Course;
-            leadRec.City__c = city;
+            leadRec.City = city;
             leadRec.Lead_Gen_Path__c = LdGenPath;
             leadRec.LeadSource = source;
             leadRec.UTM_Medium__c = medium;
@@ -265,7 +268,7 @@ public without sharing class voiceFormLWCcontroller{
     public static List<Lead> QueryPastLeads(string ExcelRagentid){
         System.debug(' ExcelRagentid =========> ' + ExcelRagentid);
         try{
-            List<Lead> PastLeadRecords = [SELECT Course__c, Email, ExcelR_Training_User__c, Name, OwnerId, Owner.Name, Phone, Product__c, Product__r.Name, Status, Total_Calls__c, Total_Connected_Call__c
+            List<Lead> PastLeadRecords = [SELECT Course__c, Email, ExcelR_Training_User__c, Name, OwnerId, Owner.Name, Phone, Status, Total_Calls__c, Total_Connected_Call__c
                                           FROM Lead
                                           Where ExcelR_Training_User__c = :ExcelRagentid ANd isconverted = false
                                           Order by createdDate Desc];

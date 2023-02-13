@@ -1,24 +1,30 @@
 import { LightningElement,api ,track,wire} from 'lwc';
-import ShowAllLeads from '@salesforce/apex/CustomerDetailApexController.ShowAllLeads';
+import getAllData from '@salesforce/apex/CustomerDetailApexController.getAllData';
 import GetAllFieldsLabelXValue from '@salesforce/apex/CustomerDetailApexController.GetAllFieldsLabelXValue';
 import { NavigationMixin } from 'lightning/navigation';
 import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
-
 export default class CustomerDetailLWCController extends NavigationMixin(LightningElement) {
 
    @api recordId;
    
-   @track LeadData=[];
-  
-   @wire(ShowAllLeads,{recordId:'$recordId'})
+    @track LeadData=[];
+    @track OpportunityData=[];
+    a_Record_URL;
+ 
+    connectedCallback(){
+        this.a_Record_URL = window.location;
+    }  
+   @wire(getAllData,{recordId:'$recordId'})
    wiredService({data,error}){
 
     if(data){
+        debugger;
         console.log('data=',data);
-        this.LeadData=data;
-        console.log('LeadData=',this.LeadData);
+        this.LeadData=data.leadsList;
+        this.OpportunityData=data.opportunityList;
+        console.log('LeadData=',this.leadsList);
     }
     else if(error){
         console.log('error');

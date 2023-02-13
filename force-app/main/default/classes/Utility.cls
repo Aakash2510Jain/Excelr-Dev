@@ -136,8 +136,8 @@ public without sharing class Utility{
                 //leadRec.Medium__c = parameters.get('medium');
                 //  leadRec.Campaign__c = parameters.get('campaign');
                // leadRec.AdGroup__c = parameters.get('adgroup');
-                leadRec.Keyword__c = parameters.get('keyword');
-                leadRec.Match_Type__c = parameters.get('matchtype');
+                //leadRec.Keyword__c = parameters.get('keyword');
+                //leadRec.Match_Type__c = parameters.get('matchtype');
             }
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());

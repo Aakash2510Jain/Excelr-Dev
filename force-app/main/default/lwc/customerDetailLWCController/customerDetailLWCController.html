@@ -3,6 +3,7 @@
         <div class="card">
             <div class="container">
                 <lightning-card variant="narrow" icon-name="standard:client">
+
                     <h1 slot="title">
                         <lightning-record-view-form object-api-name="Customers__c" record-id={recordId}>
                             <lightning-output-field field-name="Name__c"
@@ -42,164 +43,213 @@
         </div>
         <br />
         <lightning-card>
-            <div class="card">
-                <div class="container">
-                    <table class="slds-table slds-table_cell-buffer slds-table_bordered" style="width:100%;">
-                        <thead style="border-radius:5px;">
-                            <tr>
-                                <th>ID</th>
-                                <th>Status</th>
-                                <th>CreatedDate</th>
-                                <th>Phone No</th>
-                                <th>Email</th>
-                                <th>Responsible</th>
-                                <th>Source</th>
-                                <th>Course Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <template for:each={LeadData} for:item="led">
-                                <tr key={led.Id}>
-                                    <td>
-                                        {led.LID__c}
-                                    </td>
-                                    <td>
-                                        {led.Status}
-                                    </td>
-                                    <td>
-                                        <lightning-formatted-date-time value={led.CreatedDate} year="numeric"
-                                            month="numeric" day="numeric"> </lightning-formatted-date-time>
-                                    </td>
-                                    <td>
-                                        {led.Phone}
-                                    </td>
-                                    <td>
-                                        {led.Email}
-                                    </td>
-                                    <td>
-                                        {led.Name}
-                                    </td>
-                                    <td>
-                                        {led.LeadSource}
-                                    </td>
-                                    <td>
-                                        {led.Course__c}
-                                    </td>
+            <lightning-tabset variant="scoped">
+                <lightning-tab label="Leads">
+                    <div class="card">
+                        <div class="container">
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered" style="width:100%;">
+                                <thead style="border-radius:5px;">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Status</th>
+                                        <th>CreatedDate</th>
+                                        <th>Phone No</th>
+                                        <th>Email</th>
+                                        <th>Responsible</th>
+                                        <th>Source</th>
+                                        <th>Course Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={LeadData} for:item="led">
+                                        <tr key={led.Id}>
+                                            <td>
+                                                <a target="_blank" href={led.Lead_URL__c} tabindex="-1">
+                                                    {led.LID__c}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                {led.Status}
+                                            </td>
+                                            <td>
+                                                <lightning-formatted-date-time value={led.CreatedDate} year="numeric"
+                                                    month="numeric" day="numeric"> </lightning-formatted-date-time>
+                                            </td>
+                                            <td>
+                                                {led.Phone}
+                                            </td>
+                                            <td>
+                                                {led.Email}
+                                            </td>
+                                            <td>
+                                                {led.Name}
+                                            </td>
+                                            <td>
+                                                {led.LeadSource}
+                                            </td>
+                                            <td>
+                                                {led.Course__c}
+                                            </td>
 
-                                </tr>
-                            </template>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </lightning-tab>
+                <lightning-tab label="Opportunities">
+                    <div class="card">
+                        <div class="container">
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered" style="width:100%;">
+                                <thead style="border-radius:5px;">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Status</th>
+                                        <th>CreatedDate</th>
+                                        <th>Phone No</th>
+                                        <th>Email</th>
+                                        <th>Responsible</th>
+                                        <th>Source</th>
+                                        <th>Course Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={OpportunityData} for:item="led">
+                                        <tr key={led.Id}>
+                                            <td>
+                                                <a target="_blank" href={led.Opportunity_URL__c} tabindex="-1">
+                                                    {led.OID__c}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                {led.StageName}
+                                            </td>
+                                            <td>
+                                                <lightning-formatted-date-time value={led.CreatedDate} year="numeric"
+                                                    month="numeric" day="numeric"> </lightning-formatted-date-time>
+                                            </td>
+                                            <td>
+                                                {led.Account.Phone}
+                                            </td>
+                                            <td>
+                                                {led.Account.Email__c}
+                                            </td>
+                                            <td>
+                                                {led.Name}
+                                            </td>
+                                            <td>
+                                                {led.LeadSource}
+                                            </td>
+                                            <td>
+                                                {led.Course__c}
+                                            </td>
+
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </lightning-tab>
+
+            </lightning-tabset>
+
         </lightning-card>
+
         <br />
     </lightning-card>
 
     <template if:true={ShowForm}>
-        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+            class="slds-modal slds-fade-in-open slds-modal_small">
             <div class="slds-modal__container">
                 <div class="slds-modal__header">
                     EDIT PAGE
-                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={HandleCancel}>
-                        <lightning-icon icon-name="utility:close"
-                            alternative-text="close"
-                            variant="inverse"
-                            size="small" ></lightning-icon>
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                        title="Close" onclick={HandleCancel}>
+                        <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                            size="small"></lightning-icon>
                         <span class="slds-assistive-text">Close</span>
                     </button>
                 </div>
                 <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
-                    <lightning-record-edit-form record-id={recordId} object-api-name="Customers__c" >
+                    <lightning-record-edit-form record-id={recordId} object-api-name="Customers__c">
                         <lightning-messages> </lightning-messages>
                         <lightning-layout multiple-rows>
-                            <lightning-layout-item size="6" 
-                                padding="around-small">
+                            <lightning-layout-item size="6" padding="around-small">
                                 <lightning-input-field field-name="Name" variant="label-stacked" required>
                                 </lightning-input-field>
                             </lightning-layout-item>
-                            <lightning-layout-item size="6" 
-                                padding="around-small">
-                                <lightning-input-field field-name="OwnerId" variant="label-stacked" >
+                            <lightning-layout-item size="6" padding="around-small">
+                                <lightning-input-field field-name="OwnerId" variant="label-stacked">
                                 </lightning-input-field>
                             </lightning-layout-item>
-                            <lightning-layout-item size="6" 
-                                padding="around-small">
-                                <lightning-input-field field-name="Name__c" variant="label-stacked" >
+                            <lightning-layout-item size="6" padding="around-small">
+                                <lightning-input-field field-name="Name__c" variant="label-stacked">
                                 </lightning-input-field>
                             </lightning-layout-item>
-                            <lightning-layout-item size="6" 
-                                padding="around-small">
-                                <lightning-input-field field-name="CID__c" variant="label-stacked" >
+                            <lightning-layout-item size="6" padding="around-small">
+                                <lightning-input-field field-name="CID__c" variant="label-stacked">
                                 </lightning-input-field>
                             </lightning-layout-item>
-                            <lightning-layout-item size="6" 
-                                padding="around-small">
-                                <lightning-input-field field-name="Profession__c" variant="label-stacked" >
+                            <lightning-layout-item size="6" padding="around-small">
+                                <lightning-input-field field-name="Profession__c" variant="label-stacked">
                                 </lightning-input-field>
                             </lightning-layout-item>
-                            <lightning-layout-item size="6" 
-                                padding="around-small">
-                                <lightning-input-field field-name="Why_This_Course__c" variant="label-stacked" >
+                            <lightning-layout-item size="6" padding="around-small">
+                                <lightning-input-field field-name="Why_This_Course__c" variant="label-stacked">
                                 </lightning-input-field>
                             </lightning-layout-item>
-                            <lightning-layout-item size="6" 
-                                padding="around-small">
-                                <lightning-input-field field-name="Qualification__c" variant="label-stacked" >
+                            <lightning-layout-item size="6" padding="around-small">
+                                <lightning-input-field field-name="Qualification__c" variant="label-stacked">
                                 </lightning-input-field>
                             </lightning-layout-item>
-                            <lightning-layout-item size="6" 
-                                padding="around-small">
-                                <lightning-input-field field-name="Designation__c" variant="label-stacked" >
+                            <lightning-layout-item size="6" padding="around-small">
+                                <lightning-input-field field-name="Designation__c" variant="label-stacked">
                                 </lightning-input-field>
                             </lightning-layout-item>
-                            <lightning-layout-item size="6" 
-                                padding="around-small">
-                                <lightning-input-field field-name="Branch__c" variant="label-stacked" >
+                            <lightning-layout-item size="6" padding="around-small">
+                                <lightning-input-field field-name="Branch__c" variant="label-stacked">
                                 </lightning-input-field>
                             </lightning-layout-item>
-                            <lightning-layout-item size="6" 
-                                padding="around-small">
-                                <lightning-input-field field-name="Year_of_Experience__c" variant="label-stacked" >
+                            <lightning-layout-item size="6" padding="around-small">
+                                <lightning-input-field field-name="Year_of_Experience__c" variant="label-stacked">
                                 </lightning-input-field>
                             </lightning-layout-item>
-                            <lightning-layout-item size="6" 
-                                padding="around-small">
-                                <lightning-input-field field-name="Specialization__c" variant="label-stacked" >
+                            <lightning-layout-item size="6" padding="around-small">
+                                <lightning-input-field field-name="Specialization__c" variant="label-stacked">
                                 </lightning-input-field>
                             </lightning-layout-item>
-                            <lightning-layout-item size="6" 
-                                padding="around-small">
-                                <lightning-input-field field-name="Current_Domain__c" variant="label-stacked" >
+                            <lightning-layout-item size="6" padding="around-small">
+                                <lightning-input-field field-name="Current_Domain__c" variant="label-stacked">
                                 </lightning-input-field>
                             </lightning-layout-item>
-                            <lightning-layout-item size="6" 
-                                padding="around-small">
-                                <lightning-input-field field-name="Year_of_Graduation__c" variant="label-stacked" >
+                            <lightning-layout-item size="6" padding="around-small">
+                                <lightning-input-field field-name="Year_of_Graduation__c" variant="label-stacked">
                                 </lightning-input-field>
                             </lightning-layout-item>
-                            <lightning-layout-item size="6" 
-                            padding="around-small">
-                            <lightning-input-field field-name="Relevant_Experience__c" variant="label-stacked" >
-                            </lightning-input-field>
-                        </lightning-layout-item>
-                        <lightning-layout-item size="6" 
-                        padding="around-small">
-                        <lightning-input-field field-name="Company__c" variant="label-stacked" >
-                        </lightning-input-field>
-                    </lightning-layout-item>
-                        </lightning-layout >
-                            </lightning-record-edit-form>
+                            <lightning-layout-item size="6" padding="around-small">
+                                <lightning-input-field field-name="Relevant_Experience__c" variant="label-stacked">
+                                </lightning-input-field>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="6" padding="around-small">
+                                <lightning-input-field field-name="Company__c" variant="label-stacked">
+                                </lightning-input-field>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </lightning-record-edit-form>
                 </div>
                 <div class="slds-modal__footer">
                     <div style="float:left;">
-                       <lightning-button  type="submit" label="Cancel" onclick={HandleCancel} ></lightning-button>
+                        <lightning-button type="submit" label="Cancel" onclick={HandleCancel}></lightning-button>
                     </div>
-                    <lightning-button  type="submit"  variant="brand" label="Save" onclick={HandleSave}></lightning-button>
-                  </div>
+                    <lightning-button type="submit" variant="brand" label="Save"
+                        onclick={HandleSave}></lightning-button>
+                </div>
             </div>
         </section>
         <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
     </template>
-    
+
 </template>

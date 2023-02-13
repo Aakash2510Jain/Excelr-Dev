@@ -35,7 +35,7 @@ public without sharing class walkInLeadLWCcontroller{
 }
 
     @auraenabled
-    public static String createLead(string Lastname, string email, string phone, string Course, string typeofcour, string userId, string agentid, string comments){
+    public static String createLead(string Lastname, string email, string phone, string Course, string typeofcour, string userId, string agentid, string comments, string city, string state, string country, string countrycode, string AlternateMobile, String AlternateEmail){
         
         System.debug('userId ====> ' + userId);
         System.debug('agentid ====> ' + agentid);
@@ -54,8 +54,13 @@ public without sharing class walkInLeadLWCcontroller{
             //leadRec.FirstName = firstname;
             leadRec.LastName = Lastname;
             leadRec.Email = email;
-            leadRec.Phone = phone;
+            leadRec.Alternate_Email__c = AlternateEmail;
+            leadRec.Phone = countrycode + phone;
+            leadRec.Alternate_Phone__c = countrycode + AlternateMobile;
             leadRec.OwnerId = userId;
+            leadRec.State = state;
+            leadRec.Country = country;
+            leadRec.city = city;
             leadRec.Type_of_Course__c = typeofcour;
             leadRec.Course__c = Course;
             leadRec.City__c = 'NA';
@@ -278,7 +283,7 @@ public without sharing class walkInLeadLWCcontroller{
     public static List<Lead> QueryPastLeads(string ExcelRagentid){
         System.debug(' ExcelRagentid =========> ' + ExcelRagentid);
         try{
-            List<Lead> PastLeadRecords = [SELECT Course__c, Email, ExcelR_Training_User__c, Name, OwnerId, Owner.Name, Phone,Product__r.Name, Status, Total_Calls__c, Total_Connected_Call__c
+            List<Lead> PastLeadRecords = [SELECT Course__c, Email, ExcelR_Training_User__c, Name, OwnerId, Owner.Name, Phone, Status, Total_Calls__c, Total_Connected_Call__c //Product__r.Name,
                                           FROM Lead
                                           Where ExcelR_Training_User__c  = :ExcelRagentid ANd isconverted = false
                                           Order by createdDate Desc];

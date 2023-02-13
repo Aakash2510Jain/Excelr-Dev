@@ -18,7 +18,7 @@ global without sharing class TaxInvoiceHelper{
         companyDetails = [Select Name__c, Address__c, SAC__c, CIN__c, Email__c, GSTIN__c, PAN__c, Phone__c
                           From Company_Specifications__c];
         system.debug('companyDetails-->' + companyDetails);
-        invoiceRecord = [Select Opportunity__c, Name, Initiated_Date__c, Invoice_Due_Date__c, Amount__c, Opportunity__r.Description, Opportunity__r.Amount, LeadInvoice__c, LeadInvoice__r.Product__r.ProductCode
+        invoiceRecord = [Select Opportunity__c, Name, Initiated_Date__c, Invoice_Due_Date__c, Amount__c, Opportunity__r.Description, Opportunity__r.Amount, LeadInvoice__c
                          From Invoice__c
                          where Id = :InvoiceId];
         system.debug('invoiceRecord-->' + invoiceRecord);

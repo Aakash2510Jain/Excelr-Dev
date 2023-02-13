@@ -34,7 +34,7 @@ public without sharing class GenericLeadLWCcontroller{
     }
 
     @auraenabled
-    public static String createLead(string Lastname, string email, string phone, string Course, string agentid, string city, string state, string country, string source, string medium, string VisitorId, string Transcript, string leadGenPath, string comments, string pageurllanding){
+    public static String createLead(string Lastname, string email, string phone, string Course, string agentid, string city, string state, string country, string source, string medium, string VisitorId, string Transcript, string leadGenPath, string comments, string pageurllanding, string countrycode , string AlternateMobile, String AlternateEmail){
         // System.debug('userId ====> ' + userId);
 
         //String firstname,
@@ -54,12 +54,14 @@ public without sharing class GenericLeadLWCcontroller{
             //leadRec.FirstName = firstname;
             leadRec.LastName = Lastname;
             leadRec.Email = email;
-            leadRec.Phone = phone;
+            leadRec.Alternate_Email__c = AlternateEmail;
+            leadRec.Phone = countrycode + phone;
+            leadRec.Alternate_Phone__c = countrycode + AlternateMobile;
             leadRec.Enter_UTM_Link__c = pageurllanding;
             leadRec.Course__c = Course;
-            leadRec.City__c = city;
-            leadRec.State__c = state;
-            leadRec.Country__c = country;
+            leadRec.City = city;
+            leadRec.State = state;
+            leadRec.Country = country;
             leadRec.LeadSource = source;
             leadRec.UTM_Medium__c = medium;
             //leadRec.LGE__c=LGE;
@@ -263,7 +265,7 @@ public without sharing class GenericLeadLWCcontroller{
     public static List<Lead> QueryPastLeads(string ExcelRagentid){
         System.debug(' ExcelRagentid =========> ' + ExcelRagentid);
         try{
-            List<Lead> PastLeadRecords = [SELECT Course__c, Email, ExcelR_Training_User__c, Name, OwnerId, Owner.Name, Phone, Product__r.Name, Status, Total_Calls__c, Total_Connected_Call__c
+            List<Lead> PastLeadRecords = [SELECT Course__c, Email, ExcelR_Training_User__c, Name, OwnerId, Owner.Name, Phone,  Status, Total_Calls__c, Total_Connected_Call__c //Product__r.Name,
                                           FROM Lead
                                           Where ExcelR_Training_User__c = :ExcelRagentid ANd isconverted = false
                                           Order by createdDate Desc];
