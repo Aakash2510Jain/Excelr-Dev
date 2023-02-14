@@ -186,8 +186,9 @@ public without sharing class ExcelRTrainingUserLoginController{
                     //FinalPageToRedirect = CustomerDetailPageBaseUrl + '?id=' + ExistingHashcode + '&Phone=' + PhoneNumber + '&AgentId=' + AgentUniqueCode;
                     //redirecttoLoginPage = false;
                 } else{
-                    FinalPageToRedirect = LoginPageBaseurl + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
-                    //FinalPageToRedirect = CustomerDetailPageBaseUrl + '?id=' + ExistingHashcode + '&Phone=' + PhoneNumber + '&AgentId=' + AgentUniqueCode;
+                    LoginHashcode = Utility.generateRandomString();
+                    FinalPageToRedirect = LoginPageBaseurl + '?&hascode=' + LoginHashcode;
+                    //FinalPageToRedirect = LoginPageBaseurl + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
                 }
                 System.debug('FinalPageToRedirect  ====> ' + FinalPageToRedirect);
                 PageReference FormPage = new PageReference(FinalPageToRedirect);
