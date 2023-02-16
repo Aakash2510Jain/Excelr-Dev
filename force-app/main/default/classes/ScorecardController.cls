@@ -493,6 +493,8 @@ public class ScorecardController {
         @AuraEnabled
         public Map<String,String> FieldName {get;set;}
         @AuraEnabled
+        public Map<String,String> multiselectComboboxList {get;set;}
+        @AuraEnabled
         public string Id {get;set;}
         @AuraEnabled
         public string Weight {get;set;}

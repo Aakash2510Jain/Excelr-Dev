@@ -1,4 +1,4 @@
-public class AGMTriggerHelper{
+public without sharing class AGMTriggerHelper{
     static AGMTriggerHelper handlerInstance;
     
     public static AGMTriggerHelper getInstance(){
@@ -72,5 +72,35 @@ public class AGMTriggerHelper{
             HandleBusinessException.captureError('AGMTriggerHelper', 'Before AGM Update', e, null);
         }
     }
-    
+    public void afterInsert(Map<Id,Assignment_Group_Member__c> newMap, Map<Id,Assignment_Group_Member__c> oldMap){
+        try{
+            Set<Id> assignmentGroupIds = new Set<Id>();
+            List<Assignment_Group__c> assignmentGroupList = new List<Assignment_Group__c>();
+            
+            system.debug('newMap--->> '+newMap);
+            system.debug('oldMap--->> '+oldMap);
+            
+            for(Assignment_Group_Member__c agmRec : newMap.values()){
+                if(agmRec.Assignment_Group__c != null)
+                    assignmentGroupIds.add(agmRec.Assignment_Group__c);
+            }
+            if(!assignmentGroupIds.isEmpty()){
+                assignmentGroupList = [Select Id,(Select Id,Assignment_Id__c FROM Assignment_Group_Members__r order By Assignment_Id__c Desc Limit 1 ) From Assignment_Group__c];
+                if(!assignmentGroupList.isEmpty()){
+                    for(Assignment_Group__c agRec : assignmentGroupList){
+                        system.debug('agRe--->'+agRec);
+                        system.debug('agRec.Assignment_Group_Members__r--->'+agRec.Assignment_Group_Members__r);
+                        if(newMap.values()[0].Assignment_Id__c == null )
+                            newMap.values()[0].Assignment_Id__c =0;
+                        system.debug('agRec.Assignment_Group_Members__r[0].Assignment_Id__c--->'+agRec.Assignment_Group_Members__r[0].Assignment_Id__c);
+                        newMap.values()[0].Assignment_Id__c = (agRec.Assignment_Group_Members__r[0].Assignment_Id__c + 1);
+                    }
+                }
+            }
+            
+        }catch (Exception e){
+            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+            HandleBusinessException.captureError('AGMTriggerHelper', 'Before AGM Update', e, null);
+        }
+    }
 }

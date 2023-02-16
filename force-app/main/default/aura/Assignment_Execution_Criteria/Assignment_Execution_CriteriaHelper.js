@@ -1,5 +1,5 @@
 ({
-	getAllObjects : function(component, event, index) {
+    getAllObjects : function(component, event, index) {
         var objectMap =component.get("v.Exereclst");
         var action = component.get('c.getAllSObjects');
         action.setCallback(this, function(response){
@@ -24,15 +24,15 @@
         var action = component.get('c.getFieldList');
         action.setParams({'objName': objName});
         action.setCallback(this, function(response){
-        	var state = response.getState();
+            var state = response.getState();
             if(state === 'SUCCESS'){
-            	var result = response.getReturnValue();
+                var result = response.getReturnValue();
                 component.set('v.wrapperFields',result);
                 var resultJson = JSON.stringify(result);
                 var fieldMap =component.get("v.Exereclst");
                 var mapOfField = [];
                 for(var i=0; i <=result.length-1;i++){
-                	mapOfField.push({key: result[i].api_Name, value: result[i].label});    
+                    mapOfField.push({key: result[i].api_Name, value: result[i].label});    
                 }
                 fieldMap[index].FieldName = mapOfField;
                 
@@ -84,7 +84,7 @@
     saveScoreExecution : function(component, event){
         debugger;
         var attrval = component.get('v.Exereclst');
-                   
+        
         var attval = component.get('v.scoreCardDetail');
         var scorcardId;
         var scorecardObj = component.get('v.scoreCardObject');
@@ -114,6 +114,10 @@
                 delete attrval[i].mapOfObject;
                 delete attrval[i].mapOfPicklistFields;
                 delete attrval[i].matchTypeList;
+                if(attrval[i].multiselectComboboxList.length >0){
+                    delete attrval[i].multiselectComboboxList
+                }
+                
             }
             action.setParams({"objlist":JSON.stringify(attrval),
                               "ids":component.get('v.parentId'),
@@ -148,9 +152,10 @@
         component.set("v.spinner",true);
         var attrval = component.get('v.Exereclst');
         attrval.RelatedObject = 'Lead';
-    	var wrapperList = component.get("v.wrapperFields");
+        var wrapperList = component.get("v.wrapperFields");
         var filedType;
         var result =[];
+         var multiSelectPickValues = [];
         for(var i=0; i <=wrapperList.length-1;i++){
             if(wrapperList[i].api_Name === fieldName){
                 if(wrapperList[i].fielddataType != undefined && wrapperList[i].fielddataType != null){
@@ -159,31 +164,49 @@
                     filedType = 'Text';
                 }
                 if(wrapperList[i].mapOfPicklist !==null && wrapperList[i].mapOfPicklist !==undefined){
-                	result = wrapperList[i].mapOfPicklist;    
+                    result = wrapperList[i].mapOfPicklist;    
                 }
             }       
         }
         if(filedType === 'Picklist' || filedType === 'Multi-Picklist'){
             component.set("v.isPicklist",true);
+            var plValues = [];
+            for(var key in result){
+                plValues.push({
+                    label: result[key],
+                    value: result[key]
+                });
+            }
+            var index = event.target.name;
+            
+            attrval[index].multiselectComboboxList=plValues;
+            component.set("v.Exereclst", attrval);
+           // component.set("v.multiSelectPickValues", plValues);
+
+            //var tempplvalues = plValues.join(',');
+            //attrval[index].mapOfPicklistFields = tempplvalues; 
+            //component.set("v.Exereclst", attrval);
+            /*component.set("v.isPicklist",true);
             var industryMap = [];
-                for(var key in result){
-                    industryMap.push({key: key, value: result[key]});
-                }
-                attrval[index].mapOfPicklistFields = industryMap; 
-                //attrval[index].fieldDataType=filedType;
-                component.set("v.Exereclst", attrval);
-       }else{
+           
+            for(var key in result){
+                industryMap.push({key: key, value: result[key]});
+            }
+            attrval[index].mapOfPicklistFields = industryMap; 
+            //attrval[index].fieldDataType=filedType;
+            component.set("v.Exereclst", attrval);*/
+        }else{
             component.set("v.isPicklist",false);
-       }
-       attrval[index].fieldDataType=filedType;
+        }
+        attrval[index].fieldDataType=filedType;
         var action = component.get('c.getMatchList');
         action.setParams({
             "name": filedType 
         });
         action.setCallback(this, function(response){
-        	var state = response.getState();
+            var state = response.getState();
             if(state === 'SUCCESS'){
-            	var result = response.getReturnValue();
+                var result = response.getReturnValue();
                 attrval[index].matchTypeList = result;
                 component.set("v.Exereclst", attrval);
             }else{
@@ -216,9 +239,9 @@
                         
                         var mapOfPicklist = [];
                         if(Exereclst[i].fieldDataType ==='Picklist' || Exereclst[i].fieldDataType ==='Multi-Picklist'){
-                        	var mapOfPicklistFields = Exereclst[i].mapOfPicklistFields;
+                            var mapOfPicklistFields = Exereclst[i].mapOfPicklistFields;
                             for(var key in mapOfPicklistFields){
-                            	mapOfPicklist.push({key: mapOfPicklistFields[key], value:key});   
+                                mapOfPicklist.push({key: mapOfPicklistFields[key], value:key});   
                             }
                             Exereclst[i].mapOfPicklistFields=mapOfPicklist;    
                         }
@@ -232,13 +255,13 @@
                     }
                     
                 }
-               component.set("v.spinner",false);
+                component.set("v.spinner",false);
             }else if (state === "INCOMPLETE") {
-            	component.set("v.spinner",false);
+                component.set("v.spinner",false);
                 swal.fire({
-                  icon: 'info',
-                  title: '',
-                  text: 'Request in Progress'
+                    icon: 'info',
+                    title: '',
+                    text: 'Request in Progress'
                 });
             } else if (state === "ERROR") {
                 component.set("v.spinner",false);
@@ -253,9 +276,9 @@
                     console.log("Unknown error");
                 }
                 swal.fire({
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: 'Something went wrong!'
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong!'
                 });
             }
             
