@@ -10,6 +10,9 @@
 
     <aura:attribute name="rowindex" type="string" />
     <aura:registerEvent name="cmpEvent" type="c:MultiselectComboboxEvent"/> 
+
+    <aura:attribute name="isCollapsible" type="boolean" default="true"/>
+    <aura:attribute name="isExpanded" type="boolean" default="false"/>
  
     <!-- Internal Use Attributes -->
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
@@ -56,11 +59,18 @@
                 </div>
             </div>
         </div>
-        <aura:iteration items="{!v.options}" var="option">
-            <aura:if isTrue="{!option.selected}">
-            	<lightning:pill class="slds-m-around_xx-small" name="{!option.value}" label="{!option.label}" onremove="{!c.removePill}"/>
-            </aura:if>
-        </aura:iteration>
+        <div  class="slds-grid slds-wrap"> <!-- style="max-width:50px; white-space: nowrap; "-->
+            <aura:iteration items="{!v.options}" var="option">
+                <aura:if isTrue="{!option.selected}">
+                    
+                        <lightning:pill class="slds-m-around_xx-small slds-col slds-size_1-of-4" name="{!option.value}" label="{!option.label}" onremove="{!c.removePill}"/>
+                    
+                </aura:if>
+            </aura:iteration>
+
+        </div>
+       
+        
 	</div>
 
 </aura:component>
