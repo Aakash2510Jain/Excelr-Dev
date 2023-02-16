@@ -5,17 +5,14 @@ import { NavigationMixin } from 'lightning/navigation';
 import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
+
 export default class CustomerDetailLWCController extends NavigationMixin(LightningElement) {
 
    @api recordId;
    
     @track LeadData=[];
     @track OpportunityData=[];
-    a_Record_URL;
- 
-    connectedCallback(){
-        this.a_Record_URL = window.location;
-    }  
+
    @wire(getAllData,{recordId:'$recordId'})
    wiredService({data,error}){
 
