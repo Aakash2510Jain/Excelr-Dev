@@ -197,7 +197,7 @@ public class PaymentOnOpportunityApexController {
         try{
         system.debug('recordId='+recordId+'FullTenureValue='+FullTenureValue);
          system.debug('FullNBFCValue='+FullNBFCValue+'Amount='+Amount);
-          system.debug('Quantity='+Quantity+'Product__c='+ProductName);
+          //system.debug('Quantity='+Quantity+'Product__c='+ProductName);
         
         product2 PrdRec=[Select Id,Name,(Select Id,Name,UnitPrice From PricebookEntries) From Product2 where id=:ProductName ];
         

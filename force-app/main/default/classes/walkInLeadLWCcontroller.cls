@@ -9,7 +9,7 @@ public without sharing class walkInLeadLWCcontroller{
             if (EmailOrPhone != null){
                 leadList = [Select id, firstName, LastName, Owner_Email__c, OwnerId, Owner.LastName, Owner.FirstName, Owner.Name, Email, Phone
                             from Lead
-                            where Email = :EmailOrPhone OR Phone LIKE:Phonestring
+                            where Email = :EmailOrPhone OR Phone LIKE:Phonestring OR Alternate_Email__c = :EmailOrPhone Or Alternate_Phone__c = :EmailOrPhone
                             Order By CreatedDate Asc
                             LIMIT 1];
             }
@@ -35,7 +35,7 @@ public without sharing class walkInLeadLWCcontroller{
     }
 
     @auraenabled
-    public static String createLead(string Lastname, string email, string phone, string Course, string typeofcour, string userId, string agentid, string comments){
+    public static String createLead(string Lastname, string email, string phone, string Course, string typeofcour, string userId, string agentid, string comments, string city, string state, string country, string countrycode, string AlternateMobile, String AlternateEmail){
 
         System.debug('userId ====> ' + userId);
         System.debug('agentid ====> ' + agentid);
@@ -54,8 +54,13 @@ public without sharing class walkInLeadLWCcontroller{
             //leadRec.FirstName = firstname;
             leadRec.LastName = Lastname;
             leadRec.Email = email;
-            leadRec.Phone = phone;
+            leadRec.Alternate_Email__c = AlternateEmail;
+            leadRec.Phone = countrycode + phone;
+            leadRec.Alternate_Phone__c = countrycode + AlternateMobile;
             leadRec.OwnerId = userId;
+            leadRec.State = state;
+            leadRec.Country = country;
+            leadRec.city = city;
             leadRec.Type_of_Course__c = typeofcour;
             leadRec.Course__c = Course;
             leadRec.City__c = 'NA';
@@ -65,7 +70,7 @@ public without sharing class walkInLeadLWCcontroller{
             if (!existingTrainingUser.isEmpty()){
                 leadRec.ExcelR_Training_User__c = existingTrainingUser[0].id;
             }
-            leadRec.Company = '--';
+            leadRec.Company = Lastname;
             system.debug('leadRec===========================' + leadRec);
             insert leadRec;
             System.debug('lead rec Id =====> ' + leadRec.Id);
@@ -278,8 +283,8 @@ public without sharing class walkInLeadLWCcontroller{
     public static List<Lead> QueryPastLeads(string ExcelRagentid){
         System.debug(' ExcelRagentid =========> ' + ExcelRagentid);
         try{
-            List<Lead> PastLeadRecords = [SELECT Course__c, Email, ExcelR_Training_User__c, Name, OwnerId, Owner.Name, Phone, Product__c, Product__r.Name, Status, Total_Calls__c, Total_Connected_Call__c
-                                          FROM Lead
+            List<Lead> PastLeadRecords = [SELECT Course__c, Email, ExcelR_Training_User__c, Name, OwnerId, Owner.Name, Phone, Status, Total_Calls__c, Total_Connected_Call__c //Product__r.Name,
+                                          FROM Lead 
                                           Where ExcelR_Training_User__c = :ExcelRagentid ANd isconverted = false
                                           Order by createdDate Desc];
             System.debug('PastLeadRecords ======> ' + PastLeadRecords);
@@ -328,6 +333,9 @@ public without sharing class walkInLeadLWCcontroller{
                 ExistingHashcode = String.valueOf(userHashCodeCookie.getValue());
                 if (LoginHashcode == ExistingHashcode && ExcelRTrainUser[0].HashCode__c == ExistingHashcode){
                     if (Reloading == '' || Reloading == null){
+                        if (urlvalue.contains('apex')){
+                            urlvalue = urlvalue.replace('apex', 'Loginpage');
+                        }
                         FinalPageToRedirect = 'https://' + headerdata + urlvalue + '&IsReloading=true';
                         // FinalPageToRedirect = LoginHashcode+ '?id='+ExistingHashcode +'&IsReloading=true';
                         System.debug('FinalPageToRedirect ====> ' + FinalPageToRedirect);
@@ -354,13 +362,6 @@ public without sharing class walkInLeadLWCcontroller{
             HandleBusinessException.captureError('walkInLeadLWCcontroller', 'checkExistingHashKeyMatching', e, null);
             return null;
         }
-    }
-
-    @AuraEnabled( cacheable=true )  
-    public static List < Countries_With_States__mdt > fetchcountrieswithstate() {
-        
-        return [ SELECT Id, MasterLabel,Label, States__c FROM Countries_With_States__mdt ];
-        
     }
 
 }

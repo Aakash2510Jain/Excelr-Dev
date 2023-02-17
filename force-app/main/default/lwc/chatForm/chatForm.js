@@ -18,12 +18,14 @@ import createApplication from '@salesforce/apex/ChatFormLWCcontroller.CreateAppl
 import { getObjectInfo } from 'lightning/uiObjectInfoApi';
 import { getPicklistValues } from 'lightning/uiObjectInfoApi';
 import LEAD_OBJECT from '@salesforce/schema/Lead';
-//import LEAD_GEN_PATH from '@salesforce/schema/Lead.Lead_Gen_Path__c';
+import LEAD_GEN_PATH from '@salesforce/schema/Lead.Lead_Gen_Path__c';
 import LEAD_SOURCE from '@salesforce/schema/Lead.LeadSource';
 import LEAD_MEDIUM from '@salesforce/schema/Lead.UTM_Medium__c';
 import FetchStateCounty from '@salesforce/apex/ChatFormLWCcontroller.FetchStateCounty';
 import Fetchcities from '@salesforce/apex/ChatFormLWCcontroller.Fetchcities';
 import fetchCountryAndCountryCode from '@salesforce/apex/GenericLeadLWCcontroller.fetchCountryAndCountryCode';
+
+import FetchCountriesStateWithISDcode from '@salesforce/apex/voiceFormLWCcontroller.getCountryStateAndISDCode';
 
 import QueryPastLeads from '@salesforce/apex/ChatFormLWCcontroller.QueryPastLeads';
 import LightningAlert from 'lightning/alert';
@@ -53,6 +55,9 @@ const LeadListcolumns = [{ label: 'Name', fieldName: 'Name' },
 
 
 export default class chatForm extends LightningElement {
+
+    @track LeadTobeCreated = {};
+    @track taskTobeCreated = {};
     imageurl = EXCELR_LOGO;
     //feilds from schema
     @track ifdataNotFound = false;
@@ -114,6 +119,8 @@ export default class chatForm extends LightningElement {
             this.mapData.push({ label: this.DepartmentList[key], value: this.DepartmentList[key] }); //Here we are creating the array to show on UI.
         }
     }
+
+
     emailHandler(Event) {
         debugger;
         let EmailOrPhone = Event.target.value;
@@ -194,6 +201,65 @@ export default class chatForm extends LightningElement {
     }
 
 
+     // =========================================================Fetch Countries States with ISDCODe And Handle =================================================
+     @track CountriesPicklistValue=[];
+     @track countriesSateISDCodelist = [];
+     @wire(FetchCountriesStateWithISDcode)
+     wiredCounstriesStatesWithISD({data,error}){
+         debugger;
+         if(data){
+             this.countriesSateISDCodelist = data;
+             console.log('CityValuedata=',data);
+ 
+               let arr=[];
+               for(let i=0;i<data.length;i++){
+                  arr.push({label:data[i].MasterLabel,value:data[i].MasterLabel});
+               }
+               this.CountriesPicklistValue=arr;
+               console.log('Picklistvalue=',this.CountriesPicklistValue);
+            }
+            else if(error){
+                console.log('error=',error);
+            }
+ 
+     }
+ 
+     @track SelectedCountryStateList = [];
+     @track SelectedCountryISCode;
+     HandleChangeCountry(event){
+         debugger;
+         let Selectedcountry=event.detail.value;
+         this.CountryValue = Selectedcountry;
+         var SelectedcountryStateISDCode = this.countriesSateISDCodelist.find(item => item.MasterLabel == Selectedcountry);
+         this.SelectedCountryISCode = SelectedcountryStateISDCode.Country_Code__c;
+         //this.countrycodevalue = countrycode.CountryCode__c;
+         let tempStateArr = []; 
+         var tempStateString = SelectedcountryStateISDCode.States__c;
+         var tempStateArrafterCommaSeperated = tempStateString.split(',');
+         for(let i=0;i<tempStateArrafterCommaSeperated.length;i++){
+             tempStateArr.push({label:tempStateArrafterCommaSeperated[i],value:tempStateArrafterCommaSeperated[i]});
+          }
+          this.SelectedCountryStateList = tempStateArr;
+          this.StateDisable = false;
+ 
+     }
+ 
+     HandleChangeState(event){
+         debugger;
+         let SelectedState=event.detail.value;
+         this.StateValue = SelectedState;
+         //this.StateDisable = false;
+ 
+     }
+ 
+     HandleCityValue(event){
+         this.cityValue = event.detail.value;
+     }
+ 
+ 
+     // ======================================================= Fetch Countries States with ISDCODe And Handle End Here ==================================================== 
+
+
     @track StateCountryValue=[];
     @wire(FetchStateCounty)
     WiredResponse({data,error}){
@@ -222,7 +288,6 @@ export default class chatForm extends LightningElement {
 
     }
 
-
     handleCountrycode(country){
         debugger;
         let countrycode;
@@ -242,33 +307,6 @@ export default class chatForm extends LightningElement {
     // Picklistvalue=[];
     @wire(getObjectInfo, {objectApiName:LEAD_OBJECT})
     objectInfo
-
-    // @wire(getPicklistValues, { recordTypeId:'$objectInfo.data.defaultRecordTypeId', fieldApiName:LEAD_GEN_PATH})
-    //  wiredPicklistValues({data,error}){
-    //      debugger;
-    //     if(data){
-    //        console.log('data=',data);
-    //        console.log('dataValues=',data.values);
-    //        let arr=[];
-    //        for(let i=0;i<data.values.length;i++){
-    //           arr.push({label:data.values[i].label,value:data.values[i].value});
-    //        }
-    //        this.Picklistvalue=arr;
-    //        console.log('Picklistvalue=',this.Picklistvalue);
-    //     }
-    //     else {
-    //         console.log('error=',error)
-    //     }
-    //  }
-
-    //  get ldGenPath(){
-    //     return this.Picklistvalue;
-    //  }
-
-    //  ldGenPathValue(event){
-    //     debugger;
-    //     this.Leadvalue=event.target.value;
-    //  }
 
      //Getting Picklist Field Of LeadSource
      @track LeadSourcePicklist=[];
@@ -295,6 +333,40 @@ export default class chatForm extends LightningElement {
      get leadSource(){
         return this.LeadSourcePicklist;
      }
+
+     Picklistvalue = [];
+     @wire(getObjectInfo, { objectApiName: LEAD_OBJECT })
+     objectInfo
+ 
+     @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: LEAD_GEN_PATH })
+     wiredPicklistValues({ data, error }) {
+         debugger;
+         if (data) {
+             console.log('data=', data);
+             console.log('dataValues=', data.values);
+             let arr = [];
+             for (let i = 0; i < data.values.length; i++) {
+                 arr.push({ label: data.values[i].label, value: data.values[i].value });
+             }
+             this.Picklistvalue = arr;
+             this.Picklistvalue.sort((a, b) => (a.label > b.label) ? 1 : -1);
+             console.log('Picklistvalue=', this.Picklistvalue);
+         }
+         else {
+             console.log('error=', error)
+         }
+     }
+ 
+     get ldGenPath() {
+         return this.Picklistvalue;
+     }
+
+     @track Leadvalue;
+     ldGenPathValue(event) {
+        debugger;
+        this.Leadvalue = event.target.value;
+    }
+
 
      @track SourceValue;
      HandleSource(event){
@@ -504,6 +576,21 @@ export default class chatForm extends LightningElement {
         debugger;
         this.isShowModal = false;
         this.showtaskModal=false;
+        this.namValue = '';
+                        this.lNameValue = '';
+                        this.commentsValue = '';
+                        this.emailValue = '';
+                        this.phoneValue = '';
+                        this.alterMobileValue = '';
+                        this.alterEmailValue  = '';
+                        this.CourceLead = '';
+                        this.CountryValue = '';
+                        this.cityValue = '';
+                        this.Leadvalue = '';
+                        this.SelectedCountryStateList = [];
+                        if (this.SelectedCountryStateList.length == 0) {
+                            this.StateDisable = true;
+                        }
 
     }
     FnameChange(Event) {
@@ -522,8 +609,14 @@ export default class chatForm extends LightningElement {
         //var returnvalue = this.handleIncorrectEmail(email)
         this.emailValue = email;
 
-
     }
+
+    @track alterEmailValue;
+    AlterEmailChange(Event){
+        this.alterEmailValue = Event.target.value;
+    }
+
+
 
     handleIncorrectEmail(emailtocheck) {
         debugger;
@@ -541,6 +634,11 @@ export default class chatForm extends LightningElement {
         debugger;
         let phone = Event.target.value;
         this.phoneValue = phone;
+    }
+
+    @track alterMobileValue
+    AlterPhoneChange(Event){
+        this.alterMobileValue = Event.target.value;
     }
 
     StatusChange(Event) {
@@ -830,7 +928,7 @@ export default class chatForm extends LightningElement {
 
             this.handleSpinner();
             if (returnvalue == true && this.handleCorrectPhone(this.phoneValue)) {  // firstname: this.namValue, 
-                createLead({Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, Course: this.CourceLead, agentid:this.agentrecid ,city:this.cityValue,source:this.sourceValue,medium:this.MediumValue,VisitorId:this.VisitorIdValue,Transcript:this.TranscriptValue,state:this.StateValue,country:this.CountryValue,LandingPageURL:this.PageUrlValue,comments:this.commentsValue})
+                createLead({Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, Course: this.CourceLead, agentid:this.agentrecid ,city:this.cityValue,source:this.sourceValue,medium:this.MediumValue,VisitorId:this.VisitorIdValue,Transcript:this.TranscriptValue,leadGenPath: this.Leadvalue,state:this.StateValue,country:this.CountryValue,LandingPageURL:this.PageUrlValue,comments:this.commentsValue,  countrycode : this.SelectedCountryISCode, AlternateMobile : this.alterMobileValue, AlternateEmail : this.alterEmailValue})
                     .then(data => {
 
                         if (data == 'SUCCESS') {
@@ -844,6 +942,8 @@ export default class chatForm extends LightningElement {
                         this.commentsValue = '';
                         this.emailValue = '';
                         this.phoneValue = '';
+                        this.alterMobileValue = '';
+                        this.alterEmailValue  = '';
                         this.CourceLead = '';
                         this.CountryValue = '';
                         this.cityValue = '';
@@ -1024,12 +1124,7 @@ export default class chatForm extends LightningElement {
             this.HandleCreateDisable=false;
             this.handleClick();
         }
-
-            
-
     }
-
-
 
     courseforapphandler(event) {
         let selectecourse = event.detail.value;

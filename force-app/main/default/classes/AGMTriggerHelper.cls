@@ -1,4 +1,4 @@
-public class AGMTriggerHelper{
+public without sharing class AGMTriggerHelper{
     static AGMTriggerHelper handlerInstance;
     
     public static AGMTriggerHelper getInstance(){
@@ -72,5 +72,99 @@ public class AGMTriggerHelper{
             HandleBusinessException.captureError('AGMTriggerHelper', 'Before AGM Update', e, null);
         }
     }
-    
+    public void afterInsert(Map<Id,Assignment_Group_Member__c> newMap, Map<Id,Assignment_Group_Member__c> oldMap){
+        try{
+            Set<Id> assignmentGroupIds = new Set<Id>();
+            List<Assignment_Group__c> assignmentGroupList = new List<Assignment_Group__c>();
+            List<Assignment_Group_Member__c> assignmentGroupMemberListToUpdate = new List<Assignment_Group_Member__c>();
+            
+            system.debug('newMap--->> '+newMap);
+            system.debug('oldMap--->> '+oldMap);
+            
+            for(Assignment_Group_Member__c agmRec : newMap.values()){
+                if(agmRec.Assignment_Group__c != null)
+                    assignmentGroupIds.add(agmRec.Assignment_Group__c);
+            }
+            if(!assignmentGroupIds.isEmpty()){
+                assignmentGroupList = [Select Id,(Select Id,Assignment_Id__c FROM Assignment_Group_Members__r order By Assignment_Id__c ASC nulls last) From Assignment_Group__c where Id in :assignmentGroupIds];
+                if(!assignmentGroupList.isEmpty()){
+                    system.debug('assignmentGroupList-->'+assignmentGroupList);
+                    for(Assignment_Group__c agRec : assignmentGroupList){
+                       
+                        system.debug('agRec--->'+agRec);
+                        integer i = 1;
+                        for(Assignment_Group_Member__c agmRec : agRec.Assignment_Group_Members__r){
+                            Assignment_Group_Member__c agmrecToUpdate = new Assignment_Group_Member__c();
+                            if(agmRec.Assignment_Id__c == null ){
+                                agmRec.Assignment_Id__c = 0;
+                            }
+                            system.debug('agmRec.id--->'+agmRec.id);
+                            system.debug('agmRec.Assignment_Id__c--->'+agmRec.Assignment_Id__c);
+                            agmrecToUpdate.id = agmRec.id;
+                            agmrecToUpdate.Assignment_Id__c = i;
+                            system.debug('agmRec.Assignment_Id__c--->'+agmRec.Assignment_Id__c);
+                            
+                            assignmentGroupMemberListToUpdate.add(agmrecToUpdate);
+                            i++;
+                        }
+                    }
+                    system.debug('assignmentGroupMemberListToUpdate---->'+assignmentGroupMemberListToUpdate);
+                    if(!assignmentGroupMemberListToUpdate.isEmpty()){
+                        update assignmentGroupMemberListToUpdate;
+                    }
+                }
+            }
+            
+        }catch (Exception e){
+            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+            HandleBusinessException.captureError('AGMTriggerHelper', 'After AGM Insert', e, null);
+        }
+    }
+     public void afterDelete(Map<Id,Assignment_Group_Member__c> oldMap){
+        try{
+            Set<Id> assignmentGroupIds = new Set<Id>();
+            List<Assignment_Group__c> assignmentGroupList = new List<Assignment_Group__c>();
+            List<Assignment_Group_Member__c> assignmentGroupMemberListToUpdate = new List<Assignment_Group_Member__c>();
+            
+            system.debug('oldMap--->> '+oldMap);
+            
+            for(Assignment_Group_Member__c agmRec : oldMap.values()){
+                if(agmRec.Assignment_Group__c != null)
+                    assignmentGroupIds.add(agmRec.Assignment_Group__c);
+            }
+            if(!assignmentGroupIds.isEmpty()){
+                assignmentGroupList = [Select Id,(Select Id,Assignment_Id__c FROM Assignment_Group_Members__r order By Assignment_Id__c ASC nulls last) From Assignment_Group__c where Id in :assignmentGroupIds];
+                if(!assignmentGroupList.isEmpty()){
+                    system.debug('assignmentGroupList-->'+assignmentGroupList);
+                    for(Assignment_Group__c agRec : assignmentGroupList){
+                       
+                        system.debug('agRec--->'+agRec);
+                        integer i = 1;
+                        for(Assignment_Group_Member__c agmRec : agRec.Assignment_Group_Members__r){
+                            Assignment_Group_Member__c agmrecToUpdate = new Assignment_Group_Member__c();
+                            if(agmRec.Assignment_Id__c == null ){
+                                agmRec.Assignment_Id__c = 0;
+                            }
+                            system.debug('agmRec.id--->'+agmRec.id);
+                            system.debug('agmRec.Assignment_Id__c--->'+agmRec.Assignment_Id__c);
+                            agmrecToUpdate.id = agmRec.id;
+                            agmrecToUpdate.Assignment_Id__c = i;
+                            system.debug('agmRec.Assignment_Id__c--->'+agmRec.Assignment_Id__c);
+                            
+                            assignmentGroupMemberListToUpdate.add(agmrecToUpdate);
+                            i++;
+                        }
+                    }
+                    system.debug('assignmentGroupMemberListToUpdate---->'+assignmentGroupMemberListToUpdate);
+                    if(!assignmentGroupMemberListToUpdate.isEmpty()){
+                        update assignmentGroupMemberListToUpdate;
+                    }
+                }
+            }
+            
+        }catch (Exception e){
+            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+            HandleBusinessException.captureError('AGMTriggerHelper', 'After AGM Delete', e, null);
+        }
+    }
 }

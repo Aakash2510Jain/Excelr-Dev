@@ -8,6 +8,4 @@ public class Constants{
     public static final string PRIVATE_LEAD_QUEUE = 'Org Default Queue';
     public static final String CALLYZER_CALL_HISTORY_ENDPOINT = System.Label.CALLYZER_CALL_HISTORY_ENDPOINT;
     public static final string taskSubjectViaLeadCreationAPI = 'Candidate has applied again for the Same Course';
-    public static final string productRecordType = Schema.getGlobalDescribe().get('Product2').getDescribe().getRecordTypeInfosByName().get('Product').getRecordTypeId();
-
 }

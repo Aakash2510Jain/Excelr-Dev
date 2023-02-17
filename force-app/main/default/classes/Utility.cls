@@ -120,7 +120,7 @@ public without sharing class Utility{
                 //leadRec.UTM_Source__c = parameters.get('utm_source');
                 leadRec.UTM_Medium__c = parameters.get('utm_medium');
                 leadRec.UTM_Term__c = parameters.get('utm_term');
-                leadRec.UTM_Content__c = parameters.get('utm_content');
+               // leadRec.UTM_Content__c = parameters.get('utm_content');
                 leadRec.UTM_Device__c = parameters.get('utm_device');
                 leadRec.UTM_Campaign__c = parameters.get('utm_campaign');
                 leadRec.UTM_AdGroup__c = parameters.get('utm_adgroup');
@@ -135,9 +135,9 @@ public without sharing class Utility{
                 // leadRec.Source__c = parameters.get('source');
                 //leadRec.Medium__c = parameters.get('medium');
                 //  leadRec.Campaign__c = parameters.get('campaign');
-                leadRec.AdGroup__c = parameters.get('adgroup');
-                leadRec.Keyword__c = parameters.get('keyword');
-                leadRec.Match_Type__c = parameters.get('matchtype');
+               // leadRec.AdGroup__c = parameters.get('adgroup');
+                //leadRec.Keyword__c = parameters.get('keyword');
+                //leadRec.Match_Type__c = parameters.get('matchtype');
             }
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
@@ -167,7 +167,7 @@ public without sharing class Utility{
                     //invoice tag
                     //opp item tag
                     //opportunity to be updated
-                    Lead convertedLeadRec = [Select Id, Payment_initiated_Date_Time__c, course__c, Quantity__c, Product__c, Total_Amount__c
+                    Lead convertedLeadRec = [Select Id, Payment_initiated_Date_Time__c, course__c
                                              From Lead
                                              Where Id = :convertedLead.getLeadId()];
                     Account covertedAccRec = [Select Id, (Select Id
@@ -182,12 +182,12 @@ public without sharing class Utility{
                     applicationsListAttachedToLead = [Select Id, Account__c, Course__c
                                                       From Application__c
                                                       Where Lead__c = :convertedLeadRec.Id];
-                    List<PricebookEntry> priceBookEntryList = [Select Id, Product2Id
+                   /* List<PricebookEntry> priceBookEntryList = [Select Id, Product2Id
                                                                From PricebookEntry
-                                                               where Product2Id = :convertedLeadRec.Product__c];
+                                                               where Product2Id = :convertedLeadRec.Product__c]; 
                     for (PricebookEntry pbe : priceBookEntryList){
                         priceBookIdByProductId.put(pbe.Product2Id, pbe.Id);
-                    }
+                    } */
 
                     Opportunity oppRec = new Opportunity();
                     oppRec.Id = covertedAccRec.Opportunities[0].Id;
@@ -197,10 +197,10 @@ public without sharing class Utility{
                     OpportunityLineItem oppProdRec = new OpportunityLineItem();
                     //oppProdRec.Discount = convertedLeadRec.Discount__c;
                     oppProdRec.OpportunityId = covertedAccRec.Opportunities[0].Id;
-                    oppProdRec.Product2Id = convertedLeadRec.Product__c;
-                    oppProdRec.Quantity = convertedLeadRec.Quantity__c;
-                    oppProdRec.TotalPrice = convertedLeadRec.Total_Amount__c;
-                    oppProdRec.PricebookEntryId = priceBookIdByProductId.get(convertedLeadRec.Product__c);
+                    //oppProdRec.Product2Id = convertedLeadRec.Product__c;
+                    //oppProdRec.Quantity = convertedLeadRec.Quantity__c;
+                    //oppProdRec.TotalPrice = convertedLeadRec.Total_Amount__c;
+                    //oppProdRec.PricebookEntryId = priceBookIdByProductId.get(convertedLeadRec.Product__c);
                     insert oppProdRec;
                     integer i = 0;
                     if (!invoiceListAttachedToLead.isEmpty()){

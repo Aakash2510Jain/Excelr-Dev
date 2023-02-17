@@ -33,7 +33,8 @@
                     <lightning-button-menu alternative-text="Show menu" variant="border-filled"
                         onselect={handleOnselect} label="Select Form">
                         <template for:each={mapData} for:item="currentItem" for:index="index">
-                            <lightning-menu-item label={currentItem.label} value={currentItem.value} key={currentItem.value} onselect={handleOnselect}>
+                            <lightning-menu-item label={currentItem.label} value={currentItem.value}
+                                key={currentItem.value} onselect={handleOnselect}>
                             </lightning-menu-item>
 
                         </template>
@@ -65,11 +66,11 @@
                         <lightning-button title="Create Application" label="Create Application"
                             onclick={showpplicationForm} variant="brand" style="margin-left:8px;"
                             disabled={appbtndisAble}></lightning-button>
-                       <!-- <lightning-button title="Create Task" label="Create Task"
+                        <!-- <lightning-button title="Create Task" label="Create Task"
                             onclick={ShowTaskForm} variant="brand" style="margin-left:8px;"
                             disabled={taskButton}></lightning-button>-->
-                            <lightning-button title="New Task " label="New Task" onclick={newTaskBTN} disabled={taskBTNdisAble}
-                            variant="brand" style="margin-left:8px;"></lightning-button>
+                        <lightning-button title="New Task " label="New Task" onclick={newTaskBTN}
+                            disabled={taskBTNdisAble} variant="brand" style="margin-left:8px;"></lightning-button>
 
                     </div>
                 </div>
@@ -77,7 +78,7 @@
                     <template if:true={showFromOrEmpty}>
                         <lightning-tabset>
                             <lightning-tab label="Details">
-                                
+
                                 <template if:true={data}>
                                     <lightning-record-view-form object-api-name={objectApiName} record-id={recordId}
                                         density="comfy">
@@ -97,191 +98,6 @@
                                                         </div>
 
                                                     </lightning-layout-item>
-                                                    <!--div>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                <div class="slds-border_bottom">
-                                                    <lightning-output-field field-name={Campaign} style="font-weight: bold;"> </lightning-output-field>
-                                                </div>
-
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Date_of_Enrollment} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Designation} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Device} style="font-weight: bold;">
-                                                        </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Do_you} style="font-weight: bold;">
-                                                        </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Email_Conversation} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Form_Source} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Hic} style="font-weight: bold;">
-                                                        </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Is_Email_Invalid__c} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Is_Phone_Invalid} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Enquired_Course} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Why_This_Course} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Profession} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Qualification} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Rating} style="font-weight: bold;">
-                                                        </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Reason_For_Dead} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Reason_for_On_Hold} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Refree_Mob_No} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Relevant_Experience} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Telephonic_Conversation} style="font-weight: bold;">
-                                                        </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Total_Calls} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Total_Call_Duration} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Total_Connected_Call__c} style="font-weight: bold;">
-                                                        </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Total_Conversation_Duration} style="font-weight: bold;">
-                                                        </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Total_Applications_Submitted} style="font-weight: bold;">
-                                                        </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Total_Emails} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Whatsapp_Opt_in} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Year_of_Experience} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                <lightning-layout-item padding="around-small" size="6">
-                                                    <div class="slds-border_bottom">
-                                                        <lightning-output-field field-name={Year_of_Graduation} style="font-weight: bold;"> </lightning-output-field>
-                                                    </div>
-                                                
-                                                </lightning-layout-item>
-                                                                    </div-->
 
                                                     <lightning-layout-item padding="around-small" size="6">
                                                         <div class="slds-border_bottom">
@@ -363,7 +179,7 @@
                                                         </div>
 
                                                     </lightning-layout-item>
-                                                    
+
                                                     <lightning-layout-item padding="around-small" size="6">
                                                         <div class="slds-border_bottom">
                                                             <lightning-output-field field-name="Createddatetime_Form__c"
@@ -419,7 +235,7 @@
 
                     <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
                         aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
-                        <div class="slds-modal__container" >
+                        <div class="slds-modal__container">
                             <!-- Modal/Popup Box LWC header here -->
                             <header class="slds-modal__header">
                                 <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
@@ -432,77 +248,125 @@
                                     Lead</h2>
                             </header>
                             <!-- Modal/Popup Box LWC body starts here -->
-                            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" >
+                            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
                                 <!--lightning-input label="First Name" onchange={FnameChange} required="true"></lightning-input -->
-                                <lightning-input label="Name" required="true"
-                                    onchange={LnameChange}></lightning-input>
-                                <lightning-input label="Email" required="true" onchange={EmailChange} ></lightning-input>
+                                <lightning-input label="Name" required="true" onchange={LnameChange}></lightning-input>
+                                <lightning-input label="Email" required="true" onchange={EmailChange}></lightning-input>
+                                <lightning-input label="Alternate Email" onchange={AlterEmailChange}></lightning-input>
 
-                                <lightning-combobox name="City" label="City" value={cityValue}
-                                    placeholder="Select Your City" options={CityOptions} onchange={HandleCityStatus} required="true">
+                                <!--lightning-combobox name="City" label="City" value={cityValue}
+                                    placeholder="Select Your City" options={CityOptions} onchange={HandleCityStatus}
+                                    required="true">
                                 </lightning-combobox>
 
                                 <template if:true={InputCity}>
-                                    <lightning-input type="text" label="City" name="UserCity" placeholder="Enter Your City" onchange={HandleUserCityStatus} ></lightning-input>
+                                    <lightning-input type="text" label="City" name="UserCity"
+                                        placeholder="Enter Your City" onchange={HandleUserCityStatus}></lightning-input>
                                 </template>
 
-                                <!--lightning-input type="text" label="City" onchange={HandleCity}></lightning-input-->
-                                 <lightning-input type="text" label="State" name="State" value={StateValue} disabled={StateDisable} onchange={HandleChangeStateCountry}></lightning-input>
-                                <lightning-input type="text" label="Country" name="Country" value={CountryValue}  disabled={CountryDisable} onchange={HandleChangeStateCountry}></lightning-input>
+                                <lightning-input type="text" label="City" onchange={HandleCity}></lightning-input>
+                                <lightning-input type="text" label="State" name="State" value={StateValue}
+                                    disabled={StateDisable} onchange={HandleChangeStateCountry}></lightning-input>
+                                <lightning-input type="text" label="Country" name="Country" value={CountryValue}
+                                    disabled={CountryDisable} onchange={HandleChangeStateCountry}></lightning-input-->
+
+
+                                <lightning-combobox name="Countries" label="Select Country" value={CountryValue}
+                                    placeholder="Select Your Country" options={CountriesPicklistValue}
+                                    onchange={HandleChangeCountry} required="true">
+                                </lightning-combobox>
+                                <lightning-combobox name="States" label="Select State" value={StateValue}
+                                    placeholder="Select Your State" options={SelectedCountryStateList}
+                                    onchange={HandleChangeState} required="true" disabled={StateDisable}>
+                                </lightning-combobox>
+                                <lightning-input type="text" label="City" name="UserCity" placeholder="Enter Your City"
+                                    onchange={HandleCityValue}></lightning-input>
+
+
                                 <label class="slds-form-element__label" for="textarea-id-01"><abbr class="slds-required"
-                                    title="required">*</abbr>Mobile</label>
+                                        title="required">*</abbr>Mobile</label>
                                 <div class="slds-grid slds-wrap">
                                     <div class="slds-col slds-size_1-of-12">
                                         <span>
-                                            <lightning-input  value={countrycodevalue} disabled="true"></lightning-input>
+                                            <lightning-input value={SelectedCountryISCode}
+                                                disabled="true"></lightning-input>
                                         </span>
-                                      </div>
+                                    </div>
                                     <div class="slds-col slds-size_11-of-12">
                                         <span>
-                                            <lightning-input  min-length="10" onchange={PhoneChange}
-                                    max-length="10"></lightning-input>
+                                            <lightning-input min-length="10" onchange={PhoneChange}
+                                                max-length="10"></lightning-input>
 
                                         </span>
-                                      </div>
+                                    </div>
 
                                 </div>
+
+                                <label class="slds-form-element__label" for="textarea-id-01">Alternate Mobile</label>
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-12">
+                                    <span>
+                                        <lightning-input value={SelectedCountryISCode}
+                                            disabled="true"></lightning-input>
+                                    </span>
+                                </div>
+                                <div class="slds-col slds-size_11-of-12">
+                                    <span>
+                                        <lightning-input min-length="10" onchange={AlterPhoneChange}
+                                            max-length="10"></lightning-input>
+
+                                    </span>
+                                </div>
+
+                            </div>
                                 <!--label="Mobile"-->
-                                  
-                                
+
+                                <!--lightning-input label="Alternate Mobile" onchange={AlterPhoneChange}></lightning-input -->
                                 <lightning-combobox name="course" label="Course" value={value}
-                                    placeholder="Select Course" options={courssweList} onchange={courceHandler} required="true">
+                                    placeholder="Select Course" options={courssweList} onchange={courceHandler}
+                                    required="true">
                                 </lightning-combobox>
                                 <lightning-combobox name="Lead Gen Path" label="Lead Gen Path" value={Leadvalue}
-                                   placeholder="Select Lead Gen Path" options={ldGenPath} onchange={ldGenPathValue} required="true">
+                                    placeholder="Select Lead Gen Path" options={ldGenPath} onchange={ldGenPathValue}
+                                    required="true">
                                 </lightning-combobox>
 
-                                
+
                                 <!--lightning-input type="text" label="Source" onchange={HandleSource}></lightning-input-->
                                 <lightning-combobox name="Source" label="Source" value={SourceValue}
-                                placeholder="Select Your Source" options={leadSource} onchange={HandleSource} required="true" >
-                               </lightning-combobox>
+                                    placeholder="Select Your Source" options={leadSource} onchange={HandleSource}
+                                    required="true">
+                                </lightning-combobox>
                                 <!--lightning-input type="text" label="Medium" onchange={HandleMedium}></lightning-input-->
                                 <lightning-combobox name="Medium" label="Medium" value={MediumValue}
-                                placeholder="Select Your Medium" options={leadmedium} onchange={HandleMedium} required="true">
-                               </lightning-combobox>
-                               
+                                    placeholder="Select Your Medium" options={leadmedium} onchange={HandleMedium}
+                                    required="true">
+                                </lightning-combobox>
+
+                                <c-custom-lookup icon-name="standard:user" s-object-api-name="user" label="Select User"
+                                    onlookupupdate={lookupRecord} placeholder="type here..."></c-custom-lookup>
+
                                 <!--lightning-input type="text" label="LGE" onchange={HandleLGE}></lightning-input-->
-                                <lightning-input type="text" label="Visitor ID" onchange={HandleVisitorId} required="true"></lightning-input>
-                                <lightning-input type="text" label="TranScript" onchange={HandleTranscript} required="true"></lightning-input>
-                                <lightning-textarea  label="Comments" name="Comments" value={commentsValue} onchange={HandleComments}>
+                                <lightning-input type="text" label="Visitor ID"
+                                    onchange={HandleVisitorId}></lightning-input>
+                                <lightning-input type="text" label="TranScript"
+                                    onchange={HandleTranscript}></lightning-input>
+                                <lightning-textarea label="Comments" name="Comments" value={commentsValue}
+                                    onchange={HandleComments}>
                                 </lightning-textarea>
 
                                 <!--lightning-input type="text" label="Landing Page URL" onchange={HandlePageURL}></lightning-input-->
                                 <!--c-custom-lookup icon-name="standard:user" s-object-api-name="user" label="Select User"
                                     onlookupupdate={lookupRecord} placeholder="type here..."></c-custom-lookup-->
-                                    <label class="slds-form-element__label" for="textarea-id-01">Page Url</label>
+                                <label class="slds-form-element__label" for="textarea-id-01">Page Url</label>
                                 <textarea label="Page Url" value={pageurl} onchange={Handleurl}
                                     class="slds-textarea"></textarea>
                             </div>
                             <!-- Modal/Popup Box LWC footer starts here -->
                             <footer class="slds-modal__footer">
                                 <button class="slds-button slds-button_neutral" onclick={handleCancels}>Cancel</button>
-                                <button class="slds-button slds-button_brand" onclick={createNewLead} disabled={HandleLeadCreatedisable}>Create</button>
+                                <button class="slds-button slds-button_brand" onclick={createNewLead}
+                                    disabled={HandleLeadCreatedisable}>Create</button>
                             </footer>
                         </div>
                     </section>
@@ -512,15 +376,15 @@
             </lightning-card>
 
         </template>
-        
+
         <div class="slds-m-around_large">
             <div if:true={isLoaded} class="slds-is-relative">
-               <div align="center">
-                <div class="loader"></div>
-                Please wait! Loading Data...
+                <div align="center">
+                    <div class="loader"></div>
+                    Please wait! Loading Data...
+                </div>
             </div>
-           </div>
-       </div>
+        </div>
 
         <template if:true={showPastLeads}>
             <lightning-card>
@@ -564,9 +428,6 @@
                                     <div class="slds-truncate" title="Course">Course</div>
                                 </th>
                                 <th class="slds-truncate slds-cell-wrap" scope="col">
-                                    <div class="slds-truncate" title="Product Name">Product Name</div>
-                                </th>
-                                <th class="slds-truncate slds-cell-wrap" scope="col">
                                     <div class="slds-truncate" title="Status">Status</div>
                                 </th>
                                 <th class="slds-truncate slds-cell-wrap" scope="col">
@@ -605,12 +466,6 @@
                                         <div>{ld.Course__c}</div>
                                     </th>
                                     <th class="slds-truncate slds-cell-wrap" scope="col">
-                                        <template if:true={ld.Product__r}>
-                                            <div>{ld.Product__r.Name}</div>
-                                        </template>
-
-                                    </th>
-                                    <th class="slds-truncate slds-cell-wrap" scope="col">
                                         <div>{ld.Status}</div>
                                     </th>
                                     <th class="slds-truncate slds-cell-wrap" scope="col">
@@ -643,7 +498,7 @@
 
 
         <template if:true={showapplicationMOdal}>
-            
+
             <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
                 aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
                 <div class="slds-modal__container">
@@ -659,26 +514,28 @@
                             Application</h2>
                     </header>
                     <!-- Modal/Popup Box LWC body starts here -->
-                    <div class="slds-modal__content slds-p-around_xx-large" id="modal-content-id-2" style="height:28rem">
+                    <div class="slds-modal__content slds-p-around_xx-large" id="modal-content-id-2"
+                        style="height:28rem">
 
                         <lightning-combobox name="course" label="Course" value={value} placeholder="Select Course"
                             options={courssweList} onchange={courseforapphandler}>
                         </lightning-combobox>
-                        
+
                         <div class="slds-m-around_large">
                             <div if:true={isLoadedApplication} class="slds-is-relative">
-                               <div align="center">
-                                <div class="loader"></div>
-                                Please wait! Loading Data...
+                                <div align="center">
+                                    <div class="loader"></div>
+                                    Please wait! Loading Data...
+                                </div>
                             </div>
-                           </div>
-                       </div>
+                        </div>
 
                     </div>
                     <!-- Modal/Popup Box LWC footer starts here -->
                     <footer class="slds-modal__footer">
                         <button class="slds-button slds-button_neutral" onclick={handleappCancel}>Cancel</button>
-                        <button class="slds-button slds-button_brand" onclick={createapplicationForm} disabled={HandleCreateDisable}>Create</button>
+                        <button class="slds-button slds-button_brand" onclick={createapplicationForm}
+                            disabled={HandleCreateDisable}>Create</button>
                     </footer>
                 </div>
             </section>
@@ -686,43 +543,49 @@
             <!--div class="slds-backdrop slds-backdrop_open"></div -->
         </template>
 
-        
-       <!-- Show TaskModal -->
-       <template if:true={showtaskModal}>
-        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
-            <div class="slds-modal__container">
-                <div class="slds-modal__header">
-                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
-                    title="Close" onclick={handleCancel}>
-                    <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
-                        size="small"></lightning-icon>
-                    <span class="slds-assistive-text">Close</span>
-                </button>
-                    <h1>Create New Task</h1>
-                  </div>
-                  <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-4">
-                    <lightning-input type="text" name="subject" label="Subject" value={subjectvalue} onchange={subjectHandler} required="true"></lightning-input>
-                    <lightning-combobox name="Priority" label="Priority" value={priorityValue}
-                      placeholder="Select Priority" options={priorityList} onchange={priorityHandler} required="true"></lightning-combobox> 
 
-                      <lightning-combobox name="Status" label="Status" value={statusValue}
-                      placeholder="Select Status" options={StatusList} onchange={statusHandler} required="true"></lightning-combobox>   
-                    
-                      <lightning-input type="date" name="Duedate" label="Due date" value={DuedateValue} onchange={duedateHandler} ></lightning-input>    
-                      <lightning-input type="datetime" name="input2" label="Followup Date/time " value={followupValue} onchange={followupHandler}></lightning-input>
-                      <lightning-textarea  label="Comments" name="Comments" value={comValue} onchange={commentHandler}>
-                      </lightning-textarea>
-                      
+        <!-- Show TaskModal -->
+        <template if:true={showtaskModal}>
+            <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+                class="slds-modal slds-fade-in-open slds-modal_small">
+                <div class="slds-modal__container">
+                    <div class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                            title="Close" onclick={handleCancel}>
+                            <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                                size="small"></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h1>Create New Task</h1>
+                    </div>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-4">
+                        <lightning-input type="text" name="subject" label="Subject" value={subjectvalue}
+                            onchange={subjectHandler} required="true"></lightning-input>
+                        <lightning-combobox name="Priority" label="Priority" value={priorityValue}
+                            placeholder="Select Priority" options={priorityList} onchange={priorityHandler}
+                            required="true"></lightning-combobox>
 
-                  </div>
-                  <div class="slds-modal__footer">
-                    <button class="slds-button slds-button_neutral" aria-label="Cancel and close" onclick={hideshowTaskModal}>Cancel</button>
-                    <button class="slds-button slds-button_brand" onclick={createTaskRec}>Save</button>
-                  </div>
+                        <lightning-combobox name="Status" label="Status" value={statusValue} placeholder="Select Status"
+                            options={StatusList} onchange={statusHandler} required="true"></lightning-combobox>
+
+                        <lightning-input type="date" name="Duedate" label="Due date" value={DuedateValue}
+                            onchange={duedateHandler}></lightning-input>
+                        <lightning-input type="datetime" name="input2" label="Followup Date/time " value={followupValue}
+                            onchange={followupHandler}></lightning-input>
+                        <lightning-textarea label="Comments" name="Comments" value={comValue} onchange={commentHandler}>
+                        </lightning-textarea>
+
+
+                    </div>
+                    <div class="slds-modal__footer">
+                        <button class="slds-button slds-button_neutral" aria-label="Cancel and close"
+                            onclick={hideshowTaskModal}>Cancel</button>
+                        <button class="slds-button slds-button_brand" onclick={createTaskRec}>Save</button>
+                    </div>
 
                 </div>
-                </section>
-                <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
-    </template>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+        </template>
     </div>
 </template>
