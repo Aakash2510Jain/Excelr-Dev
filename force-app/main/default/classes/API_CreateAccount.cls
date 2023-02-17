@@ -104,6 +104,7 @@ global class API_CreateAccount{
         try{
             system.debug('--- leadRec ' + leadRec);
             leadRec.Customers__c = customerId;
+            leadRec.CID__c = [Select CID__c From Customers__c where id =:customerId ].CID__c;
             insert leadRec;
             return leadRec;
         } catch (Exception e){

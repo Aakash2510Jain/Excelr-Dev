@@ -343,6 +343,11 @@ public without sharing class Utility{
         leadRec.Type_of_Course__c = newAccount.Type_of_Course__c;
         leadRec.Lead_Gen_Path__c = newAccount.Lead_Gen_Path__c != null ? newAccount.Lead_Gen_Path__c : 'NA';
         leadRec.GCLID__c = newAccount.GCLID__c;
+        
+        leadRec.Country__c = newAccount.Country__c;
+        leadRec.State__c = newAccount.State__c;
+        leadRec.City__c = newAccount.City__c;
+        
         return leadRec;
     }
 

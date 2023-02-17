@@ -64,7 +64,9 @@
                                     <template for:each={LeadData} for:item="led">
                                         <tr key={led.Id}>
                                             <td>
-                                                {led.LID__c}
+                                                <a target="_blank" href={led.Lead_URL__c} tabindex="-1">
+                                                    {led.LID__c}
+                                                </a>
                                             </td>
                                             <td>
                                                 {led.Status}
@@ -116,7 +118,9 @@
                                     <template for:each={OpportunityData} for:item="led">
                                         <tr key={led.Id}>
                                             <td>
-                                                {led.OID__c}
+                                                <a target="_blank" href={led.Opportunity_URL__c} tabindex="-1">
+                                                    {led.OID__c}
+                                                </a>
                                             </td>
                                             <td>
                                                 {led.StageName}
