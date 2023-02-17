@@ -24,8 +24,6 @@ import FetchStateCounty from '@salesforce/apex/GenericLeadLWCcontroller.FetchSta
 import Fetchcities from '@salesforce/apex/GenericLeadLWCcontroller.Fetchcities';
 import fetchCountryAndCountryCode from '@salesforce/apex/GenericLeadLWCcontroller.fetchCountryAndCountryCode';
 
-import FetchCountriesStateWithISDcode from '@salesforce/apex/voiceFormLWCcontroller.getCountryStateAndISDCode';
-
 import COUNTRY_FIELD from '@salesforce/schema/Lead.Country';
 
 import QueryPastLeads from '@salesforce/apex/GenericLeadLWCcontroller.QueryPastLeads';
@@ -217,66 +215,6 @@ export default class WaklInLead extends LightningElement {
         }
 
     }
-
-
-    
-    // =========================================================Fetch Countries States with ISDCODe And Handle =================================================
-    @track CountriesPicklistValue=[];
-    @track countriesSateISDCodelist = [];
-    @wire(FetchCountriesStateWithISDcode)
-    wiredCounstriesStatesWithISD({data,error}){
-        debugger;
-        if(data){
-            this.countriesSateISDCodelist = data;
-            console.log('CityValuedata=',data);
-
-              let arr=[];
-              for(let i=0;i<data.length;i++){
-                 arr.push({label:data[i].MasterLabel,value:data[i].MasterLabel});
-              }
-              this.CountriesPicklistValue=arr;
-              console.log('Picklistvalue=',this.CountriesPicklistValue);
-           }
-           else if(error){
-               console.log('error=',error);
-           }
-
-    }
-
-    @track SelectedCountryStateList = [];
-    @track SelectedCountryISCode;
-    HandleChangeCountry(event){
-        debugger;
-        let Selectedcountry=event.detail.value;
-        this.CountryValue = Selectedcountry;
-        var SelectedcountryStateISDCode = this.countriesSateISDCodelist.find(item => item.MasterLabel == Selectedcountry);
-        this.SelectedCountryISCode = SelectedcountryStateISDCode.Country_Code__c;
-        //this.countrycodevalue = countrycode.CountryCode__c;
-        let tempStateArr = []; 
-        var tempStateString = SelectedcountryStateISDCode.States__c;
-        var tempStateArrafterCommaSeperated = tempStateString.split(',');
-        for(let i=0;i<tempStateArrafterCommaSeperated.length;i++){
-            tempStateArr.push({label:tempStateArrafterCommaSeperated[i],value:tempStateArrafterCommaSeperated[i]});
-         }
-         this.SelectedCountryStateList = tempStateArr;
-         this.StateDisable = false;
-
-    }
-
-    HandleChangeState(event){
-        debugger;
-        let SelectedState=event.detail.value;
-        this.StateValue = SelectedState;
-        //this.StateDisable = false;
-
-    }
-
-    HandleCityValue(event){
-        this.cityValue = event.detail.value;
-    }
-
-
-    // ======================================================= Fetch Countries States with ISDCODe And Handle End Here ==================================================== 
 
 
     @track StateCountryValue = [];
@@ -579,11 +517,7 @@ export default class WaklInLead extends LightningElement {
     }
 
     //close modal from innner button
-    lookupRecord(event) {
-        debugger;
-        this.selectedrecordDetails = event.detail.selectedRecord;
-        //alert('Selected Record Value on Parent Component is ' + JSON.stringify(event.detail.selectedRecord));
-    }
+
     handleCancel() {
         debugger;
         this.isShowModal = false;
@@ -595,23 +529,6 @@ export default class WaklInLead extends LightningElement {
     handleCancels() {
         debugger;
         this.isShowModal = false;
-        //this.HandleLeadCreatedisable = false;
-                        //this.namValue = '';
-                        this.lNameValue = '';
-                        this.commentsValue = '';
-                        this.emailValue = '';
-                        this.phoneValue = '';
-                        this.CourceLead = '';
-                        this.alterMobileValue = '';
-                        this.alterEmailValue  = '';
-                        this.CountryValue = '';
-                        this.cityValue = '';
-                        this.Leadvalue = '';
-                        this.pageurl = '';
-                        this.SelectedCountryStateList = [];
-                        if (this.SelectedCountryStateList.length == 0) {
-                            this.StateDisable = true;
-                        }
 
     }
     FnameChange(Event) {
@@ -672,15 +589,6 @@ export default class WaklInLead extends LightningElement {
         debugger;
         let phone = Event.target.value;
         this.phoneValue = phone;
-    }
-
-    @track alterEmailValue;
-    AlterEmailChange(Event){
-        this.alterEmailValue = Event.target.value;
-    }
-    @track alterMobileValue
-    AlterPhoneChange(Event){
-        this.alterMobileValue = Event.target.value;
     }
 
     StatusChange(Event) {
@@ -957,7 +865,7 @@ export default class WaklInLead extends LightningElement {
             debugger;
             var returnvalue = this.handleIncorrectEmail(this.emailValue)
             if (returnvalue == true && this.handleCorrectPhone(this.phoneValue)) { //firstname: this.namValue, 
-                createLead({ Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, Course: this.CourceLead, agentid: this.agentrecid, city: this.cityValue, source: this.sourceValue, medium: this.MediumValue, VisitorId: this.VisitorIdValue, Transcript: this.TranscriptValue, leadGenPath: this.Leadvalue, state: this.StateValue, country: this.CountryValue, comments: this.commentsValue, pageurllanding:this.pageurl, countrycode : this.SelectedCountryISCode, AlternateMobile : this.alterMobileValue, AlternateEmail : this.alterEmailValue })
+                createLead({ Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, Course: this.CourceLead, agentid: this.agentrecid, city: this.cityValue, source: this.sourceValue, medium: this.MediumValue, VisitorId: this.VisitorIdValue, Transcript: this.TranscriptValue, leadGenPath: this.Leadvalue, state: this.StateValue, country: this.CountryValue, comments: this.commentsValue, pageurllanding:this.pageurl })
                     .then(data => {
 
                         if (data == 'SUCCESS') {
@@ -972,8 +880,6 @@ export default class WaklInLead extends LightningElement {
                         this.emailValue = '';
                         this.phoneValue = '';
                         this.CourceLead = '';
-                        this.alterMobileValue = '';
-                        this.alterEmailValue  = '';
                         this.CountryValue = '';
                         this.cityValue = '';
                         this.Leadvalue = '';
@@ -1020,7 +926,11 @@ export default class WaklInLead extends LightningElement {
         });
     }
 
-    
+    lookupRecord(event) {
+        debugger;
+        this.selectedrecordDetails = event.detail.selectedRecord;
+        //alert('Selected Record Value on Parent Component is ' + JSON.stringify(event.detail.selectedRecord));
+    }
     async handleAlert(message) {
         await LightningAlert.open({
             message: message,

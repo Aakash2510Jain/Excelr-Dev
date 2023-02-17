@@ -18,12 +18,7 @@
     <aura:attribute name="spinner" type="Boolean" default="false"/>
     <aura:attribute name="objectName" type="String"/>
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
-    
-    <aura:attribute name="multiSelectPickValues" type="List" />
-    <aura:attribute name="selectedMultiSelectPickValues" type="List" default="[]"/>
-
-    <aura:handler name="cmpEvent" event="c:MultiselectComboboxEvent" action="{!c.handleComponentEvent}"/> 
-
+	
     <ltng:require scripts="/resource/sweetalert2/sweetalert2.js"
                   styles="/resource/sweetalert2/sweetalert2.min.css" />
     
@@ -80,64 +75,50 @@
                             </div>
                         </th>
                         <td data-label="Related Object">
-                            
+                        
                             <b><ui:outputText value="{!exc.RelatedObject}"/></b>
                         </td>
                         <td data-label="Field Name">
-                            
+                          
                             <a name="{!index}">
-                                <lightning:select aura:id="fieldVal" value="{!exc.fieldValue}" name="fieldPicklist" required="true" messageWhenValueMissing="Select cannot be empty" onchange="{!c.selectFieldName}">
-                                    <option value="">--None--</option>
-                                    <aura:iteration items="{!exc.FieldName}" var="field" indexVar="key">
-                                        <option text="{!field.value}" value="{!field.key}"/>
-                                    </aura:iteration>
-                                </lightning:select>
+                            <lightning:select aura:id="fieldVal" value="{!exc.fieldValue}" name="fieldPicklist" required="true" messageWhenValueMissing="Select cannot be empty" onchange="{!c.selectFieldName}">
+                                <option value="">--None--</option>
+                                <aura:iteration items="{!exc.FieldName}" var="field" indexVar="key">
+                                    <option text="{!field.value}" value="{!field.key}"/>
+                                </aura:iteration>
+                            </lightning:select>
                             </a>
                         </td>
                         <td data-label="Field Type">
-                            
-                            <b><ui:outputText value="{!exc.fieldDataType}"/></b>
-                            
+                           
+                                <b><ui:outputText value="{!exc.fieldDataType}"/></b>
+
                         </td>
                         <td data-label="Matching Type">
                             <a name="{!index}">
-                                <lightning:select name="matchingTypePicklist" value="{!exc.MatchingType}" required="true" messageWhenValueMissing="Select cannot be empty">
-                                    <option value="">--None--</option>
-                                    <aura:iteration items="{!exc.matchTypeList}" var="matchValue">
-                                        <option text="{!matchValue}" value="{!matchValue}"/>
-                                    </aura:iteration> 
-                                </lightning:select>
+                            <lightning:select name="matchingTypePicklist" value="{!exc.MatchingType}" required="true" messageWhenValueMissing="Select cannot be empty">
+                                <option value="">--None--</option>
+                                <aura:iteration items="{!exc.matchTypeList}" var="matchValue">
+                                    <option text="{!matchValue}" value="{!matchValue}"/>
+                                </aura:iteration> 
+                            </lightning:select>
                             </a>
-                            
+                         
                         </td>
                         <td data-label="Matching Value">
-                            
-                            <!--a name="{!index}" -->
-                                <aura:if isTrue="{!or(exc.fieldDataType=='Picklist',exc.fieldDataType=='Multi-Picklist')}"> 
-                                    <!--lightning:dualListbox data-id="{!index}" aura:id="valueVal" name="matchingTypePicklist" required="true" messageWhenValueMissing="Select cannot be empty"  value="{!v.selectedMultiSelectPickValues}" options="{!v.multiSelectPickValues}" data-record="{!index}" onchange="{!c.handleChangeforMultiSelectPicklist}"  / -->
-                                    <c:MultiSelectCombobox  rowindex="{!index}" options="{!exc.multiselectComboboxList}" multiSelect="true"/>
-                                    <aura:set attribute="else">
-                                        <lightning:input aura:id="valueVal" type="text"  value="{!exc.MatchingValue}" placeholder="Enter value"/>
-                                    </aura:set>
-                                </aura:if>
-                                
-                                <!--div>
-                                <aura:if  isTrue="{!exc.fieldDataType=='Picklist'}">
-                                    <lightning:select aura:id="valueVal" value="{!exc.MatchingValue}" name="matchingTypePicklist" required="true" messageWhenValueMissing="Select cannot be empty">
-                                        <option value="">None</option>
-                                        <aura:iteration items="{!exc.mapOfPicklistFields}" var="field" indexVar="key">
-                                            <option text="{!field.value}" value="{!field.key}"/>
-                                        </aura:iteration>
-                                    </lightning:select>
-                                </aura:if>
-                                <aura:if  isTrue="{!exc.fieldDataType=='Multi-Picklist'}">
-                                    <lightning:dualListbox aura:id="valueVal" name="matchingTypePicklist" required="true" messageWhenValueMissing="Select cannot be empty" options="{!v.multiSelectPickValues}"  onchange="{! c.handleChangeforMultiSelectPicklist }"/>
-                                </aura:if>
-                                <aura:if  isTrue="{!and(exc.fieldDataType != 'Multi-Picklist',exc.fieldDataType != 'Picklist')}">
+                            <a name="{!index}">
+                            <aura:if isTrue="{!or(exc.fieldDataType=='Picklist',exc.fieldDataType=='Multi-Picklist')}">
+                                <lightning:select aura:id="valueVal" value="{!exc.MatchingValue}" name="matchingTypePicklist" required="true" messageWhenValueMissing="Select cannot be empty">
+                                    <option value="">--None--</option>
+                                    <aura:iteration items="{!exc.mapOfPicklistFields}" var="field" indexVar="key">
+                                        <option text="{!field.value}" value="{!field.key}"/>
+                                    </aura:iteration>
+                                </lightning:select>
+                                <aura:set attribute="else">
                                     <lightning:input aura:id="valueVal" type="text"  value="{!exc.MatchingValue}" placeholder="Enter value"/>
-                                </aura:if>
-                              </div-->
-                            <!-- /a -->
+                                </aura:set>
+                            </aura:if>
+                            </a>
                         </td>
                         <td data-label="Sequence">
                             <lightning:input aura:id="valueVal" type="text"  value="{!exc.Sequence}" placeholder="Enter value"/>

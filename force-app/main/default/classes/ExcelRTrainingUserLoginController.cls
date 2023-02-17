@@ -1,6 +1,6 @@
 public without sharing class ExcelRTrainingUserLoginController{
-    public String userName{ get; set; }
 
+    public String userName{ get; set; }
     public String password{ get; set; }
 
     @RemoteAction
@@ -65,7 +65,7 @@ public without sharing class ExcelRTrainingUserLoginController{
             System.debug('ExcelRTrainUser[0].Departments__c ===> ' + ExcelRTrainUser[0].Departments__c);
 
             List<String> DepartmentArr = ExcelRTrainUser[0].Departments__c.split(';');
-            System.debug('DepartmentArr =====>   ' + DepartmentArr);
+            System.debug('DepartmentArr =====>   ' + DepartmentArr );
 
             ExcelR_Training_User__c LGEMember = new ExcelR_Training_User__c();
             String LoginHashcode = Apexpages.currentPage().getparameters().get('hascode');
@@ -125,144 +125,139 @@ public without sharing class ExcelRTrainingUserLoginController{
     public PageReference checkExistingHashKey(){
         try{
 
-            //String LoginPageBaseurl = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/';
-            String LoginPageBaseurl = System.Label.LoginPageBaseurl;
-            String ExistingHashcode = '';
-            string FinalPageToRedirect = '';
-            Boolean redirecttoLoginPage;
-            List<ExcelR_Training_User__c> ExcelLGEUser = new List<ExcelR_Training_User__c>();
+        //String LoginPageBaseurl = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/';
+        String LoginPageBaseurl = System.Label.LoginPageBaseurl;
+        String ExistingHashcode = '';
+        string FinalPageToRedirect = '';
+        Boolean redirecttoLoginPage;
+        List<ExcelR_Training_User__c> ExcelLGEUser = new List<ExcelR_Training_User__c>();
 
-            String LoginHashcode = Apexpages.currentPage().getparameters().get('hascode');
-            System.debug('LoginHashcode ======> ' + LoginHashcode);
+        String LoginHashcode = Apexpages.currentPage().getparameters().get('hascode');
+        System.debug('LoginHashcode ======> ' + LoginHashcode);
 
-            string headerdata = ApexPages.currentPage().getHeaders().get('Host');
-            System.debug('headerdata ====> ' + headerdata);
+        string headerdata = ApexPages.currentPage().getHeaders().get('Host');
+        System.debug('headerdata ====> ' + headerdata);
 
-            string urlvalue = Apexpages.currentPage().getUrl();
-            System.debug('urlvalue =====> ' + urlvalue);
-            PageReference MyNewPage;
-
-
-            Cookie userHashCodeCookie = ApexPages.currentPage().getCookies().get('userHashCodeCookie');
-            System.debug('userHashCodeCookie ==> ' + userHashCodeCookie);
-            if (userHashCodeCookie != null && LoginHashcode != null){
-                ExistingHashcode = String.valueOf(userHashCodeCookie.getValue());
-                system.debug('userHashCodeCookie' + userHashCodeCookie);
-                system.debug('ExistingHashcode' + ExistingHashcode);
-                system.debug('LoginHashcode' + LoginHashcode);
-                //abasoftUser = [Select Id , Agent_Unique_Id__c, CampaignID__c, HashCode__c From AbbaSoft_User__c Where HashCode__c =: ExistingHashcode  AND Agent_Unique_Id__c =: AgentUniqueCode];
-                List<ExcelR_Training_User__c> ExcelRTrainUser = [SELECT Departments__c, Email__c, First_Name__c, HashCode__c, Id, Last_Name__c, Name, Password__c, Username__c
-                                                                 FROM ExcelR_Training_User__c
-                                                                 WHERE HashCode__c = :ExistingHashcode
-                                                                 LIMIT 1];
+        string urlvalue = Apexpages.currentPage().getUrl();
+        System.debug('urlvalue =====> ' + urlvalue);
+        PageReference MyNewPage;
 
 
-                List<String> DepartmentArr = new List<String>();
+        Cookie userHashCodeCookie = ApexPages.currentPage().getCookies().get('userHashCodeCookie');
+        System.debug('userHashCodeCookie ==> ' + userHashCodeCookie);
+        if (userHashCodeCookie != null && LoginHashcode != null){
+            ExistingHashcode = String.valueOf(userHashCodeCookie.getValue());
+            system.debug('userHashCodeCookie' + userHashCodeCookie);
+            system.debug('ExistingHashcode' + ExistingHashcode);
+            system.debug('LoginHashcode' + LoginHashcode);
+            //abasoftUser = [Select Id , Agent_Unique_Id__c, CampaignID__c, HashCode__c From AbbaSoft_User__c Where HashCode__c =: ExistingHashcode  AND Agent_Unique_Id__c =: AgentUniqueCode];
+            List<ExcelR_Training_User__c> ExcelRTrainUser = [SELECT Departments__c, Email__c, First_Name__c, HashCode__c, Id, Last_Name__c, Name, Password__c, Username__c
+                                                             FROM ExcelR_Training_User__c
+                                                             WHERE HashCode__c = :ExistingHashcode
+                                                             LIMIT 1];
 
-                if (!ExcelRTrainUser.isEmpty()){
-                    DepartmentArr = ExcelRTrainUser[0].Departments__c.split(';');
-                }
-                system.debug('Size is ' + ExcelRTrainUser);
-                if (ExcelRTrainUser.size() > 0){
+
+            List<String> DepartmentArr = ExcelRTrainUser[0].Departments__c.split(';');
+            system.debug('Size is ' + ExcelRTrainUser);
+            if (ExcelRTrainUser.size() > 0){
 
 
-                    if (ExcelRTrainUser[0].id != null){
+                if (ExcelRTrainUser[0].id != null){
 
-                        if (DepartmentArr[0] == 'Walk-In'){
-                            FinalPageToRedirect = LoginPageBaseurl + 'walkInLeadPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
-                        }
-                        if (DepartmentArr[0] == 'Voice'){
-                            FinalPageToRedirect = LoginPageBaseurl + 'voiceFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
-                        }
-                        if (DepartmentArr[0] == 'Generic'){
-                            FinalPageToRedirect = LoginPageBaseurl + 'genericLeadAdditionPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
-                        }
-                        if (DepartmentArr[0] == 'Chat'){
-                            FinalPageToRedirect = LoginPageBaseurl + 'chatFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
-                        }
-                        MyNewPage = new PageReference(FinalPageToRedirect);
-                        MyNewPage.setRedirect(true);
+                    if (DepartmentArr[0] == 'Walk-In'){
+                        FinalPageToRedirect = LoginPageBaseurl + 'walkInLeadPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
                     }
-                    //FinalPageToRedirect = CustomerDetailPageBaseUrl + '?id=' + ExistingHashcode + '&Phone=' + PhoneNumber + '&AgentId=' + AgentUniqueCode;
-                    //redirecttoLoginPage = false;
-                } else{
-                    LoginHashcode = Utility.generateRandomString();
-                    FinalPageToRedirect = LoginPageBaseurl + '?&hascode=' + LoginHashcode;
-                    //FinalPageToRedirect = LoginPageBaseurl + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
-                }
-                System.debug('FinalPageToRedirect  ====> ' + FinalPageToRedirect);
-                PageReference FormPage = new PageReference(FinalPageToRedirect);
-                FormPage.setRedirect(true);
-                return FormPage;
-            } else if ((LoginHashcode == '' || LoginHashcode == null) && userHashCodeCookie == null){
-                //if (LoginHashcode == '' || LoginHashcode == null){
-                LoginHashcode = Utility.generateRandomString();
-                //}
-                System.debug('LoginHashcode =======> ' + LoginHashcode);
-
-                FinalPageToRedirect = LoginPageBaseurl + '?hascode=' + LoginHashcode;
-                System.debug('FinalPageToRedirect =====> ' + FinalPageToRedirect);
-
-                PageReference ExcelrUserLoginPage = new PageReference(FinalPageToRedirect);
-                ExcelrUserLoginPage.setRedirect(true);
-                return ExcelrUserLoginPage;
-            } else if (LoginHashcode == null && userHashCodeCookie != null){
-
-                List<ExcelR_Training_User__c> ExcelRTrainUser = [SELECT Departments__c, Email__c, First_Name__c, HashCode__c, Id, Last_Name__c, Name, Password__c, Username__c
-                                                                 FROM ExcelR_Training_User__c
-                                                                 WHERE HashCode__c = :String.valueOf(userHashCodeCookie.getValue())];
-
-                //system.debug('ExcelRTrainUser----' + ExcelRTrainUser);
-                //System.debug('ExcelRTrainUser[0].Departments__c ===> ' + ExcelRTrainUser[0].Departments__c);
-                //system.debug('Size is ' + ExcelRTrainUser.size());
-
-
-                if (ExcelRTrainUser.size() > 0){
-
-                    String departments = String.valueof(ExcelRTrainUser[0].Departments__c);
-
-
-                    List<String> DepartmentArr = ExcelRTrainUser[0].Departments__c.split(';');
-                    System.debug('DepartmentArr =====>   ' + DepartmentArr);
-
-
-                    if (ExcelRTrainUser[0].id != null){
-
-                        if (DepartmentArr[0] == 'Walk-In'){
-                            FinalPageToRedirect = LoginPageBaseurl + 'walkInLeadPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + departments + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
-                        }
-                        if (DepartmentArr[0] == 'Voice'){
-                            FinalPageToRedirect = LoginPageBaseurl + 'voiceFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + departments + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
-                        }
-                        if (DepartmentArr[0] == 'Generic'){
-                            FinalPageToRedirect = LoginPageBaseurl + 'genericLeadAdditionPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + departments + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
-                        }
-                        if (DepartmentArr[0] == 'Chat'){
-                            FinalPageToRedirect = LoginPageBaseurl + 'chatFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + departments + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
-                        }
-                        MyNewPage = new PageReference(FinalPageToRedirect);
-                        MyNewPage.setRedirect(true);
+                    if (DepartmentArr[0] == 'Voice'){
+                        FinalPageToRedirect = LoginPageBaseurl + 'voiceFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
                     }
-                    //FinalPageToRedirect = CustomerDetailPageBaseUrl + '?id=' + ExistingHashcode + '&Phone=' + PhoneNumber + '&AgentId=' + AgentUniqueCode;
-                    //redirecttoLoginPage = false;
-                } else{
-                    LoginHashcode = Utility.generateRandomString();
-                    FinalPageToRedirect = LoginPageBaseurl + '?&hascode=' + LoginHashcode;
-                    //FinalPageToRedirect = CustomerDetailPageBaseUrl + '?id=' + ExistingHashcode + '&Phone=' + PhoneNumber + '&AgentId=' + AgentUniqueCode;
+                    if (DepartmentArr[0] == 'Generic'){
+                        FinalPageToRedirect = LoginPageBaseurl + 'genericLeadAdditionPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
+                    }
+                    if (DepartmentArr[0] == 'Chat'){
+                        FinalPageToRedirect = LoginPageBaseurl + 'chatFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
+                    }
+                    MyNewPage = new PageReference(FinalPageToRedirect);
+                    MyNewPage.setRedirect(true);
                 }
-                System.debug('FinalPageToRedirect  ====> ' + FinalPageToRedirect);
-                PageReference FormPage = new PageReference(FinalPageToRedirect);
-                FormPage.setRedirect(true);
-                return FormPage;
+                //FinalPageToRedirect = CustomerDetailPageBaseUrl + '?id=' + ExistingHashcode + '&Phone=' + PhoneNumber + '&AgentId=' + AgentUniqueCode;
+                //redirecttoLoginPage = false;
+            } else{
+                FinalPageToRedirect = LoginPageBaseurl + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
+                //FinalPageToRedirect = CustomerDetailPageBaseUrl + '?id=' + ExistingHashcode + '&Phone=' + PhoneNumber + '&AgentId=' + AgentUniqueCode;
             }
+            System.debug('FinalPageToRedirect  ====> ' + FinalPageToRedirect);
+            PageReference FormPage = new PageReference(FinalPageToRedirect);
+            FormPage.setRedirect(true);
+            return FormPage;
+        } else if ((LoginHashcode == '' || LoginHashcode == null) && userHashCodeCookie == null){
+            //if (LoginHashcode == '' || LoginHashcode == null){
+            LoginHashcode = Utility.generateRandomString();
+            //}
+            System.debug('LoginHashcode =======> ' + LoginHashcode);
 
-            // https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage
-            return null;
-        } catch (Exception e){
-            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-            HandleBusinessException.captureError('ExcelRTrainingUserLoginController', 'checkExistingHashKey', e, null);
-            return null;
+            FinalPageToRedirect = LoginPageBaseurl + '?hascode=' + LoginHashcode;
+            System.debug('FinalPageToRedirect =====> ' + FinalPageToRedirect);
+
+            PageReference ExcelrUserLoginPage = new PageReference(FinalPageToRedirect);
+            ExcelrUserLoginPage.setRedirect(true);
+            return ExcelrUserLoginPage;
+        } else if (LoginHashcode == null && userHashCodeCookie != null){
+
+            List<ExcelR_Training_User__c> ExcelRTrainUser = [SELECT Departments__c, Email__c, First_Name__c, HashCode__c, Id, Last_Name__c, Name, Password__c, Username__c
+                                                             FROM ExcelR_Training_User__c
+                                                             WHERE HashCode__c = :String.valueOf(userHashCodeCookie.getValue()) ];
+            
+            //system.debug('ExcelRTrainUser----' + ExcelRTrainUser);
+            //System.debug('ExcelRTrainUser[0].Departments__c ===> ' + ExcelRTrainUser[0].Departments__c);
+            //system.debug('Size is ' + ExcelRTrainUser.size());
+            
+            
+            if (ExcelRTrainUser.size() > 0){
+
+                String departments = String.valueof(ExcelRTrainUser[0].Departments__c);
+
+                                                 
+                 List<String> DepartmentArr = ExcelRTrainUser[0].Departments__c.split(';');
+                 System.debug('DepartmentArr =====>   ' + DepartmentArr );
+
+
+                if (ExcelRTrainUser[0].id != null){
+
+                    if (DepartmentArr[0] == 'Walk-In'){
+                        FinalPageToRedirect = LoginPageBaseurl + 'walkInLeadPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + departments + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
+                    }
+                    if (DepartmentArr[0] == 'Voice'){
+                        FinalPageToRedirect = LoginPageBaseurl + 'voiceFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + departments + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
+                    }
+                    if (DepartmentArr[0] == 'Generic'){
+                        FinalPageToRedirect = LoginPageBaseurl + 'genericLeadAdditionPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + departments + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
+                    }
+                    if (DepartmentArr[0] == 'Chat'){
+                        FinalPageToRedirect = LoginPageBaseurl + 'chatFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + departments + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
+                    }
+                    MyNewPage = new PageReference(FinalPageToRedirect);
+                    MyNewPage.setRedirect(true);
+                }
+                //FinalPageToRedirect = CustomerDetailPageBaseUrl + '?id=' + ExistingHashcode + '&Phone=' + PhoneNumber + '&AgentId=' + AgentUniqueCode;
+                //redirecttoLoginPage = false;
+            } else{
+                LoginHashcode = Utility.generateRandomString();
+                FinalPageToRedirect = LoginPageBaseurl + '?&hascode=' + LoginHashcode;
+                //FinalPageToRedirect = CustomerDetailPageBaseUrl + '?id=' + ExistingHashcode + '&Phone=' + PhoneNumber + '&AgentId=' + AgentUniqueCode;
+            }
+            System.debug('FinalPageToRedirect  ====> ' + FinalPageToRedirect);
+            PageReference FormPage = new PageReference(FinalPageToRedirect);
+            FormPage.setRedirect(true);
+            return FormPage;
         }
+
+        // https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage
+        return null;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('ExcelRTrainingUserLoginController', 'checkExistingHashKey', e , null);
+       return null;
     }
+}
 
 }

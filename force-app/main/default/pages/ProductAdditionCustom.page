@@ -1,15 +1,15 @@
 <apex:page standardController="Opportunity"  sidebar="false" showHeader="false">
-      <apex:includeLightning />
+    <apex:includeLightning />
     <apex:includeScript value="/lightning/lightning.out.js" />
     <div id="lightningapp" />
     <script>
     debugger;
     var opportunityId = "{!$CurrentPage.parameters.id}";
-    
     $Lightning.use("c:productAdditionCustomCmpApp", function () {
         $Lightning.createComponent("c:productUpdateOnOppLWC",
                                    {
                                        'recordId' : opportunityId,
+                                       'navigateToList' : navigateToList
                                    },
                                    "lightningapp",
                                    function (cmp) {
@@ -17,5 +17,14 @@
                                    }
                                   );
     });
+    
+    function navigateToList(url) {
+        debugger;
+        if(typeof sforce != 'undefined' && sforce && sforce.one){
+            sforce.one.navigateToURL(url);
+        } else {
+            window.location.href = url;
+        }
+    }
     </script>
 </apex:page>

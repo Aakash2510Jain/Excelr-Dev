@@ -28,7 +28,7 @@ global without sharing class RazorpayWebhookHandler{
                     update ld;
                     system.debug('Lead After Updation :: ' + ld);
                     
-                    //Utility.convertLeadAfterPayment(recId, m4);
+                    Utility.convertLeadAfterPayment(recId, m4);
                     //Attach applications to account
                     //Attach invoice to opportunity
                     //attah invoice pdf under invoice

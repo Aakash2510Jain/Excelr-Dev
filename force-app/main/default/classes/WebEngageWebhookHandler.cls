@@ -85,7 +85,7 @@ global without sharing class WebEngageWebhookHandler{
             leadRec.Enter_UTM_Link__c = (string)activityObject.get('pageUrl');
             leadRec.City__c = (string)activityObject.get('city');
             leadRec.Country__c = (string)activityObject.get('country');
-           // leadRec.Platform__c = (string)activityObject.get('platform');
+            leadRec.Platform__c = (string)activityObject.get('platform');
             //leadRec.Activity_On__c	= (DateTime)JSON.deserialize('"' + String.valueOf(activityObject.get('activityOn')) + '"', DateTime.class);
             
             leadRec.Description =description ;

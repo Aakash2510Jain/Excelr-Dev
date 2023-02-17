@@ -2,40 +2,40 @@ public without sharing class ChatFormLWCcontroller{
     @auraenabled(cacheable = true)
     public static list<lead> getLead(String EmailOrPhone){
         try{
-            list<lead> leadList = new list<lead>();
-            String Phonestring = '%' + EmailOrPhone;
+        list<lead> leadList = new list<lead>();
+        String Phonestring = '%' + EmailOrPhone;
 
-            if (EmailOrPhone != null){
-                leadList = [Select id, firstName, LastName, Owner_Email__c, OwnerId, Owner.LastName, Owner.FirstName, Owner.Name, Email, Phone
-                            from Lead
-                            where Email = :EmailOrPhone OR Phone LIKE:Phonestring OR Alternate_Email__c = :EmailOrPhone Or Alternate_Phone__c = :EmailOrPhone
-                            Order By CreatedDate Asc
-                            LIMIT 1];
-            }
-            System.debug('leadList ======> ' + leadList);
-            // if ( EmailOrPhone.contains('@') ){
-            //     leadList = [Select id, firstName, LastName, Owner_Email__c, Email, Phone
-            //                 from Lead
-            //                 where Email = :EmailOrPhone];
-            // }
-            // else{
-            //     leadList = [Select id, firstName, LastName, Owner_Email__c, Email, Phone
-            //                 from Lead
-            //                 where Phone = :EmailOrPhone];
-            // }
-            // System.debug('leadList ====> ' + leadList);
-            // system.debug('leadList::' + leadList);
-            return leadList;
-        } catch (Exception e){
-            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-            HandleBusinessException.captureError('ChatFormLWCcontroller', 'getLead', e, null);
-            return null;
+        if (EmailOrPhone != null){
+            leadList = [Select id, firstName, LastName, Owner_Email__c, OwnerId, Owner.LastName, Owner.FirstName, Owner.Name, Email, Phone
+                        from Lead
+                        where Email = :EmailOrPhone OR Phone LIKE:Phonestring
+                        Order By CreatedDate Asc
+                        LIMIT 1];
         }
+        System.debug('leadList ======> ' + leadList);
+        // if ( EmailOrPhone.contains('@') ){
+        //     leadList = [Select id, firstName, LastName, Owner_Email__c, Email, Phone
+        //                 from Lead
+        //                 where Email = :EmailOrPhone];
+        // }
+        // else{
+        //     leadList = [Select id, firstName, LastName, Owner_Email__c, Email, Phone
+        //                 from Lead
+        //                 where Phone = :EmailOrPhone];
+        // }
+        // System.debug('leadList ====> ' + leadList);
+        // system.debug('leadList::' + leadList);
+        return leadList;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('ChatFormLWCcontroller', 'getLead', e , null);
+       return null;
     }
+}
 
     @auraenabled
-    public static String createLead(string Lastname, string email, string phone, string Course, string agentid, string city, string state, string country, string source, string medium, string VisitorId, string Transcript, string leadGenPath, string LandingPageURL, string comments, string countrycode, string AlternateMobile, String AlternateEmail){
-        //String firstname,
+    public static String createLead(string Lastname, string email, string phone, string Course, string agentid, string city, string state, string country, string source, string medium, string VisitorId, string Transcript, string LandingPageURL, string comments){
+         //String firstname,
         // System.debug('userId ====> ' + userId);
         System.debug('agentid ====> ' + agentid);
         lead leadRec = new lead();
@@ -54,43 +54,41 @@ public without sharing class ChatFormLWCcontroller{
                                          where Email = :email OR Phone LIKE:phone
                                          Order By CreatedDate Asc
                                          LIMIT 1];
-            // if (LeadRceordlist.size() > 0){
-            //     message = 'Lead Already exist';
+            if (LeadRceordlist.size() > 0){
+                message = 'Lead Already exist';
 
-            // } else{
-            system.debug(Lastname + ' : ' + email + ' : ' + phone + ' : ' + Lastname);
-            //leadRec.FirstName = firstname;
-            leadRec.LastName = Lastname;
-            leadRec.Email = email;
-            leadRec.Alternate_Email__c = AlternateEmail;
-            leadRec.Phone = countrycode + phone;
-            leadRec.Alternate_Phone__c = countrycode + AlternateMobile;
-            //leadRec.OwnerId = userId;
-            leadRec.Course__c = Course;
-            leadRec.City = city;
-            leadRec.State = state;
-            leadRec.Country = country;
-            leadRec.LeadSource = source;
-            leadRec.UTM_Medium__c = medium;
-            leadRec.Visitor_ID__c = VisitorId;
-            leadRec.Transcript__c = Transcript;
-            leadRec.Lead_Gen_Path__c = leadGenPath;
-            // leadRec.LGE__c=LGE;
-            leadRec.Enter_UTM_Link__c = LandingPageURL;
-            leadRec.Lead_Generation_Method__c = 'Chat Form';
-            leadRec.Comments__c = comments;
-            if (!existingTrainingUser.isEmpty()){
-                leadRec.ExcelR_Training_User__c = existingTrainingUser[0].id;
-            }
-            leadRec.Company = Lastname;
-            system.debug('leadRec===========================' + leadRec);
-            insert leadRec;
-            System.debug('lead rec Id =====> ' + leadRec.Id);
-            if (leadRec.id != null){
-                message = 'SUCCESS';
-            }
+            } else{
+                system.debug(Lastname + ' : ' + email + ' : ' + phone + ' : ' + Lastname);
+                //leadRec.FirstName = firstname;
+                leadRec.LastName = Lastname;
+                leadRec.Email = email;
+                leadRec.Phone = phone;
+                //leadRec.OwnerId = userId;
+                leadRec.Course__c = Course;
+                leadRec.City__c = city;
+                leadRec.State__c = state;
+                leadRec.Country__c = country;
+                leadRec.LeadSource = source;
+                leadRec.UTM_Medium__c = medium;
+                leadRec.Visitor_ID__c = VisitorId;
+                leadRec.Transcript__c = Transcript;
+                // leadRec.Lead_Gen_Path__c=leadGenPath;
+                // leadRec.LGE__c=LGE;
+                leadRec.Enter_UTM_Link__c = LandingPageURL;
+                leadRec.Lead_Generation_Method__c = 'Chat Form';
+                leadRec.Comments__c = comments;
+                if (!existingTrainingUser.isEmpty()){
+                    leadRec.ExcelR_Training_User__c = existingTrainingUser[0].id;
+                }
+                leadRec.Company = '--';
+                system.debug('leadRec===========================' + leadRec);
+                insert leadRec;
+                System.debug('lead rec Id =====> ' + leadRec.Id);
+                if (leadRec.id != null){
+                    message = 'SUCCESS';
+                }
 
-            //}
+            }
             //return message;
         } catch (Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());
@@ -274,8 +272,8 @@ public without sharing class ChatFormLWCcontroller{
     public static List<Lead> QueryPastLeads(string ExcelRagentid){
         System.debug(' ExcelRagentid =========> ' + ExcelRagentid);
         try{
-            List<Lead> PastLeadRecords = [SELECT Course__c, Email, ExcelR_Training_User__c, Name, OwnerId, Owner.Name, Phone, Status, Total_Calls__c, Total_Connected_Call__c //Product__r.Name,
-                                          FROM Lead 
+            List<Lead> PastLeadRecords = [SELECT Course__c, Email, ExcelR_Training_User__c, Name, OwnerId, Owner.Name, Phone, Product__c, Product__r.Name, Status, Total_Calls__c, Total_Connected_Call__c
+                                          FROM Lead
                                           Where ExcelR_Training_User__c = :ExcelRagentid ANd isconverted = false
                                           Order by createdDate Desc];
             System.debug('PastLeadRecords ======> ' + PastLeadRecords);
@@ -306,75 +304,79 @@ public without sharing class ChatFormLWCcontroller{
         return cityValues;
     }
 
+
+
+    
+
     public PageReference checkExistingHashKeyMatching(){
 
         //String LoginPageBaseurl = 'https://whitemart--partial.sandbox.my.salesforce-sites.com/Abasoft_LoginPage';
         //String CustomerDetailPageBaseUrl = 'https://whitemart--partial.sandbox.my.salesforce-sites.com/CusomerDetailAURA_IN_VFPage';
         try{
-            String LoginPageBaseurl = System.Label.LoginPageBaseurl;
-            String ExistingHashcode = '';
-            string FinalPageToRedirect = '';
-            Boolean redirecttoLoginPage;
+        String LoginPageBaseurl = System.Label.LoginPageBaseurl;
+        String ExistingHashcode = '';
+        string FinalPageToRedirect = '';
+        Boolean redirecttoLoginPage;
 
-            String LoginHashcode = Apexpages.currentPage().getparameters().get('hascode'); //IsReloading
-            String LGEMemberRecordid = Apexpages.currentPage().getparameters().get('id');
-            String Reloading = Apexpages.currentPage().getparameters().get('IsReloading');
-            string headerdata = ApexPages.currentPage().getHeaders().get('Host');
-            string urlvalue = Apexpages.currentPage().getUrl();
+        String LoginHashcode = Apexpages.currentPage().getparameters().get('hascode'); //IsReloading
+        String LGEMemberRecordid = Apexpages.currentPage().getparameters().get('id');
+        String Reloading = Apexpages.currentPage().getparameters().get('IsReloading');
+        string headerdata = ApexPages.currentPage().getHeaders().get('Host');
+        string urlvalue = Apexpages.currentPage().getUrl();
 
-            List<ExcelR_Training_User__c> ExcelRTrainUser = [SELECT Departments__c, Email__c, First_Name__c, HashCode__c, Id, Last_Name__c, Name, Password__c, Username__c
-                                                             FROM ExcelR_Training_User__c
-                                                             WHERE id = :LGEMemberRecordid
-                                                             LIMIT 1]; //
-
-
-            List<String> DepartmentArr = ExcelRTrainUser[0].Departments__c.split(';');
-
-            System.debug('hashCode ======> ' + Apexpages.currentPage().getparameters().get('hascode'));
-            System.debug('Reloading ====> ' + Reloading);
-
-            Cookie userHashCodeCookie = ApexPages.currentPage().getCookies().get('userHashCodeCookie');
-            System.debug('userHashCodeCookie ==> ' + userHashCodeCookie);
-
-            if (userHashCodeCookie != null && LoginHashcode != null){
-                ExistingHashcode = String.valueOf(userHashCodeCookie.getValue());
-                if (LoginHashcode == ExistingHashcode && ExcelRTrainUser[0].HashCode__c == ExistingHashcode){
-                    if (Reloading == '' || Reloading == null){
-                        if (urlvalue.contains('apex')){
-                            urlvalue = urlvalue.replace('apex', 'Loginpage');
-                        }
-                        FinalPageToRedirect = 'https://' + headerdata + urlvalue + '&IsReloading=true';
-                        // FinalPageToRedirect = LoginHashcode+ '?id='+ExistingHashcode +'&IsReloading=true';
-                        System.debug('FinalPageToRedirect ====> ' + FinalPageToRedirect);
+        List<ExcelR_Training_User__c> ExcelRTrainUser = [SELECT Departments__c, Email__c, First_Name__c, HashCode__c, Id, Last_Name__c, Name, Password__c, Username__c
+                                                         FROM ExcelR_Training_User__c
+                                                         WHERE id = :LGEMemberRecordid
+                                                         LIMIT 1]; //
 
 
-                        PageReference LGEMemberFormPage = new PageReference(FinalPageToRedirect);
-                        LGEMemberFormPage.setRedirect(true);
-                        return LGEMemberFormPage;
+        List<String> DepartmentArr = ExcelRTrainUser[0].Departments__c.split(';');
+
+        System.debug('hashCode ======> ' + Apexpages.currentPage().getparameters().get('hascode'));
+        System.debug('Reloading ====> ' + Reloading);
+
+        Cookie userHashCodeCookie = ApexPages.currentPage().getCookies().get('userHashCodeCookie');
+        System.debug('userHashCodeCookie ==> ' + userHashCodeCookie);
+
+        if (userHashCodeCookie != null && LoginHashcode != null){
+            ExistingHashcode = String.valueOf(userHashCodeCookie.getValue());
+            if (LoginHashcode == ExistingHashcode && ExcelRTrainUser[0].HashCode__c == ExistingHashcode){
+                if (Reloading == '' || Reloading == null){
+                    if (urlvalue.contains('apex')) {
+                        urlvalue = urlvalue.replace('apex', 'Loginpage');
                     }
+                    FinalPageToRedirect = 'https://' + headerdata + urlvalue + '&IsReloading=true';
+                    // FinalPageToRedirect = LoginHashcode+ '?id='+ExistingHashcode +'&IsReloading=true';
+                    System.debug('FinalPageToRedirect ====> ' + FinalPageToRedirect);
 
+
+                    PageReference LGEMemberFormPage = new PageReference(FinalPageToRedirect);
+                    LGEMemberFormPage.setRedirect(true);
+                    return LGEMemberFormPage;
                 }
-            } else if (userHashCodeCookie == null && LoginHashcode != null){
-                System.debug('Redirect to Login Page');
-                FinalPageToRedirect = LoginPageBaseurl;
-                System.debug('FinalPageToRedirect ====> ' + FinalPageToRedirect);
 
-                PageReference LoginPage = new PageReference(FinalPageToRedirect);
-                LoginPage.setRedirect(true);
-                return LoginPage;
-                /*FinalPageToRedirect = 'https://' + headerdata + urlvalue + '&IsReloading=true';
-                 //FinalPageToRedirect = LoginPageBaseurl + '?id='+ LoginHashcode +'&hascode=' +LoginHashcode ;
-                 System.debug('FinalPageToRedirect =====> ' + FinalPageToRedirect);
-                 PageReference CustomerDetailPage = new PageReference(FinalPageToRedirect);
-                 CustomerDetailPage.setRedirect(true);
-                 return CustomerDetailPage;*/
             }
-            return null;
-        } catch (Exception e){
-            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-            HandleBusinessException.captureError('ChatFormLWCcontroller', 'checkExistingHashKeyMatching', e, null);
-            return null;
+        } else if(userHashCodeCookie == null && LoginHashcode != null){
+            System.debug('Redirect to Login Page');
+            FinalPageToRedirect = LoginPageBaseurl;
+            System.debug('FinalPageToRedirect ====> ' + FinalPageToRedirect);
+
+            PageReference LoginPage = new PageReference(FinalPageToRedirect);
+            LoginPage.setRedirect(true);
+            return LoginPage;
+            /*FinalPageToRedirect = 'https://' + headerdata + urlvalue + '&IsReloading=true';
+            //FinalPageToRedirect = LoginPageBaseurl + '?id='+ LoginHashcode +'&hascode=' +LoginHashcode ;
+            System.debug('FinalPageToRedirect =====> ' + FinalPageToRedirect);
+            PageReference CustomerDetailPage = new PageReference(FinalPageToRedirect);
+            CustomerDetailPage.setRedirect(true);
+            return CustomerDetailPage;*/
         }
+        return null;
+    } catch (Exception e){
+        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+      HandleBusinessException.captureError('ChatFormLWCcontroller', 'checkExistingHashKeyMatching', e , null);
+       return null;
     }
+}
 
 }

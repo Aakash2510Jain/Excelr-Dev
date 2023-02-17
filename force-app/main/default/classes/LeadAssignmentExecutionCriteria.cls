@@ -49,30 +49,30 @@ public class LeadAssignmentExecutionCriteria {
         list<Default_Assignment_Group__mdt> defaultGroupName = [select id,Group_Name__c from Default_Assignment_Group__mdt];
         List<Execution_Criteria__c> AvailableCriterias = [SELECT Enabled__c,Evaluation_Expression_For_Execution__c,Id,Name ,(SELECT Execution_Criteria__c,serial__c,Field_Name__c,Field_Type__c,Matching_Type__c,Matching_Value__c,Related_Object__c,Scorecard_Execution_Criteria_Name__c,Scorecard__c,Sequence__c FROM Execution_Criteria_Entry__r WHERE Execution_Criteria__c != null ORDER BY Sequence__c ASC)FROM Execution_Criteria__c where Enabled__c = true];
         
-        list<lead> queueLeads = [SELECT Address,AD_Set_Id__c,AD_Set_Name__c,Assignment_Group__c,
+        list<lead> queueLeads = [SELECT Address,AdGroup__c,AD_Set_Id__c,AD_Set_Name__c,Assignment_Group__c,
                                  Branch__c,Capture_NBFC_Partner__c,Capture_Tenure__c,Capture_Upfront_payment__c,
                                  CID_of_Referer__c,City,City__c,Comments__c,Company,Confidence_Level__c,Conversation_Comments__c
                                  ,ConvertedAccountId,ConvertedContactId,ConvertedDate,ConvertedOpportunityId,Country,Country__c,
                                  Course_Interested_Rating__c,Course__c,CreatedById,CreatedDate,Current_Domain__c,Date_of_Enrollment__c,
                                  Description,Designation__c,Do_you__c,Email,EmailBouncedDate,EmailBouncedReason,Email_Conversation_Done__c,
-                                 Enter_UTM_Link__c,ExcelR_Training_User__c,Facebook_Ad_Id__c,Facebook_Ad_Name__c,Facebook_Platform__c,
+                                 Enquired_Course__c,Enter_UTM_Link__c,ExcelR_Training_User__c,Facebook_Ad_Id__c,Facebook_Ad_Name__c,Facebook_Platform__c,
                                  FirstName,Form_Names__c,GCLID__c,GeocodeAccuracy,Id,Industry,IsConverted,IsDeleted,ISM_Name__c,ISM__c,
-                                 IsUnreadByOwner,Is_Email_Invalid__c,Is_Phone_Invalid__c,Jigsaw,JigsawContactId,
+                                 IsUnreadByOwner,Is_Email_Invalid__c,Is_Phone_Invalid__c,Jigsaw,JigsawContactId,Keyword__c,
                                  LastActivityDate,LastModifiedById,LastModifiedDate,LastName,LastReferencedDate,LastViewedDate,Latitude,LeadSource,
                                  Lead_Assigned_Date_TIme__c,Lead_Assigned_Date__c,Lead_Assigned_Time__c,Lead_Create_Date__c,Lead_Generation_Method__c,
-                                 Lead_Generation_Team_Member_Name__c,Lead_Gen_Form_Id__c,Lead_Gen_Path__c,Lead_Id_FB__c,Lead_Name__c,Longitude,
-                                 MasterRecordId,Medium__c,MiddleName,MobilePhone,Name,Next_follow_up_date_time__c,NumberOfEmployees,OwnerId,
-                                 Owner_Email__c,Payment_Initiated_Date_Time__c,Payment_Type__c,Phone,PhotoUrl,PostalCode,
-                                 Prior_Status__c,Profession__c,Qualification__c,Quality_of_Lead__c,Rating,Reason_For_Dead__c,
+                                 Lead_Generation_Team_Member_Name__c,Lead_Gen_Form_Id__c,Lead_Gen_Path__c,Lead_Id_FB__c,Lead_Name__c,Location__c,Longitude,
+                                 MasterRecordId,Match_Type__c,Medium__c,MiddleName,MobilePhone,Name,Next_follow_up_date_time__c,NumberOfEmployees,OwnerId,
+                                 Owner_Email__c,Owner_ManagerId__c,Payment_Initiated_Date_Time__c,Payment_Type__c,Phone,PhotoUrl,Platform__c,PostalCode,
+                                 Prior_Status__c,Product__c,Profession__c,Qualification__c,Quality_of_Lead__c,Quantity__c,Rating,Reason_For_Dead__c,
                                  Reason_for_On_Hold__c,Referral_Email__c,Referral_Phone__c,referrer__c,Refree_Mob_No__c,Relevant_Experience__c,Salutation,
                                  sfleadcaphfprod__External_Lead_ID__c,Specialization__c,State,State__c,Status,Street,Suffix,
-                                 SyncedInCallyzer__c,SystemModstamp,Telephonic_Conversation__c,Title,Total_Applications_Submitted__c,
+                                 SyncedInCallyzer__c,SystemModstamp,Telephonic_Conversation__c,Title,Total_Amount__c,Total_Applications_Submitted__c,
                                  Total_Calls__c,Total_Call_Duration__c,Total_Connected_Call__c,Total_Conversation_Duration__c,Total_Course_Interests__c,
-                                 Total_Emails__c,Transcript__c,Type_of_Course__c,UTM_AdGroup__c,UTM_Campaign__c,UTM_Channel__c,UTM_Device__c,
-                                 UTM_Experiment__c,UTM_Location__c,UTM_Medium__c,UTM_Term__c,UTM_Type__c,UTM_Variety__c,Visitor_ID__c,Website,
+                                 Total_Emails__c,Transcript__c,Type_of_Course__c,UTM_AdGroup__c,UTM_Campaign__c,UTM_Channel__c,UTM_Content__c,UTM_Device__c,
+                                 UTM_Experiment__c,UTM_link__c,UTM_Location__c,UTM_Medium__c,UTM_Term__c,UTM_Type__c,UTM_Variety__c,Visitor_ID__c,Website,
                                  Whatsapp_Opt_in__c,Why_This_Course__c,Year_of_Experience__c 
                                  FROM Lead 
-                                 where id = '00QN000000BEepd'];
+                                 where ownerId =: queueId];
         if(!queueLeads.isEmpty()){
             newLeadListTemp.addAll(queueLeads);
             System.debug(queueLeads.size()); 
@@ -181,28 +181,28 @@ public class LeadAssignmentExecutionCriteria {
                                     system.debug('String Type --->'+str);
                                     if(Integer.valueOf(expectedValuebyCriteria.get(criteriaName).get(field)) >= Integer.valueOf(ld.get(field))){
                                         matchedValues++;
-                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'True');
                                         matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
                                     }else{
-                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'False');
                                     } 
                                 }else if(str == '>' || str == '>='){
                                     system.debug('String Type --->'+str);
                                     if(Integer.valueOf(expectedValuebyCriteria.get(criteriaName).get(field)) <= Integer.valueOf(ld.get(field))){
                                         matchedValues++;
-                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'True');
                                         matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
                                     }else{
-                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'False');
                                     }
                                 }else{
                                     system.debug('String Type --->'+str);
                                     if(Integer.valueOf(expectedValuebyCriteria.get(criteriaName).get(field)) == Integer.valueOf(ld.get(field))){
                                         matchedValues++;
-                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'True');
                                         matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
                                     }else{
-                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'False');
                                     }
                                 }
                             }
@@ -212,15 +212,15 @@ public class LeadAssignmentExecutionCriteria {
 
                             if(ld.get(field) == Boolean.valueOf(expectedValuebyCriteria.get(criteriaName).get(field))){
                                 matchedValues++;
-                                Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
+                                Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'True');
                                 matchedCriteriasName.add(getLabelNameOfField(field)+' '+'== '+expectedValuebyCriteria.get(criteriaName).get(field));
                             }else{
-                                Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
+                                Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'False');
                             }
                         }
                         else{
                             system.debug('field type -->'+fieldByFieldType.get(criteriaName).get(field));
-							system.debug('Size:::'+fieldByMatchingType.get(criteriaName).get(field).size());
+
                             for(String str : fieldByMatchingType.get(criteriaName).get(field)){
                                 system.debug('String Type --->'+str);
                                 if(str == '=='){
@@ -239,55 +239,47 @@ public class LeadAssignmentExecutionCriteria {
                                                 matchedValues++;
                                                 system.debug('matchedValues---->'+matchedValues);
                                                 system.debug('Values Matched===='+Str1 +' === '+String.valueOf(ld.get(field)));
-                                                system.debug('kishan::'+Booleanvalues.replaceFirst(string.valueOf(recursionValue),'kishan'));    
-                                                Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
+                                                system.debug('kishan::'+Booleanvalues.replace(string.valueOf(recursionValue),'kishan'));    
+                                                Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'True');
                                                 matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
                                                 system.debug('matchedCriteriasName----->'+matchedCriteriasName);
-                                                system.debug('kishan::'+Booleanvalues.replaceFirst(string.valueOf(recursionValue),'kishan')); 
+                                                system.debug('kishan::'+Booleanvalues.replace(string.valueOf(recursionValue),'kishan')); 
                                                 break;
                                             } 
                                         }
-                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'false');
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'false');
                                         system.debug('Booleanvalues::Booleanvalues::'+Booleanvalues);
                                     }else{
-                                        system.debug('expectedValuebyCriteria.get(criteriaName).get(field)--->'+expectedValuebyCriteria.get(criteriaName).get(field));
-                                        system.debug('String.valueOf(ld.get(field))--->'+String.valueOf(ld.get(field)));
-                                            
+                                        
                                         if(expectedValuebyCriteria.get(criteriaName).get(field) == String.valueOf(ld.get(field))){
-                                            system.debug('Making true');
                                             matchedValues++;
-                                            system.debug('recursionValue::'+recursionValue);
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
-                                            system.debug('Booleanvalues::'+Booleanvalues);
+                                            Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'True');
                                             matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
                                         }else{
-                                            system.debug('Making False');
-                                            system.debug('recursionValue::'+recursionValue);
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
-                                            system.debug('Booleanvalues::'+Booleanvalues);
+                                            Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'False');
                                         }   
                                     }    
                                 }else if(str == '!='){
                                     if(expectedValuebyCriteria.get(criteriaName).get(field) == 'null'){
                                         
                                         if(ld.get(field) == null){
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
+                                            Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'False');
                                         }else{
                                             if(expectedValuebyCriteria.get(criteriaName).get(field) != ld.get(field)){
                                                 matchedValues++;
-                                                Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
+                                                Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'True');
                                                 matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
                                             }else{
-                                                Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
+                                                Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'False');
                                             }    
                                         }
                                     }else{
                                         if(expectedValuebyCriteria.get(criteriaName).get(field) != String.valueOf(ld.get(field))){
                                             matchedValues++;
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
+                                            Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'True');
                                             matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
                                         }else{
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
+                                            Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'False');
                                         }     
                                     }
                                 }else if(str == 'CONTAINS'){
@@ -295,27 +287,25 @@ public class LeadAssignmentExecutionCriteria {
                                     if(String.valueOf(ld.get(field)) != null){
                                         if(String.valueOf(expectedValuebyCriteria.get(criteriaName).get(field)).contains(String.valueOf(ld.get(field)))){
                                             matchedValues++;
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
+                                            Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'True');
                                             matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
                                         }else{
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
+                                            Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'False');
                                         }   
                                     }else{
-                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'False');
                                     }
                                     
                                 }
                                 else if(str == 'DOES NOT CONTAIN'){
                                     if(!expectedValuebyCriteria.get(criteriaName).get(field).contains(String.valueOf(ld.get(field)))){
                                         matchedValues++;
-                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'True');
                                         matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
                                     }
                                     else{
-                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'False');
                                     }
-                                }else{
-                                    Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
                                 }
                             }
                             
@@ -330,31 +320,30 @@ public class LeadAssignmentExecutionCriteria {
                         system.debug('start'+start);
                         
                         for(String str : matchingTypeFieldByCriteria.get(criteriaName).get(field).keyset()){
-                            system.debug('fieldByFieldType.get(criteriaName).get(field)--->'+fieldByFieldType.get(criteriaName).get(field));
                             if(fieldByFieldType.get(criteriaName).get(field) == 'Number'){
                                 if(str == '<' || str == '<='){
                                     if(Integer.valueOf(matchingTypeFieldByCriteria.get(criteriaName).get(field).get(str)) >= Integer.valueOf(ld.get(field))){
                                         matchedValues++;
-                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'True');
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'True');
                                         matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
                                     }else{
-                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'False');
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'False');
                                     } 
                                 }else if(str == '>' || str == '>='){
                                     if(Integer.valueOf(matchingTypeFieldByCriteria.get(criteriaName).get(field).get(str)) <= Integer.valueOf(ld.get(field))){
                                         matchedValues++;
-                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'True');
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'True');
                                         matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
                                     }else{
-                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'False');
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'False');
                                     }
                                 }else{
                                     if(Integer.valueOf(expectedValuebyCriteria.get(criteriaName).get(field)) == Integer.valueOf(ld.get(field))){
                                         matchedValues++;
-                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'True');
                                         matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
                                     }else{
-                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'False');
                                     }
                                 }
                             }
@@ -362,37 +351,33 @@ public class LeadAssignmentExecutionCriteria {
                                 
                                 if(ld.get(field) == Boolean.valueOf(matchingTypeFieldByCriteria.get(criteriaName).get(field).get(str))){
                                     matchedValues++;
-                                    Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'True');
+                                    Booleanvalues = Booleanvalues.replace(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'True');
                                     
                                 }else{
-                                    Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'false');
+                                    Booleanvalues = Booleanvalues.replace(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'false');
                                 }
                             }
-                            
                             else{
-                                system.debug('fieldByFieldType.get(criteriaName).get(field)-->'+fieldByFieldType.get(criteriaName).get(field));
                                 if(str == '=='){
                                     if(matchingTypeFieldByCriteria.get(criteriaName).get(field).get(str).contains(',')){
                                         List<String> commaSeparatedValues = expectedValuebyCriteria.get(criteriaName).get(field).split(',');
                                         for(String Str1:commaSeparatedValues){
                                             if(Str1 == String.valueOf(ld.get(field))){
                                                 matchedValues++;
-                                                Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'True');
+                                                Booleanvalues = Booleanvalues.replace(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'True');
                                                 matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
                                             } else{
-                                                Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'False');
+                                                Booleanvalues = Booleanvalues.replace(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'False');
                                                 
                                             }
                                         }
                                     }else{
-                                        system.debug('matchingTypeFieldByCriteria.get(criteriaName).get(field).get(str)--->'+matchingTypeFieldByCriteria.get(criteriaName).get(field).get(str));
-                                        system.debug('String.valueOf(ld.get(field))---->'+String.valueOf(ld.get(field)));
                                         if(matchingTypeFieldByCriteria.get(criteriaName).get(field).get(str) == String.valueOf(ld.get(field))){
                                             matchedValues++;
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'True');
+                                            Booleanvalues = Booleanvalues.replace(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'True');
                                             matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
                                         }else{
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'False');
+                                            Booleanvalues = Booleanvalues.replace(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'False');
                                             
                                         }   
                                     }    
@@ -400,25 +385,25 @@ public class LeadAssignmentExecutionCriteria {
                                 else if(str == '!='){
                                     if(matchingTypeFieldByCriteria.get(criteriaName).get(field).get(str) == 'null'){
                                         if(ld.get(field) == null){
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'False');
+                                            Booleanvalues = Booleanvalues.replace(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'False');
                                             
                                         }else{
                                             if(matchingTypeFieldByCriteria.get(criteriaName).get(field).get(str) != ld.get(field)){
                                                 system.debug('field'+ field+'values ' +ld.get(field));
                                                 matchedValues++;
-                                                Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'True');
+                                                Booleanvalues = Booleanvalues.replace(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'True');
                                                 matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
                                             }else{
-                                                Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'False');
+                                                Booleanvalues = Booleanvalues.replace(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'False');
                                             }    
                                         }
                                     }else{
                                         if(matchingTypeFieldByCriteria.get(criteriaName).get(field).get(str) != String.valueOf(ld.get(field))){
                                             matchedValues++;
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'True');
+                                            Booleanvalues = Booleanvalues.replace(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'True');
                                             matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
                                         }else{
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'False');
+                                            Booleanvalues = Booleanvalues.replace(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'False');
                                         }     
                                     }
                                 }
@@ -427,24 +412,24 @@ public class LeadAssignmentExecutionCriteria {
                                     if(String.valueOf(ld.get(field)) != null){
                                         if(String.valueOf(matchingTypeFieldByCriteria.get(criteriaName).get(field).get(str)).contains(String.valueOf(ld.get(field)))){
                                             matchedValues++;
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'True');
+                                            Booleanvalues = Booleanvalues.replace(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'True');
                                             matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
                                         }else{
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'False');
+                                            Booleanvalues = Booleanvalues.replace(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'False');
                                         }   
                                     }else{
-                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(recursionValue),'False');
                                     }
                                     
                                 }
                                 else if(str == 'DOES NOT CONTAIN'){
                                     if(!matchingTypeFieldByCriteria.get(criteriaName).get(field).get(str).contains(String.valueOf(ld.get(field)))){
                                         matchedValues++;
-                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'True');
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'True');
                                         matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
                                     }
                                     else{
-                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'False');
+                                        Booleanvalues = Booleanvalues.replace(string.valueOf(allotedFieldbySequenceList.get(criteriaName).get(field)[start]),'False');
                                     }
                                 }
                             }

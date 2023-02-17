@@ -1,4 +1,4 @@
-trigger AGMTrigger on Assignment_Group_Member__c (before update, after insert, after delete,before delete) {
+trigger AGMTrigger on Assignment_Group_Member__c (before update) {
     SObject_Trigger_Control__mdt triggerConfig = SObject_Trigger_Control__mdt.getInstance('AGM');
     system.debug('triggerConfig:: ' + triggerConfig);
     
@@ -8,13 +8,5 @@ trigger AGMTrigger on Assignment_Group_Member__c (before update, after insert, a
         if (trigger.isUpdate && trigger.isbefore){
             handlerInstance.beforeUpdate(Trigger.newMap, trigger.oldMap);
         }
-        if (trigger.isafter && trigger.isInsert){
-            handlerInstance.afterInsert(Trigger.newMap, trigger.oldMap);
-        }
-        if(trigger.isafter && trigger.isDelete){
-            system.debug('After Delete');
-            handlerInstance.afterDelete( trigger.oldMap);
-        }
-       
     }
 }

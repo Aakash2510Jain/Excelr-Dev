@@ -43,38 +43,5 @@
         var fieldName = a[idx].fieldValue;
     	helper.getMatchingValue(component, event,fieldName,idx);
     },
-    // handleChangeforMultiSelectPicklist : function (component, event, helper) {
-    //     debugger;
-    //     var attrval = component.get('v.Exereclst');
-    //     var selectedItem = event.currentTarget;
-
-
-    //     var index = selectedItem.dataset.record;
-    //     var index = event.target.name;
-    //     //var index = event.currentTarget.id;
-
-    //     var auridvalue = component.find("valueVal");
-
-    //     var selectedOptionValueForMP = event.getParam("value");
-    //     //alert("Option selected with value: '" + selectedOptionValue.toString() + "'");
-    //     component.set("v.selectedMultiSelectPickValues",selectedOptionValueForMP); 
-
-    //     var tempplvalues = selectedOptionValueForMP.join(',');
-    //         attrval[index].MatchingValue = tempplvalues; 
-    //         component.set("v.Exereclst", attrval);
-    // },
-
-    handleComponentEvent : function(component, event) { 
-        debugger;
-        var message = event.getParam("message"); 
-        var attrval = component.get('v.Exereclst');
-        attrval[message.indextoAdd].MatchingValue = message.multiselectpicklist; 
-        component.set("v.Exereclst", attrval);
-
-        
-        // set the handler attributes based on event data 
-        
-        //component.set("v.messageFromEvent", message); 
-        
-    } 
+   
 })

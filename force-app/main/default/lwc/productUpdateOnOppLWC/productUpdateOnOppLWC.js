@@ -24,13 +24,13 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
 
     //Tempcolumns=columns;
     //Firstcolumns=columns;
-
+    @api navigateToList;
     @track currentStep=1;
     @api recordId;
     @track Typevalue
     @track  FirstScreen=true;
     @track SecondScreen=false;
-
+    @track disableButton = false;
     //Here Getting All The Courses
     @track AllCourses=[];
 
@@ -688,8 +688,15 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
             @track SelectedAddons=[];
             @track SelectedProduct=[];
 
+    cancelAndReddirect(){
+        var urlString = 'https://excelr2--dev.sandbox.lightning.force.com/lightning/r/Opportunity/'+this.recordId + '/view';
+         //              this.showNotification();
+        this.navigateToList(urlString);
+    }
+
         HandleClickSave(){
             //this.LoadingSpinner=true;
+            this.disableButton = true;
             debugger;
             this.AllSelectedProductsXRelatedAddOns.forEach(element => {
                 
@@ -719,14 +726,25 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
                 if(result=='SUCCESS'){
                        console.log('result---',result);
                        //location.href='https://excelr2--qa.sandbox.lightning.force.com/lightning/r/Opportunity'+this.recordId + '/view';
-                         urlString = 'https://excelr2--qa.sandbox.lightning.force.com/lightning/r/Opportunity'+this.recordId + '/view';
-                         window.location.replace(urlString, "_self");
-                       //window.location('https://excelr2--qa.sandbox.lightning.force.com/lightning/r/Opportunity'+this.recordId);
+                       //'https://excelr2--qa.sandbox.lightning.force.com/lightning/r/Opportunity/006N000000KDlI8IAL/view'
+                         var windowlocation = JSON.stringify(document.URL);
+                         
+                       var urlString = 'https://excelr2--dev.sandbox.lightning.force.com/lightning/r/Opportunity/'+this.recordId + '/view';
                        this.showNotification();
-                        this.Navigate();
+
+                       this.navigateToList(urlString);
+
+                       //window.open(urlString);
+                       //window.location.href = urlString;
+                       //window.location.assign(urlString, "_self");
+                       //window.location.reload();
+                       //window.location.replace(urlString);
+                       //window.location('https://excelr2--qa.sandbox.lightning.force.com/lightning/r/Opportunity'+this.recordId);
+                       
+                       //this.Navigate();
                         //this.showCustomToast('SUCCESS','OppLine Item Created Successfully');
                         
-                        eval("$A.get('e.force:refreshView').fire();");
+                    //eval("$A.get('e.force:refreshView').fire();");
                 }
             })
             .catch(error=>{
@@ -736,6 +754,7 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
         }
         //recordPageUrl ='https://excelr2--qa.sandbox.lightning.force.com/lightning/r/Opportunity';
 
+        
         Navigate(){
             debugger;
             this[NavigationMixin.Navigate]({
