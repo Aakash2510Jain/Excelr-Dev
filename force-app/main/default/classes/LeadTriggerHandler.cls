@@ -10,21 +10,10 @@ public without sharing class LeadTriggerHandler{
     public void beforeInsert(List<Lead> leadList){
         try{
             set<String> leadQuality = new set<String>();
-            Map<String, String> mapOfStateByCity = new Map<String, String>();
-            Map<String, String> mapOfCountryByCity = new Map<String, String>();
-            
-            //Custom Setting
-            List<City_State_Country__c> cityStateCountryList = [ Select City__c,Country__c,State__c From City_State_Country__c];
-            
-            if(!cityStateCountryList.isEmpty()){
-                for(City_State_Country__c CSC_Rec : cityStateCountryList){
-                    mapOfStateByCity.put(CSC_Rec.City__c, CSC_Rec.State__c);
-                    mapOfCountryByCity.put(CSC_Rec.City__c, CSC_Rec.Country__c);
-                }    
-            }
             
             for (Lead ld : leadList){
-                if (ld.ExcelR_Training_User__c == null && (ld.LeadSource != 'Reference' || ld.Lead_Gen_Path__c != 'Reference')){
+                system.debug('ld.OwnerId--->'+ld.OwnerId);
+                if ( (ld.Lead_Generation_Method__c == 'Voice Form' || ld.Lead_Generation_Method__c == 'Chat Form') && (ld.LeadSource != 'Reference' || ld.Lead_Gen_Path__c != 'Reference')){
                     system.debug('Owner is Queue');
                     ld.OwnerId = constants.queueId;
                 }
@@ -41,14 +30,7 @@ public without sharing class LeadTriggerHandler{
                         ld.Quality_of_Lead__c = 'TLM';
                     }
                 }
-                if(ld.City__c != null){
-                    if(mapOfStateByCity.containsKey(ld.City__c)){
-                        ld.State__c = mapOfStateByCity.get(ld.City__c);
-                    }
-                    if(mapOfCountryByCity.containsKey(ld.City__c)){
-                        ld.Country__c = mapOfCountryByCity.get(ld.City__c);
-                    }
-                }
+                
                 //handle necessary fields
                 if (!string.isEmpty(ld.FirstName) && !string.isBlank(ld.LastName)){
                     ld.Company = ld.FirstName +' '+ld.LastName;
@@ -56,7 +38,7 @@ public without sharing class LeadTriggerHandler{
                 if (string.isEmpty(ld.FirstName) && !string.isBlank(ld.LastName)){
                     ld.Company = ld.LastName;
                 }
-              
+                
                 if (string.isEmpty(ld.City__c) || string.isBlank(ld.City__c)){
                     ld.City__c = 'NA';
                 }
@@ -72,6 +54,8 @@ public without sharing class LeadTriggerHandler{
                 if (string.isEmpty(ld.Course__c) || string.isBlank(ld.Course__c)){
                     ld.Course__c = 'NA';
                 }
+                system.debug('ld.OwnerId--->'+ld.OwnerId);
+                
             }
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
@@ -93,18 +77,6 @@ public without sharing class LeadTriggerHandler{
     public void beforeUpdate(Map<Id, Lead> newLeadMap, Map<Id, Lead> oldLeadMap){
         try{
             system.debug('Before Update');
-            Map<String, String> mapOfStateByCity = new Map<String, String>();
-            Map<String, String> mapOfCountryByCity = new Map<String, String>();
-            
-            //Custom Setting
-            List<City_State_Country__c> cityStateCountryList = [ Select City__c,Country__c,State__c From City_State_Country__c];
-            
-            if(!cityStateCountryList.isEmpty()){
-                for(City_State_Country__c CSC_Rec : cityStateCountryList){
-                    mapOfStateByCity.put(CSC_Rec.City__c, CSC_Rec.State__c);
-                    mapOfCountryByCity.put(CSC_Rec.City__c, CSC_Rec.Country__c);
-                }    
-            }
             
             for (Lead ld : newLeadMap.values()){
                 if (ld.Enter_UTM_Link__c != null && ld.Lead_Generation_Method__c != null && (ld.Lead_Generation_Method__c == 'Chat Form' || ld.Lead_Generation_Method__c == 'Generic Form' )){
@@ -121,21 +93,7 @@ public without sharing class LeadTriggerHandler{
                         system.debug('TLM');
                         ld.Quality_of_Lead__c = 'TLM';
                     }
-                }
-                if(ld.City__c != null && ld.City__c != oldLeadMap.get(ld.Id).City__c ){
-                    system.debug('ld.City__c--->'+ld.City__c);
-                    system.debug('mapOfStateByCity.containsKey(ld.City__c)--->'+mapOfStateByCity.containsKey(ld.City__c));
-                    
-                    system.debug('mapOfCountryByCity.containsKey(ld.City__c)--->'+mapOfCountryByCity.containsKey(ld.City__c));
-
-                    if(mapOfStateByCity.containsKey(ld.City__c)){
-                        ld.State__c = mapOfStateByCity.get(ld.City__c);
-                    }
-                    if(mapOfCountryByCity.containsKey(ld.City__c)){
-                        ld.Country__c = mapOfCountryByCity.get(ld.City__c);
-                    }
-                }
-                
+                }             
             }
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());

@@ -48,15 +48,15 @@ public without sharing class voiceFormLWCcontroller{
             System.debug('Phone ===> ' + Phone);
             //leadRec.OwnerId = userId;
             leadRec.Course__c = Course;
-            leadRec.City = city;
+            leadRec.City__c = city;
             leadRec.Lead_Gen_Path__c = LdGenPath;
             leadRec.LeadSource = source;
             leadRec.UTM_Medium__c = medium;
             leadRec.Lead_Generation_Method__c = 'Voice Form';
             leadRec.Comments__c = comments;
             // leadRec.LGE__c=lgedata;
-            leadRec.Country = country;
-            leadRec.State = state;
+            leadRec.Country__c = country;
+            leadRec.State__c = state;
             if (!existingTrainingUser.isEmpty()){
                 leadRec.ExcelR_Training_User__c = existingTrainingUser[0].id;
             }
