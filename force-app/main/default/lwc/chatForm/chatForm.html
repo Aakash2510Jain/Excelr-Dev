@@ -262,41 +262,32 @@
                             <!-- Modal/Popup Box LWC body starts here -->
                             <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
                                 <!--lightning-input label="First Name" onchange={FnameChange} required="true"></lightning-input-->
-                                <lightning-input label="Name" required="true" onchange={LnameChange}></lightning-input>
-                                <lightning-input label="Email" required="true" onchange={EmailChange}></lightning-input>
-                                <lightning-input label="Alternate Email" onchange={AlterEmailChange}></lightning-input>
-                                <!--lightning-input label="Mobile" min-length="10" onchange={PhoneChange} max-length="10"
-                                    required="true"></lightning-input -->
+                                <lightning-input name="LN" label="Name" required="true"
+                                    onchange={LeadCreationHandler}></lightning-input>
+                                <lightning-input name="Em" label="Email" required="true"
+                                    onchange={LeadCreationHandler}></lightning-input>
+                                <lightning-input name="AltEm" label="Alternate Email"
+                                    onchange={LeadCreationHandler}></lightning-input>
 
-
-                                <!-- <lightning-combobox name="Lead Gen Path" label="Lead Gen Path" value={Leadvalue}
-                                   placeholder="Select Lead Gen Path" options={ldGenPath} onchange={ldGenPathValue} required="true">
-                                </lightning-combobox> -->
-
-
-                                <!--lightning-combobox name="City" label="City" value={cityValue}
-                                    placeholder="Select Your City" options={CityOptions} onchange={HandleCityStatus}
-                                    required="true">
+                                <lightning-combobox name="Country" label="Select Country" value={CountryValue}
+                                    placeholder="Select Your Country" options={countryList}
+                                    onchange={HandleCountryChange} required="true">
                                 </lightning-combobox>
 
-                                <template if:true={InputCity}>
-                                    <lightning-input type="text" label="City" name="UserCity"
-                                        placeholder="Enter Your City" onchange={HandleUserCityStatus}></lightning-input>
-                                </template>
-                                <lightning-input type="text" label="City" onchange={HandleCity}></lightning-input>
-                                <lightning-input type="text" label="State" name="State" value={StateValue}
-                                    disabled={StateDisable} onchange={HandleChangeStateCountry}></lightning-input>
-                                <lightning-input type="text" label="Country" name="Country" value={CountryValue}
-                                    disabled={CountryDisable} onchange={HandleChangeStateCountry}></lightning-input -->
+                                <lightning-combobox name="State" label="Select State" value={StateValue}
+                                    placeholder="Select Your State" options={statesList} onchange={HandleChangeState}
+                                    required="true" disabled={StateDisable}>
+                                </lightning-combobox>
 
-                                <lightning-combobox name="Countries" label="Select Country" value={CountryValue}
+
+                                <!--lightning-combobox name="Countries" label="Select Country" value={CountryValue}
                                     placeholder="Select Your Country" options={CountriesPicklistValue}
                                     onchange={HandleChangeCountry} required="true">
-                                </lightning-combobox>
-                                <lightning-combobox name="States" label="Select State" value={StateValue}
+                                </lightning-combobox-->
+                                <!--lightning-combobox name="States" label="Select State" value={StateValue}
                                     placeholder="Select Your State" options={SelectedCountryStateList}
                                     onchange={HandleChangeState} required="true" disabled={StateDisable}>
-                                </lightning-combobox>
+                                </lightning-combobox-->
                                 <lightning-input type="text" label="City" name="UserCity" placeholder="Enter Your City"
                                     onchange={HandleCityValue}></lightning-input>
 
@@ -306,13 +297,17 @@
                                 <div class="slds-grid slds-wrap">
                                     <div class="slds-col slds-size_1-of-12">
                                         <span>
-                                            <lightning-input value={SelectedCountryISCode}
-                                                disabled="true"></lightning-input>
+                                            <lightning-combobox name="CountryISDcode"  
+                                                placeholder="Select Your CountryCode" options={countryCodeList}
+                                                onchange={LeadCreationHandler} >
+                                            </lightning-combobox>
+                                            <!--lightning-input value={SelectedCountryISCode} name="CountryISDcode"
+                                                disabled="true"></lightning-input -->
                                         </span>
                                     </div>
                                     <div class="slds-col slds-size_11-of-12">
                                         <span>
-                                            <lightning-input min-length="10" onchange={PhoneChange}
+                                            <lightning-input min-length="10" onchange={LeadCreationHandler} name="PH"
                                                 max-length="10"></lightning-input>
 
                                         </span>
@@ -323,14 +318,18 @@
                                 <div class="slds-grid slds-wrap">
                                     <div class="slds-col slds-size_1-of-12">
                                         <span>
-                                            <lightning-input value={SelectedCountryISCode}
-                                                disabled="true"></lightning-input>
+                                            <lightning-combobox name="CountryISDcodeAlt"  
+                                                placeholder="Select Your CountryCode" options={countryCodeList}
+                                                onchange={LeadCreationHandler}>
+                                            </lightning-combobox>
+                                            <!--lightning-input value={SelectedCountryISCode} name="CountryISDcodeAlt"
+                                                disabled="true"></lightning-input -->
                                         </span>
                                     </div>
                                     <div class="slds-col slds-size_11-of-12">
                                         <span>
-                                            <lightning-input min-length="10" max-length="10"
-                                                onchange={AlterPhoneChange}></lightning-input>
+                                            <lightning-input min-length="10" max-length="10" name="AltPH"
+                                                onchange={LeadCreationHandler}></lightning-input>
                                             <!--lightning-input min-length="10" onchange={PhoneChange} max-length="10"></lightning-input -->
 
                                         </span>
@@ -339,41 +338,41 @@
                                 </div>
 
                                 <lightning-combobox name="course" label="Course" value={value}
-                                    placeholder="Select Course" options={courssweList} onchange={courceHandler}
+                                    placeholder="Select Course" options={courssweList} onchange={LeadCreationHandler}
                                     required="true">
                                 </lightning-combobox>
-                                <lightning-combobox name="Lead Gen Path" label="Lead Gen Path" value={Leadvalue}
-                                    placeholder="Select Lead Gen Path" options={ldGenPath} onchange={ldGenPathValue}
-                                    required="true">
+                                <lightning-combobox name="LGPath" label="Lead Gen Path" value={Leadvalue}
+                                    placeholder="Select Lead Gen Path" options={LeadGenPathPicklistvalue}
+                                    onchange={LeadCreationHandler} required="true">
                                 </lightning-combobox>
                                 <!--lightning-input type="text" label="Source" onchange={HandleSource}></lightning-input-->
                                 <lightning-combobox name="Source" label="Source" value={SourceValue}
-                                    placeholder="Select Your Source" options={leadSource} onchange={HandleSource}
-                                    required="true">
+                                    placeholder="Select Your Source" options={LeadSourcePicklist}
+                                    onchange={LeadCreationHandler} required="true">
                                 </lightning-combobox>
                                 <!--lightning-input type="text" label="Medium" onchange={HandleMedium}></lightning-input-->
                                 <lightning-combobox name="Medium" label="Medium" value={MediumValue}
-                                    placeholder="Select Your Medium" options={leadmedium} onchange={HandleMedium}
-                                    required="true">
+                                    placeholder="Select Your Medium" options={LeadMediumPicklist}
+                                    onchange={LeadCreationHandler} required="true">
                                 </lightning-combobox>
 
-                                <lightning-input type="text" label="Visitor ID" onchange={HandleVisitorId}
-                                    required="true"></lightning-input>
+                                <lightning-input name="VID" type="text" label="Visitor ID"
+                                    onchange={LeadCreationHandler} required="true"></lightning-input>
                                 <!--lightning-input type="text" label="TranScript" onchange={HandleTranscript} required="true"></lightning-input -->
                                 <!--lightning-input-rich-text label="TranScript"
                                                 onchange={HandleTranscript}>
                                             </lightning-input-rich-text -->
                                 <label class="slds-form-element__label" for="textarea-id-01"><abbr class="slds-required"
                                         title="required">*</abbr>TranScript</label>
-                                <textarea label="TranScript" value={TranscriptValue} onchange={HandleTranscript}
-                                    class="slds-textarea"></textarea>
+                                <textarea label="TranScript" value={TranscriptValue} onchange={LeadCreationHandler}
+                                    name="TransVal" class="slds-textarea"></textarea>
 
-                                <lightning-input type="text" label="Page URL" onchange={HandlePageURL}
-                                    required="true"></lightning-input>
+                                <lightning-input type="text" label="Page URL" onchange={LeadCreationHandler}
+                                    name="PageUrl" required="true"></lightning-input>
                                 <!--lightning-input type="text" label="LGE" onchange={HandleLGE} required="true"></lightning-input-->
 
                                 <lightning-textarea label="Comments" name="Comments" value={commentsValue}
-                                    onchange={HandleComments}>
+                                    onchange={LeadCreationHandler}>
                                 </lightning-textarea>
 
                                 <!--c-custom-lookup icon-name="standard:user" s-object-api-name="user" label="Select User"

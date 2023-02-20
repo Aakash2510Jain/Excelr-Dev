@@ -110,13 +110,18 @@
             }
             var action = component.get("c.createExcRecord");
             for(var i=0;i<attrval.length;i++){
-                delete attrval[i].FieldName;
-                delete attrval[i].mapOfObject;
-                delete attrval[i].mapOfPicklistFields;
-                delete attrval[i].matchTypeList;
-                if(attrval[i].multiselectComboboxList.length >0){
-                    delete attrval[i].multiselectComboboxList
-                }
+                if(attrval[i].FieldName != undefined)
+                    delete attrval[i].FieldName;
+                if(attrval[i].mapOfObject != undefined)
+                    delete attrval[i].mapOfObject;
+                if(attrval[i].mapOfPicklistFields != undefined)
+                    delete attrval[i].mapOfPicklistFields;
+                if(attrval[i].matchTypeList != undefined)
+                    delete attrval[i].matchTypeList;
+                if(attrval[i].multiselectComboboxList != undefined)
+                    if(attrval[i].multiselectComboboxList.length >0){
+                        delete attrval[i].multiselectComboboxList
+                    }
                 
             }
             action.setParams({"objlist":JSON.stringify(attrval),

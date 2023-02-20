@@ -131,6 +131,7 @@
                 }
             });
         }
+        $A.enqueueAction(action);
     },
     cancelHelper : function(component, event, helper) {
         

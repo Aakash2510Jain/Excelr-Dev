@@ -33,72 +33,106 @@ public without sharing class ChatFormLWCcontroller{
         }
     }
 
-    @auraenabled
-    public static String createLead(string Lastname, string email, string phone, string Course, string agentid, string city, string state, string country, string source, string medium, string VisitorId, string Transcript, string leadGenPath, string LandingPageURL, string comments, string countrycode, string AlternateMobile, String AlternateEmail){
-        //String firstname,
-        // System.debug('userId ====> ' + userId);
-        System.debug('agentid ====> ' + agentid);
-        lead leadRec = new lead();
-        list<ExcelR_Training_User__c> existingTrainingUser = new list<ExcelR_Training_User__c>();
+    /*@auraenabled
+     public static String createLead(string Lastname, string email, string phone, string Course, string agentid, string city, string state, string country, string source, string medium, string VisitorId, string Transcript, string leadGenPath, string LandingPageURL, string comments, string countrycode, string AlternateMobile, String AlternateEmail){
+     //String firstname,
+     // System.debug('userId ====> ' + userId);
+     System.debug('agentid ====> ' + agentid);
+     lead leadRec = new lead();
+     list<ExcelR_Training_User__c> existingTrainingUser = new list<ExcelR_Training_User__c>();
 
+     string message = '';
+     try{
+
+     if (agentid != null){
+     existingTrainingUser = [SELECT Email__c, First_Name__c, HashCode__c, Id, Last_Name__c, Name, Password__c, Username__c
+     FROM ExcelR_Training_User__c
+     Where id = :agentid];
+     }
+     List<Lead> LeadRceordlist = [Select id, firstName, LastName, Owner_Email__c, OwnerId, Owner.LastName, Owner.FirstName, Owner.Name, Email, Phone
+     from Lead
+     where Email = :email OR Phone LIKE:phone
+     Order By CreatedDate Asc
+     LIMIT 1];
+     // if (LeadRceordlist.size() > 0){
+     //     message = 'Lead Already exist';
+
+     // } else{
+     system.debug(Lastname + ' : ' + email + ' : ' + phone + ' : ' + Lastname);
+     //leadRec.FirstName = firstname;
+     leadRec.LastName = Lastname;
+     leadRec.Email = email;
+     leadRec.Alternate_Email__c = AlternateEmail;
+     leadRec.Phone = countrycode + phone;
+     leadRec.Alternate_Phone__c = countrycode + AlternateMobile;
+     //leadRec.OwnerId = userId;
+     leadRec.Course__c = Course;
+     leadRec.City = city;
+     leadRec.State = state;
+     leadRec.Country = country;
+     leadRec.LeadSource = source;
+     leadRec.UTM_Medium__c = medium;
+     leadRec.Visitor_ID__c = VisitorId;
+     leadRec.Transcript__c = Transcript;
+     leadRec.Lead_Gen_Path__c = leadGenPath;
+     // leadRec.LGE__c=LGE;
+     leadRec.Enter_UTM_Link__c = LandingPageURL;
+     leadRec.Lead_Generation_Method__c = 'Chat Form';
+     leadRec.Comments__c = comments;
+     if (!existingTrainingUser.isEmpty()){
+     leadRec.ExcelR_Training_User__c = existingTrainingUser[0].id;
+     }
+     leadRec.Company = Lastname;
+     system.debug('leadRec===========================' + leadRec);
+     insert leadRec;
+     System.debug('lead rec Id =====> ' + leadRec.Id);
+     if (leadRec.id != null){
+     message = 'SUCCESS';
+     }
+
+     //}
+     //return message;
+     } catch (Exception e){
+     System.debug(' the Error has occured due to =====> ' + e.getMessage());
+     System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+     HandleBusinessException.captureError('ChatFormLWCcontroller', 'createLead', e, null);
+     message = 'FAIL';
+     //return null;
+     }
+     return message;
+     }*/
+    @AuraEnabled
+    public static string createLead(Lead Leadrec, String countrycode, string countrycodealternate){
         string message = '';
         try{
+            System.debug('LeadTobeCreated =======> ' + Leadrec);
+            System.debug('countrycode =======> ' + countrycode);
+            System.debug('countrycodealternate =======> ' + countrycodealternate);
 
-            if (agentid != null){
-                existingTrainingUser = [SELECT Email__c, First_Name__c, HashCode__c, Id, Last_Name__c, Name, Password__c, Username__c
-                                        FROM ExcelR_Training_User__c
-                                        Where id = :agentid];
+            if (countrycode != null){
+                Leadrec.Phone = countrycode + Leadrec.Phone;
             }
-            List<Lead> LeadRceordlist = [Select id, firstName, LastName, Owner_Email__c, OwnerId, Owner.LastName, Owner.FirstName, Owner.Name, Email, Phone
-                                         from Lead
-                                         where Email = :email OR Phone LIKE:phone
-                                         Order By CreatedDate Asc
-                                         LIMIT 1];
-            // if (LeadRceordlist.size() > 0){
-            //     message = 'Lead Already exist';
 
-            // } else{
-            system.debug(Lastname + ' : ' + email + ' : ' + phone + ' : ' + Lastname);
-            //leadRec.FirstName = firstname;
-            leadRec.LastName = Lastname;
-            leadRec.Email = email;
-            leadRec.Alternate_Email__c = AlternateEmail;
-            leadRec.Phone = countrycode + phone;
-            leadRec.Alternate_Phone__c = countrycode + AlternateMobile;
-            //leadRec.OwnerId = userId;
-            leadRec.Course__c = Course;
-            leadRec.City = city;
-            leadRec.State = state;
-            leadRec.Country = country;
-            leadRec.LeadSource = source;
-            leadRec.UTM_Medium__c = medium;
-            leadRec.Visitor_ID__c = VisitorId;
-            leadRec.Transcript__c = Transcript;
-            leadRec.Lead_Gen_Path__c = leadGenPath;
-            // leadRec.LGE__c=LGE;
-            leadRec.Enter_UTM_Link__c = LandingPageURL;
-            leadRec.Lead_Generation_Method__c = 'Chat Form';
-            leadRec.Comments__c = comments;
-            if (!existingTrainingUser.isEmpty()){
-                leadRec.ExcelR_Training_User__c = existingTrainingUser[0].id;
+            if (countrycodealternate != null){
+                Leadrec.Alternate_Phone__c = countrycodealternate + Leadrec.Alternate_Phone__c;
+
             }
-            leadRec.Company = Lastname;
-            system.debug('leadRec===========================' + leadRec);
-            insert leadRec;
-            System.debug('lead rec Id =====> ' + leadRec.Id);
+            Leadrec.Lead_Generation_Method__c = 'Chat Form';
+            leadRec.Company = Leadrec.Lastname;
+            insert Leadrec;
             if (leadRec.id != null){
                 message = 'SUCCESS';
             }
 
-            //}
-            //return message;
         } catch (Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());
             System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
             HandleBusinessException.captureError('ChatFormLWCcontroller', 'createLead', e, null);
             message = 'FAIL';
-            //return null;
+
         }
+
+
         return message;
     }
 
@@ -275,7 +309,7 @@ public without sharing class ChatFormLWCcontroller{
         System.debug(' ExcelRagentid =========> ' + ExcelRagentid);
         try{
             List<Lead> PastLeadRecords = [SELECT Course__c, Email, ExcelR_Training_User__c, Name, OwnerId, Owner.Name, Phone, Status, Total_Calls__c, Total_Connected_Call__c //Product__r.Name,
-                                          FROM Lead 
+                                          FROM Lead
                                           Where ExcelR_Training_User__c = :ExcelRagentid ANd isconverted = false
                                           Order by createdDate Desc];
             System.debug('PastLeadRecords ======> ' + PastLeadRecords);
@@ -304,6 +338,25 @@ public without sharing class ChatFormLWCcontroller{
                                                   ORDER BY Order_Number__c ASC];
 
         return cityValues;
+    }
+
+    @AuraEnabled(Cacheable = True)
+    Public Static List<Country__c> FetchCountryRec(){
+        List<Country__c> countryRecordList = [Select name, Id
+                                              From Country__c
+                                              ORDER BY Name ASC];
+
+        return countryRecordList;
+    }
+
+    @AuraEnabled(Cacheable = True)
+    Public Static List<State__c> FetchStateRec(string countryid){
+        List<State__c> statesList = [Select name, Id
+                                     From State__c
+                                     where Country__c = :countryid
+                                     ORDER BY Name ASC];
+
+        return statesList;
     }
 
     public PageReference checkExistingHashKeyMatching(){
