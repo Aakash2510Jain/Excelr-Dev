@@ -39,7 +39,7 @@ global class API_CreateAccount{
             if (newAccount != null){
                 existingLeadByEmail = [Select Id, Email, status, course__c, Customers__c,OwnerId
                                        From Lead
-                                       where Email = :newAccount.Email__c and isConverted = false order by CreatedDate Desc limit 1                                       ];
+                                       where Email = :newAccount.Email__c and isConverted = false order by CreatedDate Desc limit 1];
                 system.debug('existingLeadByEmail-->'+existingLeadByEmail);
                 convertedLeadByEmail = [Select Id, Email
                                         From Lead

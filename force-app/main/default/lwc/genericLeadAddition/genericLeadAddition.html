@@ -271,49 +271,74 @@
                                     disabled={CountryDisable} onchange={HandleChangeStateCountry}></lightning-input-->
 
 
-                                <lightning-combobox name="Countries" label="Select Country" value={CountryValue}
+                                <!--lightning-combobox name="Countries" label="Select Country" value={CountryValue}
                                     placeholder="Select Your Country" options={CountriesPicklistValue}
                                     onchange={HandleChangeCountry} required="true">
+                                </lightning-combobox-->
+
+                                <lightning-combobox name="Country" label="Select Country" value={CountryValue}
+                                    placeholder="Select Your Country" options={countryList}
+                                    onchange={HandleCountryChange} required="true">
                                 </lightning-combobox>
-                                <lightning-combobox name="States" label="Select State" value={StateValue}
+
+                                <!--lightning-combobox name="States" label="Select State" value={StateValue}
                                     placeholder="Select Your State" options={SelectedCountryStateList}
                                     onchange={HandleChangeState} required="true" disabled={StateDisable}>
+                                </lightning-combobox-->
+                                <lightning-combobox name="State" label="Select State" value={StateValue}
+                                    placeholder="Select Your State" options={statesList} onchange={HandleChangeState}
+                                    required="true" disabled={StateDisable}>
                                 </lightning-combobox>
-                                <lightning-input type="text" label="City" name="UserCity" placeholder="Enter Your City"
-                                    onchange={HandleCityValue}></lightning-input>
+                                
+                                <!--lightning-input type="text" label="City" name="UserCity" placeholder="Enter Your City"
+                                    onchange={HandleCityValue}></lightning-input-->
+
+                                <lightning-combobox name="UserCity" label="Select City" value={selectedCityValue}
+                                    placeholder="Select Your City" options={cityList} onchange={HandleCityValue}
+                                    required="true" disabled={CityDisable}>
+                                </lightning-combobox>
 
 
                                 <label class="slds-form-element__label" for="textarea-id-01"><abbr class="slds-required"
-                                        title="required">*</abbr>Mobile</label>
-                                <div class="slds-grid slds-wrap">
-                                    <div class="slds-col slds-size_1-of-12">
-                                        <span>
-                                            <lightning-input value={SelectedCountryISCode}
-                                                disabled="true"></lightning-input>
-                                        </span>
-                                    </div>
-                                    <div class="slds-col slds-size_11-of-12">
-                                        <span>
-                                            <lightning-input min-length="10" onchange={PhoneChange}
-                                                max-length="10"></lightning-input>
-
-                                        </span>
-                                    </div>
-
-                                </div>
-
-                                <label class="slds-form-element__label" for="textarea-id-01">Alternate Mobile</label>
+                                    title="required">*</abbr>Mobile</label>
                             <div class="slds-grid slds-wrap">
                                 <div class="slds-col slds-size_1-of-12">
                                     <span>
-                                        <lightning-input value={SelectedCountryISCode}
-                                            disabled="true"></lightning-input>
+                                        <lightning-combobox name="CountryISDcode"  
+                                            placeholder="Select Your CountryCode" options={countryCodeList}
+                                            onchange={LeadCreationHandler} >
+                                        </lightning-combobox>
+                                        <!--lightning-input value={SelectedCountryISCode} name="CountryISDcode"
+                                            disabled="true"></lightning-input -->
                                     </span>
                                 </div>
                                 <div class="slds-col slds-size_11-of-12">
                                     <span>
-                                        <lightning-input min-length="10" onchange={AlterPhoneChange}
+                                        <lightning-input min-length="10" onchange={LeadCreationHandler} name="PH"
                                             max-length="10"></lightning-input>
+
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <label class="slds-form-element__label" for="textarea-id-01">Alternate Mobile</label>
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-12">
+                                    <span>
+                                        <lightning-combobox name="CountryISDcodeAlt"  
+                                            placeholder="Select Your CountryCode" options={countryCodeList}
+                                            onchange={LeadCreationHandler}>
+                                        </lightning-combobox>
+                                        <!--lightning-input value={SelectedCountryISCode} name="CountryISDcodeAlt"
+                                            disabled="true"></lightning-input -->
+                                    </span>
+                                </div>
+                                <div class="slds-col slds-size_11-of-12">
+                                    <span>
+                                        <lightning-input min-length="10" max-length="10" name="AltPH"
+                                            onchange={LeadCreationHandler}></lightning-input>
+                                        <!--lightning-input min-length="10" onchange={PhoneChange} max-length="10"></lightning-input -->
 
                                     </span>
                                 </div>

@@ -32,6 +32,9 @@ import QueryPastLeads from '@salesforce/apex/GenericLeadLWCcontroller.QueryPastL
 import LightningAlert from 'lightning/alert';
 import LightningConfirm from "lightning/confirm";
 import { refreshApex } from '@salesforce/apex';
+import GettingCountries from '@salesforce/apex/SiteFormUtility.FetchCountryRec';
+import GettingStates from '@salesforce/apex/SiteFormUtility.FetchStateRec';
+import GettingCities from '@salesforce/apex/SiteFormUtility.GetCityFromBigobject';
 
 
 
@@ -58,6 +61,7 @@ const LeadListcolumns = [{ label: 'Name', fieldName: 'Name' },
 export default class WaklInLead extends LightningElement {
     imageurl = EXCELR_LOGO;
     //feilds from schema
+    @track LeadTobeCreated = {};
     @track ifdataNotFound = false;
     @track ownerEmail;
     @track ismBTNdisAble = true;
@@ -245,35 +249,104 @@ export default class WaklInLead extends LightningElement {
 
     @track SelectedCountryStateList = [];
     @track SelectedCountryISCode;
-    HandleChangeCountry(event){
+
+    @track countryList = [];
+    @wire(GettingCountries)
+    wiredCountries({ data, error }) {
         debugger;
-        let Selectedcountry=event.detail.value;
-        this.CountryValue = Selectedcountry;
-        var SelectedcountryStateISDCode = this.countriesSateISDCodelist.find(item => item.MasterLabel == Selectedcountry);
-        this.SelectedCountryISCode = SelectedcountryStateISDCode.Country_Code__c;
-        //this.countrycodevalue = countrycode.CountryCode__c;
-        let tempStateArr = []; 
-        var tempStateString = SelectedcountryStateISDCode.States__c;
-        var tempStateArrafterCommaSeperated = tempStateString.split(',');
-        for(let i=0;i<tempStateArrafterCommaSeperated.length;i++){
-            tempStateArr.push({label:tempStateArrafterCommaSeperated[i],value:tempStateArrafterCommaSeperated[i]});
-         }
-         this.SelectedCountryStateList = tempStateArr;
-         this.StateDisable = false;
+        if (data) {
+
+            let arr = [];
+            for (let i = 0; i < data.length; i++) {
+                arr.push({ label: data[i].Name, value: data[i].Id });
+            }
+            this.countryList = arr;
+            console.log('Picklistvalue=', this.countryList);
+        }
+        else if (error) {
+            console.log('error=', error);
+        }
 
     }
 
-    HandleChangeState(event){
+    @track StateDisable=true;
+
+    @track statesList = [];
+    HandleCountryChange(event) {
         debugger;
-        let SelectedState=event.detail.value;
-        this.StateValue = SelectedState;
-        //this.StateDisable = false;
+        //let selectedCountry=event.detail.value;
+       
+        let SelectedcountryId = event.detail.value;
+        this.SelectedcountryId = SelectedcountryId;
+
+        var SelectedCountry = this.countryList.find(item => item.value == this.SelectedcountryId);
+        this.LeadTobeCreated.Country__c = SelectedCountry.label;
+
+        GettingStates({
+            countryid: this.SelectedcountryId
+        })
+            .then(result => {
+                debugger;
+                let arr = [];
+                for (let i = 0; i < result.length; i++) {
+                    arr.push({ label: result[i].Name, value: result[i].Id });
+                }
+                this.statesList = arr;
+                this.StateDisable = false;
+
+                console.log('Picklistvalue=', this.statesList);
+            }
+
+            );
+            if(this.SelectedStateId!=null){
+                this.selectedCityValue='';
+            }
+            
+    }
+
+    @track cityList=[];
+    @track CityDisable=true;
+
+    HandleChangeState(event) {
+        debugger;
+
+        this.SelectedStateId = event.detail.value;
+        var SelectedState = this.statesList.find(item => item.value == this.SelectedStateId);
+
+        this.LeadTobeCreated.State__c = SelectedState.label;
+        this.StateDisable = false;
+        console.log('SelectedStateId-',this.SelectedStateId);
+        console.log('SelectedcountryId-',this.SelectedcountryId);
+        
+        GettingCities({
+            SelectedStateId: this.SelectedStateId, SelectedCountryId: this.SelectedcountryId
+        })
+            .then(result => {
+                debugger;
+                console.log('PicklistvalueCityresult=', result);
+                let arr = [];
+                for (let i = 0; i < result.length; i++) {
+                    arr.push({ label: result[i].City__c, value: result[i].City__c });
+                }
+                this.cityList = arr;
+                this.CityDisable=false;
+
+                console.log('PicklistvalueCity=', this.cityList);
+            }
+
+            );
+
+
 
     }
 
-    HandleCityValue(event){
-        this.cityValue = event.detail.value;
+    @track selectedCityValue;
+    HandleCityValue(event) {
+        debugger;
+        this.selectedCityValue = event.detail.value;
+        this.LeadTobeCreated.City__c = event.detail.value;
     }
+
 
 
     // ======================================================= Fetch Countries States with ISDCODe And Handle End Here ==================================================== 

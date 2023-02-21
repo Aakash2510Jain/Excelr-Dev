@@ -45,9 +45,9 @@ public without sharing class LeadTriggerHandler{
                 if (string.isEmpty(ld.LeadSource) || string.isBlank(ld.LeadSource)){
                     ld.LeadSource = 'NA';
                 }
-                if (string.isEmpty(ld.UTM_Medium__c) || string.isBlank(ld.UTM_Medium__c)){
+                /*if (string.isEmpty(ld.UTM_Medium__c) || string.isBlank(ld.UTM_Medium__c)){
                     ld.UTM_Medium__c = 'NA';
-                }
+                }*/
                 if (string.isEmpty(ld.Lead_Gen_Path__c) || string.isBlank(ld.Lead_Gen_Path__c)){
                     ld.Lead_Gen_Path__c = 'NA';
                 }

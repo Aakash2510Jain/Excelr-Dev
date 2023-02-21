@@ -30,7 +30,7 @@ import getallPicklistvlaues from '@salesforce/apex/SiteFormUtility.getallPicklis
 
 import GettingCountries from '@salesforce/apex/SiteFormUtility.FetchCountryRec';
 import GettingStates from '@salesforce/apex/SiteFormUtility.FetchStateRec';
-import GettingCities from '@salesforce/apex/SiteFormUtility.FetchCitiesrec';
+import GettingCities from '@salesforce/apex/SiteFormUtility.GetCityFromBigobject';
 
 
 const applicationcolumns = [{ label: 'Name', fieldName: 'Name' },
@@ -334,11 +334,13 @@ export default class chatForm extends LightningElement {
     @track statesList = [];
     HandleCountryChange(event) {
         debugger;
+        //let selectedCountry=event.detail.value;
+       
         let SelectedcountryId = event.detail.value;
         this.SelectedcountryId = SelectedcountryId;
 
         var SelectedCountry = this.countryList.find(item => item.value == this.SelectedcountryId);
-        this.LeadTobeCreated.Country = SelectedCountry.label;
+        this.LeadTobeCreated.Country__c = SelectedCountry.label;
 
         GettingStates({
             countryid: this.SelectedcountryId
@@ -356,6 +358,10 @@ export default class chatForm extends LightningElement {
             }
 
             );
+            if(this.SelectedStateId!=null){
+                this.selectedCityValue='';
+            }
+            
     }
 
 
@@ -404,37 +410,52 @@ export default class chatForm extends LightningElement {
 
     }*/
 
+    @track FetchedcityList=[];
+    @track cityList=[];
+    @track CityDisable=true;
+
     HandleChangeState(event) {
         debugger;
 
         this.SelectedStateId = event.detail.value;
         var SelectedState = this.statesList.find(item => item.value == this.SelectedStateId);
 
-        this.LeadTobeCreated.State = SelectedState.label;
+        this.LeadTobeCreated.State__c = SelectedState.label;
         this.StateDisable = false;
-        /*GettingCities({
+        console.log('SelectedStateId-',this.SelectedStateId);
+        console.log('SelectedcountryId-',this.SelectedcountryId);
+        
+        GettingCities({
             SelectedStateId: this.SelectedStateId, SelectedCountryId: this.SelectedcountryId
         })
             .then(result => {
                 debugger;
+                console.log('PicklistvalueCityresult=', result);
                 let arr = [];
                 for (let i = 0; i < result.length; i++) {
-                    arr.push({ label: result[i].Name, value: result[i].Id });
+                    arr.push({ label: result[i].City__c, value: result[i].City__c });
                 }
-                this.statesList = arr;
+                this.cityList = arr;
+                this.CityDisable=false;
 
-                console.log('Picklistvalue=', this.statesList);
+                console.log('PicklistvalueCity=', this.cityList);
             }
 
-            );*/
+            );
 
 
 
     }
 
+    handleSearch(){
+
+    }
+
+    @track selectedCityValue;
     HandleCityValue(event) {
-        this.cityValue = event.detail.value;
-        this.LeadTobeCreated.City = event.detail.value;
+        debugger;
+        this.selectedCityValue = event.detail.value;
+        this.LeadTobeCreated.City__c = event.detail.value;
     }
 
 
@@ -492,13 +513,13 @@ export default class chatForm extends LightningElement {
 
    
 
-    @track MediumValue;
+    //@track MediumValue;
 
-    HandleMedium(event) {
-        debugger;
-        let Medium = event.target.value;
-        this.MediumValue = Medium;
-    }
+    // HandleMedium(event) {
+    //     debugger;
+    //     //let Medium = event.target.value;
+    //    // this.MediumValue = Medium;
+    // }
 
     @track CityPicklistValue = [];
     @track cityValue;
@@ -673,8 +694,9 @@ export default class chatForm extends LightningElement {
         this.alterEmailValue = '';
         this.CourceLead = '';
         this.CountryValue = '';
-        this.cityValue = '';
+        this.selectedCityValue = '';
         this.Leadvalue = '';
+        this.SelectedMedium='';
         this.SelectedCountryStateList = [];
 
         this.LeadTobeCreated = {};
@@ -702,6 +724,7 @@ export default class chatForm extends LightningElement {
     //     let firstname = Event.target.value;
     //     this.namValue = firstname;
     // }
+    @track SelectedMedium;
 
     @track CountryCode
     @track CountryCodeAlt
@@ -719,14 +742,14 @@ export default class chatForm extends LightningElement {
             this.LeadTobeCreated.Alternate_Email__c = event.target.value;
         }
         if (InputName == 'Country') {
-            this.LeadTobeCreated.Country = event.target.value;
+            this.LeadTobeCreated.Country__c = event.target.value;
         }
 
         if (InputName == 'State') {
-            this.LeadTobeCreated.State = event.target.value;
+            this.LeadTobeCreated.State__c = event.target.value;
         }
         if (InputName == 'UserCity') {
-            this.LeadTobeCreated.City = event.target.value;
+            this.LeadTobeCreated.City__c = event.target.value;
         }
         if (InputName == 'CountryISDcode') {
             // this.LeadTobeCreated.Alternate_Email__c = event.target.value;
@@ -751,7 +774,8 @@ export default class chatForm extends LightningElement {
             this.LeadTobeCreated.LeadSource = event.target.value;
         }
         if (InputName == 'Medium') {
-            this.LeadTobeCreated.UTM_Medium__c = event.target.value;
+            this.SelectedMedium=event.detail.value;
+            this.LeadTobeCreated.UTM_Medium__c = event.detail.value;
         }
         if (InputName == 'VID') {
             this.LeadTobeCreated.Visitor_ID__c = event.target.value;
@@ -1071,21 +1095,22 @@ export default class chatForm extends LightningElement {
     @track HandleLeadCreatedisable = false;
 
     createNewLead() {
+        debugger;
         console.log('transcript', this.TranscriptValue);
         console.log('lNameValue', this.lNameValue);
         this.LeadTobeCreated.ExcelR_Training_User__c = this.agentrecid;
         //(this.namValue!=undefined && this.namValue!=null && this.namValue!=''  ) && 
 
         if ((this.LeadTobeCreated.LastName != undefined && this.LeadTobeCreated.LastName != null && this.LeadTobeCreated.LastName != '') && (this.LeadTobeCreated.Email != undefined && this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '') && (this.LeadTobeCreated.Phone != undefined && this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '')
-            && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '') && (this.LeadTobeCreated.City != undefined && this.LeadTobeCreated.City != null && this.LeadTobeCreated.City != '') && (this.LeadTobeCreated.LeadSource != undefined && this.LeadTobeCreated.LeadSource != null && this.LeadTobeCreated.LeadSource != '')
-            && (this.LeadTobeCreated.UTM_Medium__c != undefined && this.LeadTobeCreated.UTM_Medium__c != null && this.LeadTobeCreated.UTM_Medium__c != '') &&
+            && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '') && (this.LeadTobeCreated.City__c != undefined && this.LeadTobeCreated.City__c != null && this.LeadTobeCreated.City__c != '') && (this.LeadTobeCreated.LeadSource != undefined && this.LeadTobeCreated.LeadSource != null && this.LeadTobeCreated.LeadSource != '')
+            && (this.LeadTobeCreated.UTM_Medium__c != undefined && this.LeadTobeCreated.UTM_Medium__c != null && this.LeadTobeCreated.UTM_Medium__c != '') &&(this.SelectedMedium!=null && this.SelectedMedium!= '' && this.SelectedMedium != undefined)&&
             (this.LeadTobeCreated.Visitor_ID__c != undefined && this.LeadTobeCreated.Visitor_ID__c != null && this.LeadTobeCreated.Visitor_ID__c != '') && (this.LeadTobeCreated.Transcript__c != undefined && this.LeadTobeCreated.Transcript__c != null && this.LeadTobeCreated.Transcript__c != '') && (this.LeadTobeCreated.Enter_UTM_Link__c != undefined && this.LeadTobeCreated.Enter_UTM_Link__c != null && this.LeadTobeCreated.Enter_UTM_Link__c != '')) {
 
 
             var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
 
             if (returnvalue == true && this.handleCorrectPhone(this.LeadTobeCreated.Phone)) {
-                createLead({ Leadrec: this.LeadTobeCreated, countrycode : this.CountryCode, countrycodealternate :this.CountryCodeAlt })
+                createLead({ Leadrec: this.LeadTobeCreated, countrycode : this.CountryCode, countrycodealternate :this.CountryCodeAlt,mediumValue:this.SelectedMedium })
                     .then(data => {
 
                         if (data == 'SUCCESS') {

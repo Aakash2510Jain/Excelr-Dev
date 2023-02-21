@@ -116,26 +116,34 @@ public without sharing class Utility{
                 string urlValue = string.valueOf(leadRec.Enter_UTM_Link__c);
                 System.PageReference pageReference = new System.PageReference(urlValue);
                 Map<String, String> parameters = pageReference.getParameters();
-                system.debug('utm_source ::' + parameters.get('utm_channel'));
-                //leadRec.UTM_Source__c = parameters.get('utm_source');
-                leadRec.UTM_Medium__c = parameters.get('utm_medium');
-                leadRec.UTM_Term__c = parameters.get('utm_term');
-               // leadRec.UTM_Content__c = parameters.get('utm_content');
-                leadRec.UTM_Device__c = parameters.get('utm_device');
-                leadRec.UTM_Campaign__c = parameters.get('utm_campaign');
-                leadRec.UTM_AdGroup__c = parameters.get('utm_adgroup');
-                leadRec.UTM_Location__c = parameters.get('utm_location');
-                leadRec.UTM_Channel__c = parameters.get('utm_channel');
-                leadRec.UTM_Type__c = parameters.get('utm_type');
-                leadRec.UTM_Variety__c = parameters.get('utm_variety');
-                leadRec.UTM_Experiment__c = parameters.get('utm_experiment');
 
-                leadRec.GCLID__c = parameters.get('gclid');
-
+                if(parameters.get('utm_medium') != null)
+                    leadRec.UTM_Medium__c = parameters.get('utm_medium');
+                if(parameters.get('utm_term') != null)
+                    leadRec.UTM_Term__c = parameters.get('utm_term');
+                if(parameters.get('utm_device') != null)
+                    leadRec.UTM_Device__c = parameters.get('utm_device');
+                if(parameters.get('utm_campaign') != null)
+                    leadRec.UTM_Campaign__c = parameters.get('utm_campaign');
+                if(parameters.get('utm_adgroup') != null)
+                    leadRec.UTM_AdGroup__c = parameters.get('utm_adgroup');
+                if(parameters.get('utm_location') != null)
+                    leadRec.UTM_Location__c = parameters.get('utm_location');
+                if(parameters.get('utm_channel') != null)
+                    leadRec.UTM_Channel__c = parameters.get('utm_channel');
+                if(parameters.get('utm_type') != null)
+                    leadRec.UTM_Type__c = parameters.get('utm_type');
+                if(parameters.get('utm_variety') != null)
+                    leadRec.UTM_Variety__c = parameters.get('utm_variety');
+                if(parameters.get('utm_experiment') != null)
+                    leadRec.UTM_Experiment__c = parameters.get('utm_experiment');
+                if(parameters.get('gclid') != null)
+                    leadRec.GCLID__c = parameters.get('gclid');
+                
                 // leadRec.Source__c = parameters.get('source');
                 //leadRec.Medium__c = parameters.get('medium');
                 //  leadRec.Campaign__c = parameters.get('campaign');
-               // leadRec.AdGroup__c = parameters.get('adgroup');
+                // leadRec.AdGroup__c = parameters.get('adgroup');
                 //leadRec.Keyword__c = parameters.get('keyword');
                 //leadRec.Match_Type__c = parameters.get('matchtype');
             }
@@ -144,7 +152,7 @@ public without sharing class Utility{
             HandleBusinessException.captureError('Utility', 'UTMLinkParams', e, null);
         }
     }
-
+    
     public static void convertLeadAfterPayment(string leadId, Map<String, Object> paymentResponse){
         try{
             Map<String, string> priceBookIdByProductId = new Map<String, String>();
@@ -152,7 +160,7 @@ public without sharing class Utility{
             List<Invoice__c> invoiceListToUpdate = new List<Invoice__c>();
             List<Application__c> applicationsListAttachedToLead = new List<Application__C>();
             List<Application__c> applicationsListToUpdate = new List<Application__C>();
-
+            
             if (paymentResponse.get('captured') == true){
                 //covert lead
                 LeadStatus convertStatus = [SELECT Id, MasterLabel

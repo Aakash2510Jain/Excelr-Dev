@@ -262,10 +262,13 @@
                             <!-- Modal/Popup Box LWC body starts here -->
                             <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
                                 <!--lightning-input label="First Name" onchange={FnameChange} required="true"></lightning-input-->
+
                                 <lightning-input name="LN" label="Name" required="true"
                                     onchange={LeadCreationHandler}></lightning-input>
+
                                 <lightning-input name="Em" label="Email" required="true"
                                     onchange={LeadCreationHandler}></lightning-input>
+
                                 <lightning-input name="AltEm" label="Alternate Email"
                                     onchange={LeadCreationHandler}></lightning-input>
 
@@ -288,8 +291,14 @@
                                     placeholder="Select Your State" options={SelectedCountryStateList}
                                     onchange={HandleChangeState} required="true" disabled={StateDisable}>
                                 </lightning-combobox-->
-                                <lightning-input type="text" label="City" name="UserCity" placeholder="Enter Your City"
-                                    onchange={HandleCityValue}></lightning-input>
+
+                                <!--lightning-input type="text" label="City" name="UserCity" placeholder="Enter Your City"
+                                    onchange={HandleCityValue}></lightning-input-->
+                                <lightning-combobox name="UserCity" label="Select City" value={selectedCityValue}
+                                    placeholder="Select Your City" options={cityList} onchange={HandleCityValue}
+                                    required="true" disabled={CityDisable} onsearch={handleSearch}>
+                                </lightning-combobox>
+
 
 
                                 <label class="slds-form-element__label" for="textarea-id-01"><abbr class="slds-required"
@@ -351,7 +360,7 @@
                                     onchange={LeadCreationHandler} required="true">
                                 </lightning-combobox>
                                 <!--lightning-input type="text" label="Medium" onchange={HandleMedium}></lightning-input-->
-                                <lightning-combobox name="Medium" label="Medium" value={MediumValue}
+                                <lightning-combobox name="Medium" label="Medium" value={SelectedMedium}
                                     placeholder="Select Your Medium" options={LeadMediumPicklist}
                                     onchange={LeadCreationHandler} required="true">
                                 </lightning-combobox>

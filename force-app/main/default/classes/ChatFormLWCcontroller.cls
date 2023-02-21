@@ -102,7 +102,7 @@ public without sharing class ChatFormLWCcontroller{
      return message;
      }*/
     @AuraEnabled
-    public static string createLead(Lead Leadrec, String countrycode, string countrycodealternate){
+    public static string createLead(Lead Leadrec, String countrycode, string countrycodealternate,string mediumValue){
         string message = '';
         try{
             System.debug('LeadTobeCreated =======> ' + Leadrec);
@@ -117,8 +117,12 @@ public without sharing class ChatFormLWCcontroller{
                 Leadrec.Alternate_Phone__c = countrycodealternate + Leadrec.Alternate_Phone__c;
 
             }
+            if(mediumValue!=null){
+                Leadrec.UTM_Medium__c=mediumValue;
+            }
             Leadrec.Lead_Generation_Method__c = 'Chat Form';
             leadRec.Company = Leadrec.Lastname;
+            
             insert Leadrec;
             if (leadRec.id != null){
                 message = 'SUCCESS';
