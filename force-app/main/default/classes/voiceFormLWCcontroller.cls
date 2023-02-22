@@ -22,7 +22,7 @@ public without sharing class voiceFormLWCcontroller{
         }
     }
 
-    @auraenabled
+    /*@auraenabled
     public static String createLead(string Lastname, string email, string phone, string Course, string agentid, string city, string LdGenPath, string state, string country, string source, string medium, string comments, string countrycode, string AlternateMobile, String AlternateEmail){
         // System.debug('userId ====> ' + userId); String firstname,
 
@@ -75,6 +75,48 @@ public without sharing class voiceFormLWCcontroller{
             message = 'FAIL';
             //return null;
         }
+        return message;
+    }*/
+
+    @AuraEnabled
+    public static string createLead(Lead Leadrec, String countrycode, string countrycodealternate,string mediumValue,string city){
+        string message = '';
+        try{
+            System.debug('LeadTobeCreated =======> ' + Leadrec);
+            System.debug('countrycode =======> ' + countrycode);
+            System.debug('countrycodealternate =======> ' + countrycodealternate);
+
+            if (countrycode != null){
+                Leadrec.Phone = countrycode + Leadrec.Phone;
+            }
+
+            if (countrycodealternate != null){
+                Leadrec.Alternate_Phone__c = countrycodealternate + Leadrec.Alternate_Phone__c;
+
+            }
+            if(mediumValue!=null){
+                Leadrec.UTM_Medium__c=mediumValue;
+            }
+            if(city!=null){
+                Leadrec.City__c=city;
+            }
+            Leadrec.Lead_Generation_Method__c = 'Chat Form';
+            leadRec.Company = Leadrec.Lastname;
+            
+            insert Leadrec;
+            if (leadRec.id != null){
+                message = 'SUCCESS';
+            }
+
+        } catch (Exception e){
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('ChatFormLWCcontroller', 'createLead', e, null);
+            message = 'FAIL';
+
+        }
+
+
         return message;
     }
 

@@ -3,7 +3,7 @@ import EXCELR_LOGO from '@salesforce/resourceUrl/ExcelRLogo';
 import getLead from '@salesforce/apex/ChatFormLWCcontroller.getLead';
 import getApplication from '@salesforce/apex/ChatFormLWCcontroller.getApplication';
 import EmailIsm from '@salesforce/apex/ChatFormLWCcontroller.EmailIsm';
-import getMember from '@salesforce/apex/ChatFormLWCcontroller.getMember';
+//import getMember from '@salesforce/apex/ChatFormLWCcontroller.getMember';
 
 //import getPickiststatusOfTask from '@salesforce/apex/ChatFormLWCcontroller.getPickiststatusOfTask';
 //import getPickistpriorityOfTask from '@salesforce/apex/ChatFormLWCcontroller.getPickistpriorityOfTask';
@@ -13,11 +13,11 @@ import createTask from '@salesforce/apex/ChatFormLWCcontroller.createTaskForVoic
 import createLead from '@salesforce/apex/ChatFormLWCcontroller.createLead';
 import createApplication from '@salesforce/apex/ChatFormLWCcontroller.CreateApplication';
 
-import FetchStateCounty from '@salesforce/apex/ChatFormLWCcontroller.FetchStateCounty';
-import Fetchcities from '@salesforce/apex/ChatFormLWCcontroller.Fetchcities';
+//import FetchStateCounty from '@salesforce/apex/ChatFormLWCcontroller.FetchStateCounty';
+//import Fetchcities from '@salesforce/apex/ChatFormLWCcontroller.Fetchcities';
 import fetchCountryAndCountryCode from '@salesforce/apex/GenericLeadLWCcontroller.fetchCountryAndCountryCode';
 
-import FetchCountriesStateWithISDcode from '@salesforce/apex/voiceFormLWCcontroller.getCountryStateAndISDCode';
+//import FetchCountriesStateWithISDcode from '@salesforce/apex/voiceFormLWCcontroller.getCountryStateAndISDCode';
 import QueryPastLeads from '@salesforce/apex/ChatFormLWCcontroller.QueryPastLeads';
 import LightningAlert from 'lightning/alert';
 //import LightningConfirm from "lightning/confirm";
@@ -64,7 +64,7 @@ export default class chatForm extends LightningElement {
     @track ismBTNdisAble = true;
 
 
-    @track CourceLead;
+    //@track CourceLead;
     @track courseforApp;
     @api recordId;
     @track newBTNdisAble = false;
@@ -77,12 +77,12 @@ export default class chatForm extends LightningElement {
     @track columns;
     @track isShowModal = false;
     @track showtaskModal = false;
-    @track namValue;
-    @track lNameValue;
-    @track emailValue;
-    @track phoneValue;
-    @track lStatus;
-    @track compnyValue;
+    // @track namValue;
+    // @track lNameValue;
+    // @track emailValue;
+    // @track phoneValue;
+    // @track lStatus;
+    // @track compnyValue;
     @track groupMemList = [];
     @track data;
     @api selectedrecordDetails;
@@ -288,26 +288,7 @@ export default class chatForm extends LightningElement {
 
 
     // =========================================================Fetch Countries States with ISDCODe And Handle =================================================
-    //@track CountriesPicklistValue = [];
-    // @track countriesSateISDCodelist = [];
-    /*@wire(FetchCountriesStateWithISDcode)
-    wiredCounstriesStatesWithISD({ data, error }) {
-        debugger;
-        if (data) {
-            this.countriesSateISDCodelist = data;
-
-            let arr = [];
-            for (let i = 0; i < data.length; i++) {
-                arr.push({ label: data[i].MasterLabel, value: data[i].MasterLabel });
-            }
-            this.CountriesPicklistValue = arr;
-            console.log('Picklistvalue=', this.CountriesPicklistValue);
-        }
-        else if (error) {
-            console.log('error=', error);
-        }
-
-    }*/
+   
     //====================fetch Country
 
     @track countryList = [];
@@ -332,6 +313,7 @@ export default class chatForm extends LightningElement {
     // handle Country Change and get States list
 
     @track statesList = [];
+    @track DefaultCountryCode;
     HandleCountryChange(event) {
         debugger;
         //let selectedCountry=event.detail.value;
@@ -341,6 +323,14 @@ export default class chatForm extends LightningElement {
 
         var SelectedCountry = this.countryList.find(item => item.value == this.SelectedcountryId);
         this.LeadTobeCreated.Country__c = SelectedCountry.label;
+
+        if(SelectedCountry.label=='India'){
+            this.DefaultCountryCode="91";
+        }else if(SelectedCountry.label=='United Kingdom'){
+            this.DefaultCountryCode="44";
+        }else if(SelectedCountry.label=='United States'){
+            this.DefaultCountryCode="1";
+        }
 
         GettingStates({
             countryid: this.SelectedcountryId
@@ -369,50 +359,18 @@ export default class chatForm extends LightningElement {
 
     //getting States List
     @track stateList = [];
-    /*@wire(GettingStates)
-    wiredCounstriesStatesWithISD({ data, error }) {
-        debugger;
-        if (data) {
-
-            let arr = [];
-            for (let i = 0; i < data.length; i++) {
-                arr.push({ label: data[i].Name, value: data[i].Id });
-            }
-            this.stateList = arr;
-            console.log('Picklistvalue=', this.countryList);
-        }
-        else if (error) {
-            console.log('error=', error);
-        }
-
-    }*/
+   
 
 
     @track SelectedCountryStateList = [];
     @track SelectedCountryISCode;
-    /*HandleChangeCountry(event) {
-        debugger;
-        let Selectedcountry = event.detail.value;
-        this.CountryValue = Selectedcountry;
-        this.LeadTobeCreated.Country = event.detail.value;
-
-        var SelectedcountryStateISDCode = this.countriesSateISDCodelist.find(item => item.MasterLabel == Selectedcountry);
-        this.SelectedCountryISCode = SelectedcountryStateISDCode.Country_Code__c;
-        //this.countrycodevalue = countrycode.CountryCode__c;
-        let tempStateArr = [];
-        var tempStateString = SelectedcountryStateISDCode.States__c;
-        var tempStateArrafterCommaSeperated = tempStateString.split(',');
-        for (let i = 0; i < tempStateArrafterCommaSeperated.length; i++) {
-            tempStateArr.push({ label: tempStateArrafterCommaSeperated[i], value: tempStateArrafterCommaSeperated[i] });
-        }
-        this.SelectedCountryStateList = tempStateArr;
-        this.StateDisable = false;
-
-    }*/
+    
 
     @track FetchedcityList=[];
     @track cityList=[];
     @track CityDisable=true;
+    @track searchResults=[];
+    @track disableInput=true;
 
     HandleChangeState(event) {
         debugger;
@@ -435,21 +393,74 @@ export default class chatForm extends LightningElement {
                 for (let i = 0; i < result.length; i++) {
                     arr.push({ label: result[i].City__c, value: result[i].City__c });
                 }
-                this.cityList = arr;
+                this.FetchedcityList = arr;
+                this.disableInput=false;
                 this.CityDisable=false;
 
                 console.log('PicklistvalueCity=', this.cityList);
             }
 
             );
-
-
-
     }
 
-    handleSearch(){
+    @track selectedValue
+    @track booleanValue=false;
+    search(event){
+        debugger;
+        let value=event.target.value;
 
+        let TempValue;
+        if(value){
+            TempValue=value;
+        }
+
+        let arr=[];
+        if(TempValue){
+            TempValue = TempValue.charAt(0).toUpperCase() + TempValue.slice(1);
+            console.log('TempValue=',TempValue);
+            const results = this.FetchedcityList.filter(product => product.value.includes(TempValue));
+          
+            console.log('results====',results);
+            results.forEach(element => {
+                arr.push({label:element.value,value:element.value});
+            });
+            
+            
+            console.log('arr====',arr);
+        }
+        this.searchResults=arr;
+        if(this.searchResults.length>0){
+            this.booleanValue=true;
+        }else{
+            this.booleanValue=false;
+        }
+        console.log('this.searchResults====',this.searchResults);
     }
+
+  
+
+    @track selectedSearchResult ;
+    @track selectedresultValue;
+
+    selectSearchResult(event){
+        debugger;
+        const selectedValue = event.currentTarget.dataset.value;
+        this.selectedresultValue=selectedValue;
+        console.log('selectedValue--',selectedValue);
+        this.selectedSearchResult = this.searchResults.find(
+            (picklistOption) => picklistOption.value === selectedValue
+          );
+          console.log('selectedSearchResult--',this.selectedSearchResult);
+          console.log('selectedresultValue--',this.selectedresultValue);
+          
+          this.clearSearchResults();
+        }
+      
+        clearSearchResults() {
+          this.searchResults = null;
+        }
+
+    
 
     @track selectedCityValue;
     HandleCityValue(event) {
@@ -463,19 +474,7 @@ export default class chatForm extends LightningElement {
 
 
     @track StateCountryValue = [];
-    /*@wire(FetchStateCounty)
-    WiredResponse({ data, error }) {
-        debugger;
-        if (data) {
-            console.log('StateCountryValuedata=', data);
-            this.StateCountryValue = data;
-            console.log('StateCountryValue=', this.StateCountryValue);
-        }
-        else if (error) {
-            console.log('error=', error);
-        }
-
-    }*/
+   
 
     @track countryCodeList = [];
     @wire(fetchCountryAndCountryCode)
@@ -495,55 +494,11 @@ export default class chatForm extends LightningElement {
 
     }
 
-    /* handleCountrycode(country) {
-         debugger;
-         let countrycode;
-         country = country.toLowerCase();
-         country = country.charAt(0).toUpperCase() + country.slice(1);
-         countrycode = this.countryCodeList.find(item => item.Name == country);
-         if (countrycode != undefined) {
-             this.countrycodevalue = countrycode.CountryCode__c;
-         }
-         else {
-             this.countrycodevalue = '';
-         }
- 
- 
-     }*/
-
    
-
-    //@track MediumValue;
-
-    // HandleMedium(event) {
-    //     debugger;
-    //     //let Medium = event.target.value;
-    //    // this.MediumValue = Medium;
-    // }
 
     @track CityPicklistValue = [];
     @track cityValue;
-    /*@wire(Fetchcities)
-    WiredResponsecities({ data, error }) {
-        debugger;
-        if (data) {
-            console.log('CityValuedata=', data);
-            let arr = [];
-            for (let i = 0; i < data.length; i++) {
-                arr.push({ label: data[i].City__c, value: data[i].City__c });
-            }
-            this.CityPicklistValue = arr;
-            console.log('Picklistvalue=', this.CityPicklistValue);
-        }
-        else if (error) {
-            console.log('error=', error);
-        }
-
-    }
-
-    get CityOptions() {
-        return this.CityPicklistValue;
-    }*/
+   
 
     @track CountryDisable = true;
     @track StateDisable = true;
@@ -551,98 +506,13 @@ export default class chatForm extends LightningElement {
     @track StateValue;
     @track CountryValue;
     @track selectedCountryId;
-    /*HandleCityStatus(event) {
 
-        debugger;
-        let city = event.detail.value;
-        if (city) {
-            this.cityValue = city;
-            let state;
-            let TempValue;
-            let country;
-            TempValue = city;
-
-            console.log('Tempstate=', TempValue);
-
-            if (TempValue == "Other") {
-                this.StateDisable = false;
-                this.CountryDisable = false;
-                this.InputCity = true;
-                alert('Please Type Your State and Country');
-            }
-            else {
-                this.StateDisable = true;
-                this.CountryDisable = true;
-                this.InputCity = false;
-            }
-
-            if (TempValue) {
-                TempValue = TempValue.charAt(0).toUpperCase() + TempValue.slice(1);
-                console.log('Tempstate2=', TempValue);
-                state = this.StateCountryValue.find(item => item.City__c == TempValue);
-                country = this.StateCountryValue.find(item => item.City__c == TempValue);
-                console.log('state=', state);
-
-            }
-            if (state) {
-                this.StateValue = state.State__c;
-                this.CountryValue = country.Country__c;
-                console.log('StateValue=', this.StateValue);
-
-
-            }
-            else {
-                this.StateValue = '';
-                this.CountryValue = '';
-            }
-
-            if (this.CountryValue) {
-                //countrycode = this.countryCodeList.find(item => item.Name == this.CountryValue);
-                //this.countrycodevalue = countrycode.CountryCode__c;
-                this.handleCountrycode(this.CountryValue);
-            }
-
-
-            console.log('state=', this.StateValue);
-        }
-
-    }
-
-    @track UserInputCity
-    HandleUserCityStatus(event) {
-        let value = event.target.value;
-        if (this.cityValue == 'Other') {
-            this.UserInputCity = value;
-        }
-
-    }
-
-    HandleChangeStateCountry(event) {
-        if (this.cityValue == 'Other') {
-
-            debugger;
-            let value = event.target.value;
-
-            if (event.target.name == "State") {
-
-                this.StateValue = value;
-            }
-            if (event.target.name == "Country") {
-
-                this.CountryValue = value;
-                if (this.CountryValue) {
-                    this.handleCountrycode(this.CountryValue);
-                }
-            }
-        }
-
-    }*/
     createTaskRec() {
         debugger;
         console.log('captureownerId', this.CaptureOwnerId);
-        if ((this.subjectvalue != null && this.subjectvalue != undefined && this.subjectvalue != '') && (this.CaptureOwnerId != null && this.CaptureOwnerId != undefined && this.CaptureOwnerId != '') && (this.priorityValue != null && this.priorityValue != undefined && this.priorityValue != '') && (this.statusValue != null && this.statusValue != undefined && this.statusValue != '')) {
-            createTask({ subject: this.subjectvalue, assignto: this.CaptureOwnerId, priority: this.priorityValue, status: this.statusValue, duedate: this.DuedateValue, comments: this.comValue, followupDate: this.followupValue, leadId: this.recordId })
-
+        if ((this.CaptureOwnerId != null && this.CaptureOwnerId != undefined && this.CaptureOwnerId != '') && (this.recordId != null && this.recordId != undefined && this.recordId != '')){
+            createTask({assignto: this.CaptureOwnerId,leadId: this.recordId,TaskRecord:this.taskTobeCreated})
+                  //subject: this.subjectvalue, assignto: this.CaptureOwnerId, priority: this.priorityValue, status: this.statusValue, duedate: this.DuedateValue, comments: this.comValue, followupDate: this.followupValue, leadId: this.recordId 
                 .then((result) => {
                     console.log('result', result);
                     if (result == 'Success') {
@@ -685,18 +555,20 @@ export default class chatForm extends LightningElement {
         debugger;
         this.isShowModal = false;
         this.showtaskModal = false;
-        this.namValue = '';
-        this.lNameValue = '';
+        // this.namValue = '';
+        // this.lNameValue = '';
         this.commentsValue = '';
-        this.emailValue = '';
-        this.phoneValue = '';
-        this.alterMobileValue = '';
-        this.alterEmailValue = '';
+        // this.emailValue = '';
+        // this.phoneValue = '';
+        // this.alterMobileValue = '';
+        // this.alterEmailValue = '';
         this.CourceLead = '';
         this.CountryValue = '';
         this.selectedCityValue = '';
         this.Leadvalue = '';
         this.SelectedMedium='';
+        this.selectedresultValue='';
+        this.DefaultCountryCode='';
         this.SelectedCountryStateList = [];
 
         this.LeadTobeCreated = {};
@@ -719,11 +591,6 @@ export default class chatForm extends LightningElement {
 
     }
 
-    // FnameChange(Event) {
-    //     debugger;
-    //     let firstname = Event.target.value;
-    //     this.namValue = firstname;
-    // }
     @track SelectedMedium;
 
     @track CountryCode
@@ -742,6 +609,7 @@ export default class chatForm extends LightningElement {
             this.LeadTobeCreated.Alternate_Email__c = event.target.value;
         }
         if (InputName == 'Country') {
+
             this.LeadTobeCreated.Country__c = event.target.value;
         }
 
@@ -793,168 +661,89 @@ export default class chatForm extends LightningElement {
 
 
     }
-    /*LnameChange(event) {
-        debugger;
-
-
-        let lasttname = event.target.value;
-        this.lNameValue = lasttname;
-    }
-    EmailChange(event) {
-        debugger;
-        let email = event.target.value;
-        //var returnvalue = this.handleIncorrectEmail(email)
-        this.emailValue = email;
-
-    }
-
-    @track Leadvalue;
-    ldGenPathValue(event) {
-        debugger;
-        this.Leadvalue = event.target.value;
-    }
-
-
-    @track SourceValue;
-    HandleSource(event) {
-        debugger;
-        let Source = event.target.value;
-        this.SourceValue = Source;
-    }
-
-    @track alterEmailValue;
-    AlterEmailChange(Event) {
-        this.alterEmailValue = Event.target.value;
-    }
-    PhoneChange(Event) {
-        debugger;
-        let phone = Event.target.value;
-        this.phoneValue = phone;
-    }
-
-    @track alterMobileValue
-    AlterPhoneChange(Event) {
-        this.alterMobileValue = Event.target.value;
-    }
-
-    StatusChange(Event) {
-        debugger;
-        let statuss = Event.target.value;
-        this.lStatus = statuss;
-    }*/
-
-    /*CompanyChange(event) {
-        debugger;
-        let cname = event.target.value;
-        this.compnyValue = cname;
-    }
-
-    handleChange(event) {
-        debugger;
-        let selectedValue = event.detail.value;
-        this.ismeId = selectedValue;
-        console.log('MEMLIST---', this.groupMemList);
-        this.gruoMemberId = this.groupMemList.find(item => item.Group_Member__c == selectedValue).Id;
-        //this.groupMemList[this.ismeId];
-    }*/
-   /* courceHandler(event) {
-        debugger;
-        let selectedCource = event.detail.value;
-        this.CourceLead = selectedCource;
-    }
-    @track cityValue;
-    HandleCity(event) {
-        debugger;
-        let city = event.target.value;
-        this.cityValue = city;
-    }
-    @track sourceValue;
-    HandleSource(event) {
-        debugger;
-        let source = event.target.value;
-        this.sourceValue = source;
-    }
-    @track MediumValue;
-    HandleMedium(event) {
-        debugger;
-        let medium = event.target.value;
-        this.MediumValue = medium;
-    }
-    HandleComments(event) {
-        let comment = event.target.value;
-        this.commentsValue = comment;
-    }
-
-    @track VisitorIdValue;
-    HandleVisitorId(event) {
-        debugger;
-        let VId = event.target.value;
-        this.VisitorIdValue = VId;
-    }
-    @track TranscriptValue;
-    HandleTranscript(event) {
-        debugger;
-        let Trans = event.target.value;
-        this.TranscriptValue = Trans;
-    }
-    @track PageUrlValue;
-    HandlePageURL(event) {
-        debugger;
-        let Purl = event.target.value;
-        this.PageUrlValue = Purl;
-    }*/
+    
 
 
     // ==================================== task Handlers ========================================
-    @track subjectvalue
-    subjectHandler(event) {
-        debugger;
-        let selectedSubject = event.target.value;
-        this.subjectvalue = selectedSubject;
-    }
 
-    @track statusValue;
-    statusHandler(event) {
-        debugger;
-        let selectedStatus = event.detail.value;
-        this.statusValue = selectedStatus;
-    }
+    TaskCreationHandler(event){
 
-    @track DuedateValue;
-    duedateHandler(event) {
-        debugger;
-        let selectedDuedate = event.detail.value;
-        this.DuedateValue = selectedDuedate;
+        var TaskInputName = event.currentTarget.name;
+        if (TaskInputName == 'subject'){
+
+            this.taskTobeCreated.Subject=event.target.value;
+        }
+        if(TaskInputName == 'Priority'){
+
+            this.taskTobeCreated.Priority=event.target.value;
+
+        }if(TaskInputName == 'Status'){
+
+            this.taskTobeCreated.Status=event.target.value;
+
+        }if(TaskInputName == 'Duedate'){
+
+            this.taskTobeCreated.ActivityDate=event.target.value;
+
+        }if(TaskInputName =='Followupdatetime'){
+
+            this.taskTobeCreated.Followup_Date_Time__c=event.target.value;
+
+        }if(TaskInputName =='Comments'){
+
+            this.taskTobeCreated.Description=event.target.value;
+        }
 
     }
+    // @track subjectvalue
+    // subjectHandler(event) {
+    //     debugger;
+    //     let selectedSubject = event.target.value;
+    //     this.subjectvalue = selectedSubject;
+    // }
 
-    @track comValue;
-    commentHandler(event) {
-        debugger;
-        let selectedComment = event.target.value;
-        this.comValue = selectedComment;
-    }
-    @track followupValue;
-    followupHandler(event) {
-        debugger;
-        let selectedfollowup = event.target.value;
-        this.followupValue = selectedfollowup;
-    }
+    // @track statusValue;
+    // statusHandler(event) {
+    //     debugger;
+    //     let selectedStatus = event.detail.value;
+    //     this.statusValue = selectedStatus;
+    // }
+
+    // @track DuedateValue;
+    // duedateHandler(event) {
+    //     debugger;
+    //     let selectedDuedate = event.detail.value;
+    //     this.DuedateValue = selectedDuedate;
+
+    // }
+
+    // @track comValue;
+    // commentHandler(event) {
+    //     debugger;
+    //     let selectedComment = event.target.value;
+    //     this.comValue = selectedComment;
+    // }
+    // @track followupValue;
+    // followupHandler(event) {
+    //     debugger;
+    //     let selectedfollowup = event.target.value;
+    //     this.followupValue = selectedfollowup;
+    // }
 
 
-    @track priorityValue;
-    priorityHandler(event) {
-        debugger;
-        let selectedPriority = event.detail.value;
-        this.priorityValue = selectedPriority;
-    }
+    // @track priorityValue;
+    // priorityHandler(event) {
+    //     debugger;
+    //     let selectedPriority = event.detail.value;
+    //     this.priorityValue = selectedPriority;
+    // }
 
-    @track statusValue;
-    statusHandler(event) {
-        debugger;
-        let selectedStatus = event.detail.value;
-        this.statusValue = selectedStatus;
-    }
+    // @track statusValue;
+    // statusHandler(event) {
+    //     debugger;
+    //     let selectedStatus = event.detail.value;
+    //     this.statusValue = selectedStatus;
+    // }
     // ===============================================task handler Completed ===============================
 
     notifyismBTN() {
@@ -973,144 +762,27 @@ export default class chatForm extends LightningElement {
             })
     }
 
-    /*@wire(getMember)
-    wireRes(data, error) {
-        if (data) {
-            debugger;
-            this.groupMemList = data.data;
-            console.log('Picklist-----', this.groupMemList);
-            let grmId = [];
-            let options = [];
-            if (data.data != undefined) {
-                console.log('Picklist-----', data);
-                for (var key in data.data) {
-                    options.push({ label: data.data[key].Group_Member__r.Name, value: data.data[key].Group_Member__c });
-                    grmId.push(data.data[key].Id)
-                    console.log(data.data[key].Id)
-                }
-                if (this.ismeId == data.data[key].Group_Member__c) {
-                    this.gruoMemberId = grmId;
-                    console.log(`im inside the for if to match the value ${this.gruoMemberId}`);
-                }
-                console.log(`im  the for if to match the value ${this.gruoMemberId}`);
-
-            }
-            console.log()
-            console.log(options);
-            this.objectList = options;
-            console.log(data);
-            console.log(this.objectList);
-
-        }
-        if (error) {
-
-        }
-    }*/
-
-    /*@wire(getPuckistOflead)
-    wireRs({ error, data }) {
-        if (data) {
-            let options = []
-            for (const [key, value] of Object.entries(data)) {
-                options.push({
-                    label: key,
-                    value: value
-                })
-                console.log(`${key}: ${value}`);
-            }
-            this.courssweList = options;
-            this.courssweList.sort((a, b) => (a.label > b.label) ? 1 : -1);
-
-            console.log(data)
-        }
-        if (error) {
-
-        }
-    }*/
-
-    // getPickiststatusOfTask
-    /*@wire(getPickiststatusOfTask)
-    wiredRs({ error, data }) {
-        debugger;
-        if (data) {
-            debugger;
-            let options = [];
-            for (const [key, value] of Object.entries(data)) {
-                options.push({
-                    label: key,
-                    value: value
-                })
-                console.log(`${key}: ${value}`);
-            }
-            this.StatusList = options;
-            this.StatusList.sort((a, b) => (a.label > b.label) ? 1 : -1);
-            console.log(data);
-            console.log('statusList--', this.StatusList);
-        }
-        if (error) {
-            console.log('error=', error);
-        }
-    }*/
-    //getPickistpriorityOfTask
-    /*@wire(getPickistpriorityOfTask)
-    wireRs({ error, data }) {
-        if (data) {
-            let options = []
-            for (const [key, value] of Object.entries(data)) {
-                options.push({
-                    label: key,
-                    value: value
-                })
-                console.log(`${key}: ${value}`);
-            }
-            this.priorityList = options;
-            this.priorityList.sort((a, b) => (a.label > b.label) ? 1 : -1);
-            console.log(data)
-        }
-        if (error) {
-
-        }
-    }*/
-
-    /*handlecourseList() {
-        getPuckistOflead()
-            .then(result => {
-                ///this.data = result;
-                let options = []
-                for (const [key, value] of Object.entries(result)) {
-                    options.push({
-                        label: key,
-                        value: value
-                    })
-                    console.log(`${key}: ${value}`);
-                }
-                this.courssweList = options;
-                console.log(courssweList)
-            })
-            .catch(error => {
-                this.error = error;
-            });
-    }*/
+    
 
     @track HandleLeadCreatedisable = false;
 
     createNewLead() {
         debugger;
-        console.log('transcript', this.TranscriptValue);
-        console.log('lNameValue', this.lNameValue);
+        //console.log('transcript', this.TranscriptValue);
+       // console.log('lNameValue', this.lNameValue);
         this.LeadTobeCreated.ExcelR_Training_User__c = this.agentrecid;
-        //(this.namValue!=undefined && this.namValue!=null && this.namValue!=''  ) && 
+        
 
         if ((this.LeadTobeCreated.LastName != undefined && this.LeadTobeCreated.LastName != null && this.LeadTobeCreated.LastName != '') && (this.LeadTobeCreated.Email != undefined && this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '') && (this.LeadTobeCreated.Phone != undefined && this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '')
-            && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '') && (this.LeadTobeCreated.City__c != undefined && this.LeadTobeCreated.City__c != null && this.LeadTobeCreated.City__c != '') && (this.LeadTobeCreated.LeadSource != undefined && this.LeadTobeCreated.LeadSource != null && this.LeadTobeCreated.LeadSource != '')
-            && (this.LeadTobeCreated.UTM_Medium__c != undefined && this.LeadTobeCreated.UTM_Medium__c != null && this.LeadTobeCreated.UTM_Medium__c != '') &&(this.SelectedMedium!=null && this.SelectedMedium!= '' && this.SelectedMedium != undefined)&&
+            && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '') && (this.LeadTobeCreated.LeadSource != undefined && this.LeadTobeCreated.LeadSource != null && this.LeadTobeCreated.LeadSource != '')
+            && (this.LeadTobeCreated.UTM_Medium__c != undefined && this.LeadTobeCreated.UTM_Medium__c != null && this.LeadTobeCreated.UTM_Medium__c != '') &&(this.SelectedMedium!=null && this.SelectedMedium!= '' && this.SelectedMedium != undefined)&&(this.selectedresultValue!=null && this.selectedresultValue!=undefined && this.selectedresultValue!='')&&
             (this.LeadTobeCreated.Visitor_ID__c != undefined && this.LeadTobeCreated.Visitor_ID__c != null && this.LeadTobeCreated.Visitor_ID__c != '') && (this.LeadTobeCreated.Transcript__c != undefined && this.LeadTobeCreated.Transcript__c != null && this.LeadTobeCreated.Transcript__c != '') && (this.LeadTobeCreated.Enter_UTM_Link__c != undefined && this.LeadTobeCreated.Enter_UTM_Link__c != null && this.LeadTobeCreated.Enter_UTM_Link__c != '')) {
 
 
             var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
 
             if (returnvalue == true && this.handleCorrectPhone(this.LeadTobeCreated.Phone)) {
-                createLead({ Leadrec: this.LeadTobeCreated, countrycode : this.CountryCode, countrycodealternate :this.CountryCodeAlt,mediumValue:this.SelectedMedium })
+                createLead({ Leadrec: this.LeadTobeCreated, countrycode : this.CountryCode, countrycodealternate :this.CountryCodeAlt,mediumValue:this.SelectedMedium,city:this.selectedresultValue })
                     .then(data => {
 
                         if (data == 'SUCCESS') {
@@ -1148,77 +820,6 @@ export default class chatForm extends LightningElement {
             alert('All Fields are Mandatory,Please Check any one Of Your Field Is Empty');
             this.HandleLeadCreatedisable = false;
         }
-
-
-
-
-
-      /*  if ((this.lNameValue != undefined && this.lNameValue != null && this.lNameValue != '') && (this.emailValue != undefined && this.emailValue != null && this.emailValue != '') && (this.phoneValue != undefined && this.phoneValue != null && this.phoneValue != '')
-            && (this.CourceLead != undefined && this.CourceLead != null && this.CourceLead != '') && (this.cityValue != undefined && this.cityValue != null && this.cityValue != '') && (this.sourceValue != undefined && this.sourceValue != null && this.sourceValue != '') && (this.MediumValue != undefined && this.MediumValue != null && this.MediumValue != '') &&
-            (this.VisitorIdValue != undefined && this.VisitorIdValue != null && this.VisitorIdValue != '') && (this.TranscriptValue != undefined && this.TranscriptValue != null && this.TranscriptValue != '') && (this.PageUrlValue != undefined && this.PageUrlValue != null && this.PageUrlValue != '')) {
-            this.HandleLeadCreatedisable = true;
-
-            if (this.cityValue == 'Other') {
-                this.cityValue = this.UserInputCity
-            }
-
-            debugger;
-            var returnvalue = this.handleIncorrectEmail(this.emailValue)
-
-            this.handleSpinner();
-            if (returnvalue == true && this.handleCorrectPhone(this.phoneValue)) {  // firstname: this.namValue, 
-                createLead({ Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, Course: this.CourceLead, agentid: this.agentrecid, city: this.cityValue, source: this.sourceValue, medium: this.MediumValue, VisitorId: this.VisitorIdValue, Transcript: this.TranscriptValue, leadGenPath: this.Leadvalue, state: this.StateValue, country: this.CountryValue, LandingPageURL: this.PageUrlValue, comments: this.commentsValue, countrycode: this.SelectedCountryISCode, AlternateMobile: this.alterMobileValue, AlternateEmail: this.alterEmailValue })
-                    .then(data => {
-
-                        if (data == 'SUCCESS') {
-                            this.handleConfirm('Lead Created Successfully');
-                            console.log(data)
-                            //alert('Lead Record created successfully');
-                            this.handleCancel();
-                            this.HandleLeadCreatedisable = false;
-                            this.namValue = '';
-                            this.lNameValue = '';
-                            this.commentsValue = '';
-                            this.emailValue = '';
-                            this.phoneValue = '';
-                            this.alterMobileValue = '';
-                            this.alterEmailValue = '';
-                            this.CourceLead = '';
-                            this.CountryValue = '';
-                            this.cityValue = '';
-                            this.Leadvalue = '';
-                            this.handleSpinner();
-
-                        }
-                        else if (data == 'FAIL') {
-                            this.handleSpinner();
-                            this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
-                            this.HandleLeadCreatedisable = false;
-                        }
-                        else if (data == 'Lead Already exist') {
-                            this.handleSpinner();
-                            this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
-
-                        }
-                    })
-                    .catch(error => {
-                        this.handleSpinner();
-                        this.handleAlert('Error updating or reloading records');
-                        this.HandleLeadCreatedisable = false;
-                        this.handleCancel();
-                    })
-            }
-            else {
-                alert('Incorrect Email Pattern');
-                this.HandleLeadCreatedisable = false;
-            }
-        }
-        else {
-            alert('All Fields are Mandatory,Please Check any one Of Your Field Is Empty');
-            this.HandleLeadCreatedisable = false;
-        }*/
-
-
     }
 
     @track spinnerLoading = false;
@@ -1284,14 +885,7 @@ export default class chatForm extends LightningElement {
                     if (data.length > 0) {
                         this.Leaddata = data;
 
-                        // this.Leaddata = data.map(row=>{
-                        //     return{...row, OwnerName: row.Owner.Name,
-                        //         //if (Product__r) {
-                        //             ProductName:row.Product__r.Name
-
-                        //         //}
-                        //     }
-                        // })
+                       
                         this.error = undefined;
                         this.LeadrecordsFound = true;
                         //this.Leaddata = tempRecords;
@@ -1335,7 +929,7 @@ export default class chatForm extends LightningElement {
                         this.handleConfirm('Application Created Successfully');
                         this.isLoadedApplication = false;
                         this.appbtndisAble = true;
-                        //this.handleClick();
+                       
                         refreshApex(this.dataForApp);
 
 

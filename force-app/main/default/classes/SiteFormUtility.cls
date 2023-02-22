@@ -57,21 +57,7 @@ public without sharing class SiteFormUtility{
         return statesList;
     }
 
-   /* @AuraEnabled
-    public static List<sObject> FetchCitiesrec(String SelectedStateId, String SelectedCountryId){
-
-        System.debug('SelectedStateId =====> ' + SelectedStateId);
-        System.debug('SelectedCountryId =====> ' + SelectedCountryId);
-
-        //List<CityBO__b> CitiesList = [SELECT City__c,Country__c,State__c FROM CityBO__b ]; //Where Country__c =: SelectedCountryId AND State__c =: SelectedStateId
-
-        String bigobjectQueryString = 'SELECT City__c,Country__c,State__c FROM CityBO__b Where Country__c =: SelectedCountryId AND State__c =: SelectedStateId';
-        List<sObject> sobjList = Database.query(bigobjectQueryString);
-        System.debug('sobjList ===> ' + sobjList);
-        return sobjList;
-        
-    }*/
-
+   
     @AuraEnabled
     public static List <City_Big_Object__b> GetCityFromBigobject(string SelectedCountryId,string SelectedStateId){
         system.debug('SelectedCountryId--'+SelectedCountryId);

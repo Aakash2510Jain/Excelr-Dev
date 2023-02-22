@@ -102,7 +102,7 @@ public without sharing class ChatFormLWCcontroller{
      return message;
      }*/
     @AuraEnabled
-    public static string createLead(Lead Leadrec, String countrycode, string countrycodealternate,string mediumValue){
+    public static string createLead(Lead Leadrec, String countrycode, string countrycodealternate,string mediumValue,string city){
         string message = '';
         try{
             System.debug('LeadTobeCreated =======> ' + Leadrec);
@@ -119,6 +119,9 @@ public without sharing class ChatFormLWCcontroller{
             }
             if(mediumValue!=null){
                 Leadrec.UTM_Medium__c=mediumValue;
+            }
+            if(city!=null){
+                Leadrec.City__c=city;
             }
             Leadrec.Lead_Generation_Method__c = 'Chat Form';
             leadRec.Company = Leadrec.Lastname;
@@ -141,7 +144,7 @@ public without sharing class ChatFormLWCcontroller{
     }
 
     @AuraEnabled
-    public static String createTaskForVoice(String subject, string assignto, string priority, string status, Date duedate, string comments, DateTime followupDate, string leadId){
+    public static String createTaskForVoice(Task TaskRecord,string assignto,string leadId){
         system.debug('assignto-->' + assignto);
         system.debug('leadId-->' + leadId);
         system.debug('');
@@ -149,14 +152,14 @@ public without sharing class ChatFormLWCcontroller{
         try{
             // Lead lRec = [select Id, OwnerId from Lead where id =''];
             // Task taskRec = new Task();
-            taskRec.Subject = subject;
+            taskRec.Subject = TaskRecord.Subject;
             taskRec.OwnerId = assignto;
             taskRec.WhoId = leadId;      // lead---Name
-            taskRec.Priority = priority;
-            taskRec.Status = status;
-            taskRec.ActivityDate = duedate;
-            taskRec.Description = comments;
-            taskRec.Followup_Date_Time__c = followupDate;
+            taskRec.Priority = TaskRecord.Priority;
+            taskRec.Status = TaskRecord.Status;
+            taskRec.ActivityDate = TaskRecord.ActivityDate;
+            taskRec.Description = TaskRecord.Description;
+            taskRec.Followup_Date_Time__c = TaskRecord.Followup_Date_Time__c;
             insert taskRec;
             return 'Success';
 
