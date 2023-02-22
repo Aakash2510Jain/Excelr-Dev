@@ -326,10 +326,16 @@ export default class chatForm extends LightningElement {
 
         if(SelectedCountry.label=='India'){
             this.DefaultCountryCode="91";
+             this.CountryCode="91";
+             this.CountryCodeAlt="91";
         }else if(SelectedCountry.label=='United Kingdom'){
             this.DefaultCountryCode="44";
+            this.CountryCode="44";
+            this.CountryCodeAlt="44";
         }else if(SelectedCountry.label=='United States'){
             this.DefaultCountryCode="1";
+            this.CountryCode="1";
+            this.CountryCodeAlt="1";
         }
 
         GettingStates({
@@ -770,6 +776,11 @@ export default class chatForm extends LightningElement {
         debugger;
         //console.log('transcript', this.TranscriptValue);
        // console.log('lNameValue', this.lNameValue);
+       if(this.FetchedcityList.find((picklistOption) => picklistOption.value === this.selectedresultValue)){
+            console.log('Selected City Is Correct');
+        }else{
+        window.alert('Choose a Correct City');
+        }
         this.LeadTobeCreated.ExcelR_Training_User__c = this.agentrecid;
         
 

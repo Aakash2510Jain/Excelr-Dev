@@ -140,16 +140,19 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                     
                     if (!ExistingtaskList.isEmpty()){
                         for (task tas : ExistingtaskList){
-                            if (tas.whoId != null) {
+                            if (tas.whoId != null && String.valueof((tas.whoId).getsobjecttype()) == 'Lead') {
                                 TaskCallObjectIdWithLeadTask.put(tas.CallObject, tas);
                             }
-                            else if (tas.whatId != null) {
+                            else if (tas.whoId != null && String.valueof((tas.whoId).getsobjecttype()) == 'Contact') {
                                 TaskCallObjectIdWithContactTask.put(tas.CallObject, tas);
                             }
                             //TaskCallObjectIdWithTask.put(tas.CallObject, tas);
                         }
                     }
                 }
+
+                System.debug('TaskCallObjectIdWithLeadTask =====> ' + TaskCallObjectIdWithLeadTask);
+                System.debug('TaskCallObjectIdWithContactTask =====> ' + TaskCallObjectIdWithContactTask);
 
                 System.debug('PhoneStringNotExistintheSystem =====> ' + PhoneStringNotExistintheSystem);
                 system.debug('TaskIdWithObject---->' + TaskIdWithObject);

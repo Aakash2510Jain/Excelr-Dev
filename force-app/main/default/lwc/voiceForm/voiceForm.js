@@ -438,10 +438,16 @@ export default class voiceForm extends LightningElement {
 
         if(SelectedCountry.label=='India'){
             this.DefaultCountryCode="91";
+            this.CountryCode="91";
+            this.CountryCodeAlt="91";
         }else if(SelectedCountry.label=='United Kingdom'){
             this.DefaultCountryCode="44";
+            this.CountryCode="44";
+            this.CountryCodeAlt="44";
         }else if(SelectedCountry.label=='United States'){
             this.DefaultCountryCode="1";
+            this.CountryCode="1";
+            this.CountryCodeAlt="1";
         }
 
         GettingStates({
@@ -585,8 +591,8 @@ export default class voiceForm extends LightningElement {
     createTaskRec() {
         debugger;
 
-        if ((this.subjectvalue != null && this.subjectvalue != undefined && this.subjectvalue != '') && (this.CaptureOwnerId != null && this.CaptureOwnerId != undefined && this.CaptureOwnerId != '') && (this.priorityValue != null && this.priorityValue != undefined && this.priorityValue != '') && (this.statusValue != null && this.statusValue != undefined && this.statusValue != '')) {
-            createTask({ subject: this.subjectvalue, assignto: this.CaptureOwnerId, priority: this.priorityValue, status: this.statusValue, duedate: this.DuedateValue, comments: this.comValue, followupDate: this.followupValue, leadId: this.recordId })
+        if ((this.CaptureOwnerId != null && this.CaptureOwnerId != undefined && this.CaptureOwnerId != '') && (this.recordId != null && this.recordId != undefined && this.recordId != '')) {
+            createTask({assignto: this.CaptureOwnerId,leadId: this.recordId,TaskRecord:this.taskTobeCreated})
 
                 .then((result) => {
                     console.log('result', result);
@@ -959,6 +965,8 @@ export default class voiceForm extends LightningElement {
     }
 
     //===============On Change On Every Input=================Starts Here=========================================================================
+    @track CountryCode
+    @track CountryCodeAlt
     LeadCreationHandler(event) {
         debugger;
         var InputName = event.currentTarget.name;
@@ -1054,55 +1062,87 @@ export default class voiceForm extends LightningElement {
 
     //==============================================For Task Creation========================================================================
 
-    @track subjectvalue
-    subjectHandler(event) {
-        debugger;
-        let selectedSubject = event.target.value;
-        this.subjectvalue = selectedSubject;
-    }
+    
+    TaskCreationHandler(event){
 
-    @track statusValue;
-    statusHandler(event) {
-        debugger;
-        let selectedStatus = event.detail.value;
-        this.statusValue = selectedStatus;
-    }
+        var TaskInputName = event.currentTarget.name;
+        if (TaskInputName == 'subject'){
 
-    @track DuedateValue;
-    duedateHandler(event) {
-        debugger;
-        let selectedDuedate = event.detail.value;
-        this.DuedateValue = selectedDuedate;
+            this.taskTobeCreated.Subject=event.target.value;
+        }
+        if(TaskInputName == 'Priority'){
 
-    }
+            this.taskTobeCreated.Priority=event.target.value;
 
-    @track comValue;
-    commentHandler(event) {
-        debugger;
-        let selectedComment = event.target.value;
-        this.comValue = selectedComment;
-    }
-    @track followupValue;
-    followupHandler(event) {
-        debugger;
-        let selectedfollowup = event.target.value;
-        this.followupValue = selectedfollowup;
+        }if(TaskInputName == 'Status'){
+
+            this.taskTobeCreated.Status=event.target.value;
+
+        }if(TaskInputName == 'Duedate'){
+
+            this.taskTobeCreated.ActivityDate=event.target.value;
+
+        }if(TaskInputName =='Followupdatetime'){
+
+            this.taskTobeCreated.Followup_Date_Time__c=event.target.value;
+
+        }if(TaskInputName =='Comments'){
+
+            this.taskTobeCreated.Description=event.target.value;
+        }
+
     }
 
 
-    @track priorityValue;
-    priorityHandler(event) {
-        debugger;
-        let selectedPriority = event.detail.value;
-        this.priorityValue = selectedPriority;
-    }
+    // @track subjectvalue
+    // subjectHandler(event) {
+    //     debugger;
+    //     let selectedSubject = event.target.value;
+    //     this.subjectvalue = selectedSubject;
+    // }
 
-    @track statusValue;
-    statusHandler(event) {
-        debugger;
-        let selectedStatus = event.detail.value;
-        this.statusValue = selectedStatus;
-    }
+    // @track statusValue;
+    // statusHandler(event) {
+    //     debugger;
+    //     let selectedStatus = event.detail.value;
+    //     this.statusValue = selectedStatus;
+    // }
+
+    // @track DuedateValue;
+    // duedateHandler(event) {
+    //     debugger;
+    //     let selectedDuedate = event.detail.value;
+    //     this.DuedateValue = selectedDuedate;
+
+    // }
+
+    // @track comValue;
+    // commentHandler(event) {
+    //     debugger;
+    //     let selectedComment = event.target.value;
+    //     this.comValue = selectedComment;
+    // }
+    // @track followupValue;
+    // followupHandler(event) {
+    //     debugger;
+    //     let selectedfollowup = event.target.value;
+    //     this.followupValue = selectedfollowup;
+    // }
+
+
+    // @track priorityValue;
+    // priorityHandler(event) {
+    //     debugger;
+    //     let selectedPriority = event.detail.value;
+    //     this.priorityValue = selectedPriority;
+    // }
+
+    // @track statusValue;
+    // statusHandler(event) {
+    //     debugger;
+    //     let selectedStatus = event.detail.value;
+    //     this.statusValue = selectedStatus;
+    // }
 //===========================================================================================Ends Here========================================================
 
     notifyismBTN() {
@@ -1240,7 +1280,16 @@ export default class voiceForm extends LightningElement {
     }
     HandleLeadCreatedisable = false;
     createNewLead() {
-        debugger; //(this.namValue!=undefined && this.namValue!=null && this.namValue!='' ) &&
+        debugger;
+        
+        if(this.FetchedcityList.find((picklistOption) => picklistOption.value === this.selectedresultValue)){
+            console.log('Selected City Is Correct');
+        }else{
+        window.alert('Choose a Correct City');
+        }
+        
+        this.LeadTobeCreated.ExcelR_Training_User__c = this.agentrecid;
+        //(this.namValue!=undefined && this.namValue!=null && this.namValue!='' ) &&
         if ((this.LeadTobeCreated.LastName != undefined && this.LeadTobeCreated.LastName != null && this.LeadTobeCreated.LastName != '') && (this.LeadTobeCreated.Email != undefined && this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '') && (this.LeadTobeCreated.Phone != undefined && this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '')
         && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '') && (this.LeadTobeCreated.LeadSource != undefined && this.LeadTobeCreated.LeadSource != null && this.LeadTobeCreated.LeadSource != '')
         && (this.LeadTobeCreated.UTM_Medium__c != undefined && this.LeadTobeCreated.UTM_Medium__c != null && this.LeadTobeCreated.UTM_Medium__c != '') &&(this.SelectedMedium!=null && this.SelectedMedium!= '' && this.SelectedMedium != undefined)&&(this.selectedresultValue!=null && this.selectedresultValue!=undefined && this.selectedresultValue!=''))

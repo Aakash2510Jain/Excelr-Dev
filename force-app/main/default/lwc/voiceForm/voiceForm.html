@@ -268,7 +268,7 @@
                                     
                                     <!--lightning-input type="text" label="City" name="UserCity"
                                         placeholder="Enter Your City" onchange={HandleCityValue}></lightning-input-->
-                                        <div class="slds-card slds-p-around_medium">
+                                        <div class="slds-card">
                                             <div class="slds-form-element">
                                                 <div class="slds-form-element__control">
                                                     <lightning-input label="Searchable Combobox" type="search" onchange={search} value={selectedresultValue} disabled={disableInput}></lightning-input>
@@ -296,7 +296,7 @@
 
                                     
                                 </div>
-
+                                 <br/>
                                 <label class="slds-form-element__label" for="textarea-id-01"><abbr class="slds-required"
                                         title="required">*</abbr>Mobile</label>
                                 <div class="slds-grid slds-wrap">
@@ -343,7 +343,7 @@
                                     required="true">
                                 </lightning-combobox>
 
-                                <lightning-combobox name="Lead Gen Path" label="Lead Gen Path" value={Leadvalue}
+                                <lightning-combobox name="LGPath" label="Lead Gen Path" value={Leadvalue}
                                     placeholder="Select Lead Gen Path" options={LeadGenPathPicklistvalue} onchange={LeadCreationHandler}
                                     required="true">
                                 </lightning-combobox>
@@ -557,19 +557,22 @@
                     </div>
                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
                         <lightning-input type="text" name="subject" label="Subject" value={subjectvalue}
-                            onchange={subjectHandler} required="true"></lightning-input>
+                            onchange={TaskCreationHandler} required="true"></lightning-input>
+
                         <lightning-combobox name="Priority" label="Priority" value={priorityValue}
-                            placeholder="Select Priority" options={priorityList} onchange={priorityHandler}
+                            placeholder="Select Priority" options={priorityList} onchange={TaskCreationHandler}
                             required="true"></lightning-combobox>
 
                         <lightning-combobox name="Status" label="Status" value={statusValue} placeholder="Select Status"
-                            options={StatusList} onchange={statusHandler} required="true"></lightning-combobox>
+                            options={StatusList} onchange={TaskCreationHandler} required="true"></lightning-combobox>
 
                         <lightning-input type="date" name="Duedate" label="Due date" value={DuedateValue}
-                            onchange={duedateHandler}></lightning-input>
-                        <lightning-input type="datetime" name="input2" label="Followup Date/time " value={followupValue}
-                            onchange={followupHandler}></lightning-input>
-                        <lightning-textarea label="Comments" name="Comments" value={comValue} onchange={commentHandler}>
+                            onchange={TaskCreationHandler}></lightning-input>
+
+                        <lightning-input type="datetime" name="Followupdatetime" label="Followup Date/time " value={followupValue}
+                            onchange={TaskCreationHandler}></lightning-input>
+
+                        <lightning-textarea label="Comments" name="Comments" value={comValue} onchange={TaskCreationHandler}>
                         </lightning-textarea>
 
 

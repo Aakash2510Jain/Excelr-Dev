@@ -259,37 +259,25 @@
                             <!-- Modal/Popup Box LWC body starts here -->
                             <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
                                 <!--lightning-input label="First Name" onchange={FnameChange} required="true"></lightning-input -->
-                                <lightning-input label="Name" required="true" onchange={LnameChange}></lightning-input>
-                                <lightning-input label="Email" required="true" onchange={EmailChange}></lightning-input>
-                                <lightning-input label="Alternate Email"  onchange={AlterEmailChange}></lightning-input>
-                                <!--lightning-input type="tel" label="Mobile" min-length="10" onchange={PhoneChange}
-                                    max-length="10" required="true"></lightning-input -->
+                                <lightning-input name="LN" label="Name" required="true"
+                                    onchange={LeadCreationHandler}></lightning-input>
 
+                                <lightning-input name="Em" label="Email" required="true"
+                                    onchange={LeadCreationHandler}></lightning-input>
 
-                                <!--lightning-combobox name="City" label="City" value={cityValue}
-                                    placeholder="Select Your City" options={CityOptions} onchange={HandleCityStatus}
-                                    required="true">
-                                </lightning-combobox>
-
-                                <template if:true={InputCity}>
-                                    <lightning-input type="text" label="City" name="UserCity"
-                                        placeholder="Enter Your City" onchange={HandleUserCityStatus}></lightning-input>
-                                </template>
-
-                                <lightning-input type="text" label="City" onchange={HandleCity}></lightning-input>
-                                <lightning-input type="text" label="State" name="State" value={StateValue}
-                                    disabled={StateDisable} onchange={HandleChangeStateCountry}></lightning-input>
-                                <lightning-input type="text" label="Country" name="Country" value={CountryValue}
-                                    disabled={CountryDisable} onchange={HandleChangeStateCountry}></lightning-input -->
-
+                                <lightning-input name="AltEm" label="Alternate Email"
+                                    onchange={LeadCreationHandler}></lightning-input>
+                                
                                     <lightning-combobox name="Countries" label="Select Country" value={CountryValue}
                                         placeholder="Select Your Country" options={CountriesPicklistValue}
                                         onchange={HandleChangeCountry} required="true">
                                     </lightning-combobox>
+
                                     <lightning-combobox name="States" label="Select State" value={StateValue}
                                         placeholder="Select Your State" options={SelectedCountryStateList}
                                         onchange={HandleChangeState} required="true" disabled={StateDisable}>
                                     </lightning-combobox>
+
                                     <lightning-input type="text" label="City" name="UserCity"
                                         placeholder="Enter Your City" onchange={HandleCityValue}></lightning-input>
 

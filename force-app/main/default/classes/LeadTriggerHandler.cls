@@ -13,7 +13,7 @@ public without sharing class LeadTriggerHandler{
             
             for (Lead ld : leadList){
                 system.debug('ld.OwnerId--->'+ld.OwnerId);
-                if ( (ld.Lead_Generation_Method__c == 'Voice Form' || ld.Lead_Generation_Method__c == 'Chat Form' || (ld.Lead_Generation_Method__c == 'Generic Form')) && (ld.LeadSource != 'Reference' || ld.Lead_Gen_Path__c != 'Reference')){
+                if ( (ld.Lead_Generation_Method__c == 'Voice Form' || ld.Lead_Generation_Method__c == 'Chat Form' || (ld.Lead_Generation_Method__c == 'Generic Form' && ld.Is_User_Assigned__c == 'Not-Assigned' ) || (ld.Lead_Generation_Method__c == 'Walk-in Form' && ld.Is_User_Assigned__c == 'Not-Assigned' ) ) && (ld.LeadSource != 'Reference' || ld.Lead_Gen_Path__c != 'Reference')){
                     system.debug('Owner is Queue');
                     ld.OwnerId = constants.queueId;
                 }

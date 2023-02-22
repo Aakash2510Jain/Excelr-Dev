@@ -100,7 +100,7 @@ public without sharing class voiceFormLWCcontroller{
             if(city!=null){
                 Leadrec.City__c=city;
             }
-            Leadrec.Lead_Generation_Method__c = 'Chat Form';
+            Leadrec.Lead_Generation_Method__c = 'Voice Form';
             leadRec.Company = Leadrec.Lastname;
             
             insert Leadrec;
@@ -121,29 +121,29 @@ public without sharing class voiceFormLWCcontroller{
     }
 
     @AuraEnabled
-    public static String createTaskForVoice(String subject, string assignto, string priority, string status, Date duedate, string comments, DateTime followupDate, string leadId){
+    public static String createTaskForVoice(Task TaskRecord,string assignto,string leadId){
         system.debug('assignto-->' + assignto);
         system.debug('leadId-->' + leadId);
-        system.debug('comments' + comments);
+        system.debug('');
         Task taskRec = new Task();
         try{
             // Lead lRec = [select Id, OwnerId from Lead where id =''];
             // Task taskRec = new Task();
-            taskRec.Subject = subject;
+            taskRec.Subject = TaskRecord.Subject;
             taskRec.OwnerId = assignto;
             taskRec.WhoId = leadId;      // lead---Name
-            taskRec.Priority = priority;
-            taskRec.Status = status;
-            taskRec.ActivityDate = duedate;
-            taskRec.Description = comments;
-            taskRec.Followup_Date_Time__c = followupDate;
+            taskRec.Priority = TaskRecord.Priority;
+            taskRec.Status = TaskRecord.Status;
+            taskRec.ActivityDate = TaskRecord.ActivityDate;
+            taskRec.Description = TaskRecord.Description;
+            taskRec.Followup_Date_Time__c = TaskRecord.Followup_Date_Time__c;
             insert taskRec;
             return 'Success';
 
         } catch (Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());
             System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
-            HandleBusinessException.captureError('voiceFormLWCcontroller', 'createTaskForVoice', e, null);
+            HandleBusinessException.captureError('ChatFormLWCcontroller', 'createTaskForVoice', e, null);
             return 'error';
         }
     }
