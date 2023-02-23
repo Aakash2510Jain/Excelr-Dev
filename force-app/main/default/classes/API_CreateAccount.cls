@@ -37,13 +37,13 @@ global class API_CreateAccount{
             Account newAccount = (Account) JSON.deserialize(requestString, Account.class);
             system.debug('newAccount-->'+newAccount);
             if (newAccount != null){
-                existingLeadByEmail = [Select Id, Email, status, course__c, Customers__c,OwnerId
+                existingLeadByEmail = [Select Id, Email, status, course__c, Customers__c,OwnerId,Alternate_Phone__c,Phone
                                        From Lead
-                                       where Email = :newAccount.Email__c and isConverted = false order by CreatedDate Desc limit 1];
+                                       where (Email = :newAccount.Email__c or Alternate_Email__c =:newAccount.Email__c or Alternate_Phone__c =: newAccount.Alternate_Phone__c or Phone =: newAccount.Phone)  and isConverted = false order by CreatedDate Desc limit 1];
                 system.debug('existingLeadByEmail-->'+existingLeadByEmail);
                 convertedLeadByEmail = [Select Id, Email
                                         From Lead
-                                        where Email = :newAccount.Email__c and isConverted = true
+                                        where (Email = :newAccount.Email__c or Alternate_Email__c =:newAccount.Email__c or Alternate_Phone__c =: newAccount.Alternate_Phone__c or Phone =: newAccount.Phone) and isConverted = true
                                         limit 1];
                 system.debug('convertedLeadByEmail-->'+convertedLeadByEmail);
                 if (!convertedLeadByEmail.isEmpty()){

@@ -1197,7 +1197,7 @@ export default class voiceForm extends LightningElement {
 
         }
         else {
-            alert('All Fields are Mandatory,Please Check any one Of Your Field Is Empty');
+            alert('Some of the mandatory fields are not filled');
             this.HandleLeadCreatedisable = false;
         }
 

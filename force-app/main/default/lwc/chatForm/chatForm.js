@@ -424,6 +424,15 @@ export default class chatForm extends LightningElement {
             
             console.log('arr====',arr);
         }
+
+        // if(this.FetchedcityList.filter(product => product.value.includes(TempValue))){
+
+        //       console.log('Correct Search'); 
+        //   }else{
+
+        //     window.alert('Choose a Correct City');
+        //   }
+
         this.searchResults=arr;
         if(this.searchResults.length>0){
             this.booleanValue=true;
@@ -716,14 +725,12 @@ export default class chatForm extends LightningElement {
     createNewLead() {
         debugger;
         
-        if(this.selectedresultValue!=null){
-
             if(this.FetchedcityList.find((picklistOption) => picklistOption.value === this.selectedresultValue)){
                 console.log('Selected City Is Correct');
             }else{
             window.alert('Choose a Correct City');
             }
-        }
+        
         this.LeadTobeCreated.ExcelR_Training_User__c = this.agentrecid;
         
 
@@ -772,7 +779,7 @@ export default class chatForm extends LightningElement {
 
         }
         else {
-            alert('All Fields are Mandatory,Please Check any one Of Your Field Is Empty');
+            alert('Some of the mandatory fields are not filled');
             this.HandleLeadCreatedisable = false;
         }
     }
