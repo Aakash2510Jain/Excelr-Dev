@@ -3,21 +3,11 @@ import EXCELR_LOGO from '@salesforce/resourceUrl/ExcelRLogo';
 import getLead from '@salesforce/apex/ChatFormLWCcontroller.getLead';
 import getApplication from '@salesforce/apex/ChatFormLWCcontroller.getApplication';
 import EmailIsm from '@salesforce/apex/ChatFormLWCcontroller.EmailIsm';
-//import getMember from '@salesforce/apex/ChatFormLWCcontroller.getMember';
 
-//import getPickiststatusOfTask from '@salesforce/apex/ChatFormLWCcontroller.getPickiststatusOfTask';
-//import getPickistpriorityOfTask from '@salesforce/apex/ChatFormLWCcontroller.getPickistpriorityOfTask';
 import createTask from '@salesforce/apex/ChatFormLWCcontroller.createTaskForVoice';
-
-
 import createLead from '@salesforce/apex/ChatFormLWCcontroller.createLead';
 import createApplication from '@salesforce/apex/ChatFormLWCcontroller.CreateApplication';
-
-//import FetchStateCounty from '@salesforce/apex/ChatFormLWCcontroller.FetchStateCounty';
-//import Fetchcities from '@salesforce/apex/ChatFormLWCcontroller.Fetchcities';
 import fetchCountryAndCountryCode from '@salesforce/apex/GenericLeadLWCcontroller.fetchCountryAndCountryCode';
-
-//import FetchCountriesStateWithISDcode from '@salesforce/apex/voiceFormLWCcontroller.getCountryStateAndISDCode';
 import QueryPastLeads from '@salesforce/apex/ChatFormLWCcontroller.QueryPastLeads';
 import LightningAlert from 'lightning/alert';
 //import LightningConfirm from "lightning/confirm";
@@ -701,55 +691,6 @@ export default class chatForm extends LightningElement {
         }
 
     }
-    // @track subjectvalue
-    // subjectHandler(event) {
-    //     debugger;
-    //     let selectedSubject = event.target.value;
-    //     this.subjectvalue = selectedSubject;
-    // }
-
-    // @track statusValue;
-    // statusHandler(event) {
-    //     debugger;
-    //     let selectedStatus = event.detail.value;
-    //     this.statusValue = selectedStatus;
-    // }
-
-    // @track DuedateValue;
-    // duedateHandler(event) {
-    //     debugger;
-    //     let selectedDuedate = event.detail.value;
-    //     this.DuedateValue = selectedDuedate;
-
-    // }
-
-    // @track comValue;
-    // commentHandler(event) {
-    //     debugger;
-    //     let selectedComment = event.target.value;
-    //     this.comValue = selectedComment;
-    // }
-    // @track followupValue;
-    // followupHandler(event) {
-    //     debugger;
-    //     let selectedfollowup = event.target.value;
-    //     this.followupValue = selectedfollowup;
-    // }
-
-
-    // @track priorityValue;
-    // priorityHandler(event) {
-    //     debugger;
-    //     let selectedPriority = event.detail.value;
-    //     this.priorityValue = selectedPriority;
-    // }
-
-    // @track statusValue;
-    // statusHandler(event) {
-    //     debugger;
-    //     let selectedStatus = event.detail.value;
-    //     this.statusValue = selectedStatus;
-    // }
     // ===============================================task handler Completed ===============================
 
     notifyismBTN() {
@@ -774,12 +715,14 @@ export default class chatForm extends LightningElement {
 
     createNewLead() {
         debugger;
-        //console.log('transcript', this.TranscriptValue);
-       // console.log('lNameValue', this.lNameValue);
-       if(this.FetchedcityList.find((picklistOption) => picklistOption.value === this.selectedresultValue)){
-            console.log('Selected City Is Correct');
-        }else{
-        window.alert('Choose a Correct City');
+        
+        if(this.selectedresultValue!=null){
+
+            if(this.FetchedcityList.find((picklistOption) => picklistOption.value === this.selectedresultValue)){
+                console.log('Selected City Is Correct');
+            }else{
+            window.alert('Choose a Correct City');
+            }
         }
         this.LeadTobeCreated.ExcelR_Training_User__c = this.agentrecid;
         
@@ -789,6 +732,7 @@ export default class chatForm extends LightningElement {
             && (this.LeadTobeCreated.UTM_Medium__c != undefined && this.LeadTobeCreated.UTM_Medium__c != null && this.LeadTobeCreated.UTM_Medium__c != '') &&(this.SelectedMedium!=null && this.SelectedMedium!= '' && this.SelectedMedium != undefined)&&(this.selectedresultValue!=null && this.selectedresultValue!=undefined && this.selectedresultValue!='')&&
             (this.LeadTobeCreated.Visitor_ID__c != undefined && this.LeadTobeCreated.Visitor_ID__c != null && this.LeadTobeCreated.Visitor_ID__c != '') && (this.LeadTobeCreated.Transcript__c != undefined && this.LeadTobeCreated.Transcript__c != null && this.LeadTobeCreated.Transcript__c != '') && (this.LeadTobeCreated.Enter_UTM_Link__c != undefined && this.LeadTobeCreated.Enter_UTM_Link__c != null && this.LeadTobeCreated.Enter_UTM_Link__c != '')) {
 
+                this.HandleLeadCreatedisable = true;
 
             var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
 
@@ -808,7 +752,7 @@ export default class chatForm extends LightningElement {
                         }
                         else if (data == 'FAIL') {
                             this.handleSpinner();
-                            this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
+                           // this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
                             this.HandleLeadCreatedisable = false;
                         }
 

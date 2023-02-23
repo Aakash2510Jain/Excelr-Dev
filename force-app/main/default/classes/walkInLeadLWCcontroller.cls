@@ -34,62 +34,102 @@ public without sharing class walkInLeadLWCcontroller{
         }
     }
 
-    @auraenabled
-    public static String createLead(string Lastname, string email, string phone, string Course, string typeofcour, string userId, string agentid, string comments, string city, string state, string country, string countrycode, string AlternateMobile, String AlternateEmail){
+    // @auraenabled
+    // public static String createLead(string Lastname, string email, string phone, string Course, string typeofcour, string userId, string agentid, string comments, string city, string state, string country, string countrycode, string AlternateMobile, String AlternateEmail){
 
-        System.debug('userId ====> ' + userId);
-        System.debug('agentid ====> ' + agentid);
-        lead leadRec = new lead();
-        list<ExcelR_Training_User__c> existingTrainingUser = new list<ExcelR_Training_User__c>();
-        String message = '';
+    //     System.debug('userId ====> ' + userId);
+    //     System.debug('agentid ====> ' + agentid);
+    //     lead leadRec = new lead();
+    //     list<ExcelR_Training_User__c> existingTrainingUser = new list<ExcelR_Training_User__c>();
+    //     String message = '';
+    //     try{
+
+    //         if (agentid != null){
+    //             existingTrainingUser = [SELECT Email__c, First_Name__c, HashCode__c, Id, Last_Name__c, Name, Password__c, Username__c
+    //                                     FROM ExcelR_Training_User__c
+    //                                     Where id = :agentid];
+    //         }
+
+    //         system.debug(Lastname + ' : ' + email + ' : ' + phone + ' : ' + Lastname);
+    //         //leadRec.FirstName = firstname;
+    //         leadRec.LastName = Lastname;
+    //         leadRec.Email = email;
+    //         leadRec.Alternate_Email__c = AlternateEmail;
+    //         leadRec.Phone = countrycode + phone;
+    //         leadRec.Alternate_Phone__c = countrycode + AlternateMobile;
+    //         leadRec.OwnerId = userId;
+    //         leadRec.State = state;
+    //         leadRec.Country = country;
+    //         leadRec.city = city;
+    //         leadRec.Type_of_Course__c = typeofcour;
+    //         leadRec.Course__c = Course;
+    //         leadRec.City__c = 'NA';
+    //         leadRec.Lead_Generation_Method__c = 'Walk-in Form';
+    //         leadRec.LeadSource = 'Walkin';
+    //         leadRec.Comments__c = comments;
+    //         if (!existingTrainingUser.isEmpty()){
+    //             leadRec.ExcelR_Training_User__c = existingTrainingUser[0].id;
+    //         }
+    //         leadRec.Company = Lastname;
+    //         system.debug('leadRec===========================' + leadRec);
+    //         insert leadRec;
+    //         System.debug('lead rec Id =====> ' + leadRec.Id);
+    //         if (leadRec.id != null){
+    //             message = 'SUCCESS';
+    //         }
+    //         //return leadRec;
+    //     } catch (Exception e){
+    //         System.debug(' the Error has occured due to =====> ' + e.getMessage());
+    //         System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+    //         HandleBusinessException.captureError('walkInLeadLWCcontroller', 'createLead', e, null);
+    //         message = 'FAIL';
+    //         //return null;
+    //     }
+    //     return message;
+    // }
+
+    @AuraEnabled
+    public static string createLead(Lead Leadrec, String countrycode, string countrycodealternate,string city){
+        string message = '';
         try{
+            System.debug('LeadTobeCreated =======> ' + Leadrec);
+            System.debug('countrycode =======> ' + countrycode);
+            System.debug('countrycodealternate =======> ' + countrycodealternate);
 
-            if (agentid != null){
-                existingTrainingUser = [SELECT Email__c, First_Name__c, HashCode__c, Id, Last_Name__c, Name, Password__c, Username__c
-                                        FROM ExcelR_Training_User__c
-                                        Where id = :agentid];
+            if (countrycode != null){
+                Leadrec.Phone = countrycode + Leadrec.Phone;
             }
 
-            system.debug(Lastname + ' : ' + email + ' : ' + phone + ' : ' + Lastname);
-            //leadRec.FirstName = firstname;
-            leadRec.LastName = Lastname;
-            leadRec.Email = email;
-            leadRec.Alternate_Email__c = AlternateEmail;
-            leadRec.Phone = countrycode + phone;
-            leadRec.Alternate_Phone__c = countrycode + AlternateMobile;
-            leadRec.OwnerId = userId;
-            leadRec.State = state;
-            leadRec.Country = country;
-            leadRec.city = city;
-            leadRec.Type_of_Course__c = typeofcour;
-            leadRec.Course__c = Course;
-            leadRec.City__c = 'NA';
-            leadRec.Lead_Generation_Method__c = 'Walk-in Form';
-            leadRec.LeadSource = 'Walkin';
-            leadRec.Comments__c = comments;
-            if (!existingTrainingUser.isEmpty()){
-                leadRec.ExcelR_Training_User__c = existingTrainingUser[0].id;
+            if (countrycodealternate != null){
+                Leadrec.Alternate_Phone__c = countrycodealternate + Leadrec.Alternate_Phone__c;
+
             }
-            leadRec.Company = Lastname;
-            system.debug('leadRec===========================' + leadRec);
-            insert leadRec;
-            System.debug('lead rec Id =====> ' + leadRec.Id);
+            
+            if(city!=null){
+                Leadrec.City__c=city;
+            }
+            Leadrec.Lead_Generation_Method__c = 'Walk-in Form';
+            leadRec.Company = Leadrec.Lastname;
+            
+            insert Leadrec;
             if (leadRec.id != null){
                 message = 'SUCCESS';
             }
-            //return leadRec;
+
         } catch (Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());
             System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
-            HandleBusinessException.captureError('walkInLeadLWCcontroller', 'createLead', e, null);
+            HandleBusinessException.captureError('ChatFormLWCcontroller', 'createLead', e, null);
             message = 'FAIL';
-            //return null;
+
         }
+
+
         return message;
     }
 
     @AuraEnabled
-    public static String createTaskForVoice(String subject, string assignto, string priority, string status, Date duedate, string comments, DateTime followupDate, string leadId){
+    public static String createTaskForVoice(Task TaskRecord,string assignto,string leadId){
         system.debug('assignto-->' + assignto);
         system.debug('leadId-->' + leadId);
         system.debug('');
@@ -97,21 +137,21 @@ public without sharing class walkInLeadLWCcontroller{
         try{
             // Lead lRec = [select Id, OwnerId from Lead where id =''];
             // Task taskRec = new Task();
-            taskRec.Subject = subject;
+            taskRec.Subject = TaskRecord.Subject;
             taskRec.OwnerId = assignto;
             taskRec.WhoId = leadId;      // lead---Name
-            taskRec.Priority = priority;
-            taskRec.Status = status;
-            taskRec.ActivityDate = duedate;
-            taskRec.Description = comments;
-            taskRec.Followup_Date_Time__c = followupDate;
+            taskRec.Priority = TaskRecord.Priority;
+            taskRec.Status = TaskRecord.Status;
+            taskRec.ActivityDate = TaskRecord.ActivityDate;
+            taskRec.Description = TaskRecord.Description;
+            taskRec.Followup_Date_Time__c = TaskRecord.Followup_Date_Time__c;
             insert taskRec;
             return 'Success';
 
         } catch (Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());
             System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
-            HandleBusinessException.captureError('walkInLeadLWCcontroller', 'createTaskForVoice', e, null);
+            HandleBusinessException.captureError('ChatFormLWCcontroller', 'createTaskForVoice', e, null);
             return 'error';
         }
     }

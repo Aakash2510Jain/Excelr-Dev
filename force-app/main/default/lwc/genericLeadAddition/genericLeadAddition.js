@@ -4,29 +4,16 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getLead from '@salesforce/apex/GenericLeadLWCcontroller.getLead';
 import getApplication from '@salesforce/apex/GenericLeadLWCcontroller.getApplication';
 import EmailIsm from '@salesforce/apex/GenericLeadLWCcontroller.EmailIsm';
-import getMember from '@salesforce/apex/GenericLeadLWCcontroller.getMember';
-import getPuckistOflead from '@salesforce/apex/GenericLeadLWCcontroller.getPuckistOflead';
 
-import getPickiststatusOfTask from '@salesforce/apex/GenericLeadLWCcontroller.getPickiststatusOfTask';
-import getPickistpriorityOfTask from '@salesforce/apex/GenericLeadLWCcontroller.getPickistpriorityOfTask';
 import createTask from '@salesforce/apex/GenericLeadLWCcontroller.createTaskForVoice';
 
 import createLead from '@salesforce/apex/GenericLeadLWCcontroller.createLead';
 import createApplication from '@salesforce/apex/GenericLeadLWCcontroller.CreateApplication';
-
-import { getObjectInfo } from 'lightning/uiObjectInfoApi';
-import { getPicklistValues } from 'lightning/uiObjectInfoApi';
-import LEAD_OBJECT from '@salesforce/schema/Lead';
-import LEAD_GEN_PATH from '@salesforce/schema/Lead.Lead_Gen_Path__c';
-import LEAD_SOURCE from '@salesforce/schema/Lead.LeadSource';
-import LEAD_MEDIUM from '@salesforce/schema/Lead.UTM_Medium__c';
 import FetchStateCounty from '@salesforce/apex/GenericLeadLWCcontroller.FetchStateCounty';
-import Fetchcities from '@salesforce/apex/GenericLeadLWCcontroller.Fetchcities';
+
 import fetchCountryAndCountryCode from '@salesforce/apex/GenericLeadLWCcontroller.fetchCountryAndCountryCode';
 
-import FetchCountriesStateWithISDcode from '@salesforce/apex/voiceFormLWCcontroller.getCountryStateAndISDCode';
 
-import COUNTRY_FIELD from '@salesforce/schema/Lead.Country';
 
 import QueryPastLeads from '@salesforce/apex/GenericLeadLWCcontroller.QueryPastLeads';
 import LightningAlert from 'lightning/alert';
@@ -133,25 +120,7 @@ export default class WaklInLead extends LightningElement {
     }
 
 
-    // @track countryPicklist;
-    // @wire(getPicklistValues, { recordTypeId:'$objectInfo.data.defaultRecordTypeId', fieldApiName:COUNTRY_FIELD})
-    // wiredCountryPicklistValues({ data, error }) {
-    //     debugger;
-    //     if (data) {
-    //         console.log('data=', data);
-    //         console.log('dataValues=', data.values);
-    //         let arr = [];
-    //         for (let i = 0; i < data.values.length; i++) {
-    //             arr.push({ label: data.values[i].label, value: data.values[i].value });
-    //         }
-    //         this.countryPicklist = arr;
-    //         this.countryPicklist.sort((a, b) => (a.label > b.label) ? 1 : -1);
-    //         console.log('countryPicklist =======', this.countryPicklist);
-    //     }
-    //     else {
-    //         console.log('error=', error)
-    //     }
-    // }
+    
     IndustryPicklistValues
 
     @track taskBTNdisAble = true;
@@ -321,27 +290,7 @@ export default class WaklInLead extends LightningElement {
 
     
     // =========================================================Fetch Countries States with ISDCODe And Handle =================================================
-    // @track CountriesPicklistValue=[];
-    // @track countriesSateISDCodelist = [];
-    // @wire(FetchCountriesStateWithISDcode)
-    // wiredCounstriesStatesWithISD({data,error}){
-    //     debugger;
-    //     if(data){
-    //         this.countriesSateISDCodelist = data;
-    //         console.log('CityValuedata=',data);
-
-    //           let arr=[];
-    //           for(let i=0;i<data.length;i++){
-    //              arr.push({label:data[i].MasterLabel,value:data[i].MasterLabel});
-    //           }
-    //           this.CountriesPicklistValue=arr;
-    //           console.log('Picklistvalue=',this.CountriesPicklistValue);
-    //        }
-    //        else if(error){
-    //            console.log('error=',error);
-    //        }
-
-    // }
+    
 
     @track SelectedCountryStateList = [];
     @track SelectedCountryISCode;
@@ -540,127 +489,11 @@ export default class WaklInLead extends LightningElement {
 
     }
 
-    // Picklistvalue = [];
-    // @wire(getObjectInfo, { objectApiName: LEAD_OBJECT })
-    // objectInfo
-
-    // @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: LEAD_GEN_PATH })
-    // wiredPicklistValues({ data, error }) {
-    //     debugger;
-    //     if (data) {
-    //         console.log('data=', data);
-    //         console.log('dataValues=', data.values);
-    //         let arr = [];
-    //         for (let i = 0; i < data.values.length; i++) {
-    //             arr.push({ label: data.values[i].label, value: data.values[i].value });
-    //         }
-    //         this.Picklistvalue = arr;
-    //         this.Picklistvalue.sort((a, b) => (a.label > b.label) ? 1 : -1);
-    //         console.log('Picklistvalue=', this.Picklistvalue);
-    //     }
-    //     else {
-    //         console.log('error=', error)
-    //     }
-    // }
-
-    // get ldGenPath() {
-    //     return this.Picklistvalue;
-    // }
-
-    // ldGenPathValue(event) {
-    //     debugger;
-    //     this.Leadvalue = event.target.value;
-    // }
-
-    // //Getting Picklist Field Of LeadSource
-    // @track LeadSourcePicklist = [];
-    // @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: LEAD_SOURCE })
-    // wiredPicklistLeadSource({ data, error }) {
-    //     debugger;
-    //     if (data) {
-    //         console.log('data=', data);
-    //         console.log('dataValues=', data.values);
-    //         let arr = [];
-    //         for (let i = 0; i < data.values.length; i++) {
-    //             arr.push({ label: data.values[i].label, value: data.values[i].value });
-    //         }
-    //         this.LeadSourcePicklist = arr;
-    //         this.LeadSourcePicklist.sort((a, b) => (a.label > b.label) ? 1 : -1);
-    //         console.log('Picklistvalue=', this.LeadSourcePicklist);
-    //     }
-    //     else {
-    //         console.log('error=', error)
-    //     }
-    // }
-
-    // get leadSource() {
-    //     return this.LeadSourcePicklist;
-    // }
-
-    // @track SourceValue;
-    // HandleSource(event) {
-    //     debugger;
-    //     let Source = event.target.value;
-    //     this.SourceValue = Source;
-    // }
-
-    // //Getting Picklist Field Of Medium
-    // @track LeadMediumPicklist = [];
-    // @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: LEAD_MEDIUM })
-    // wiredPicklistLeadMedium({ data, error }) {
-    //     debugger;
-    //     if (data) {
-    //         console.log('data=', data);
-    //         console.log('dataValues=', data.values);
-    //         let arr = [];
-    //         for (let i = 0; i < data.values.length; i++) {
-    //             arr.push({ label: data.values[i].label, value: data.values[i].value });
-    //         }
-    //         this.LeadMediumPicklist = arr;
-    //         this.LeadMediumPicklist.sort((a, b) => (a.label > b.label) ? 1 : -1);   
-    //         console.log('Picklistvalue=', this.LeadMediumPicklist);
-    //     }
-    //     else {
-    //         console.log('error=', error)
-    //     }
-    // }
-
-    // get leadmedium() {
-    //     return this.LeadMediumPicklist;
-    // }
-
-    // @track MediumValue;
-
-    // HandleMedium(event) {
-    //     debugger;
-    //     let Medium = event.target.value;
-    //     this.MediumValue = Medium;
-    // }
+    
 
     @track CityPicklistValue = [];
     @track cityValue;
-    // @wire(Fetchcities)
-    // WiredResponsecities({ data, error }) {
-    //     debugger;
-    //     if (data) {
-    //         console.log('CityValuedata=', data);
-    //         let arr = [];
-    //         for (let i = 0; i < data.length; i++) {
-    //             arr.push({ label: data[i].City__c, value: data[i].City__c });
-    //         }
-    //         this.CityPicklistValue = arr;
-    //         console.log('Picklistvalue=', this.CityPicklistValue);
-    //     }
-    //     else if (error) {
-    //         console.log('error=', error);
-    //     }
-
-    // }
-
-    // get CityOptions() {
-    //     return this.CityPicklistValue;
-    // }
-
+    
     @track countryCodeList = [];
     @wire(fetchCountryAndCountryCode)
     wiredcountryCountrycode({ data, error }) {
@@ -686,102 +519,10 @@ export default class WaklInLead extends LightningElement {
     @track InputCity = false;
 
     @track countrycodevalue;
-    // HandleCityStatus(event) {
-
-    //     debugger;
-    //     let city = event.detail.value;
-    //     if (city) {
-    //         this.cityValue = city;
-    //         let state;
-    //         let TempValue;
-    //         let country;
-    //         let countrycode;
-    //         TempValue = city;
-
-    //         console.log('Tempstate=', TempValue);
-
-    //         if (TempValue == "Other") {
-    //             this.StateDisable = false;
-    //             this.CountryDisable = false;
-    //             this.InputCity = true;
-    //             alert('Please Type Your State and Country');
-    //         }
-    //         else {
-    //             this.StateDisable = true;
-    //             this.CountryDisable = true;
-    //             this.InputCity = false;
-    //         }
-
-    //         if (TempValue) {
-    //             TempValue = TempValue.charAt(0).toUpperCase() + TempValue.slice(1);
-    //             console.log('Tempstate2=', TempValue);
-    //             state = this.StateCountryValue.find(item => item.City__c == TempValue);
-    //             country = this.StateCountryValue.find(item => item.City__c == TempValue);
-    //             console.log('state=', state);
-
-    //         }
-    //         if (state) {
-    //             this.StateValue = state.State__c;
-    //             this.CountryValue = country.Country__c;
-    //             console.log('StateValue=', this.StateValue);
-
-    //         }
-    //         else {
-    //             this.StateValue = '';
-    //             this.CountryValue = '';
-    //         }
-
-    //         if (this.CountryValue) {
-    //             //countrycode = this.countryCodeList.find(item => item.Name == this.CountryValue);
-    //             //this.countrycodevalue = countrycode.CountryCode__c;
-    //             this.handleCountrycode(this.CountryValue);
-    //         }
-
-
-    //         console.log('state=', this.StateValue);
-    //     }
-
-    // }
-
-    handleCountrycode(country){
-        debugger;
-        let countrycode;
-        country = country.toLowerCase();
-        country = country.charAt(0).toUpperCase() + country.slice(1);
-        countrycode = this.countryCodeList.find(item => item.Name == this.CountryValue);
-        this.countrycodevalue = countrycode.CountryCode__c;
-
-    }
+    
 
 
     @track UserInputCity
-    // HandleUserCityStatus(event) {
-    //     let value = event.target.value;
-    //     if (this.cityValue == 'Other') {
-    //         this.UserInputCity = value;
-    //     }
-
-    // }
-
-    // HandleChangeStateCountry(event) {
-    //     if (this.cityValue == 'Other') {
-    //         debugger;
-    //         let value = event.target.value;
-
-    //         if (event.target.name == "State") {
-
-    //             this.StateValue = value;
-    //         }
-    //         if (event.target.name == "Country") {
-
-    //             this.CountryValue = value;
-    //             if (this.CountryValue) {
-    //                 this.handleCountrycode(this.CountryValue);
-    //             }
-    //         }
-    //     }
-
-    // }
     createTaskRec() {
         debugger;
         if ((this.CaptureOwnerId != null && this.CaptureOwnerId != undefined && this.CaptureOwnerId != '') && (this.recordId != null && this.recordId != undefined && this.recordId != '')){
@@ -829,7 +570,7 @@ export default class WaklInLead extends LightningElement {
         this.selectedrecordDetails = event.detail.selectedRecord;
         if(this.selectedrecordDetails!=null){
 
-            this.LeadTobeCreated.OwnerId=this.selectedrecordDetails;
+            this.LeadTobeCreated.OwnerId=this.selectedrecordDetails.Id;
             this.LeadTobeCreated.Is_User_Assigned__c='Assigned';
 
         }else{
@@ -839,55 +580,34 @@ export default class WaklInLead extends LightningElement {
         
         //alert('Selected Record Value on Parent Component is ' + JSON.stringify(event.detail.selectedRecord));
     }
-    handleCancel() {
-        debugger;
-        this.isShowModal = false;
-        this.showtaskModal = false;
-
-    }
+    
 
     //close modal from innner button
     handleCancels() {
         debugger;
         this.isShowModal = false;
-        //this.HandleLeadCreatedisable = false;
-                        //this.namValue = '';
-                        this.lNameValue = '';
-                        this.commentsValue = '';
-                        this.emailValue = '';
-                        this.phoneValue = '';
+        this.showtaskModal = false;
+        
                         this.CourceLead = '';
-                        this.alterMobileValue = '';
-                        this.alterEmailValue  = '';
                         this.CountryValue = '';
-                        this.cityValue = '';
+                        this.selectedCityValue = '';
                         this.Leadvalue = '';
-                        this.pageurl = '';
+                        this.SelectedMedium='';
+                        this.selectedresultValue='';
+                        this.DefaultCountryCode='';
+                        this.CountryCode='';
                         this.SelectedCountryStateList = [];
+                
+                        this.LeadTobeCreated = {};
                         if (this.SelectedCountryStateList.length == 0) {
                             this.StateDisable = true;
                         }
+                    
+        }
 
-    }
+    
 
-    // FnameChange(Event) {
-    //     debugger;
-    //     let firstname = Event.target.value;
-    //     this.namValue = firstname;
-    // }
-    // LnameChange(Event) {
-    //     debugger;
-    //     let lasttname = Event.target.value;
-    //     this.lNameValue = lasttname;
-    // }
-    // EmailChange(Event) {
-    //     debugger;
-    //     let email = Event.target.value;
-    //     //var returnvalue = this.handleIncorrectEmail(email)
-    //     this.emailValue = email;
-
-
-    // }
+    
 
     handleIncorrectEmail(emailtocheck) {
         debugger;
@@ -981,60 +701,7 @@ export default class WaklInLead extends LightningElement {
             return false;
         }
     }
-    // HandleComments(event) {
-    //     let comment = event.target.value;
-    //     this.commentsValue = comment;
-    // }
-
-    // @track pageurl
-    // Handleurl(event){
-    //     debugger;
-    //     let purl = event.target.value;
-    //     this.pageurl = purl;
-    // }
-
-
-    // PhoneChange(Event) {
-    //     debugger;
-    //     let phone = Event.target.value;
-    //     this.phoneValue = phone;
-    // }
-
-    // @track alterEmailValue;
-    // AlterEmailChange(Event){
-    //     this.alterEmailValue = Event.target.value;
-    // }
-    // @track alterMobileValue
-    // AlterPhoneChange(Event){
-    //     this.alterMobileValue = Event.target.value;
-    // }
-
-    // StatusChange(Event) {
-    //     debugger;
-    //     let statuss = Event.target.value;
-    //     this.lStatus = statuss;
-    // }
-
-    // CompanyChange(event) {
-    //     debugger;
-    //     let cname = event.target.value;
-    //     this.compnyValue = cname;
-    // }
-
-    handleChange(event) {
-        debugger;
-        let selectedValue = event.detail.value;
-        this.ismeId = selectedValue;
-        console.log('MEMLIST---', this.groupMemList);
-        this.gruoMemberId = this.groupMemList.find(item => item.Group_Member__c == selectedValue).Id;
-        //this.groupMemList[this.ismeId];
-    }
-    // courceHandler(event) {
-    //     debugger;
-    //     let selectedCource = event.detail.value;
-    //     this.CourceLead = selectedCource;
-    // }
-
+    
     //===================For Task Creation Starts Here=====================================================================================================
 
     TaskCreationHandler(event){
@@ -1068,100 +735,11 @@ export default class WaklInLead extends LightningElement {
     }
 
 
-    // @track subjectvalue
-    // subjectHandler(event) {
-    //     debugger;
-    //     let selectedSubject = event.target.value;
-    //     this.subjectvalue = selectedSubject;
-    // }
-
-    // @track statusValue;
-    // statusHandler(event) {
-    //     debugger;
-    //     let selectedStatus = event.detail.value;
-    //     this.statusValue = selectedStatus;
-    // }
-
-    // @track DuedateValue;
-    // duedateHandler(event) {
-    //     debugger;
-    //     let selectedDuedate = event.detail.value;
-    //     this.DuedateValue = selectedDuedate;
-
-    // }
-
-    // @track comValue;
-    // commentHandler(event) {
-    //     debugger;
-    //     let selectedComment = event.target.value;
-    //     this.comValue = selectedComment;
-    // }
-    // @track followupValue;
-    // followupHandler(event) {
-    //     debugger;
-    //     let selectedfollowup = event.target.value;
-    //     this.followupValue = selectedfollowup;
-    // }
-
-
-    // @track priorityValue;
-    // priorityHandler(event) {
-    //     debugger;
-    //     let selectedPriority = event.detail.value;
-    //     this.priorityValue = selectedPriority;
-    // }
-
-    // @track statusValue;
-    // statusHandler(event) {
-    //     debugger;
-    //     let selectedStatus = event.detail.value;
-    //     this.statusValue = selectedStatus;
-    // }
+    
 //===================================================================ENDS HERE=====================================================================================================
 
 
-    // @track cityValue;
-    // HandleCity(event) {
-    //     debugger;
-    //     let city = event.target.value;
-    //     this.cityValue = city;
-    // }
-    // @track sourceValue;
-    // HandleSource(event) {
-    //     debugger;
-    //     let source = event.target.value;
-    //     this.sourceValue = source;
-    // }
-    // @track MediumValue;
-    // HandleMedium(event) {
-    //     debugger;
-    //     let medium = event.target.value;
-    //     this.MediumValue = medium;
-    // }
-    // // @track LGEValue;
-    // // HandleLGE(event){
-    // //     debugger;
-    // //     let LGE=event.target.value;
-    // //     this.LGEValue=LGE;
-    // //}
-    // @track VisitorIdValue;
-    // HandleVisitorId(event) {
-    //     debugger;
-    //     let VId = event.target.value;
-    //     this.VisitorIdValue = VId;
-    // }
-    // @track TranscriptValue;
-    // HandleTranscript(event) {
-    //     debugger;
-    //     let Trans = event.target.value;
-    //     this.TranscriptValue = Trans;
-    // }
-    // @track PageUrlValue;
-    // HandlePageURL(event){
-    //     debugger;
-    //     let Purl=event.target.value;
-    //     this.PageUrlValue=Purl;
-    // }
+    
 
     notifyismBTN() {
         this.handleClick();
@@ -1177,107 +755,6 @@ export default class WaklInLead extends LightningElement {
             .catch(error => {
                 this.handleAlert('Email not sent');
             })
-    }
-
-    //For Creating Task
-
-
-    // @wire(getMember)
-    // wireRes(data, error) {
-    //     if (data) {
-    //         debugger;
-    //         this.groupMemList = data.data;
-    //         console.log('Picklist-----', this.groupMemList);
-    //         let grmId = [];
-    //         let options = [];
-    //         if (data.data != undefined) {
-    //             console.log('Picklist-----', data);
-    //             for (var key in data.data) {
-    //                 options.push({ label: data.data[key].Group_Member__r.Name, value: data.data[key].Group_Member__c });
-    //                 grmId.push(data.data[key].Id)
-    //                 console.log(data.data[key].Id)
-    //             }
-    //             if (this.ismeId == data.data[key].Group_Member__c) {
-    //                 this.gruoMemberId = grmId;
-    //                 console.log(`im inside the for if to match the value ${this.gruoMemberId}`);
-    //             }
-    //             console.log(`im  the for if to match the value ${this.gruoMemberId}`);
-
-    //         }
-    //         console.log()
-    //         console.log(options);
-    //         this.objectList = options;
-    //         console.log(data);
-    //         console.log(this.objectList);
-
-    //     }
-    //     if (error) {
-
-    //     }
-    // }
-
-    // @wire(getPuckistOflead)
-    // wireRs({ error, data }) {
-    //     if (data) {
-    //         let options = []
-    //         for (const [key, value] of Object.entries(data)) {
-    //             options.push({
-    //                 label: key,
-    //                 value: value
-    //             })
-    //             console.log(`${key}: ${value}`);
-    //         }
-    //         this.courssweList = options;
-    //         this.courssweList.sort((a, b) => (a.label > b.label) ? 1 : -1);  
-    //         console.log(data)
-    //     }
-    //     if (error) {
-
-    //     }
-    // }
-
-    // getPickiststatusOfTask
-    @wire(getPickiststatusOfTask)
-    wiredRs({ error, data }) {
-        debugger;
-        if (data) {
-            debugger;
-            let options = [];
-            for (const [key, value] of Object.entries(data)) {
-                options.push({
-                    label: key,
-                    value: value
-                })
-                console.log(`${key}: ${value}`);
-            }
-            this.StatusList = options;
-            this.StatusList.sort((a, b) => (a.label > b.label) ? 1 : -1);  
-            console.log(data);
-            console.log('statusList--', this.StatusList);
-        }
-        if (error) {
-            console.log('error=', error);
-        }
-    }
-    //getPickistpriorityOfTask
-    @wire(getPickistpriorityOfTask)
-    wireRs({ error, data }) {
-        if (data) {
-            let options = []
-            for (const [key, value] of Object.entries(data)) {
-                options.push({
-                    label: key,
-                    value: value
-                })
-                console.log(`${key}: ${value}`);
-            }
-            this.priorityList = options;
-            this.priorityList.sort((a, b) => (a.label > b.label) ? 1 : -1); 
-            console.log(data)
-        }
-        if (error) {
-
-        }
     }
 
     // handlecourseList() {
@@ -1331,7 +808,7 @@ export default class WaklInLead extends LightningElement {
                             this.handleConfirm('Lead Created Successfully');
                         console.log(data)
                         //alert('Lead Record created successfully');
-                        this.handleCancel();
+                        this.handleCancels();
                         this.HandleLeadCreatedisable = false;
                         //this.namValue = '';
                         this.lNameValue = '';
@@ -1348,7 +825,7 @@ export default class WaklInLead extends LightningElement {
                         }
                         else if (data == 'FAIL'){
                             this.HandleLeadCreatedisable=false;
-                            this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
+                            //this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
                         }
                         
                     })

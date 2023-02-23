@@ -60,7 +60,7 @@ public without sharing class AGMTriggerHelper{
                                     (newMap.get(agmIdByUserId.get(userId))).addError('Decrease Daily Limit');
                                 } else{
                                     //add error to Increase daily agm limit
-                                    (newMap.get(agmIdByUserId.get(userId))).addError('Increase Daily Limit');
+                                    //(newMap.get(agmIdByUserId.get(userId))).addError('Increase Daily Limit');
                                 }
                             }
                         }

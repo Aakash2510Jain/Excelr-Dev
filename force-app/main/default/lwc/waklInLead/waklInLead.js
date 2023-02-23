@@ -4,11 +4,10 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getLead from '@salesforce/apex/walkInLeadLWCcontroller.getLead';
 import getApplication from '@salesforce/apex/walkInLeadLWCcontroller.getApplication';
 import EmailIsm from '@salesforce/apex/walkInLeadLWCcontroller.EmailIsm';
-import getMember from '@salesforce/apex/walkInLeadLWCcontroller.getMember';
+
 import getPuckistOflead from '@salesforce/apex/walkInLeadLWCcontroller.getPuckistOflead';
 
-import getPickiststatusOfTask from '@salesforce/apex/walkInLeadLWCcontroller.getPickiststatusOfTask';
-import getPickistpriorityOfTask from '@salesforce/apex/walkInLeadLWCcontroller.getPickistpriorityOfTask';
+
 import createTask from '@salesforce/apex/walkInLeadLWCcontroller.createTaskForVoice';
 
 import createLead from '@salesforce/apex/walkInLeadLWCcontroller.createLead';
@@ -25,11 +24,17 @@ import LEAD_OBJECT from '@salesforce/schema/Lead';
 import { getPicklistValues } from 'lightning/uiObjectInfoApi';
 import TYPE_OF_COURSE_FIELD from '@salesforce/schema/Lead.Type_of_Course__c';
 
-import FetchStateCounty from '@salesforce/apex/GenericLeadLWCcontroller.FetchStateCounty';
-import Fetchcities from '@salesforce/apex/GenericLeadLWCcontroller.Fetchcities';
+
 import fetchCountryAndCountryCode from '@salesforce/apex/GenericLeadLWCcontroller.fetchCountryAndCountryCode';
 
-import FetchCountriesStateWithISDcode from '@salesforce/apex/voiceFormLWCcontroller.getCountryStateAndISDCode';
+
+// ================================== All Picklist values ==================================
+
+import getallPicklistvlaues from '@salesforce/apex/SiteFormUtility.getallPicklistvlaues';
+
+import GettingCountries from '@salesforce/apex/SiteFormUtility.FetchCountryRec';
+import GettingStates from '@salesforce/apex/SiteFormUtility.FetchStateRec';
+import GettingCities from '@salesforce/apex/SiteFormUtility.GetCityFromBigobject';
 
 
 const applicationcolumns = [{ label: 'Name', fieldName: 'Name' },
@@ -55,6 +60,10 @@ const LeadListcolumns = [{ label: 'Name', fieldName: 'Name' },
 export default class WaklInLead extends LightningElement {
     imageurl = EXCELR_LOGO;
     //feilds from schema
+
+    @track LeadTobeCreated = {};
+    @track taskTobeCreated = {};
+
     @track ifdataNotFound = false;
     @track ownerEmail;
     @track ismBTNdisAble = true;
@@ -103,7 +112,7 @@ export default class WaklInLead extends LightningElement {
 
     connectedCallback() {
         //defined a varibale
-        this.handlecourseList();
+       // this.handlecourseList();
         this.convertStringtoList();
 
     }
@@ -124,175 +133,113 @@ export default class WaklInLead extends LightningElement {
 
     // =========================== Handle city state Country Starts ===================================================
 
-    @track CityPicklistValue = [];
-    @track cityValue;
-    @wire(Fetchcities)
-    WiredResponsecities({ data, error }) {
-        debugger;
-        if (data) {
-            console.log('CityValuedata=', data);
-            let arr = [];
-            for (let i = 0; i < data.length; i++) {
-                arr.push({ label: data[i].City__c, value: data[i].City__c });
-            }
-            this.CityPicklistValue = arr;
-            console.log('Picklistvalue=', this.CityPicklistValue);
-        }
-        else if (error) {
-            console.log('error=', error);
-        }
-
-    }
-
-    get CityOptions() {
-        return this.CityPicklistValue;
-    }
-
+    
 
     @track CountryDisable = true;
     @track StateDisable = true;
     @track StateValue;
     @track CountryValue;
     @track InputCity = false;
-    HandleCityStatus(event) {
-
-        debugger;
-        let city = event.detail.value;
-        if (city) {
-            this.cityValue = city;
-            let state;
-            let TempValue;
-            let country;
-            TempValue = city;
-
-            console.log('Tempstate=', TempValue);
-
-            if (TempValue == "Other") {
-                this.StateDisable = false;
-                this.CountryDisable = false;
-                this.InputCity = true;
-                alert('Please Type Your State and Country');
-            }
-            else {
-                this.StateDisable = true;
-                this.CountryDisable = true;
-                this.InputCity = false;
-            }
-
-            if (TempValue) {
-                TempValue = TempValue.charAt(0).toUpperCase() + TempValue.slice(1);
-                console.log('Tempstate2=', TempValue);
-                state = this.StateCountryValue.find(item => item.City__c == TempValue);
-                country = this.StateCountryValue.find(item => item.City__c == TempValue);
-                console.log('state=', state);
-
-            }
-            if (state) {
-                this.StateValue = state.State__c;
-                this.CountryValue = country.Country__c;
-                console.log('StateValue=', this.StateValue);
-
-            }
-            else {
-                this.StateValue = '';
-                this.CountryValue = '';
-            }
-
-            if (this.CountryValue) {
-                //countrycode = this.countryCodeList.find(item => item.Name == this.CountryValue);
-                //this.countrycodevalue = countrycode.CountryCode__c;
-                this.handleCountrycode(this.CountryValue);
-            }
-
-            console.log('state=', this.StateValue);
-        }
-
-    }
-
-
-    @track UserInputCity
-    HandleUserCityStatus(event) {
-        let value = event.target.value;
-        if (this.cityValue == 'Other') {
-            this.UserInputCity = value;
-        }
-
-    }
-
-
-    HandleChangeStateCountry(event) {
-        if (this.cityValue == 'Other') {
-            debugger;
-            let value = event.target.value;
-
-            if (event.target.name == "State") {
-
-                this.StateValue = value;
-            }
-            if (event.target.name == "Country") {
-
-                this.CountryValue = value;
-                if (this.CountryValue) {
-                    this.handleCountrycode(this.CountryValue);
-                }
-            }
-        }
-
-    }
-
+    
     // =========================================================Fetch Countries States with ISDCODe And Handle =================================================
     @track CountriesPicklistValue=[];
     @track countriesSateISDCodelist = [];
-    @wire(FetchCountriesStateWithISDcode)
-    wiredCounstriesStatesWithISD({data,error}){
-        debugger;
-        if(data){
-            this.countriesSateISDCodelist = data;
-            console.log('CityValuedata=',data);
-
-              let arr=[];
-              for(let i=0;i<data.length;i++){
-                 arr.push({label:data[i].MasterLabel,value:data[i].MasterLabel});
-              }
-              this.CountriesPicklistValue=arr;
-              console.log('Picklistvalue=',this.CountriesPicklistValue);
-           }
-           else if(error){
-               console.log('error=',error);
-           }
-
-    }
+    
 
     @track SelectedCountryStateList = [];
     @track SelectedCountryISCode;
-    HandleChangeCountry(event){
+    
+
+    
+    @track LeadSourcePicklist = [];
+    @track courssweList = [];
+    @track LeadGenPathPicklistvalue = [];
+    @track LeadMediumPicklist = [];
+
+    @track priorityList = [];
+    @track StatusList = [];
+
+    @wire(getallPicklistvlaues)
+    wiredResponsePicklist({ data, error }) {
         debugger;
-        let Selectedcountry=event.detail.value;
-        this.CountryValue = Selectedcountry;
-        var SelectedcountryStateISDCode = this.countriesSateISDCodelist.find(item => item.MasterLabel == Selectedcountry);
-        this.SelectedCountryISCode = SelectedcountryStateISDCode.Country_Code__c;
-        //this.countrycodevalue = countrycode.CountryCode__c;
-        let tempStateArr = []; 
-        var tempStateString = SelectedcountryStateISDCode.States__c;
-        var tempStateArrafterCommaSeperated = tempStateString.split(',');
-        for(let i=0;i<tempStateArrafterCommaSeperated.length;i++){
-            tempStateArr.push({label:tempStateArrafterCommaSeperated[i],value:tempStateArrafterCommaSeperated[i]});
-         }
-         this.SelectedCountryStateList = tempStateArr;
-         this.StateDisable = false;
+        if (data) {
 
-    }
+            if (data.Courses.length > 0) {
 
-    HandleChangeState(event){
-        debugger;
-        let SelectedState=event.detail.value;
-        this.StateValue = SelectedState;
-        //this.StateDisable = false;
+                let tempcoursearr = [];
+                for (let i = 0; i < data.Courses.length; i++) {
+                    tempcoursearr.push({ label: data.Courses[i], value: data.Courses[i] });
+                }
+                this.courssweList = tempcoursearr;
+                this.courssweList.sort((a, b) => (a.label > b.label) ? 1 : -1);
 
-    }
+            }
 
-    HandleCityValue(event){
-        this.cityValue = event.detail.value;
+            // if (data.Sources.length > 0) {
+
+            //     let tempSourcearr = [];
+            //     for (let i = 0; i < data.Sources.length; i++) {
+            //         tempSourcearr.push({ label: data.Sources[i], value: data.Sources[i] });
+            //     }
+            //     this.LeadSourcePicklist = tempSourcearr;
+            //     this.LeadSourcePicklist.sort((a, b) => (a.label > b.label) ? 1 : -1);
+            //     console.log('Picklistvalue=', this.LeadSourcePicklist);
+
+            // }
+
+            // if (data.LeadGenPath.length > 0) {
+
+            //     let tempLeadGenPatharr = [];
+            //     for (let i = 0; i < data.LeadGenPath.length; i++) {
+            //         tempLeadGenPatharr.push({ label: data.LeadGenPath[i], value: data.LeadGenPath[i] });
+            //     }
+            //     this.LeadGenPathPicklistvalue = tempLeadGenPatharr;
+            //     this.LeadGenPathPicklistvalue.sort((a, b) => (a.label > b.label) ? 1 : -1);
+            //     console.log('Picklistvalue=', this.LeadGenPathPicklistvalue);
+
+            // }
+
+            // if (data.Medium.length > 0) {
+
+            //     let tempMediumarr = [];
+            //     for (let i = 0; i < data.Medium.length; i++) {
+            //         tempMediumarr.push({ label: data.Medium[i], value: data.Medium[i] });
+            //     }
+            //     this.LeadMediumPicklist = tempMediumarr;
+            //     this.LeadMediumPicklist.sort((a, b) => (a.label > b.label) ? 1 : -1);
+            //     console.log('Picklistvalue=', this.LeadMediumPicklist);
+
+            // }
+
+            if (data.TaskStatus.length > 0) {
+
+                let tempTaskStatusarr = [];
+                for (let i = 0; i < data.TaskStatus.length; i++) {
+                    tempTaskStatusarr.push({ label: data.TaskStatus[i], value: data.TaskStatus[i] });
+                }
+
+                this.StatusList = tempTaskStatusarr;
+                this.StatusList.sort((a, b) => (a.label > b.label) ? 1 : -1);
+                console.log('statusList--', this.StatusList);
+
+            }
+
+            if (data.TaskPriority.length > 0) {
+                let tempTaskPriorityarr = [];
+                for (let i = 0; i < data.TaskPriority.length; i++) {
+                    tempTaskPriorityarr.push({ label: data.TaskPriority[i], value: data.TaskPriority[i] });
+                }
+
+                this.priorityList = tempTaskPriorityarr;
+                this.priorityList.sort((a, b) => (a.label > b.label) ? 1 : -1);
+                console.log('statusList--', this.priorityList);
+
+            }
+
+        }
+        else if (error) {
+            console.log('error=', error);
+        }
     }
 
 
@@ -300,46 +247,207 @@ export default class WaklInLead extends LightningElement {
 
 
     @track StateCountryValue = [];
-    @wire(FetchStateCounty)
-    WiredResponse({ data, error }) {
+    
+    @track countryList = [];
+    @wire(GettingCountries)
+    wiredCountries({ data, error }) {
         debugger;
         if (data) {
-            console.log('StateCountryValuedata=', data);
-            this.StateCountryValue = data;
-            console.log('StateCountryValue=', this.StateCountryValue);
+
+            let arr = [];
+            for (let i = 0; i < data.length; i++) {
+                arr.push({ label: data[i].Name, value: data[i].Id });
+            }
+            this.countryList = arr;
+            console.log('Picklistvalue=', this.countryList);
         }
         else if (error) {
             console.log('error=', error);
         }
 
     }
+
+    @track statesList = [];
+    @track DefaultCountryCode;
+    HandleCountryChange(event) {
+        debugger;
+        //let selectedCountry=event.detail.value;
+       
+        let SelectedcountryId = event.detail.value;
+        this.SelectedcountryId = SelectedcountryId;
+
+        var SelectedCountry = this.countryList.find(item => item.value == this.SelectedcountryId);
+        this.LeadTobeCreated.Country__c = SelectedCountry.label;
+
+        if(SelectedCountry.label=='India'){
+            this.DefaultCountryCode="91";
+             this.CountryCode="91";
+             this.CountryCodeAlt="91";
+        }else if(SelectedCountry.label=='United Kingdom'){
+            this.DefaultCountryCode="44";
+            this.CountryCode="44";
+            this.CountryCodeAlt="44";
+        }else if(SelectedCountry.label=='United States'){
+            this.DefaultCountryCode="1";
+            this.CountryCode="1";
+            this.CountryCodeAlt="1";
+        }
+
+        GettingStates({
+            countryid: this.SelectedcountryId
+        })
+            .then(result => {
+                debugger;
+                let arr = [];
+                for (let i = 0; i < result.length; i++) {
+                    arr.push({ label: result[i].Name, value: result[i].Id });
+                }
+                this.statesList = arr;
+                this.StateDisable = false;
+
+                console.log('Picklistvalue=', this.statesList);
+            }
+
+            );
+            if(this.SelectedStateId!=null){
+                this.selectedCityValue='';
+            }
+            
+    }
+
+
+
+
+    //getting States List
+    @track stateList = [];
+   
+
+
+    @track SelectedCountryStateList = [];
+    @track SelectedCountryISCode;
+    
+
+    @track FetchedcityList=[];
+    @track cityList=[];
+    @track CityDisable=true;
+    @track searchResults=[];
+    @track disableInput=true;
+
+    HandleChangeState(event) {
+        debugger;
+
+        this.SelectedStateId = event.detail.value;
+        var SelectedState = this.statesList.find(item => item.value == this.SelectedStateId);
+
+        this.LeadTobeCreated.State__c = SelectedState.label;
+        this.StateDisable = false;
+        console.log('SelectedStateId-',this.SelectedStateId);
+        console.log('SelectedcountryId-',this.SelectedcountryId);
+        
+        GettingCities({
+            SelectedStateId: this.SelectedStateId, SelectedCountryId: this.SelectedcountryId
+        })
+            .then(result => {
+                debugger;
+                console.log('PicklistvalueCityresult=', result);
+                let arr = [];
+                for (let i = 0; i < result.length; i++) {
+                    arr.push({ label: result[i].City__c, value: result[i].City__c });
+                }
+                this.FetchedcityList = arr;
+                this.disableInput=false;
+                this.CityDisable=false;
+
+                console.log('PicklistvalueCity=', this.cityList);
+            }
+
+            );
+    }
+
+    @track selectedValue
+    @track booleanValue=false;
+    search(event){
+        debugger;
+        let value=event.target.value;
+
+        let TempValue;
+        if(value){
+            TempValue=value;
+        }
+
+        let arr=[];
+        if(TempValue){
+            TempValue = TempValue.charAt(0).toUpperCase() + TempValue.slice(1);
+            console.log('TempValue=',TempValue);
+            const results = this.FetchedcityList.filter(product => product.value.includes(TempValue));
+          
+            console.log('results====',results);
+            results.forEach(element => {
+                arr.push({label:element.value,value:element.value});
+            });
+            
+            
+            console.log('arr====',arr);
+        }
+        this.searchResults=arr;
+        if(this.searchResults.length>0){
+            this.booleanValue=true;
+        }else{
+            this.booleanValue=false;
+        }
+        console.log('this.searchResults====',this.searchResults);
+    }
+
+  
+
+    @track selectedSearchResult ;
+    @track selectedresultValue;
+
+    selectSearchResult(event){
+        debugger;
+        const selectedValue = event.currentTarget.dataset.value;
+        this.selectedresultValue=selectedValue;
+        console.log('selectedValue--',selectedValue);
+        this.selectedSearchResult = this.searchResults.find(
+            (picklistOption) => picklistOption.value === selectedValue
+          );
+          console.log('selectedSearchResult--',this.selectedSearchResult);
+          console.log('selectedresultValue--',this.selectedresultValue);
+          
+          this.clearSearchResults();
+        }
+      
+        clearSearchResults() {
+          this.searchResults = null;
+        }
+
+    
+
+    @track selectedCityValue;
+    HandleCityValue(event) {
+        debugger;
+        this.selectedCityValue = event.detail.value;
+        this.LeadTobeCreated.City__c = event.detail.value;
+    }
+//==================================================================================
 
     @track countryCodeList = [];
     @wire(fetchCountryAndCountryCode)
     wiredcountryCountrycode({ data, error }) {
         debugger;
         if (data) {
-           this.countryCodeList = data;
+
+            let arr = [];
+                for (let i = 0; i < data.length; i++) {
+                    arr.push({ label: data[i].CountryCode__c, value: data[i].CountryCode__c });
+                }
+            this.countryCodeList = arr;
         }
         else if (error) {
             console.log('error=', error);
         }
 
     }
-
-    handleCountrycode(country){
-        debugger;
-        let countrycode;
-        country = country.toLowerCase();
-        country = country.charAt(0).toUpperCase() + country.slice(1);
-        countrycode = this.countryCodeList.find(item => item.Name == this.CountryValue);
-        this.countrycodevalue = countrycode.CountryCode__c;
-
-    }
-
-
-
-
 
     // =========================== Handle city state Country Ends ===================================================
 
@@ -347,6 +455,7 @@ export default class WaklInLead extends LightningElement {
     typeofcourseHandler(event){
         debugger;
         this.typeofCoursevalue = event.target.value;
+        this.LeadTobeCreated.Type_of_Course__c=this.typeofCoursevalue;
     }
 
 
@@ -435,8 +544,8 @@ export default class WaklInLead extends LightningElement {
      createTaskRec()
      {
         debugger;
-        if ((this.subjectvalue != null && this.subjectvalue != undefined && this.subjectvalue != '') && (this.CaptureOwnerId != null && this.CaptureOwnerId != undefined && this.CaptureOwnerId != '') && (this.priorityValue != null && this.priorityValue != undefined && this.priorityValue != '') && (this.statusValue != null && this.statusValue != undefined && this.statusValue != '')) {
-            createTask({ subject: this.subjectvalue, assignto:this.CaptureOwnerId,priority:this.priorityValue,status:this.statusValue,duedate:this.DuedateValue,comments:this.comValue,followupDate:this.followupValue,leadId:this.recordId })
+        if ((this.CaptureOwnerId != null && this.CaptureOwnerId != undefined && this.CaptureOwnerId != '') && (this.recordId != null && this.recordId != undefined && this.recordId != '')) {
+            createTask({assignto: this.CaptureOwnerId,leadId: this.recordId,TaskRecord:this.taskTobeCreated})
  
              .then((result) => {
                  console.log('result',result);
@@ -491,42 +600,20 @@ export default class WaklInLead extends LightningElement {
         debugger;
         this.isShowModal = false;
         this.showtaskModal=false;
-        this.lNameValue = '';
-                        this.commentsValue = '';
-                        this.emailValue = '';
-                        this.phoneValue = '';
-                        this.AlternateMobile = '';
-                        this.alterEmailValue = '';
-                        this.CourceLead = '';
-                        this.cityValue = '';
-                        this.StateValue = '';
-                        this.CountryValue = '';
-                        this.typeofCoursevalue = '';
-                        this.SelectedCountryStateList = [];
-                        if (this.SelectedCountryStateList.length == 0) {
-                            this.StateDisable = true;
-                        }
+        this.SelectedMedium='';
+        this.selectedresultValue='';
+        this.DefaultCountryCode='';
+        this.SelectedCountryStateList = [];
+        this.CountryCode='';
+
+        this.LeadTobeCreated = {};
+        if (this.SelectedCountryStateList.length == 0) {
+            this.StateDisable = true;
+        }
 
     }
     
-    FnameChange(Event) {
-        debugger;
-        let firstname = Event.target.value;
-        this.namValue = firstname;
-    }
-    LnameChange(Event) {
-        debugger;
-        let lasttname = Event.target.value;
-        this.lNameValue = lasttname;
-    }
-    EmailChange(Event) {
-        debugger;
-        let email = Event.target.value;
-        //var returnvalue = this.handleIncorrectEmail(email)
-        this.emailValue = email;
-
-
-    }
+   
 
     handleIncorrectEmail(emailtocheck) {
         debugger;
@@ -540,21 +627,53 @@ export default class WaklInLead extends LightningElement {
         }
 
     }
-    PhoneChange(Event) {
+
+    LeadCreationHandler(event) {
         debugger;
-        let phone = Event.target.value;
-        this.phoneValue = phone;
-    }
+        var InputName = event.currentTarget.name;
+        if (InputName == 'LN') {
+            this.LeadTobeCreated.LastName = event.target.value;
+        }
+        if (InputName == 'Em') {
+            this.LeadTobeCreated.Email = event.target.value;
+        }
+        if (InputName == 'AltEm') {
+            this.LeadTobeCreated.Alternate_Email__c = event.target.value;
+        }
+        if (InputName == 'Country') {
 
-    @track alterMobileValue
-    AlterPhoneChange(Event){
-        this.alterMobileValue = Event.target.value;
-    }
+            this.LeadTobeCreated.Country__c = event.target.value;
+        }
 
-    @track alterEmailValue;
-    AlterEmailChange(Event){
-        this.alterEmailValue = Event.target.value;
+        if (InputName == 'State') {
+            this.LeadTobeCreated.State__c = event.target.value;
+        }
+        if (InputName == 'UserCity') {
+            this.LeadTobeCreated.City__c = event.target.value;
+        }
+        if (InputName == 'CountryISDcode') {
+            // this.LeadTobeCreated.Alternate_Email__c = event.target.value;
+            this.CountryCode = event.target.value;
+        }
+        if (InputName == 'PH') {
+            this.LeadTobeCreated.Phone = event.target.value;
+        }
+        if (InputName == 'CountryISDcodeAlt') {
+            this.CountryCodeAlt = event.target.value;
+        }
+        if (InputName == 'AltPH') {
+            this.LeadTobeCreated.Alternate_Phone__c = event.target.value;
+        }
+        if (InputName == 'course') {
+            this.LeadTobeCreated.Course__c = event.target.value;
+        }
+        if (InputName == 'Comments') {
+            this.LeadTobeCreated.Comments__c = event.target.value;
+        }
+
+
     }
+    
 
     handleCorrectPhone(PhoneToverify){
         var regExpPhoneformat = /^[0-9]{1,10}$/g;
@@ -565,23 +684,8 @@ export default class WaklInLead extends LightningElement {
             return false;
         }
     }
-    HandleComments(event)
-    {
-       let comment = event.target.value;
-       this.commentsValue = comment;
-    }
 
-    StatusChange(Event) {
-        debugger;
-        let statuss = Event.target.value;
-        this.lStatus = statuss;
-    }
-
-    CompanyChange(event) {
-        debugger;
-        let cname = event.target.value;
-        this.compnyValue = cname;
-    }
+    
 
     handleChange(event) {
         debugger;
@@ -596,64 +700,40 @@ export default class WaklInLead extends LightningElement {
         let selectedCource = event.detail.value;
         this.CourceLead = selectedCource;
     }
+//=============================================Task Creation Starts Here============================================================================================
 
-    @track subjectvalue
-    subjectHandler(event)
-    {
-       debugger;
-       let selectedSubject = event.target.value;
-       this.subjectvalue = selectedSubject;
+TaskCreationHandler(event){
+
+    var TaskInputName = event.currentTarget.name;
+    if (TaskInputName == 'subject'){
+
+        this.taskTobeCreated.Subject=event.target.value;
+    }
+    if(TaskInputName == 'Priority'){
+
+        this.taskTobeCreated.Priority=event.target.value;
+
+    }if(TaskInputName == 'Status'){
+
+        this.taskTobeCreated.Status=event.target.value;
+
+    }if(TaskInputName == 'Duedate'){
+
+        this.taskTobeCreated.ActivityDate=event.target.value;
+
+    }if(TaskInputName =='Followupdatetime'){
+
+        this.taskTobeCreated.Followup_Date_Time__c=event.target.value;
+
+    }if(TaskInputName =='Comments'){
+
+        this.taskTobeCreated.Description=event.target.value;
     }
 
-    @track statusValue;
-    statusHandler(event)
-    {
-        debugger;
-        let selectedStatus = event.detail.value;
-        this.statusValue = selectedStatus;
-    }
+}
 
-    @track DuedateValue;
-    duedateHandler(event)
-    {
-        debugger;
-        let selectedDuedate = event.detail.value;
-        this.DuedateValue = selectedDuedate;
-
-    }
-
-    @track comValue;
-    commentHandler(event)
-    {
-        debugger;
-        let selectedComment = event.target.value;
-        this.comValue = selectedComment;
-    }
-    @track followupValue;
-    followupHandler(event)
-    {
-        debugger;
-        let selectedfollowup = event.target.value;
-        this.followupValue = selectedfollowup;
-    }
-
-   
-    @track priorityValue;
-    priorityHandler(event)
-    {
-        debugger;
-        let selectedPriority = event.detail.value;
-        this.priorityValue = selectedPriority;
-    }
-   
-    @track statusValue;
-    statusHandler(event)
-    {
-        debugger;
-       let selectedStatus = event.detail.value;
-       this.statusValue =  selectedStatus;
-    }
-
+    
+//==================================================Task Creation Ends Here====================================================================================
 
     notifyismBTN() {
         debugger;
@@ -669,143 +749,51 @@ export default class WaklInLead extends LightningElement {
             })
     }
 
-    @wire(getMember)
-    wireRes(data, error) {
-        if (data) {
-            debugger;
-            this.groupMemList = data.data;
-            console.log('Picklist-----', this.groupMemList);
-            let grmId = [];
-            let options = [];
-            if (data.data != undefined) {
-                console.log('Picklist-----', data);
-                for (var key in data.data) {
-                    options.push({ label: data.data[key].Group_Member__r.Name, value: data.data[key].Group_Member__c });
-                    grmId.push(data.data[key].Id)
-                    console.log(data.data[key].Id)
-                }
-                if (this.ismeId == data.data[key].Group_Member__c) {
-                    this.gruoMemberId = grmId;
-                    console.log(`im inside the for if to match the value ${this.gruoMemberId}`);
-                }
-                console.log(`im  the for if to match the value ${this.gruoMemberId}`);
-
-            }
-            console.log()
-            console.log(options);
-            this.objectList = options;
-            console.log(data);
-            console.log(this.objectList);
-
-        }
-        if (error) {
-
-        }
-    }
-
-    @wire(getPuckistOflead)
-    wireRs({ error, data }) {
-        if (data) {
-            let options = []
-            for (const [key, value] of Object.entries(data)) {
-                options.push({
-                    label: key,
-                    value: value
-                })
-                console.log(`${key}: ${value}`);
-            }
-            this.courssweList = options;
-            this.courssweList.sort((a, b) => (a.label > b.label) ? 1 : -1);
-            console.log(data)
-        }
-        if (error) {
-
-        }
-    }
-
-      // getPickiststatusOfTask
-      @wire(getPickiststatusOfTask)
-      wiredRs({ error, data }) {
-          debugger;
-          if (data) {
-              debugger;
-              let options = [];
-              for (const [key, value] of Object.entries(data)) {
-                  options.push({
-                      label: key,
-                      value: value
-                  })
-                  console.log(`${key}: ${value}`);
-              }
-              this.StatusList = options;
-              this.StatusList.sort((a, b) => (a.label > b.label) ? 1 : -1);
-              console.log(data);
-              console.log('statusList--',this.StatusList);
-          }
-          if (error) {
-               console.log('error=',error);
-          }
-      }
-       //getPickistpriorityOfTask
-      @wire(getPickistpriorityOfTask)
-      wireRs({ error, data }) {
-          if (data) {
-              let options = []
-              for (const [key, value] of Object.entries(data)) {
-                  options.push({
-                      label: key,
-                      value: value
-                  })
-                  console.log(`${key}: ${value}`);
-              }
-              this.priorityList = options;
-              this.priorityList.sort((a, b) => (a.label > b.label) ? 1 : -1);
-              console.log(data)
-          }
-          if (error) {
-  
-          }
-      }
-
-    handlecourseList() {
-        getPuckistOflead()
-            .then(result => {
-                ///this.data = result;
-                let options = []
-                for (const [key, value] of Object.entries(result)) {
-                    options.push({
-                        label: key,
-                        value: value
-                    })
-                    console.log(`${key}: ${value}`);
-                }
-                this.courssweList = options;
-                console.log(courssweList)
-            })
-            .catch(error => {
-                this.error = error;
-            });
-    }
+    // handlecourseList() {
+    //     getPuckistOflead()
+    //         .then(result => {
+    //             ///this.data = result;
+    //             let options = []
+    //             for (const [key, value] of Object.entries(result)) {
+    //                 options.push({
+    //                     label: key,
+    //                     value: value
+    //                 })
+    //                 console.log(`${key}: ${value}`);
+    //             }
+    //             this.courssweList = options;
+    //             console.log(courssweList)
+    //         })
+    //         .catch(error => {
+    //             this.error = error;
+    //         });
+    // }
 
     HandleLeadCreatedisable=false;
     createNewLead() {
         debugger;
 
+        if(this.FetchedcityList.find((picklistOption) => picklistOption.value === this.selectedresultValue)){
+            console.log('Selected City Is Correct');
+        }else{
+        window.alert('Choose a Correct City');
+        }
+        this.LeadTobeCreated.ExcelR_Training_User__c = this.agentrecid;
         //(this.namValue!=undefined && this.namValue!=null && this.namValue!='') && 
 
-        if((this.lNameValue!=undefined && this.lNameValue!=null && this.lNameValue!='' ) && (this.emailValue!=undefined && this.emailValue!=null && this.emailValue!='' ) && (this.phoneValue!=undefined && this.phoneValue!=null && this.phoneValue!='' ) 
-        && (this.CourceLead!=undefined && this.CourceLead!=null && this.CourceLead!='' ) && (this.selectedrecordDetails!=undefined && this.selectedrecordDetails!=null && this.selectedrecordDetails!='' )) 
+        if((this.LeadTobeCreated.LastName != undefined && this.LeadTobeCreated.LastName != null && this.LeadTobeCreated.LastName != '') && (this.LeadTobeCreated.Email != undefined && this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '') && (this.LeadTobeCreated.Phone != undefined && this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '')
+        && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '')&& (this.selectedresultValue!=null && this.selectedresultValue!=undefined && this.selectedresultValue!='') && (this.selectedrecordDetails!=null && this.selectedrecordDetails!=undefined && this.selectedrecordDetails!='')) 
             
            {
 
             this.HandleLeadCreatedisable=true; 
 
-        var returnvalue = this.handleIncorrectEmail(this.emailValue)
-        var phoneregexreturnvalue = this.handleCorrectPhone(this.phoneValue)
+        var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email);
+        var phoneregexreturnvalue = this.handleCorrectPhone(this.LeadTobeCreated.Phone);
         this.agentrecid;
         this.handleSpinner();
-        if (returnvalue == true && this.handleCorrectPhone(this.phoneValue)) {
-            createLead({Lastname: this.lNameValue, email: this.emailValue, phone: this.phoneValue, Course: this.CourceLead, typeofcour: this.typeofCoursevalue, userId: this.selectedrecordDetails.Id, agentid: this.agentrecid,comments:this.commentsValue, city: this.cityValue , state: this.StateValue , country: this.CountryValue,  countrycode : this.SelectedCountryISCode, AlternateMobile : this.alterMobileValue, AlternateEmail : this.alterEmailValue })
+        if (returnvalue == true && this.handleCorrectPhone(this.LeadTobeCreated.Phone)) {
+            createLead({ Leadrec: this.LeadTobeCreated, countrycode : this.CountryCode, countrycodealternate :this.CountryCodeAlt,city:this.selectedresultValue })
                 .then(data => {
 
                     if (data == 'SUCCESS') {
@@ -830,7 +818,7 @@ export default class WaklInLead extends LightningElement {
                     else if (data == 'FAIL') {
                         this.handleSpinner();
                         this.HandleLeadCreatedisable=false;
-                        this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
+                        //this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
                         
                     }
 
@@ -875,8 +863,19 @@ export default class WaklInLead extends LightningElement {
     lookupRecord(event) {
         debugger;
         this.selectedrecordDetails = event.detail.selectedRecord;
+        if(this.selectedrecordDetails!=null){
+
+            this.LeadTobeCreated.OwnerId=this.selectedrecordDetails.Id;
+            this.LeadTobeCreated.Is_User_Assigned__c='Assigned';
+
+        }else{
+            this.LeadTobeCreated.OwnerId='';
+            this.LeadTobeCreated.Is_User_Assigned__c='Not-Assigned';
+        }
+        
         //alert('Selected Record Value on Parent Component is ' + JSON.stringify(event.detail.selectedRecord));
     }
+
     async handleAlert(message) {
         await LightningAlert.open({
             message: message,

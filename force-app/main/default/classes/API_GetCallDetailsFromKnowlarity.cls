@@ -20,15 +20,21 @@ global without sharing class API_GetCallDetailsFromKnowlarity {
         System.debug(res.getBody());
     }
     public static void fecthCallDetails(string leadId){
+        system.debug('leadId--->'+leadId);
+            
         Lead leadRec = [Select Id,Phone,CreatedDate From Lead Where Id =: leadId And Phone != null];
+        system.debug('leadRec--->'+leadRec);
         if(leadRec != null){
             Knowlarity_Integration__c knowlarityConfiguration = Knowlarity_Integration__c.getValues('KnowlarityConfig');
-            DateTime currentdateTime = system.now();
-            DateTime startDateTime = leadRec.CreatedDate.addDays(-1);
+            DateTime currentdateTime = system.now().addDays(1);
+            DateTime startDateTime = leadRec.CreatedDate.addDays(-2);
             string leadPhone = (leadRec.Phone).replaceAll('[^0-9]', ''); 
+            system.debug('startDateTime--->'+startDateTime);
+             system.debug('currentdateTime--->'+currentdateTime);
             
             string endpoint = 'https://kpi.knowlarity.com/Basic/v1/account/calllog?start_time=';
-            endpoint = endpoint+String.valueOf((startDateTime).year())+'%20'+String.valueOf((startDateTime).hour())+'%3A'+String.valueOf((startDateTime).minute())+'%3A00%2B05%3A30&end_time='+String.valueOf(currentdateTime.year())+'%20'+String.valueOf((currentdateTime).hour())+'%3A'+String.valueOf((currentdateTime).minute())+'%3A00%2B05%3A30&customer_number=%2B'+leadPhone;
+            endpoint = endpoint+String.valueOf((startDateTime).date())+'%20'+String.valueOf((startDateTime).hour())+'%3A'+String.valueOf((startDateTime).minute())+'%3A00%2B05%3A30&end_time='+String.valueOf(currentdateTime.date())+'%20'+String.valueOf((currentdateTime).hour())+'%3A'+String.valueOf((currentdateTime).minute())+'%3A00%2B05%3A30&customer_number=%2B'+leadPhone;
+            system.debug('endpoint--->'+endpoint);
             HttpRequest req = new HttpRequest();
             req.setEndpoint(endpoint);
             req.setMethod('GET');
@@ -40,12 +46,16 @@ global without sharing class API_GetCallDetailsFromKnowlarity {
             Http http = new Http();
             HTTPResponse res = http.send(req);
             System.debug(res.getBody());
+
+            if (res.getBody() != null) {
+                CreateAndUpdateTaskOnLeadRecordID.CreateAndUpdateTaskOnLeadRecordID(res.getBody(),leadId );
+            }
         }
     }
     /*
      * resposne body
      {
-   "meta":{
+   "meta":{s
       "limit":20,
       "next":"",
       "offset":0,

@@ -272,7 +272,7 @@
                                 <div class="slds-card">
                                     <div class="slds-form-element">
                                         <div class="slds-form-element__control">
-                                            <lightning-input label="Select City" type="search" onchange={search} value={selectedresultValue} disabled={disableInput}></lightning-input>
+                                            <lightning-input label="Select City" type="search" onchange={search} value={selectedresultValue} disabled={disableInput} required="true"></lightning-input>
                                             <div if:true={booleanValue} class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid"
                                                 role="listbox">
                                                 <ul class="slds-listbox slds-listbox_vertical" role="presentation">
@@ -578,7 +578,7 @@
                 <div class="slds-modal__container">
                     <div class="slds-modal__header">
                         <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
-                            title="Close" onclick={handleCancel}>
+                            title="Close" onclick={handleCancels}>
                             <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
                                 size="small"></lightning-icon>
                             <span class="slds-assistive-text">Close</span>

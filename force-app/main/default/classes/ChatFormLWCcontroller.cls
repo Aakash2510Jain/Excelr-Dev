@@ -140,6 +140,7 @@ public without sharing class ChatFormLWCcontroller{
         }
 
 
+
         return message;
     }
 
@@ -159,7 +160,9 @@ public without sharing class ChatFormLWCcontroller{
             taskRec.Status = TaskRecord.Status;
             taskRec.ActivityDate = TaskRecord.ActivityDate;
             taskRec.Description = TaskRecord.Description;
+            system.debug('Task Description-'+TaskRecord.Description);
             taskRec.Followup_Date_Time__c = TaskRecord.Followup_Date_Time__c;
+            system.debug('Task Followup_Date_Time__c-'+TaskRecord.Followup_Date_Time__c);
             insert taskRec;
             return 'Success';
 

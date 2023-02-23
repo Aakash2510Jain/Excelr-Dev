@@ -259,6 +259,7 @@
                             <!-- Modal/Popup Box LWC body starts here -->
                             <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
                                 <!--lightning-input label="First Name" onchange={FnameChange} required="true"></lightning-input -->
+
                                 <lightning-input name="LN" label="Name" required="true"
                                     onchange={LeadCreationHandler}></lightning-input>
 
@@ -268,71 +269,106 @@
                                 <lightning-input name="AltEm" label="Alternate Email"
                                     onchange={LeadCreationHandler}></lightning-input>
                                 
-                                    <lightning-combobox name="Countries" label="Select Country" value={CountryValue}
-                                        placeholder="Select Your Country" options={CountriesPicklistValue}
-                                        onchange={HandleChangeCountry} required="true">
-                                    </lightning-combobox>
+                                <lightning-combobox name="Country" label="Select Country" value={CountryValue}
+                                    placeholder="Select Your Country" options={countryList}
+                                    onchange={HandleCountryChange} required="true">
+                                </lightning-combobox>
 
-                                    <lightning-combobox name="States" label="Select State" value={StateValue}
-                                        placeholder="Select Your State" options={SelectedCountryStateList}
-                                        onchange={HandleChangeState} required="true" disabled={StateDisable}>
-                                    </lightning-combobox>
+                                    <lightning-combobox name="State" label="Select State" value={StateValue}
+                                    placeholder="Select Your State" options={statesList} onchange={HandleChangeState}
+                                    required="true" disabled={StateDisable}>
+                                </lightning-combobox>
 
-                                    <lightning-input type="text" label="City" name="UserCity"
-                                        placeholder="Enter Your City" onchange={HandleCityValue}></lightning-input>
-
-                                <label class="slds-form-element__label" for="textarea-id-01"><abbr class="slds-required"
-                                        title="required">*</abbr>Mobile</label>
-                                <div class="slds-grid slds-wrap">
-                                    <div class="slds-col slds-size_1-of-12">
-                                        <span>
-                                            <lightning-input value={SelectedCountryISCode} disabled="true"></lightning-input>
-                                        </span>
+                                <div class="slds-card">
+                                    <div class="slds-form-element">
+                                        <div class="slds-form-element__control">
+                                            <lightning-input label="Select City" type="search" onchange={search} value={selectedresultValue} disabled={disableInput} required="true"></lightning-input>
+                                            <div if:true={booleanValue} class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid"
+                                                role="listbox">
+                                                <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                                    <template for:each={searchResults} for:item="searchResult">
+                                                        <li key={searchResult.value} data-value={searchResult.value} role="presentation"
+                                                            onclick={selectSearchResult} class="slds-listbox__item">
+                                                            <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small "
+                                                                role="option">
+                                                                <span class="slds-media__body">
+                                                                    <span class="slds-truncate" title={searchResult.label}>
+                                                                        {searchResult.label}
+                                                                    </span>
+                                                                </span>
+                                                            </div>
+                                                        </li>
+                                                    </template>
+                                                </ul>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="slds-col slds-size_11-of-12">
-                                        <span>
-                                            <lightning-input type="tel" min-length="10" onchange={PhoneChange}
-                                                max-length="10"></lightning-input>
+                                </div>
 
-                                        </span>
+
+                                  <br/>
+
+                                  <label class="slds-form-element__label" for="textarea-id-01"><abbr class="slds-required"
+                                    title="required">*</abbr>Mobile</label>
+                                    <div class="slds-grid slds-wrap">
+                                        <div class="slds-col slds-size_1-of-12">
+                                            <span>
+                                                <lightning-combobox name="CountryISDcode"  
+                                                    placeholder="Select Your CountryCode" options={countryCodeList}
+                                                    onchange={LeadCreationHandler} value={DefaultCountryCode}>
+                                                </lightning-combobox>
+                                                
+                                            </span>
+                                        </div>
+                                        <div class="slds-col slds-size_11-of-12">
+                                            <span>
+                                                <lightning-input min-length="10" onchange={LeadCreationHandler} name="PH"
+                                                    max-length="10"></lightning-input>
+
+                                            </span>
+                                        </div>
+
                                     </div>
 
-                                </div>
-
-                                <label class="slds-form-element__label" for="textarea-id-01">Alternate Mobile</label>
-                            <div class="slds-grid slds-wrap">
-                                <div class="slds-col slds-size_1-of-12">
-                                    <span>
-                                        <lightning-input value={SelectedCountryISCode} disabled="true"></lightning-input>
-                                    </span>
-                                </div>
-                                <div class="slds-col slds-size_11-of-12">
-                                    <span>
-                                        <lightning-input type="tel" min-length="10" onchange={AlterPhoneChange}
-                                            max-length="10"></lightning-input>
-
-                                    </span>
-                                </div>
-
-                            </div>
+                                    <label class="slds-form-element__label" for="textarea-id-01">Alternate Mobile</label>
+                                    <div class="slds-grid slds-wrap">
+                                        <div class="slds-col slds-size_1-of-12">
+                                            <span>
+                                                <lightning-combobox name="CountryISDcodeAlt"  
+                                                    placeholder="Select Your CountryCode" options={countryCodeList}
+                                                    onchange={LeadCreationHandler} value={DefaultCountryCode}>
+                                                </lightning-combobox>
+                                               
+                                            </span>
+                                        </div>
+                                        <div class="slds-col slds-size_11-of-12">
+                                            <span>
+                                                <lightning-input min-length="10" max-length="10" name="AltPH"
+                                                    onchange={LeadCreationHandler}></lightning-input>
+                                            </span>
+                                        </div>
+    
+                                    </div>
                                 <!--lightning-input label="Alternate Mobile" onchange={AlterPhoneChange}></lightning-input -->
                                 <lightning-combobox name="course" label="Course" value={value}
-                                    placeholder="Select Course" options={courssweList} onchange={courceHandler}
+                                    placeholder="Select Course" options={courssweList} onchange={LeadCreationHandler}
                                     required="true">
                                 </lightning-combobox>
 
                                 <template if:true={TypeofCoursePicklistValues.data}>
                                     <lightning-combobox name="TOCR" label="Type of Course" value={typeofCoursevalue}
                                         placeholder="select" options={TypeofCoursePicklistValues.data.values}
-                                        onchange={typeofcourseHandler}>
+                                        onchange={typeofcourseHandler} required="true">
                                     </lightning-combobox>
                                 </template>
 
-                                <c-custom-lookup icon-name="standard:user" s-object-api-name="user" label="Select User"
-                                    onlookupupdate={lookupRecord} placeholder="type here..."></c-custom-lookup>
+                                <label class="slds-form-element__label" for="textarea-id-01"><abbr class="slds-required"
+                                    title="required">*</abbr>Select User</label>
+                                <c-custom-lookup icon-name="standard:user" s-object-api-name="user" label=""
+                                    onlookupupdate={lookupRecord} placeholder="type here..." ></c-custom-lookup>
 
                                 <lightning-textarea label="Comments" name="Comments" value={commentsValue}
-                                    onchange={HandleComments}>
+                                    onchange={LeadCreationHandler}>
                                 </lightning-textarea>
                             </div>
                             <!-- Modal/Popup Box LWC footer starts here -->
@@ -527,20 +563,24 @@
                         <h1>Create New Task</h1>
                     </div>
                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
+
                         <lightning-input type="text" name="subject" label="Subject" value={subjectvalue}
-                            onchange={subjectHandler} required="true"></lightning-input>
+                            onchange={TaskCreationHandler} required="true"></lightning-input>
+
                         <lightning-combobox name="Priority" label="Priority" value={priorityValue}
-                            placeholder="Select Priority" options={priorityList} onchange={priorityHandler}
+                            placeholder="Select Priority" options={priorityList} onchange={TaskCreationHandler}
                             required="true"></lightning-combobox>
 
                         <lightning-combobox name="Status" label="Status" value={statusValue} placeholder="Select Status"
-                            options={StatusList} onchange={statusHandler} required="true"></lightning-combobox>
+                            options={StatusList} onchange={TaskCreationHandler} required="true"></lightning-combobox>
 
                         <lightning-input type="date" name="Duedate" label="Due date" value={DuedateValue}
-                            onchange={duedateHandler}></lightning-input>
-                        <lightning-input type="datetime" name="input2" label="Followup Date/time " value={followupValue}
-                            onchange={followupHandler}></lightning-input>
-                        <lightning-textarea label="Comments" name="Comments" value={comValue} onchange={commentHandler}>
+                            onchange={TaskCreationHandler}></lightning-input>
+
+                        <lightning-input type="datetime" name="Followupdatetime" label="Followup Date/time " value={followupValue}
+                            onchange={TaskCreationHandler}></lightning-input>
+
+                        <lightning-textarea label="Comments" name="Comments" value={comValue} onchange={TaskCreationHandler}>
                         </lightning-textarea>
 
 

@@ -1,0 +1,40 @@
+<template>
+    <lightning-card title="">
+        <div style="padding:2%">
+            <lightning-input type="text" label="Enter User Name"></lightning-input>
+            <br />
+            <lightning-button label="Search" title="Non-primary action" onclick={searchAGM}
+                class="slds-m-left_x-small"></lightning-button>
+            <br /><br /><br />
+            <template if:true={isLoaded}>
+                <table class="my-table">
+                    <thead>
+                        <tr>
+                            <th>AGM Name</th>
+                            <th>Assignment Group</th>
+                            <th>Maximum Leads</th>
+                            <th>Queue Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={data} for:item="item">
+                            <tr key={item.Id}>
+                                <td>
+                                    <a target="_blank" href={item.AGM_URL__c} tabindex="-1">
+                                        {item.Name}
+                                    </a>
+                                </td>
+                                <td>{item.Assignment_Group__r.Name}</td>
+                                <td>{item.Max_Lead_Per_Day__c}</td>
+                                <td>{item.Queue_Type__c}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={isLoaded}>
+                <h1><b>{message}</b></h1>
+            </template>
+        </div>
+    </lightning-card>
+</template>

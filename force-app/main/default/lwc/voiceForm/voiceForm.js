@@ -4,26 +4,18 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getLead from '@salesforce/apex/voiceFormLWCcontroller.getLead';
 import getApplication from '@salesforce/apex/voiceFormLWCcontroller.getApplication';
 import EmailIsm from '@salesforce/apex/voiceFormLWCcontroller.EmailIsm';
-import getMember from '@salesforce/apex/voiceFormLWCcontroller.getMember';
+
 import getPuckistOflead from '@salesforce/apex/voiceFormLWCcontroller.getPuckistOflead';
 
-import getPickiststatusOfTask from '@salesforce/apex/voiceFormLWCcontroller.getPickiststatusOfTask';
-import getPickistpriorityOfTask from '@salesforce/apex/voiceFormLWCcontroller.getPickistpriorityOfTask';
+
 import createTask from '@salesforce/apex/voiceFormLWCcontroller.createTaskForVoice';
 
 import createLead from '@salesforce/apex/voiceFormLWCcontroller.createLead';
 import createApplication from '@salesforce/apex/voiceFormLWCcontroller.CreateApplication';
 
-import { getObjectInfo } from 'lightning/uiObjectInfoApi';
-import { getPicklistValues } from 'lightning/uiObjectInfoApi';
 
-import LEAD_OBJECT from '@salesforce/schema/Lead';
-import LEAD_GEN_PATH from '@salesforce/schema/Lead.Lead_Gen_Path__c';
-import LEAD_SOURCE from '@salesforce/schema/Lead.LeadSource';
-import LEAD_MEDIUM from '@salesforce/schema/Lead.UTM_Medium__c';
 import FetchStateCounty from '@salesforce/apex/voiceFormLWCcontroller.FetchStateCounty';
-import Fetchcities from '@salesforce/apex/voiceFormLWCcontroller.Fetchcities';
-import FetchCountriesStateWithISDcode from '@salesforce/apex/voiceFormLWCcontroller.getCountryStateAndISDCode';
+
 import fetchCountryAndCountryCode from '@salesforce/apex/GenericLeadLWCcontroller.fetchCountryAndCountryCode';
 
 
@@ -135,106 +127,6 @@ export default class voiceForm extends LightningElement {
     }
 
     Picklistvalue = [];
-    // @wire(getObjectInfo, { objectApiName: LEAD_OBJECT })
-    // objectInfo
-    // //Getting Picklist Field Of Lead GenPath
-    // @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: LEAD_GEN_PATH })
-    // wiredPicklistLeadGenPath({ data, error }) {
-    //     debugger;
-    //     if (data) {
-    //         console.log('data=', data);
-    //         console.log('dataValues=', data.values);
-    //         let arr = [];
-    //         for (let i = 0; i < data.values.length; i++) {
-    //             if ((data.values[i].value == "Direct Calls") || (data.values[i].value == "Tollfree")) {
-    //                 arr.push({ label: data.values[i].label, value: data.values[i].value });
-    //             }
-    //         }
-    //         this.Picklistvalue = arr;
-    //         this.Picklistvalue.sort((a, b) => (a.label > b.label) ? 1 : -1);
-    //         console.log('Picklistvalue=', this.Picklistvalue);
-    //     }
-    //     else {
-    //         console.log('error=', error)
-    //     }
-    // }
-
-    // get ldGenPath() {
-    //     return this.Picklistvalue;
-    // }
-
-    // ldGenPathValue(event) {
-    //     debugger;
-    //     this.Leadvalue = event.target.value;
-    // }
-
-    // //Getting Picklist Field Of LeadSource
-    // @track LeadSourcePicklist = [];
-    // @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: LEAD_SOURCE })
-    // wiredPicklistLeadSource({ data, error }) {
-    //     debugger;
-    //     if (data) {
-    //         console.log('data=', data);
-    //         console.log('dataValues=', data.values);
-    //         let arr = [];
-    //         for (let i = 0; i < data.values.length; i++) {
-    //             arr.push({ label: data.values[i].label, value: data.values[i].value });
-    //         }
-    //         this.LeadSourcePicklist = arr;
-    //         this.LeadSourcePicklist.sort((a, b) => (a.label > b.label) ? 1 : -1);
-    //         console.log('Picklistvalue=', this.LeadSourcePicklist);
-    //     }
-    //     else {
-    //         console.log('error=', error)
-    //     }
-    // }
-
-    // get leadSource() {
-    //     return this.LeadSourcePicklist;
-    // }
-
-    // @track SourceValue;
-    // HandleSource(event) {
-    //     debugger;
-    //     let Source = event.target.value;
-    //     this.SourceValue = Source;
-    // }
-
-    // //Getting Picklist Field Of Medium
-    // @track LeadMediumPicklist = [];
-    // @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: LEAD_MEDIUM })
-    // wiredPicklistLeadMedium({ data, error }) {
-    //     debugger;
-    //     if (data) {
-    //         console.log('data=', data);
-    //         console.log('dataValues=', data.values);
-    //         let arr = [];
-    //         for (let i = 0; i < data.values.length; i++) {
-    //             arr.push({ label: data.values[i].label, value: data.values[i].value });
-    //         }
-    //         this.LeadMediumPicklist = arr;
-    //         this.LeadMediumPicklist.sort((a, b) => (a.label > b.label) ? 1 : -1);
-    //         console.log('Picklistvalue=', this.LeadMediumPicklist);
-    //     }
-    //     else {
-    //         console.log('error=', error)
-    //     }
-    // }
-
-    // get leadmedium() {
-    //     return this.LeadMediumPicklist;
-    // }
-
-    // @track MediumValue;
-
-    // HandleMedium(event) {
-    //     debugger;
-    //     let Medium = event.target.value;
-    //     this.MediumValue = Medium;
-    // }
-    //Comment all above
-
-
     @track CaptureOwnerId;
     @track captureownerName;
     @track taskBTNdisAble = true;
@@ -641,25 +533,7 @@ export default class voiceForm extends LightningElement {
 
     handleCancel() {
         debugger;
-        // this.isShowModal = false;
-        // this.showtaskModal = false;
-        // this.namValue = '';
-        //                     this.lNameValue = '';
-        //                     this.commentsValue = '';
-        //                     this.emailValue = '';
-        //                     this.phoneValue = '';
-        //                     this.AlternateMobile = '';
-        //                     this.alterEmailValue = '';
-        //                     this.CourceLead = '';
-        //                     this.CountryValue = '';
-        //                     this.cityValue = '';
-        //                     this.StateValue = '';
-        //                     this.Leadvalue = '';
-
-        //                     this.SelectedCountryStateList = [];
-        //                     if (this.SelectedCountryStateList.length == 0) {
-        //                         this.StateDisable = true;
-        //                     }
+        
 
     
             this.isShowModal = false;
@@ -678,6 +552,7 @@ export default class voiceForm extends LightningElement {
             this.SelectedMedium='';
             this.selectedresultValue='';
             this.DefaultCountryCode='';
+            this.CountryCode='';
             this.SelectedCountryStateList = [];
     
             this.LeadTobeCreated = {};
@@ -689,32 +564,7 @@ export default class voiceForm extends LightningElement {
 
     }
 
-    // FnameChange(Event) {
-    //     debugger;
-    //     let firstname = Event.target.value;
-    //     this.namValue = firstname;
-    // }
-    // LnameChange(Event) {
-    //     debugger;
-    //     let lasttname = Event.target.value;
-    //     this.lNameValue = lasttname;
-    // }
-    // EmailChange(Event) {
-    //     debugger;
-    //     let email = Event.target.value;
-    //     //var returnvalue = this.handleIncorrectEmail(email)
-    //     this.emailValue = email;
-    // }
-
-    // @track alterMobileValue
-    // AlterPhoneChange(Event) {
-    //     this.alterMobileValue = Event.target.value;
-    // }
-
-    // @track alterEmailValue;
-    // AlterEmailChange(Event) {
-    //     this.alterEmailValue = Event.target.value;
-    // }
+    
 
     @track StateCountryValue = [];
     @wire(FetchStateCounty)
@@ -1046,14 +896,14 @@ export default class voiceForm extends LightningElement {
     //     this.compnyValue = cname;
     // }
 
-    handleChange(event) {
-        debugger;
-        let selectedValue = event.detail.value;
-        this.ismeId = selectedValue;
-        console.log('MEMLIST---', this.groupMemList);
-        this.gruoMemberId = this.groupMemList.find(item => item.Group_Member__c == selectedValue).Id;
-        //this.groupMemList[this.ismeId];
-    }
+    // handleChange(event) {
+    //     debugger;
+    //     let selectedValue = event.detail.value;
+    //     this.ismeId = selectedValue;
+    //     console.log('MEMLIST---', this.groupMemList);
+    //     this.gruoMemberId = this.groupMemList.find(item => item.Group_Member__c == selectedValue).Id;
+    //     //this.groupMemList[this.ismeId];
+    // }
     // courceHandler(event) {
     //     debugger;
     //     let selectedCource = event.detail.value;
@@ -1328,7 +1178,7 @@ export default class voiceForm extends LightningElement {
                         }
                         else if (data == 'FAIL') {
                             this.HandleLeadCreatedisable = false;
-                            this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
+                            //this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
                         }
 
 
@@ -1374,6 +1224,7 @@ export default class voiceForm extends LightningElement {
         this.selectedrecordDetails = event.detail.selectedRecord;
         //alert('Selected Record Value on Parent Component is ' + JSON.stringify(event.detail.selectedRecord));
     }
+    
     async handleAlert(message) {
         await LightningAlert.open({
             message: message,
