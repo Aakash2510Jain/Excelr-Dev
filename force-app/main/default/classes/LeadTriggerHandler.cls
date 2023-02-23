@@ -93,7 +93,17 @@ public without sharing class LeadTriggerHandler{
                         system.debug('TLM');
                         ld.Quality_of_Lead__c = 'TLM';
                     }
-                }             
+                }    
+                 if(ld.Profession__c != null && ld.Profession__c != oldLeadMap.get(ld.Id).Profession__c){
+                    addValidationForProfilling(ld, oldLeadMap);
+                 }
+                 if(ld.status != oldLeadMap.get(ld.Id).status && ld.Email_Conversation_Done__c == false ){
+                    ld.addError('Email conversation is required to proceed');
+                 }
+                 if(ld.status != oldLeadMap.get(ld.Id).status && ld.Profession__c == null ){
+                    ld.addError('Profiling Details are required to proceed (Profession,Experience...)');
+                 }
+                 
             }
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
@@ -112,6 +122,51 @@ public without sharing class LeadTriggerHandler{
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
             HandleBusinessException.captureError('LeadTriggerHandler', 'After Lead Update', e, null);
         }
+    }
+
+    public void addValidationForProfilling(Lead ld, Map<id,Lead> oldLeadMap){
+            if(ld.Profession__c == 'Student'){
+                if(ld.Year_of_Graduation__c == null){
+                    ld.Year_of_Graduation__c.addError('Year of Graduation can not be Empty');
+                }
+                if(ld.Specialization__c == null){
+                    ld.Specialization__c.addError('Specialization can not be Empty');
+                }
+                if(ld.Branch__c == null){
+                    ld.Branch__c.addError('Branch can not be Empty');
+                }
+                if(ld.Qualification__c == null){
+                    ld.Qualification__c.addError('Qualification can not be Empty');
+                }
+            }else if(ld.Profession__c == 'Working Professional'){
+                if(ld.Relevant_Experience__c == null){
+                    ld.Relevant_Experience__c.addError('Relevant Experience can not be Empty');
+                }
+                if(ld.Current_Domain__c == null){
+                    ld.Current_Domain__c.addError('Current Domain can not be Empty');
+                }
+                if(ld.Year_of_Experience__c == null){
+                    ld.Year_of_Experience__c.addError('Year of Experience can not be Empty');
+                }
+                if(ld.Designation__c == null){
+                    ld.Designation__c.addError('Designation can not be Empty');
+                }
+                if(ld.Organisation__c == null){
+                    ld.Organisation__c.addError('Organisation can not be Empty');
+                }
+                if(ld.Year_of_Graduation__c == null){
+                    ld.Year_of_Graduation__c.addError('Year of Graduation can not be Empty');
+                }
+                if(ld.Specialization__c == null){
+                    ld.Specialization__c.addError('Specialization can not be Empty');
+                }
+                if(ld.Branch__c == null){
+                    ld.Branch__c.addError('Branch can not be Empty');
+                }
+                if(ld.Qualification__c == null){
+                    ld.Qualification__c.addError('Qualification can not be Empty');
+                }
+            }
     }
     
 }
