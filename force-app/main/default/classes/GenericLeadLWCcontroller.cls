@@ -107,7 +107,7 @@ public without sharing class GenericLeadLWCcontroller{
                 Leadrec.Phone = countrycode + Leadrec.Phone;
             }
 
-            if (countrycodealternate != null){
+            if (countrycodealternate != null && Leadrec.Alternate_Phone__c!=null){
                 Leadrec.Alternate_Phone__c = countrycodealternate + Leadrec.Alternate_Phone__c;
 
             }

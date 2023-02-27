@@ -6,7 +6,8 @@ trigger AGMTrigger on Assignment_Group_Member__c (before update, after insert, a
         AGMTriggerHelper handlerInstance = AGMTriggerHelper.getInstance();
         
         if (trigger.isUpdate && trigger.isbefore){
-            handlerInstance.beforeUpdate(Trigger.newMap, trigger.oldMap);
+            //Validate max lead per day from AGM to max lead per month on User
+            // handlerInstance.beforeUpdate(Trigger.newMap, trigger.oldMap);
         }
         if (trigger.isafter && trigger.isInsert){
             handlerInstance.afterInsert(Trigger.newMap, trigger.oldMap);
@@ -15,6 +16,6 @@ trigger AGMTrigger on Assignment_Group_Member__c (before update, after insert, a
             system.debug('After Delete');
             handlerInstance.afterDelete( trigger.oldMap);
         }
-       
+        
     }
 }

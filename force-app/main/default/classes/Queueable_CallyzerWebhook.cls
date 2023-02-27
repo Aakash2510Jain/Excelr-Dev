@@ -41,7 +41,8 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
 
         list<Lead> ExistingLeadwithPhone = new List<Lead>();
         LIst<Contact> ExistingContactwithPhone = new List<Contact>();
-
+		List<Lead> leadListToBeUpdatedForTelephonicConversation = new List<Lead>();
+        
         try{
 
             if (!String.isEmpty(callLogString)){
@@ -87,7 +88,7 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                 System.debug('CustomerPhones ====> ' + CustomerPhones);
                 if (!CustomerPhones.isEmpty()){
                     System.debug('I am finding existing Lead');
-                    ExistingLeadwithPhone = [Select id, Phone, ownerId, MobilePhone, Alternate_Phone__c
+                    ExistingLeadwithPhone = [Select id, Phone, ownerId, MobilePhone, Alternate_Phone__c,Telephonic_Conversation__c
                                              From Lead
                                              Where (Phone IN:CustomerPhones OR Alternate_Phone__c IN:CustomerPhones) And status != 'Dead' And status != 'Junk' And isConverted = false];
                     System.debug('ExistingLeadwithPhone ====> ' + ExistingLeadwithPhone);
@@ -101,6 +102,10 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                             else if (ld.Alternate_Phone__c != null && CustomerPhoneWithObject.containskey((ld.Alternate_Phone__c).right(10))) {
                                 PhoneWithLead.put(ld.Alternate_Phone__c, ld);
                             }
+                            leadListToBeUpdatedForTelephonicConversation.add(new Lead(id = ld.Id,Telephonic_Conversation__c = true));
+                        }
+                        if(!leadListToBeUpdatedForTelephonicConversation.isEmpty()){
+                            update leadListToBeUpdatedForTelephonicConversation;
                         }
                     }
                     System.debug('PhoneWithLead =====> ' + PhoneWithLead);

@@ -1,13 +1,19 @@
 import { LightningElement, track, api, wire } from 'lwc';
-import { getPicklistValues } from 'lightning/uiObjectInfoApi';
-import COURSE_FIELD from '@salesforce/schema/Lead.Course__c'; 
-import TYPE_OF_COURSE_FIELD from '@salesforce/schema/Lead.Type_of_Course__c';
+//import { getPicklistValues } from 'lightning/uiObjectInfoApi';
+//import COURSE_FIELD from '@salesforce/schema/Lead.Course__c'; 
+//import TYPE_OF_COURSE_FIELD from '@salesforce/schema/Lead.Type_of_Course__c';
 import SubmitReferralDetails from '@salesforce/apex/ReferralFormController.SubmitReferralDetails';
 //import QueryCityList from '@salesforce/apex/ReferralFormController.QueryCityList';
 import Fetchcities from '@salesforce/apex/voiceFormLWCcontroller.Fetchcities';
 
-import { getObjectInfo } from 'lightning/uiObjectInfoApi';
-import LEAD_OBJECT from '@salesforce/schema/Lead';
+import getallPicklistvlaues from '@salesforce/apex/SiteFormUtility.ReferralFormPicklists';
+
+import GettingCountries from '@salesforce/apex/SiteFormUtility.FetchCountryRec';
+import GettingStates from '@salesforce/apex/SiteFormUtility.FetchStateRec';
+import GettingCities from '@salesforce/apex/SiteFormUtility.GetCityFromBigobject';
+import fetchCountryAndCountryCode from '@salesforce/apex/SiteFormUtility.fetchCountryAndCountryCode';
+//import { getObjectInfo } from 'lightning/uiObjectInfoApi';
+//import LEAD_OBJECT from '@salesforce/schema/Lead';
 import EXCELR_LOGO from '@salesforce/resourceUrl/ExcelRLogo';
 
 import LightningAlert from 'lightning/alert';
@@ -16,124 +22,367 @@ import LightningConfirm from "lightning/confirm";
 export default class ReferralForm extends LightningElement {
     imageurl = EXCELR_LOGO;
 
-    @track FirstName
-    @track Lastname
-    @track Phone
-    @track Email
-    @track Coursevalue
-    @track msg
-    @track CID_of_Referer
-    @track type_of_Course
-    @track location_of_reference
+    @track LeadTobeCreated = {};
 
-    @wire(getObjectInfo, { objectApiName: LEAD_OBJECT })
-    objectInfo
-
-    @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: COURSE_FIELD })
-    CoursePicklistValues
-
-    @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: TYPE_OF_COURSE_FIELD })
-    TypeofCoursePicklistValues
-
-    @track CityPicklistValue=[];
-    @track cityValue;
-    @wire(Fetchcities)
-    WiredResponsecities({data,error}){
+    @wire(getallPicklistvlaues)
+    wiredResponsePicklist({ data, error }) {
         debugger;
-        if(data){
-         console.log('CityValuedata=',data);
-           let arr=[];
-           for(let i=0;i<data.length;i++){
-              arr.push({label:data[i].City__c,value:data[i].City__c});
-           }
-           this.CityPicklistValue=arr;
-           console.log('Picklistvalue=',this.CityPicklistValue);
+        if (data) {
+
+            if (data.Courses.length > 0) {
+
+                let tempcoursearr = [];
+                for (let i = 0; i < data.Courses.length; i++) {
+                    tempcoursearr.push({ label: data.Courses[i], value: data.Courses[i] });
+                }
+                this.CoursePicklistValues = tempcoursearr;
+                this.CoursePicklistValues.sort((a, b) => (a.label > b.label) ? 1 : -1);
+
+            }
+            if (data.typeofCourses.length > 0) {
+
+                let tempcoursearr = [];
+                for (let i = 0; i < data.typeofCourses.length; i++) {
+                    tempcoursearr.push({ label: data.typeofCourses[i], value: data.typeofCourses[i] });
+                }
+                this.TypeofCoursePicklistValues = tempcoursearr;
+                this.TypeofCoursePicklistValues.sort((a, b) => (a.label > b.label) ? 1 : -1);
+
+            }
         }
-        else if(error){
-            console.log('error=',error);
+        else if (error) {
+            console.log('error=', error);
+        }
+    }
+
+
+   // =========================================================Fetch Countries States with ISDCODe And Handle =================================================
+   
+    //====================fetch Country
+
+    @track countryList = [];
+    @wire(GettingCountries)
+    wiredCountries({ data, error }) {
+        debugger;
+        if (data) {
+
+            let arr = [];
+            for (let i = 0; i < data.length; i++) {
+                arr.push({ label: data[i].Name, value: data[i].Id });
+            }
+            this.countryList = arr;
+            console.log('Picklistvalue=', this.countryList);
+        }
+        else if (error) {
+            console.log('error=', error);
         }
 
     }
 
-   get CityOptions(){
-     return this.CityPicklistValue;
-   }
+    // handle Country Change and get States list
+
+    @track statesList = [];
+    @track DefaultCountryCode;
+    @track selectedcountryname;
+    HandleCountryChange(event) {
+        debugger;
+        //let selectedCountry=event.detail.value;
+       
+        let SelectedcountryId = event.detail.value;
+        this.SelectedcountryId = SelectedcountryId;
+
+        var SelectedCountry = this.countryList.find(item => item.value == this.SelectedcountryId);
+        console.log('SelectedCountry',SelectedCountry);
+        console.log('SelectedCountry.label--',SelectedCountry.label);
+        this.selectedcountryname = SelectedCountry.label;
+
+        //console.log('selectedcountryname--',this.selectedcountryname);
+        this.LeadTobeCreated.Country__c = this.selectedcountryname;
+
+        if(SelectedCountry.label=='India'){
+            this.DefaultCountryCode="91";
+             this.CountryCode="91";
+             this.CountryCodeAlt="91";
+             this.selectedcountryname='India';
+        }else if(SelectedCountry.label=='United Kingdom'){
+            this.DefaultCountryCode="44";
+            this.CountryCode="44";
+            this.CountryCodeAlt="44";
+            this.selectedcountryname='United Kingdom';
+        }else if(SelectedCountry.label=='United States'){
+            this.DefaultCountryCode="1";
+            this.CountryCode="1";
+            this.CountryCodeAlt="1";
+            this.selectedcountryname='United States';
+        }
+
+        GettingStates({
+            countryid: this.SelectedcountryId
+        })
+            .then(result => {
+                debugger;
+                let arr = [];
+                for (let i = 0; i < result.length; i++) {
+                    arr.push({ label: result[i].Name, value: result[i].Id });
+                }
+                this.statesList = arr;
+                this.StateDisable = false;
+
+            // var SelectedCountry = this.countryList.find(item => item.value == this.SelectedcountryId);
+            // this.selectedcountryname = SelectedCountry.label;
+            // this.LeadTobeCreated.Country__c = this.selectedcountryname;
+
+                if(this.SelectedStateId!=null){
+                    this.selectedresultValue='';
+                    this.booleanValue=false;
+
+                }
+
+            }
+           
+
+            );
+            
+    }
+
+
+
+
+    //getting States List
+    @track stateList = [];
+    
+
+    @track FetchedcityList=[];
+    @track cityList=[];
+    @track CityDisable=true;
+    @track searchResults=[];
+    @track disableInput=true;
+    @track selectedstatename;
+
+    HandleChangeState(event) {
+        debugger;
+
+        this.SelectedStateId = event.detail.value;
+        var SelectedState = this.statesList.find(item => item.value == this.SelectedStateId);
+        this.selectedstatename = SelectedState.label;
+        this.LeadTobeCreated.State__c = this.selectedstatename;
+        this.StateDisable = false;
+        console.log('SelectedStateId-',this.SelectedStateId);
+        console.log('SelectedcountryId-',this.SelectedcountryId);
+        
+        GettingCities({
+            SelectedStateId: this.SelectedStateId, SelectedCountryId: this.SelectedcountryId
+        })
+            .then(result => {
+                debugger;
+                console.log('PicklistvalueCityresult=', result);
+                let arr = [];
+                for (let i = 0; i < result.length; i++) {
+                    arr.push({ label: result[i].City__c, value: result[i].City__c });
+                }
+                this.FetchedcityList = arr;
+                this.disableInput=false;
+                this.CityDisable=false;
+
+                console.log('PicklistvalueCity=', this.cityList);
+            }
+
+            );
+    }
+
+    @track selectedValue
+    @track booleanValue=false;
+    search(event){
+        debugger;
+        let value=event.target.value;
+
+        let TempValue;
+        if(value){
+            TempValue=value;
+        }
+
+        let arr=[];
+        if(TempValue){
+            TempValue = TempValue.charAt(0).toUpperCase() + TempValue.slice(1);
+            console.log('TempValue=',TempValue);
+            const results = this.FetchedcityList.filter(product => product.value.includes(TempValue));
+          
+            console.log('results====',results);
+            results.forEach(element => {
+                arr.push({label:element.value,value:element.value});
+            });
+            
+            
+            console.log('arr====',arr);
+        }
+
+        this.searchResults=arr;
+        if(this.searchResults.length>0){
+            this.booleanValue=true;
+        }else{
+            this.booleanValue=false;
+        }
+        console.log('this.searchResults====',this.searchResults);
+    }
+
+  
+
+    @track selectedSearchResult ;
+    @track selectedresultValue;
+
+    selectSearchResult(event){
+        debugger;
+        const selectedValue = event.currentTarget.dataset.value;
+        this.selectedresultValue=selectedValue;
+        this.LeadTobeCreated.City__c = selectedValue;
+        console.log('selectedValue--',selectedValue);
+        this.selectedSearchResult = this.searchResults.find(
+            (picklistOption) => picklistOption.value === selectedValue
+          );
+          console.log('selectedSearchResult--',this.selectedSearchResult);
+          console.log('selectedresultValue--',this.selectedresultValue);
+          
+          this.clearSearchResults();
+          
+        }
+      
+        clearSearchResults() {
+          this.searchResults = null;
+        }
+
+    
+
+    /*@track selectedCityValue;
+    HandleCityValue(event) {
+        debugger;
+        this.selectedCityValue = event.detail.value;
+        this.LeadTobeCreated.City__c = event.detail.value;
+    }*/
+
+    @track StateCountryValue = [];
+   
+
+    @track countryCodeList = [];
+    @wire(fetchCountryAndCountryCode)
+    wiredcountryCountrycode({ data, error }) {
+        debugger;
+        if (data) {
+
+            let arr = [];
+                for (let i = 0; i < data.length; i++) {
+                    arr.push({ label: data[i].CountryCode__c, value: data[i].CountryCode__c });
+                }
+            this.countryCodeList = arr;
+        }
+        else if (error) {
+            console.log('error=', error);
+        }
+
+    }
+
+
+    // ======================================================= Fetch Countries States with ISDCODe And Handle End Here ==================================================== 
 
     ReferralFormInputHandler(event) {
         debugger;
 
-        //var InputName = event.getSource().get("v.name");
         var InputName = event.currentTarget.name;
         let Textvalue = event.target.value;
         if (InputName == 'FN') {
             this.FirstName = Textvalue;
         }
         else if (InputName == 'LN') {
-            this.Lastname = Textvalue;
+            //this.Lastname = Textvalue;
+            this.LeadTobeCreated.LastName = event.target.value;
         }
         else if (InputName == 'EM') {
-            this.Email = Textvalue
+            //this.Email = Textvalue
+            this.LeadTobeCreated.Email = event.target.value;
+        }
+        else if (InputName == 'AltEm') {
+            this.LeadTobeCreated.Alternate_Email__c = event.target.value;
         }
         else if (InputName == 'PH') {
-            this.Phone = Textvalue;
+           // this.Phone = Textvalue;
+            this.LeadTobeCreated.Phone = event.target.value;
+        }
+        else if (InputName == 'AltPH') {
+             
+                this.LeadTobeCreated.Alternate_Phone__c = event.target.value;
+           
+        }
+        else if (InputName == 'CountryISDcode') {
+            // this.LeadTobeCreated.Alternate_Email__c = event.target.value;
+            this.CountryCode = event.target.value;
+        }
+        else if (InputName == 'CountryISDcodeAlt') {
+            this.CountryCodeAlt = event.target.value;
         }
         else if (InputName == 'CR') {
-            this.Coursevalue = Textvalue;
+           // this.Coursevalue = Textvalue; 
+            this.LeadTobeCreated.Course__c = event.target.value;
         } else if (InputName == 'CID') {
-            this.CID_of_Referer = Textvalue;
+            //this.CID_of_Referer = Textvalue;
+            this.LeadTobeCreated.CID_of_Referer__c = event.target.value;
         } else if (InputName == 'ReferenceLocation') {
-            this.location_of_reference = Textvalue;
+            //this.location_of_reference = Textvalue;
+            this.LeadTobeCreated.City__c = event.target.value;
         }else if (InputName == 'TOCR') {
-            this.type_of_Course = Textvalue;
+            //this.type_of_Course = Textvalue; 
+            this.LeadTobeCreated.Type_of_Course__c = event.target.value;
         }
-        /*else if (InputName == 'CourseType') {
-            this.type_of_Course = Textvalue;
-        }*/
 
     }
 
     SaveReferralFormDetails() {
         debugger;
-        if ((this.FirstName != undefined && this.FirstName != null) && (this.Lastname != undefined && this.Lastname != null) && (this.Email != undefined && this.Email != null) && (this.Phone != undefined && this.Phone != null) && (this.CID_of_Referer != undefined && this.CID_of_Referer != null) && (this.type_of_Course != undefined && this.type_of_Course != null) && (this.location_of_reference != undefined && this.location_of_reference != null)) {
-            var returnvalue = this.handleIncorrectEmail(this.Email)
-            //var phoneregexreturnvalue = this.handleCorrectPhone(this.Phone)
-            if (returnvalue == true && this.handleCorrectPhone(this.Phone)) {
-                SubmitReferralDetails({ FirstN: this.FirstName, LastName: this.Lastname, Email: this.Email, Phone: this.Phone, Coursevalue: this.Coursevalue, CID_of_Referer: this.CID_of_Referer, type_of_Course: this.type_of_Course, location_of_reference: this.location_of_reference })
-                    .then(result => {
-                        debugger;
-                        if (result == 'SUCCESS') {
-                            this.FirstName = '';
-                            this.Lastname = '';
-                            this.Email = '';
-                            this.Phone = '';
-                            this.CID_of_Referer = '';
-                            this.type_of_Course = '';
-                            this.location_of_reference = '';
-                            this.Coursevalue = '';
-                            this.handleConfirm('Referral Form Submitted Successfully');
+        this.handleSpinner();
+        if ((this.LeadTobeCreated.LastName != undefined && this.LeadTobeCreated.LastName != null && this.LeadTobeCreated.LastName != '') && (this.LeadTobeCreated.Email != undefined && this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '') && (this.LeadTobeCreated.Phone != undefined && this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '')
+            && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '')  && (this.LeadTobeCreated.CID_of_Referer__c != undefined && this.LeadTobeCreated.CID_of_Referer__c != null   && this.LeadTobeCreated.CID_of_Referer__c != '') && (this.LeadTobeCreated.Type_of_Course__c != undefined && this.LeadTobeCreated.Type_of_Course__c != null) 
+            &&(this.selectedresultValue!=null && this.selectedresultValue!=undefined && this.selectedresultValue!='')) {
+
+                var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email);
+                if (returnvalue == true && this.handleCorrectPhone(this.LeadTobeCreated.Phone)) {
+                    SubmitReferralDetails({ Leadrec: this.LeadTobeCreated, countrycode : this.CountryCode, countrycodealternate :this.CountryCodeAlt })
+                    .then(data => {
+
+                        if (data == 'SUCCESS') {
+                            this.handleConfirm('Lead Created Successfully');
+                            console.log(data)
+                            //alert('Lead Record created successfully');
+                            this.LeadTobeCreated = {};
+                            this.CountryCode = '';
+                            this.CountryCodeAlt = '';
+                            this.searchResults = [];
+                            this.handleSpinner();
+                            eval("$A.get('e.force:refreshView').fire();");
 
                         }
-                        else if (result == 'Fail') {
-                            this.handleAlert('Referral Email Does not Exist In the system. Please Provide correct email Id!!!!!');
+                        else if (data == 'Referral CID does not found in the system') {
+                            this.handleAlert(data);
+                            
+                        }
+                        else if (data == 'FAIL') {
+                            this.handleSpinner();
                         }
 
                     })
                     .catch(error => {
-                        this.handleAlert('Error in Submission of Referral Form. Please try after Sometime');
+                        this.handleSpinner();
+                        this.handleAlert('Error updating or reloading records');
                     })
+                }
+                else{
+                    alert('Incorrect Email or Phone Pattern');
+
+                }
 
             }
-            else {
-                alert('Incorrect Email or Phone Pattern');
-                this.HandleLeadCreatedisable = false;
+            else{
+                this.handleAlert('Some of the Required Fields are Empty!');
+                this.handleSpinner();
+
             }
-        }
-        else {
-            alert('All Fields are Mandatory,Please Check any one Of Your Field Is Empty');
-            this.HandleLeadCreatedisable = false;
-        }
-
-
     }
     handleClick(event) {
         debugger;
@@ -162,10 +411,13 @@ export default class ReferralForm extends LightningElement {
     }
 
     async handleConfirm(msg) {
-        const result = await LightningConfirm.open({
+
+        await LightningAlert.open({
             message: msg,
-            theme: "success",
+            theme: "Success",
             label: "Success"
+        }).then(() => {
+            console.log("###Alert Closed");
         });
         console.log("🚀 ~ result", result);
     }
@@ -178,5 +430,10 @@ export default class ReferralForm extends LightningElement {
         }).then(() => {
             console.log("###Alert Closed");
         });
+    }
+
+    @track spinnerLoading = false;
+    handleSpinner() {
+        this.spinnerLoading = !this.spinnerLoading;
     }
 }

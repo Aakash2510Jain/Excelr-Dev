@@ -69,4 +69,32 @@ public without sharing class SiteFormUtility{
        return cityList;
     }
 
+    @AuraEnabled(Cacheable = True)
+    public static Map<String, List<String>> ReferralFormPicklists(){
+        Map<String, List<String>> pickValByField = new Map<String, List<String>>();
+        //try {
+        // ======================================== Lead Related Picklist Values ========================================
+
+        pickValByField.put('Courses', getPicklistValues('Lead', 'Course__c'));
+        pickValByField.put('typeofCourses', getPicklistValues('Lead', 'Type_of_Course__c'));
+
+            
+        /*} catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }*/
+        return pickValByField;
+    }
+
+    @AuraEnabled(Cacheable = True)
+    public static List<Country_CountryCode__c> fetchCountryAndCountryCode(){
+        try{
+            List<Country_CountryCode__c> CCodeList = [SELECT CountryCode__c, Id, Name
+                                                      FROM Country_CountryCode__c];
+
+            return CCodeList;
+        } catch (Exception e){
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
 }

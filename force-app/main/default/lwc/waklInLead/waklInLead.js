@@ -662,7 +662,9 @@ export default class WaklInLead extends LightningElement {
             this.CountryCodeAlt = event.target.value;
         }
         if (InputName == 'AltPH') {
-            this.LeadTobeCreated.Alternate_Phone__c = event.target.value;
+            if(event.target.value!=null || event.target.value!=undefined || event.target.value!=''){
+                this.LeadTobeCreated.Alternate_Phone__c = event.target.value;
+            } 
         }
         if (InputName == 'course') {
             this.LeadTobeCreated.Course__c = event.target.value;

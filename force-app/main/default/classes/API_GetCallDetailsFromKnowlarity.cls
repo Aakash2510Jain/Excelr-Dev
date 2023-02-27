@@ -19,6 +19,9 @@ global without sharing class API_GetCallDetailsFromKnowlarity {
         HTTPResponse res = http.send(req);
         System.debug(res.getBody());
     }
+
+
+    
     public static void fecthCallDetails(string leadId){
         system.debug('leadId--->'+leadId);
             
@@ -45,17 +48,17 @@ global without sharing class API_GetCallDetailsFromKnowlarity {
             
             Http http = new Http();
             HTTPResponse res = http.send(req);
-            System.debug(res.getBody());
+            System.debug('Response Body :'+res.getBody());
 
             if (res.getBody() != null) {
-                CreateAndUpdateTaskOnLeadRecordID.CreateAndUpdateTaskOnLeadRecordID(res.getBody(),leadId );
+                CreateAndUpdateTaskOnLeadRecordID.CreateandUpdatetask(res.getBody(),leadId );
             }
         }
     }
     /*
      * resposne body
      {
-   "meta":{s
+   "meta":{
       "limit":20,
       "next":"",
       "offset":0,

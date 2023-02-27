@@ -35,16 +35,41 @@ global class API_CreateAccount{
         
         if (!String.isEmpty(requestString)){
             Account newAccount = (Account) JSON.deserialize(requestString, Account.class);
-            system.debug('newAccount-->'+newAccount);
+           
             if (newAccount != null){
-                existingLeadByEmail = [Select Id, Email, status, course__c, Customers__c,OwnerId,Alternate_Phone__c,Phone
-                                       From Lead
-                                       where (Email = :newAccount.Email__c or Alternate_Email__c =:newAccount.Email__c or Alternate_Phone__c =: newAccount.Alternate_Phone__c or Phone =: newAccount.Phone)  and isConverted = false order by CreatedDate Desc limit 1];
+                
+                string queryStringForNonConvertedLead = 'select Id, Email, status, course__c, Customers__c,OwnerId,Alternate_Phone__c,Phone From Lead ';
+                String queryStringForConvertedLead = 'select Id, Email, status, course__c, Customers__c,OwnerId,Alternate_Phone__c,Phone From Lead ';
+                
+                List<String> whereClauses = new List<String>();
+                
+                if (newAccount.Email__c != null) {
+                    whereClauses.add('Email = \'' + newAccount.Email__c+'\'');
+                }
+                if (newAccount.Alternate_Email__c != null) {
+                    whereClauses.add('Alternate_Email__c = \'' + newAccount.Alternate_Email__c+'\'');
+                }
+                if (newAccount.Phone != null) {
+                    whereClauses.add('Phone LIKE \'%'+newAccount.Phone+'\'');
+                }
+                if (newAccount.Alternate_Phone__c != null) {
+                    whereClauses.add('Alternate_Phone__c LIKE \'%'+newAccount.Alternate_Phone__c+'\'');
+                }
+                
+                if (!whereClauses.isEmpty()) {
+                    String whereClause = ' WHERE ( ' + String.join(whereClauses, ' OR ');
+                    queryStringForNonConvertedLead = queryStringForNonConvertedLead + whereClause+' ) and isConverted = false order by CreatedDate Desc limit 1';
+                    queryStringForConvertedLead = queryStringForConvertedLead + whereClause+' ) and isConverted = true order by CreatedDate Desc limit 1';
+                }
+                system.debug('queryStringForNonConvertedLead---->'+queryStringForNonConvertedLead);
+                system.debug('queryStringForConvertedLead-->'+queryStringForConvertedLead);
+                
+                existingLeadByEmail = Database.query(queryStringForNonConvertedLead);
+                
                 system.debug('existingLeadByEmail-->'+existingLeadByEmail);
-                convertedLeadByEmail = [Select Id, Email
-                                        From Lead
-                                        where (Email = :newAccount.Email__c or Alternate_Email__c =:newAccount.Email__c or Alternate_Phone__c =: newAccount.Alternate_Phone__c or Phone =: newAccount.Phone) and isConverted = true
-                                        limit 1];
+                
+                convertedLeadByEmail = Database.query(queryStringForConvertedLead);
+                
                 system.debug('convertedLeadByEmail-->'+convertedLeadByEmail);
                 if (!convertedLeadByEmail.isEmpty()){
                     Utility.createApplicationInstance(string.valueOf(convertedLeadByEmail[0].ConvertedAccountId), newAccount.Course__c, requestString);

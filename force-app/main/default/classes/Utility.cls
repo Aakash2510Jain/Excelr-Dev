@@ -380,7 +380,7 @@ public without sharing class Utility{
 
     public static String createCustomerViaLeadCreationAPI(Account accRec){
         string customerId = '';
-        List<Customers__c> customerList = [Select Id,Email__c,Alternate_Email__c,Phone__c,Alternate_Phone__c FRom Customers__c where Email__c = :accRec.Email__c or Alternate_Email__c =:accRec.Email__c or Alternate_Phone__c =: accRec.Alternate_Phone__c or Phone__c =: accRec.Phone limit 1];
+        List<Customers__c> customerList = [Select Id,Email__c,Alternate_Email__c,Phone__c,Alternate_Phone__c FRom Customers__c where Email__c = :accRec.Email__c or Alternate_Email__c =:accRec.Email__c or Alternate_Phone__c Like : '%'+accRec.Alternate_Phone__c or Phone__c  Like : '%'+accRec.Phone limit 1];
         
         if(!customerList.isEmpty()){
             customerId = customerList[0].Id;
@@ -391,6 +391,25 @@ public without sharing class Utility{
             customerRec.Alternate_Email__c = accRec.Alternate_Email__c;
             customerRec.Alternate_Phone__c = accRec.Alternate_Phone__c;
             customerRec.Phone__c = accRec.Phone;
+            insert customerRec;
+            customerId = customerRec.id;
+        }
+        
+        return customerId;
+    }
+       public static String createCustomer(Lead leadRec){
+        string customerId = '';
+        List<Customers__c> customerList = [Select Id,Email__c,Alternate_Email__c,Phone__c,Alternate_Phone__c From Customers__c where Email__c = :leadRec.Email or Alternate_Email__c =:leadRec.Alternate_Email__c or Alternate_Phone__c Like : '%'+leadRec.Alternate_Phone__c or Phone__c  Like : '%'+leadRec.Phone limit 1];
+        
+        if(!customerList.isEmpty()){
+            customerId = customerList[0].Id;
+        }else{
+            Customers__c customerRec = new Customers__c();
+            customerRec.Name__c = leadRec.Firstname+' '+leadRec.LastName;
+            customerRec.Email__c = leadRec.Email;
+            customerRec.Alternate_Email__c = leadRec.Alternate_Email__c;
+            customerRec.Alternate_Phone__c = leadRec.Alternate_Phone__c;
+            customerRec.Phone__c = leadRec.Phone;
             insert customerRec;
             customerId = customerRec.id;
         }

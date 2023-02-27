@@ -57,7 +57,7 @@ public class LeadAssignmentExecutionCriteria {
                                      UTM_Experiment__c,UTM_Location__c,UTM_Medium__c,UTM_Term__c,UTM_Type__c,UTM_Variety__c,Visitor_ID__c,Website,
                                      Whatsapp_Opt_in__c,Why_This_Course__c,Year_of_Experience__c 
                                      FROM Lead 
-                                     where ownerId =: queueId];
+                                     where ownerId =: queueId and Is_Lead_Assigned_to_User__c = false];
             if(!queueLeads.isEmpty()){
                 newLeadListTemp.addAll(queueLeads);
                 System.debug(queueLeads.size()); 
