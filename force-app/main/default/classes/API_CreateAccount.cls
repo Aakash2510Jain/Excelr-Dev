@@ -35,7 +35,8 @@ global class API_CreateAccount{
         
         if (!String.isEmpty(requestString)){
             Account newAccount = (Account) JSON.deserialize(requestString, Account.class);
-           
+            insertLead(Utility.insertLeadViaAPI(newAccount), requestString);
+            /*
             if (newAccount != null){
                 
                 string queryStringForNonConvertedLead = 'select Id, Email, status, course__c, Customers__c,OwnerId,Alternate_Phone__c,Phone From Lead ';
@@ -118,18 +119,22 @@ global class API_CreateAccount{
                         }
                     }
                 }
-            }
+            }*/
+            RestContext.response.responseBody = Blob.valueOf(JSON.serialize(new IntegrationWrapper.APIResponseWrapper('Success', 'Response Captured Successfully')));
+
         } else{
-            RestContext.response.responseBody = Blob.valueOf(JSON.serialize(new IntegrationWrapper.APIResponseWrapper('Error', 'Bad Request')));
+            RestContext.response.responseBody = Blob.valueOf(JSON.serialize(new IntegrationWrapper.APIResponseWrapper('Error', 'Some Error has Occured')));
             RestContext.response.statusCode = 400;
         }
     }
     
-    public static Lead insertLead(Lead leadRec, string requestString, string customerId){
+    public static Lead insertLead(Lead leadRec, string requestString){
         try{
             system.debug('--- leadRec ' + leadRec);
-            leadRec.Customers__c = customerId;
-            leadRec.CID__c = [Select CID__c From Customers__c where id =:customerId ].CID__c;
+            /*
+leadRec.Customers__c = customerId;
+leadRec.CID__c = [Select CID__c From Customers__c where id =:customerId ].CID__c;
+*/
             insert leadRec;
             return leadRec;
         } catch (Exception e){

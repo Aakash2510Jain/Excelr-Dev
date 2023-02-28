@@ -47,40 +47,73 @@
                 <div class="slds-size_2-of-6">
 
                     <lightning-input name="CID" label="Customer ID of Referer" required="true"
-                        onchange={ReferralFormInputHandler} style="margin-top:8px;" value={LeadTobeCreated.CID_of_Referer__c}
-                        type="text"></lightning-input>
+                        onchange={ReferralFormInputHandler} style="margin-top:8px;"
+                        value={LeadTobeCreated.CID_of_Referer__c} type="text"></lightning-input>
 
                     <!--lightning-input name="FN" label="First Name of Reference" required="true"
                         onchange={ReferralFormInputHandler} style="margin-top:8px;" value={FirstName}
                         type="text"></lightning-input -->
                     <lightning-input name="LN" label="Name of Reference" required="true"
-                        onchange={ReferralFormInputHandler} style="margin-top:8px;" value={LeadTobeCreated.LastName}></lightning-input>
-                    <lightning-input name="EM" label="Email Id of Reference" required="true"
-                        onchange={ReferralFormInputHandler} style="margin-top:8px;" value={LeadTobeCreated.Email}></lightning-input>
-                    <lightning-input name="AltEm" label="Alternate Email" value={LeadTobeCreated.Alternate_Email__c}
-                        onchange={ReferralFormInputHandler}></lightning-input>
+                        onchange={ReferralFormInputHandler} style="margin-top:8px;"
+                        value={LeadTobeCreated.LastName}></lightning-input>
+                    <lightning-combobox name="co" label="Select Country" value={} placeholder="Select Your Country"
+                        options={countryList} onchange={HandleCountryChange} required="true">
+                    </lightning-combobox>
+
+                    <lightning-combobox name="St" label="Select State" value={} placeholder="Select Your State"
+                        options={statesList} onchange={HandleChangeState} required="true" disabled={StateDisable}>
+                    </lightning-combobox>
+                    <div class="slds-card">
+                        <div class="slds-form-element">
+                            <div class="slds-form-element__control">
+                                <lightning-input label="Select City" type="search" onchange={search}
+                                    value={selectedresultValue} disabled={disableInput}
+                                    required="true"></lightning-input>
+                                <div if:true={booleanValue}
+                                    class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid" role="listbox">
+                                    <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                        <template for:each={searchResults} for:item="searchResult">
+                                            <li key={searchResult.value} data-value={searchResult.value}
+                                                role="presentation" onclick={selectSearchResult}
+                                                class="slds-listbox__item">
+                                                <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small "
+                                                    role="option">
+                                                    <span class="slds-media__body">
+                                                        <span class="slds-truncate" title={searchResult.label}>
+                                                            {searchResult.label}
+                                                        </span>
+                                                    </span>
+                                                </div>
+                                            </li>
+                                        </template>
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!--lightning-input name="PH" label="Phone no. of Reference" required="true"
                         onchange={ReferralFormInputHandler} style="margin-top:8px;" value={Phone}></lightning-input -->
                     <!--lightning-input name="CourseType" label="Type of Course" required="true"
                         onchange={ReferralFormInputHandler} style="margin-top:8px;"
                         value={type_of_Course}></lightning-input -->
-
+                    <br />
                     <label class="slds-form-element__label" for="textarea-id-01"><abbr class="slds-required"
                             title="required">*</abbr>Mobile</label>
                     <div class="slds-grid slds-wrap">
                         <div class="slds-col slds-size_2-of-12">
                             <span>
                                 <lightning-combobox name="CountryISDcode" placeholder="Select Your CountryCode"
-                                    options={countryCodeList} onchange={ReferralFormInputHandler}
-                                    value={CountryCode}>
+                                    options={countryCodeList} onchange={ReferralFormInputHandler} value={CountryCode}>
                                 </lightning-combobox>
 
                             </span>
                         </div>
                         <div class="slds-col slds-size_10-of-12">
                             <span>
-                                <lightning-input min-length="10" onchange={ReferralFormInputHandler} name="PH" value={LeadTobeCreated.Phone}
-                                    max-length="10"></lightning-input>
+                                <lightning-input min-length="10" onchange={ReferralFormInputHandler} name="PH"
+                                    value={LeadTobeCreated.Phone} max-length="10"></lightning-input>
 
                             </span>
                         </div>
@@ -88,6 +121,7 @@
                     </div>
                     <label class="slds-form-element__label" for="textarea-id-01">Alternate Mobile</label>
                     <div class="slds-grid slds-wrap">
+
                         <div class="slds-col slds-size_2-of-12">
                             <span>
                                 <lightning-combobox name="CountryISDcodeAlt" placeholder="Select Your CountryCode"
@@ -99,88 +133,32 @@
                         </div>
                         <div class="slds-col slds-size_10-of-12">
                             <span>
-                                <lightning-input min-length="10" max-length="10" name="AltPH" value={LeadTobeCreated.Alternate_Phone__c}
+                                <lightning-input min-length="10" max-length="10" name="AltPH"
+                                    value={LeadTobeCreated.Alternate_Phone__c}
                                     onchange={ReferralFormInputHandler}></lightning-input>
                             </span>
                         </div>
 
                     </div>
 
+                    <lightning-input name="EM" label="Email Id of Reference" required="true"
+                        onchange={ReferralFormInputHandler} style="margin-top:8px;"
+                        value={LeadTobeCreated.Email}></lightning-input>
+                    <lightning-input name="AltEm" label="Alternate Email" value={LeadTobeCreated.Alternate_Email__c}
+                        onchange={ReferralFormInputHandler}></lightning-input>
+
                     <lightning-combobox name="CR" label="Course Name of Reference" value={LeadTobeCreated.Course__c}
                         placeholder="Select Course" options={CoursePicklistValues} onchange={ReferralFormInputHandler}
                         required="true">
                     </lightning-combobox>
-                    <lightning-combobox name="TOCR" label="Type of Course Reference" value={LeadTobeCreated.Type_of_Course__c}
-                        placeholder="Select Type of Course" options={TypeofCoursePicklistValues}
-                        onchange={ReferralFormInputHandler} required="true">
-                    </lightning-combobox>
-                    <!--template if:true={CoursePicklistValues}>
-                       
-                        <lightning-combobox name="CR" label="Course Name of Reference" value={Coursevalue}
-                            placeholder="select" options={CoursePicklistValues.data.values}
-                            onchange={ReferralFormInputHandler}>
-                        </lightning-combobox>
-                    </template>
-                    <template if:true={TypeofCoursePicklistValues}>
-                        <lightning-combobox name="TOCR" label="Type of Course Reference" value={typeofCoursevalue}
-                            placeholder="select" options={TypeofCoursePicklistValues.data.values}
-                            onchange={ReferralFormInputHandler}>
-                        </lightning-combobox>
-                    </template>
-
-                    <lightning-combobox name="ReferenceLocation" label="Location of Reference"
-                        value={location_of_reference} placeholder="Select Your City" options={CityOptions}
-                        onchange={ReferralFormInputHandler} required="true">
-                    </lightning-combobox>
-                    <lightning-input name="ReferenceLocation" label="Location of Reference" required="true"
-                        onchange={ReferralFormInputHandler} style="margin-top:8px;"
-                        value={location_of_reference}></lightning-input -->
-                      
-                    <lightning-combobox name="co" label="Select Country" value={}
-                        placeholder="Select Your Country" options={countryList} onchange={HandleCountryChange}
-                        required="true">
-                    </lightning-combobox>
-
-                    <lightning-combobox name="St" label="Select State" value={}
-                        placeholder="Select Your State" options={statesList} onchange={HandleChangeState}
-                        required="true" disabled={StateDisable}>
+                    <lightning-combobox name="TOCR" label="Type of Course Reference"
+                        value={LeadTobeCreated.Type_of_Course__c} placeholder="Select Type of Course"
+                        options={TypeofCoursePicklistValues} onchange={ReferralFormInputHandler} required="true">
                     </lightning-combobox>
 
 
-                    <!--lightning-combobox name="UserCity" label="Select City" value={selectedCityValue}
-                                    placeholder="Select Your City" options={cityList} onchange={HandleCityValue}
-                                    required="true" disabled={CityDisable} onsearch={handleSearch}>
-                                </lightning-combobox-->
-                     <br/>
-                    <div class="slds-card">
-                        <div class="slds-form-element">
-                            <div class="slds-form-element__control">
-                                <lightning-input label="Select City" type="search" onchange={search}
-                                    value={selectedresultValue} disabled={disableInput}
-                                    required="true"></lightning-input>
-                                <div if:true={booleanValue}
-                                    class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid" role="listbox">
-                                    <ul class="slds-listbox slds-listbox_vertical" role="presentation">
-                                            <template for:each={searchResults} for:item="searchResult">
-                                                <li key={searchResult.value} data-value={searchResult.value}
-                                                    role="presentation" onclick={selectSearchResult}
-                                                    class="slds-listbox__item">
-                                                    <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small "
-                                                        role="option">
-                                                        <span class="slds-media__body">
-                                                            <span class="slds-truncate" title={searchResult.label}>
-                                                                {searchResult.label}
-                                                            </span>
-                                                        </span>
-                                                    </div>
-                                                </li>
-                                            </template>
+                    <br />
 
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
 
 
@@ -195,8 +173,6 @@
         <div class=" slds-align_absolute-center">
             <lightning-button title="Save" label="Submit" onclick={SaveReferralFormDetails} variant="brand"
                 style="margin-top:8px ;"></lightning-button>
-            <!--lightning-button variant="brand" label="Brand" title="Primary action" onclick={handleClick}
-                class="slds-m-left_x-small"></lightning-button -->
 
         </div>
 

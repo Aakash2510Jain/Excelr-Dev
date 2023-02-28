@@ -1,6 +1,6 @@
 public without sharing class Utility{
     public static List<String> getPicklistValues(String ObjectApi_name, String Field_name){
-
+        
         List<String> lstPickvals = new List<String>();
         Schema.SObjectType targetType = Schema.getGlobalDescribe().get(ObjectApi_name);
         Sobject Object_name = targetType.newSObject();
@@ -8,24 +8,24 @@ public without sharing class Utility{
         Schema.DescribeSObjectResult sobject_describe = sobject_type.getDescribe();
         Map<String, Schema.SObjectField> field_map = sobject_describe.fields.getMap();
         List<Schema.PicklistEntry> pick_list_values = field_map.get(Field_name).getDescribe().getPickListValues();
-
+        
         for (Schema.PicklistEntry a : pick_list_values){
-
+            
             lstPickvals.add(String.ValueOf(a.getLabel()).trim());
         }
         return lstPickvals;
     }
-
+    
     public static List<String> getPicklistValuesWithNone(String ObjectApi_name, String Field_name){
         List<String> pickList = new List<String>{ '--None--' };
-        pickList.addAll(getPicklistValues(objectApi_name, field_name));
+            pickList.addAll(getPicklistValues(objectApi_name, field_name));
         return pickList;
     }
-
+    
     static Map<Id, UserRole> allRolesMap;
     public static ApprovalWrapper getUserQAMap(){
         Map<Id, Id> userRoleToQARoleMap = new Map<Id, Id>();
-
+        
         allRolesMap = allRolesMap == null ? new Map<Id, UserRole>([SELECT Id, ParentRoleId, Name
                                                                    FROM UserRole]) : allRolesMap;
         for (UserRole ur : allRolesMap.values()){
@@ -33,7 +33,7 @@ public without sharing class Utility{
                 userRoleToQARoleMap.put(ur.Id, getQAIdRecursive(allRolesMap, ur));
             }
         }
-
+        
         Map<Id, Id> usrRoleToQAIdMap = new Map<Id, Id>();
         if (!userRoleToQARoleMap.isEmpty()){
             List<User> userList = [SELECT Id, UserRoleId
@@ -46,10 +46,10 @@ public without sharing class Utility{
         }
         return new ApprovalWrapper(userRoleToQARoleMap, usrRoleToQAIdMap);
     }
-
+    
     public static ApprovalWrapper getUserBHMap(){
         Map<Id, Id> userRoleToBHRoleMap = new Map<Id, Id>();
-
+        
         allRolesMap = allRolesMap == null ? new Map<Id, UserRole>([SELECT Id, ParentRoleId, Name
                                                                    FROM UserRole]) : allRolesMap;
         for (UserRole ur : allRolesMap.values()){
@@ -57,7 +57,7 @@ public without sharing class Utility{
                 userRoleToBHRoleMap.put(ur.Id, getBHIdRecursive(allRolesMap, ur));
             }
         }
-
+        
         Map<Id, Id> usrRoleToBHIdMap = new Map<Id, Id>();
         if (!userRoleToBHRoleMap.isEmpty()){
             List<User> userList = [SELECT Id, UserRoleId
@@ -70,7 +70,7 @@ public without sharing class Utility{
         }
         return new ApprovalWrapper(userRoleToBHRoleMap, usrRoleToBHIdMap);
     }
-
+    
     Public static Id getQAIdRecursive(Map<Id, UserRole> userRoleMap, UserRole currentRole){
         if (currentRole.ParentRoleId != null && userRoleMap.get(currentRole.ParentRoleId).Name != null && userRoleMap.get(currentRole.ParentRoleId).Name.containsIgnoreCase('QA')){
             return userRoleMap.get(currentRole.ParentRoleId).Id;
@@ -80,7 +80,7 @@ public without sharing class Utility{
             return null; //TOP Role - CEO.
         }
     }
-
+    
     Public static Id getBHIdRecursive(Map<Id, UserRole> userRoleMap, UserRole currentRole){
         if (currentRole.ParentRoleId != null && userRoleMap.get(currentRole.ParentRoleId).Name != null && userRoleMap.get(currentRole.ParentRoleId).Name.containsIgnoreCase('Business Head')){
             return userRoleMap.get(currentRole.ParentRoleId).Id;
@@ -90,7 +90,7 @@ public without sharing class Utility{
             return null; //TOP Role - CEO.
         }
     }
-
+    
     public class ApprovalWrapper{
         public Map<Id, Id> smToManagerMap;
         public Map<Id, Id> managerRoleToUserIdMap;
@@ -98,25 +98,25 @@ public without sharing class Utility{
             this.smToManagerMap = smToManagerMap;
             this.managerRoleToUserIdMap = managerRoleToUserIdMap;
         }
-
+        
     }
-
+    
     Public Static void CreateInvoice(String recordId){
-
+        
         Invoice__c InvoiceRec = new Invoice__c();
         InvoiceRec.Opportunity__c = recordId;
         InvoiceRec.Status__c = 'Initiated';
-
+        
         insert InvoiceRec;
     }
-
+    
     public static void UTMLinkParams(Lead leadRec){
         try{
             if (leadRec.Enter_UTM_Link__c != null){
                 string urlValue = string.valueOf(leadRec.Enter_UTM_Link__c);
                 System.PageReference pageReference = new System.PageReference(urlValue);
                 Map<String, String> parameters = pageReference.getParameters();
-
+                
                 if(parameters.get('utm_medium') != null)
                     leadRec.UTM_Medium__c = parameters.get('utm_medium');
                 if(parameters.get('utm_term') != null)
@@ -190,18 +190,18 @@ public without sharing class Utility{
                     applicationsListAttachedToLead = [Select Id, Account__c, Course__c
                                                       From Application__c
                                                       Where Lead__c = :convertedLeadRec.Id];
-                   /* List<PricebookEntry> priceBookEntryList = [Select Id, Product2Id
-                                                               From PricebookEntry
-                                                               where Product2Id = :convertedLeadRec.Product__c]; 
-                    for (PricebookEntry pbe : priceBookEntryList){
-                        priceBookIdByProductId.put(pbe.Product2Id, pbe.Id);
-                    } */
-
+                    /* List<PricebookEntry> priceBookEntryList = [Select Id, Product2Id
+From PricebookEntry
+where Product2Id = :convertedLeadRec.Product__c]; 
+for (PricebookEntry pbe : priceBookEntryList){
+priceBookIdByProductId.put(pbe.Product2Id, pbe.Id);
+} */
+                    
                     Opportunity oppRec = new Opportunity();
                     oppRec.Id = covertedAccRec.Opportunities[0].Id;
                     oppRec.StageName = 'Converted';
                     update oppRec;
-
+                    
                     OpportunityLineItem oppProdRec = new OpportunityLineItem();
                     //oppProdRec.Discount = convertedLeadRec.Discount__c;
                     oppProdRec.OpportunityId = covertedAccRec.Opportunities[0].Id;
@@ -229,7 +229,7 @@ public without sharing class Utility{
                             update invoiceListToUpdate;
                         }
                     }
-
+                    
                     if (!applicationsListAttachedToLead.isEmpty()){
                         for (Application__c appRec : applicationsListAttachedToLead){
                             Application__c appRecToUpdate = new Application__c();
@@ -246,13 +246,13 @@ public without sharing class Utility{
                             update applicationsListToUpdate;
                         }
                     }
-
-
+                    
+                    
                 }
             } else{
                 //update status as failed
-
-
+                
+                
                 List<Invoice__c> invoiceList = [Select Id, Status__c, Opportunity__c
                                                 From Invoice__c
                                                 where LeadInvoice__c = :leadId
@@ -260,14 +260,14 @@ public without sharing class Utility{
                                                 limit 1];
                 invoiceList[0].Status__c = 'Not Realized';
                 update invoiceList;
-
+                
             }
         } catch (exception ex){
             system.debug('Error==>' + ex.getMessage());
             system.debug('Error==>@@' + ex.getLineNumber());
         }
     }
-
+    
     public static string createApplicationInstance(string leadId, string courseName, string requestString){
         string applicationId = '';
         try{
@@ -279,16 +279,36 @@ public without sharing class Utility{
             if (leadId.startsWith('001'))
                 appRec.Account__c = leadid;
             applicationId = API_CreateAccount.insertApplication(appRec, requestString);
-
+            
         } catch (Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());
             System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
             HandleBusinessException.captureError('Utility', 'createApplicationInstance', e, null);
-
+            
         }
         return applicationId;
     }
-
+    
+    
+    public static Application__c returnApplicationInstance(string recordId, string courseName){
+        string applicationId = '';
+        try{
+            Application__c appRec = new Application__c();
+            appRec.Applied_Date_Time__c = system.now();
+            appRec.Course__c = courseName;
+            if (recordId.startsWith('00Q'))
+                appRec.Lead__c = recordId;
+            if (recordId.startsWith('001'))
+                appRec.Account__c = recordId;
+            return appRec;
+        } catch (Exception e){
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('Utility', 'createApplicationInstance', e, null);
+            return null;
+        }
+    }
+    
     Public static void API_ErrorORSuccess(List<String> ErrorFields, String ErrorMsg, Integer ErrorStatus, string ErrOrSuccId, STring ClassName, String MethodName, string JSONString){
         try{
             API_Log__c APILog = new API_Log__c();
@@ -310,13 +330,13 @@ public without sharing class Utility{
                 APILog.JSON_String__c = JSONString;
             }
             insert APILog;
-
+            
         } catch (Exception e){
             System.debug('the error has occured due to ===> ' + e.getMessage());
             System.debug('the error has occured at ===> ' + e.getLineNumber());
         }
     }
-
+    
     public static String generateRandomString(){
         Integer len = 10;
         final String chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
@@ -327,7 +347,7 @@ public without sharing class Utility{
         }
         return randStr + string.ValueOf(system.now().getTime());
     }
-
+    
     public static Lead insertLeadViaAPI(Account newAccount){
         Lead leadRec = new Lead();
         leadRec.Email = newAccount.Email__c;
@@ -358,7 +378,7 @@ public without sharing class Utility{
         
         return leadRec;
     }
-
+    
     public static String createTaskViaLeadCreationAPI(Lead leadRec){
         Task taskRec = new Task();
         taskRec.Subject = Constants.taskSubjectViaLeadCreationAPI;
@@ -367,7 +387,13 @@ public without sharing class Utility{
         insert taskRec;
         return taskRec.Id;
     }
-
+    public static Task returnTaskInstance(Lead leadRec){
+        Task taskRec = new Task();
+        taskRec.Subject = Constants.taskSubjectViaLeadCreationAPI;
+        taskRec.WhoId = leadRec.Id;
+        taskRec.OwnerId = leadRec.OwnerId;
+        return taskRec;
+    }
     public static String createApplicationViaLeadCreationAPI(Lead leadRec){
         Application__c appRec = new Application__c();
         appRec.Lead__c = leadRec.Id;
@@ -377,7 +403,15 @@ public without sharing class Utility{
         insert appRec;
         return appRec.Id;
     }
-
+    public static Application__c returnApplicationInstance(Lead leadRec){
+        Application__c appRec = new Application__c();
+        appRec.Lead__c = leadRec.Id;
+        appRec.Applied_Date_Time__c = System.now();
+        appRec.Status__c = 'Open';
+        appRec.Course__c = leadRec.course__c;
+        return appRec;
+    }
+    
     public static String createCustomerViaLeadCreationAPI(Account accRec){
         string customerId = '';
         List<Customers__c> customerList = [Select Id,Email__c,Alternate_Email__c,Phone__c,Alternate_Phone__c FRom Customers__c where Email__c = :accRec.Email__c or Alternate_Email__c =:accRec.Email__c or Alternate_Phone__c Like : '%'+accRec.Alternate_Phone__c or Phone__c  Like : '%'+accRec.Phone limit 1];
@@ -397,7 +431,7 @@ public without sharing class Utility{
         
         return customerId;
     }
-       public static String createCustomer(Lead leadRec){
+    public static String createCustomer(Lead leadRec){
         string customerId = '';
         List<Customers__c> customerList = [Select Id,Email__c,Alternate_Email__c,Phone__c,Alternate_Phone__c From Customers__c where Email__c = :leadRec.Email or Alternate_Email__c =:leadRec.Alternate_Email__c or Alternate_Phone__c Like : '%'+leadRec.Alternate_Phone__c or Phone__c  Like : '%'+leadRec.Phone limit 1];
         
@@ -416,5 +450,15 @@ public without sharing class Utility{
         
         return customerId;
     }
-    
+    public static Customers__c returnCustomerInstance(Lead leadRec){
+        
+        Customers__c customerRec = new Customers__c();
+        customerRec.Name__c = leadRec.Firstname+' '+leadRec.LastName;
+        customerRec.Email__c = leadRec.Email;
+        customerRec.Alternate_Email__c = leadRec.Alternate_Email__c;
+        customerRec.Alternate_Phone__c = leadRec.Alternate_Phone__c;
+        customerRec.Phone__c = leadRec.Phone;
+        insert customerRec;
+        return customerRec;
+    }
 }
