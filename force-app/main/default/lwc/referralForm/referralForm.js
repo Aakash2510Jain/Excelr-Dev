@@ -243,9 +243,9 @@ export default class ReferralForm extends LightningElement {
           console.log('selectedresultValue--',this.selectedresultValue);
           
           this.clearSearchResults();
-          
+          this.booleanValue = false;
         }
-      
+        
         clearSearchResults() {
           this.searchResults = null;
         }
@@ -334,6 +334,7 @@ export default class ReferralForm extends LightningElement {
 
     }
 
+    @track HandleLeadCreatedisable = false;
     SaveReferralFormDetails() {
         debugger;
         this.handleSpinner();
@@ -343,6 +344,7 @@ export default class ReferralForm extends LightningElement {
 
                 var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email);
                 if (returnvalue == true && this.handleCorrectPhone(this.LeadTobeCreated.Phone)) {
+                    this.HandleLeadCreatedisable = true;
                     SubmitReferralDetails({ Leadrec: this.LeadTobeCreated, countrycode : this.CountryCode, countrycodealternate :this.CountryCodeAlt })
                     .then(data => {
 
@@ -355,25 +357,32 @@ export default class ReferralForm extends LightningElement {
                             this.CountryCodeAlt = '';
                             this.searchResults = [];
                             this.handleSpinner();
+                            this.HandleLeadCreatedisable = false;
                             eval("$A.get('e.force:refreshView').fire();");
 
                         }
                         else if (data == 'Referral CID does not found in the system') {
                             this.handleAlert(data);
+                            this.HandleLeadCreatedisable = false;
+                            this.handleSpinner();
                             
                         }
                         else if (data == 'FAIL') {
                             this.handleSpinner();
+                            this.HandleLeadCreatedisable = false;
                         }
 
                     })
                     .catch(error => {
                         this.handleSpinner();
                         this.handleAlert('Error updating or reloading records');
+                        this.HandleLeadCreatedisable = false;
                     })
                 }
                 else{
                     alert('Incorrect Email or Phone Pattern');
+                    this.HandleLeadCreatedisable = false;
+                    this.handleSpinner();
 
                 }
 
@@ -381,6 +390,7 @@ export default class ReferralForm extends LightningElement {
             else{
                 this.handleAlert('Some of the Required Fields are Empty!');
                 this.handleSpinner();
+                this.HandleLeadCreatedisable = false;
 
             }
     }

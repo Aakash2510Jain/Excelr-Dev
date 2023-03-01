@@ -59,18 +59,20 @@ public with sharing class ProductUpdateOnOppApexController{
                     system.debug('ModeThree==' + ModeThree);
                 }
             }
-            if (CourseOne != null && CourseTwo != null && ModeOne != null && ModeTwo != null){
+            if (CourseOne != null && CourseTwo != null && ModeOne != null && ModeTwo != null && CourseThree == null && ModeThree == null){
                 system.debug('CourseOne-->' + CourseOne);
                 system.debug('CourseTwo-->' + CourseTwo);
                 system.debug('ModeOne-->' + ModeOne);
                 system.debug('ModeTwo-->' + ModeTwo);
+                system.debug('I am Searching For Two Course');
 
-                ProdList = [SELECT City__c, Course_1__c, Course_2__c, Course_3__c, Discount__c, Description, Family, Id, IsActive, Mode_One__c, Mode_Three__c, Mode_Two__c, Mode__c, Name, Offer__c, ProductCode, Type__c, (Select UnitPrice
+                ProdList = [SELECT City__c, Course_1__c, Course_2__c, Discount__c, Description, Family, Id, IsActive, Mode_One__c, Mode_Two__c, Mode__c, Name, Offer__c, ProductCode, Type__c, (Select UnitPrice
                                                                                                                                                                                                                             From PricebookEntries
                                                                                                                                                                                                                             where IsActive = true)
                             From Product2
-                            Where IsActive = true AND ((Course_1__r.Name = :CourseOne AND Mode_One__c = :ModeOne) OR (Course_2__r.Name = :CourseOne AND Mode_Two__c = :ModeOne)) AND ((Course_1__r.Name = :CourseTwo AND Mode_One__c = :ModeTwo) OR (Course_2__r.Name = :CourseTwo AND Mode_Two__c = :ModeTwo))];
+                            Where IsActive = true AND (Course_3__c = null AND Mode_Three__c = null ) AND ((Course_1__r.Name = :CourseOne AND Mode_One__c = :ModeOne) OR (Course_2__r.Name = :CourseOne AND Mode_Two__c = :ModeOne)) AND ((Course_1__r.Name = :CourseTwo AND Mode_One__c = :ModeTwo) OR (Course_2__r.Name = :CourseTwo AND Mode_Two__c = :ModeTwo))];
             } else if (CourseOne != null && CourseTwo != null && ModeOne != null && ModeTwo != null && CourseThree != null && ModeThree != null){
+                system.debug('I am Searching For Three Course');
                 system.debug('CourseOne-->' + CourseOne);
                 system.debug('CourseTwo-->' + CourseTwo);
                 system.debug('CourseThree==' + CourseThree);
@@ -100,7 +102,7 @@ public with sharing class ProductUpdateOnOppApexController{
 
     @AuraEnabled
     Public Static List<Add_On__c> FetchAddOns(String ProdId){
-        List<Add_On__c> AddOnRecList = [Select Id, Name, Price__c, Addon_Product__c
+        List<Add_On__c> AddOnRecList = [Select Id, Name, Price__c, Addon_Product__c,Addon_Product__r.Name
                                         From Add_On__c
                                         Where ProductId__c = :ProdId];
         system.debug('AddOnRecList==' + AddOnRecList);

@@ -1,42 +1,42 @@
 <aura:component controller="ManualpaymentController" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader"  access="global">
-<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
-<aura:attribute name="pickValues" type="List"/>
-<aura:attribute name="pickValueSelected" type="String"/> 
-<aura:attribute name="currentRecord" type="Invoice__c"/>
-<aura:attribute name="fileName" type="String" default="No File Selected..."/>
-<aura:attribute name="fileParentId" type="integer"/>
-<aura:attribute name="enteredAmount" type="String"/>
-<aura:attribute name="description" type="String" />
-<aura:attribute name="oppAmount" type="String" />
-<aura:attribute name="dueAmountRemaning" type="String"/>
-
-<div class="slds-modal__content">
-     <h2 style=" text-align: center;font-size: 25px;font-family: math;">Manual Payment</h2>
-     <br/>
-     
-     <lightning:input  label="Amount" disabled="true" value="{!v.oppAmount}"/><br/>
-     <lightning:input type="number" aura:id="actualamount" label="Actual Amount" onchange="{!c.onChangeHandler}" />
-     <lightning:input type="number" disabled="true" aura:id="dueamount" label="Due Amount" value="{!v.dueAmountRemaning}" />
-     <lightning:textarea  aura:id="desc" type="text" maxlength="300" label="Description" placeholder="Enter description"  onchange="{!c.onChangeHandler}"  />
-     <!-- <lightning:select aura:id="field" label="Select Payment Type"  onchange="{!c.onChangeHandler}">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="pickValues" type="List"/>
+    <aura:attribute name="pickValueSelected" type="String"/> 
+    <aura:attribute name="currentRecord" type="Invoice__c"/>
+    <aura:attribute name="fileName" type="String" default="No File Selected..."/>
+    <aura:attribute name="fileParentId" type="integer"/>
+    <aura:attribute name="enteredAmount" type="String"/>
+    <aura:attribute name="description" type="String" />
+    <aura:attribute name="oppAmount" type="String" />
+    <aura:attribute name="dueAmountRemaning" type="String"/>
+    
+    <div class="slds-modal__content">
+        <h2 style=" text-align: center;font-size: 25px;font-family: math;">Manual Payment</h2>
+        <br/>
+        
+        <lightning:input  label="Amount" disabled="true" value="{!v.oppAmount}"/><br/>
+        <lightning:input type="number" aura:id="actualamount" label="Actual Amount" onchange="{!c.onChangeHandler}" />
+        <lightning:input type="number" disabled="true" aura:id="dueamount" label="Due Amount" value="{!v.dueAmountRemaning}" />
+        <lightning:textarea  aura:id="desc" type="text" maxlength="300" label="Description" placeholder="Enter description"  onchange="{!c.onChangeHandler}"  />
+        <!-- <lightning:select aura:id="field" label="Select Payment Type"  onchange="{!c.onChangeHandler}">
           <option value="">None</option>
           <aura:iteration items="{!v.pickValues}" var="val">
               <option value="{!val}"> {!val}</option>
           </aura:iteration>
       </lightning:select> -->
-      <lightning:input aura:id="fileuplod" onchange="{!c.handleFilesChange}" type="file" accept="image/png, .png, ,jpg, image/jpeg, image/jpg , application/pdf" label="Upload File" multiple="false"/>
-      <div class="slds-text-body_small slds-text-color_success"> {!v.fileName} </div> 
-</div>
-<br/>
-<div class="modal-footer slds-modal__footer slds-size_1-of-1" style="
-width: 110%;
-padding: 10px;
-margin-left: -29px;
-">
-     <div class="forceChangeRecordTypeFooter">
-         <ui:button class="slds-button slds-float_left  slds-button_neutral" label="Cancel" press="{! c.cancelFile}" /> 
-         <ui:button class="slds-button slds-button--brand"
-                label="Save" press="{!c.Save}"/>
-     </div>
- </div> 
+        <lightning:input aura:id="fileuplod" onchange="{!c.handleFilesChange}" type="file" accept="image/png, .png, ,jpg, image/jpeg, image/jpg , application/pdf" label="Upload File" multiple="false"/>
+        <div class="slds-text-body_small slds-text-color_success"> {!v.fileName} </div> 
+    </div>
+    <br/>
+    <div class="modal-footer slds-modal__footer slds-size_1-of-1" style="
+                                                                         width: 110%;
+                                                                         padding: 10px;
+                                                                         margin-left: -29px;
+                                                                         ">
+        <div class="forceChangeRecordTypeFooter">
+            <ui:button class="slds-button slds-float_left  slds-button_neutral" label="Cancel" press="{! c.cancelFile}" /> 
+            <ui:button class="slds-button slds-button--brand"
+                       label="Save" press="{!c.Save}"/>
+        </div>
+    </div> 
 </aura:component>

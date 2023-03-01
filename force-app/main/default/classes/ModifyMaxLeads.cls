@@ -1,67 +1,67 @@
 public class ModifyMaxLeads 
 {
     @AuraEnabled
-    public Static List<User> getUser()
-    {
-      try{   
-        Id userId = UserInfo.getUserId();
-        System.debug('UserId'+userId);
-        User userRecord = [select Id,Max_Lead_Per_Day__c,Max_Lead_Per_Month__c,UserRoleId from User where Id =:userId];
-         System.debug('roleId'+userRecord);
-        
-      //  set<Id> allSubRoleIds = new set<Id>();
-      //  allSubRoleIds.add(userRecord.UserRoleId);
-        Set<Id> allSubRoleIds = getAllSubRoleIds(New Set<ID>{userRecord.UserRoleId});
-         System.debug('allSubRoleIds'+allSubRoleIds);
-         Map<Id, User> users = new Map<Id, User>([SELECT Id,Username, Name,Max_Lead_Per_Day__c,Max_Lead_Per_Month__c From User Where UserRoleId IN :allSubRoleIds]); 
-        System.debug('Usersssss'+users);
-       // ModifyMaxLeads.getAllSubRoleIds(allSubRoleIds);
-        return users.values() ;
-    } catch (Exception e){
-        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-      HandleBusinessException.captureError('ModifyMaxLeads', 'getUser', e , null);
-       return null;
-    }
-}
-    
-    public Static Set<ID> getAllSubRoleIds(set<Id> roleIds)
-    { 
-        try{
-         Set<ID> currentRoleIds = new Set<ID>();
-         
-        //Get all of the roles below the passed roles
-        for(UserRole userRole :[SELECT Id from UserRole Where ParentRoleId =:roleIds AND ParentRoleID != null])
-        {
-            System.debug('userRole'+userRole);
-            currentRoleIds.add(userRole.Id);
+    public Static List<User> getUser(){
+        try{   
+            Set<Id> reporteeIds = new Set<Id>();
+            List<Id> roleIds = new List<Id>();
+            List<User> reportees = new List<User>();
+            string currentUserRoleId = '';
+            
+            
+            currentUserRoleId = [select Id,Max_Lead_Per_Day__c,Max_Lead_Per_Month__c,UserRoleId from User where Id =: UserInfo.getUserId()].UserRoleId;
+            if(!string.isBlank(currentUserRoleId)){
+                for(UserRole role : [SELECT Id, Name FROM UserRole WHERE ParentRoleId =: currentUserRoleId]) {
+                    roleIds.add(role.Id);
+                }
+                if(!roleIds.isEmpty()){
+                    for(User u : [SELECT Id, UserRoleId FROM User WHERE UserRoleId IN :roleIds]) {
+                        reporteeIds.add(u.Id);
+                    }
+                    if(!reporteeIds.isEmpty()){
+                        reportees = [SELECT Id, Name,Username, Max_Lead_Per_Day__c,Max_Lead_Per_Month__c FROM User WHERE Id IN : reporteeIds];
+                    }
+                }
+            }
+            reportees = hierarchialInfoController.getRoleSubordinateUsers(currentUserRoleId);
+            return reportees ;
+        }catch (Exception e){
+            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+            HandleBusinessException.captureError('ModifyMaxLeads', 'getUser', e , null);
+            return null;
         }
-        System.debug('currentRoleIds'+currentRoleIds);
-        return currentRoleIds;
-    } catch (Exception e){
-        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-      HandleBusinessException.captureError('ModifyMaxLeads', 'getAllSubRoleIds', e , null);
-       return null;
     }
-}
-
+    
     @AuraEnabled
     public static boolean updaterecord(List<User> userList){
         try {
-            System.debug('userList====='+userList);
-             List<User> uList = [select Id,Username, Name,Max_Lead_Per_Day__c,Max_Lead_Per_Month__c From User Where Id =:userList];
-            System.debug('Ulist..........'+uList);
-        /*    for(User u :uList)
-            {
-                if(u.Max_Lead_Per_Day__c !=0 & u.Max_Lead_Per_Month__c != 0 )
-                {
-                     update uList;
-                }
-            }*/
-           update userList;
+            update userList;
             return true;
         } catch(Exception e) {
             return false;
         }
     }
-
+    
+    public static Set<Id> reporteeIds = new Set<Id>();
+    public static  Map<Id, UserRole> roleMap = new Map<Id, UserRole>([SELECT Id, Name, ParentRoleId FROM UserRole]);
+    
+    public static Set<Id> getAllReporteesByRole(Id managerId) {
+        
+        // Get the manager's role ID
+        Id managerRoleId = [SELECT Id, UserRole.Name FROM User WHERE Id =: managerId].UserRoleId;
+        
+        // Call the recursive function for the manager's role
+        getReporteesForRole(managerRoleId);
+        
+        // Do something with the reportee IDs, for example:
+        List<User> reportees = [SELECT Id, Name, Email FROM User WHERE Id IN : reporteeIds];
+        
+        return reporteeIds;
+    }
+    public static void getReporteesForRole(Id roleId) {
+        for(User u : [SELECT Id, UserRoleId FROM User WHERE UserRoleId =: roleId]) {
+            reporteeIds.add(u.Id);
+            getReporteesForRole(u.UserRoleId); // recursively get reportees for the reportee's role
+        }
+    }
 }

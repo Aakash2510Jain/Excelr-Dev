@@ -323,6 +323,7 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
             tsk.OwnerId = PhoneWithLead.OwnerId;//PhoneWithLead.get('+'+(String) (TaskIdWithObject.get(str)).get('countryCode')+ ((String) (TaskIdWithObject.get(str)).get('number')).right(10)).OwnerId;
             tsk.whoid = PhoneWithLead.Id;//PhoneWithLead.get('+'+(String) (TaskIdWithObject.get(str)).get('countryCode')+ ((String) (TaskIdWithObject.get(str)).get('number')).right(10)).Id;
             tsk.Status = 'Completed';
+            tsk.Calling_Party__c = 'Callyzer';
             tsk.Call_Type__c = (String) (TaskIdWithObject.get(str)).get('callType');
             tsk.CallDurationInSeconds = Integer.valueof((TaskIdWithObject.get(str)).get('duration'));
             //tsk.Call_Start_Date_Time__c = (DateTime)JSON.deserialize('"' + String.valueOf((TaskIdWithObject.get(str)).get('callTime')) + '"', DateTime.class);
@@ -348,7 +349,8 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
             System.debug('((String) (TaskIdWithObject.get(str)).get(number)).right(10)' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10));
             tsk.OwnerId = PhoneWithContact.get(((String) (TaskIdWithObject.get(str)).get('number')).right(10)).OwnerId;
             tsk.WhoId = PhoneWithContact.get(((String) (TaskIdWithObject.get(str)).get('number')).right(10)).Id;
-            tsk.Status = 'New';
+            tsk.Status = 'Completed';
+            tsk.Calling_Party__c = 'Callyzer';
             tsk.Call_Type__c = (String) (TaskIdWithObject.get(str)).get('callType');
             tsk.CallDurationInSeconds = Integer.valueof((TaskIdWithObject.get(str)).get('duration'));
 
@@ -378,7 +380,8 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
             System.debug('((String) (TaskIdWithObject.get(str)).get(number)).right(10)' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10));
             tsk.OwnerId = ld.OwnerId;
             tsk.WhoId = ld.Id;
-            tsk.Status = 'New';
+            tsk.Status = 'Completed';
+            tsk.Calling_Party__c = 'Callyzer';
             tsk.Call_Type__c = (String) (TaskIdWithObject.get(str)).get('callType');
             tsk.CallDurationInSeconds = Integer.valueof((TaskIdWithObject.get(str)).get('duration'));
 

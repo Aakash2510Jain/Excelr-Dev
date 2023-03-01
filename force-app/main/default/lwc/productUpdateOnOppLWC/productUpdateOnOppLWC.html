@@ -450,10 +450,18 @@
                                         <br />
                                     </td>
                                     <td>
+                                    <template if:true={rec.PricebookEntries}>
                                         <lightning-combobox name="Discount" label="" value={rec.Discount__c}
                                             data-id={rec.Id} placeholder="Choose Discount" options={DiscountOption}
                                             onchange={handleInputChange}>
                                         </lightning-combobox>
+                                    </template>
+                                    <template if:false={rec.PricebookEntries}>
+                                        <lightning-combobox name="Discount" label="" value={rec.Discount__c}
+                                            data-id={rec.Id} placeholder="No Discount For AddOns" options={DiscountOption}
+                                            onchange={handleInputChange} disabled>
+                                        </lightning-combobox>
+                                    </template>
                                         <br />
                                         <!--lightning-input type="number" variant="label-hidden" label="" data-id={rec.Id} name="Discount" value={rec.Discount__c} onchange={handleInputChange}></lightning-input-->
 

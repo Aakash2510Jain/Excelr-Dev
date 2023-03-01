@@ -71,6 +71,27 @@ public without sharing class Utility{
         return new ApprovalWrapper(userRoleToBHRoleMap, usrRoleToBHIdMap);
     }
     
+    public static ApprovalWrapper getParentUserMap() {
+        Map<Id,Id> userRoleToParentRoleMap = new Map<Id,Id>();
+
+        allRolesMap = allRolesMap == null ? new Map<Id, UserRole>([SELECT Id, ParentRoleId, Name FROM UserRole]) : allRolesMap;
+        for(UserRole ur : allRolesMap.values()) {
+            if(!ur.Name.containsIgnoreCase('CEO') && !ur.Name.containsIgnoreCase('CEO')) {
+                userRoleToParentRoleMap.put(ur.Id, getParentIdRecursive(allRolesMap, ur));
+            }
+        }
+
+        Map<Id,Id> roleIdToParentIdMap = new Map<Id,Id>();
+        if(!userRoleToParentRoleMap.isEmpty()) {
+            List<User> userList = [SELECT Id, UserRoleId FROM User WHERE UserRoleId IN :userRoleToParentRoleMap.values()];
+            for(User usr: userList) {
+                if(!roleIdToParentIdMap.containsKey(usr.UserRoleId))
+                    roleIdToParentIdMap.put(usr.UserRoleId, usr.Id);
+            }
+        }
+        return new ApprovalWrapper(userRoleToParentRoleMap, roleIdToParentIdMap);
+    }
+    
     Public static Id getQAIdRecursive(Map<Id, UserRole> userRoleMap, UserRole currentRole){
         if (currentRole.ParentRoleId != null && userRoleMap.get(currentRole.ParentRoleId).Name != null && userRoleMap.get(currentRole.ParentRoleId).Name.containsIgnoreCase('QA')){
             return userRoleMap.get(currentRole.ParentRoleId).Id;
@@ -82,13 +103,45 @@ public without sharing class Utility{
     }
     
     Public static Id getBHIdRecursive(Map<Id, UserRole> userRoleMap, UserRole currentRole){
-        if (currentRole.ParentRoleId != null && userRoleMap.get(currentRole.ParentRoleId).Name != null && userRoleMap.get(currentRole.ParentRoleId).Name.containsIgnoreCase('Business Head')){
+        list<user> userlist = new list<user>();
+        if(currentRole.ParentRoleId != null && userRoleMap.get(currentRole.ParentRoleId).Name != null && userRoleMap.get(currentRole.ParentRoleId).Name.containsIgnoreCase('Business Head')){
+            userlist = [Select id from User where UserRoleId =: currentRole.ParentRoleId];
+        }
+        
+        if (currentRole.ParentRoleId != null && userlist.size() >0 && !userlist.isEmpty()){
             return userRoleMap.get(currentRole.ParentRoleId).Id;
         } else if (currentRole.ParentRoleId != null){
             return getBHIdRecursive(userRoleMap, userRoleMap.get(currentRole.ParentRoleId));
         } else{
             return null; //TOP Role - CEO.
         }
+    }
+    
+    public static Id getParentIdRecursive(Map<Id,UserRole> userRoleMap, UserRole currentRole) {
+        
+        list<user> userlist = new list<user>();
+        if(currentRole.ParentRoleId != null ) { //&& userRoleMap.get(currentRole.ParentRoleId).Name != null
+            //System.debug('parentRoleId =====> ' + userRoleMap.get(currentRole.ParentRoleId).Id);
+            //System.debug('parentRole Name =====> ' + userRoleMap.get(currentRole.ParentRoleId).Name);
+            userlist = [Select id from User where UserRoleId =: currentRole.ParentRoleId];
+            
+            //return userRoleMap.get(currentRole.ParentRoleId).Id;
+        }
+        if (currentRole.ParentRoleId != null  && userlist.size() >0 && !userlist.isEmpty()) {
+            
+            return userRoleMap.get(currentRole.ParentRoleId).Id;
+        }
+        else if(currentRole.ParentRoleId != null && userlist.isEmpty() ){
+            return getParentIdRecursive(userRoleMap, userRoleMap.get(currentRole.ParentRoleId));
+        }
+        else {
+            return null;
+        }
+        /*else if(currentRole.ParentRoleId != null){
+            return getParentIdRecursive(userRoleMap, userRoleMap.get(currentRole.ParentRoleId));
+        }else {
+            return null; //TOP Role - CEO.
+        }*/
     }
     
     public class ApprovalWrapper{

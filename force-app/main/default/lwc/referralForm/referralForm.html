@@ -63,6 +63,7 @@
                     <lightning-combobox name="St" label="Select State" value={} placeholder="Select Your State"
                         options={statesList} onchange={HandleChangeState} required="true" disabled={StateDisable}>
                     </lightning-combobox>
+
                     <div class="slds-card">
                         <div class="slds-form-element">
                             <div class="slds-form-element__control">
@@ -86,7 +87,6 @@
                                                 </div>
                                             </li>
                                         </template>
-
                                     </ul>
                                 </div>
                             </div>
@@ -98,35 +98,32 @@
                     <!--lightning-input name="CourseType" label="Type of Course" required="true"
                         onchange={ReferralFormInputHandler} style="margin-top:8px;"
                         value={type_of_Course}></lightning-input -->
-                    <br />
+
                     <label class="slds-form-element__label" for="textarea-id-01"><abbr class="slds-required"
-                            title="required">*</abbr>Mobile</label>
+                        title="required">*</abbr>Mobile</label>
                     <div class="slds-grid slds-wrap">
                         <div class="slds-col slds-size_2-of-12">
                             <span>
-                                <lightning-combobox name="CountryISDcode" placeholder="Select Your CountryCode"
-                                    options={countryCodeList} onchange={ReferralFormInputHandler} value={CountryCode}>
-                                </lightning-combobox>
-
+                                <lightning-combobox  name="CountryISDcode" placeholder="Select Your CountryCode"
+                                    options={countryCodeList} onchange={ReferralFormInputHandler} value={CountryCode} variant = "label-hidden" >
+                                </lightning-combobox>                                 
                             </span>
                         </div>
                         <div class="slds-col slds-size_10-of-12">
-                            <span>
-                                <lightning-input min-length="10" onchange={ReferralFormInputHandler} name="PH"
-                                    value={LeadTobeCreated.Phone} max-length="10"></lightning-input>
-
+                            <span> 
+                                <lightning-input  min-length="10" onchange={ReferralFormInputHandler} name="PH"
+                                    value={LeadTobeCreated.Phone} max-length="10" variant = "label-hidden"></lightning-input>
                             </span>
                         </div>
 
                     </div>
                     <label class="slds-form-element__label" for="textarea-id-01">Alternate Mobile</label>
                     <div class="slds-grid slds-wrap">
-
                         <div class="slds-col slds-size_2-of-12">
                             <span>
                                 <lightning-combobox name="CountryISDcodeAlt" placeholder="Select Your CountryCode"
                                     options={countryCodeList} onchange={ReferralFormInputHandler}
-                                    value={CountryCodeAlt}>
+                                    value={CountryCodeAlt} variant = "label-hidden">
                                 </lightning-combobox>
 
                             </span>
@@ -135,7 +132,7 @@
                             <span>
                                 <lightning-input min-length="10" max-length="10" name="AltPH"
                                     value={LeadTobeCreated.Alternate_Phone__c}
-                                    onchange={ReferralFormInputHandler}></lightning-input>
+                                    onchange={ReferralFormInputHandler} variant = "label-hidden"></lightning-input>
                             </span>
                         </div>
 
@@ -171,7 +168,7 @@
 
     <lightning-modal-footer class="my-modal-footer">
         <div class=" slds-align_absolute-center">
-            <lightning-button title="Save" label="Submit" onclick={SaveReferralFormDetails} variant="brand"
+            <lightning-button title="Save" label="Submit" onclick={SaveReferralFormDetails} variant="brand" disabled={HandleLeadCreatedisable}
                 style="margin-top:8px ;"></lightning-button>
 
         </div>

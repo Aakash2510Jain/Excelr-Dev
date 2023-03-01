@@ -355,12 +355,12 @@
                                     required="true">
                                 </lightning-combobox>
 
-                                <template if:true={TypeofCoursePicklistValues.data}>
+                                <!-- template if:true={TypeofCoursePicklistValues.data} -->
                                     <lightning-combobox name="TOCR" label="Type of Course" value={typeofCoursevalue}
-                                        placeholder="select" options={TypeofCoursePicklistValues.data.values}
-                                        onchange={typeofcourseHandler} required="true">
+                                        placeholder="select" options={TypeofCoursePicklistValues}
+                                        onchange={LeadCreationHandler} required="true">
                                     </lightning-combobox>
-                                </template>
+                                <!-- /template -->
 
                                 <label class="slds-form-element__label" for="textarea-id-01"><abbr class="slds-required"
                                     title="required">*</abbr>Select User</label>

@@ -5,7 +5,7 @@ import getLead from '@salesforce/apex/walkInLeadLWCcontroller.getLead';
 import getApplication from '@salesforce/apex/walkInLeadLWCcontroller.getApplication';
 import EmailIsm from '@salesforce/apex/walkInLeadLWCcontroller.EmailIsm';
 
-import getPuckistOflead from '@salesforce/apex/walkInLeadLWCcontroller.getPuckistOflead';
+//import getPuckistOflead from '@salesforce/apex/walkInLeadLWCcontroller.getPuckistOflead';
 
 
 import createTask from '@salesforce/apex/walkInLeadLWCcontroller.createTaskForVoice';
@@ -15,14 +15,14 @@ import createApplication from '@salesforce/apex/walkInLeadLWCcontroller.CreateAp
 
 import QueryPastLeads from '@salesforce/apex/walkInLeadLWCcontroller.QueryPastLeads';
 import LightningAlert from 'lightning/alert';
-import LightningConfirm from "lightning/confirm";
+//import LightningConfirm from "lightning/confirm";
 import { refreshApex } from '@salesforce/apex';
 
-import { getObjectInfo } from 'lightning/uiObjectInfoApi';
-import LEAD_OBJECT from '@salesforce/schema/Lead';
+//import { getObjectInfo } from 'lightning/uiObjectInfoApi';
+//import LEAD_OBJECT from '@salesforce/schema/Lead';
 
-import { getPicklistValues } from 'lightning/uiObjectInfoApi';
-import TYPE_OF_COURSE_FIELD from '@salesforce/schema/Lead.Type_of_Course__c';
+//import { getPicklistValues } from 'lightning/uiObjectInfoApi';
+//import TYPE_OF_COURSE_FIELD from '@salesforce/schema/Lead.Type_of_Course__c';
 
 
 import fetchCountryAndCountryCode from '@salesforce/apex/GenericLeadLWCcontroller.fetchCountryAndCountryCode';
@@ -117,11 +117,11 @@ export default class WaklInLead extends LightningElement {
 
     }
 
-    @wire(getObjectInfo, { objectApiName: LEAD_OBJECT })
-    objectInfo
+    // @wire(getObjectInfo, { objectApiName: LEAD_OBJECT })
+    // objectInfo
 
-    @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: TYPE_OF_COURSE_FIELD })
-    TypeofCoursePicklistValues
+    // @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: TYPE_OF_COURSE_FIELD })
+    // TypeofCoursePicklistValues
 
     convertStringtoList(){
         this.DepartmentList = this.DepartmentListstring.split(';');
@@ -199,17 +199,19 @@ export default class WaklInLead extends LightningElement {
 
             // }
 
-            // if (data.Medium.length > 0) {
+            if (data.TypeofCourse.length > 0) {
 
-            //     let tempMediumarr = [];
-            //     for (let i = 0; i < data.Medium.length; i++) {
-            //         tempMediumarr.push({ label: data.Medium[i], value: data.Medium[i] });
-            //     }
-            //     this.LeadMediumPicklist = tempMediumarr;
-            //     this.LeadMediumPicklist.sort((a, b) => (a.label > b.label) ? 1 : -1);
-            //     console.log('Picklistvalue=', this.LeadMediumPicklist);
+                let temptypeofcoursearr = [];
+                for (let i = 0; i < data.TypeofCourse.length; i++) {
+                    temptypeofcoursearr.push({ label: data.TypeofCourse[i], value: data.TypeofCourse[i] });
+                }
+                this.TypeofCoursePicklistValues = temptypeofcoursearr;
+                this.TypeofCoursePicklistValues.sort((a, b) => (a.label > b.label) ? 1 : -1);
+                console.log('Picklistvalue=', this.TypeofCoursePicklistValues);
 
-            // }
+            }
+
+            //TypeofCourse
 
             if (data.TaskStatus.length > 0) {
 
@@ -672,6 +674,9 @@ export default class WaklInLead extends LightningElement {
         if (InputName == 'Comments') {
             this.LeadTobeCreated.Comments__c = event.target.value;
         }
+        if (InputName == 'TOCR') {
+            this.LeadTobeCreated.Type_of_Course__c=event.target.value;
+        }
 
 
     }
@@ -788,13 +793,14 @@ TaskCreationHandler(event){
             
            {
 
-            this.HandleLeadCreatedisable=true; 
+            
 
         var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email);
         var phoneregexreturnvalue = this.handleCorrectPhone(this.LeadTobeCreated.Phone);
         this.agentrecid;
         this.handleSpinner();
         if (returnvalue == true && this.handleCorrectPhone(this.LeadTobeCreated.Phone)) {
+            this.HandleLeadCreatedisable=true;
             createLead({ Leadrec: this.LeadTobeCreated, countrycode : this.CountryCode, countrycodealternate :this.CountryCodeAlt,city:this.selectedresultValue })
                 .then(data => {
 

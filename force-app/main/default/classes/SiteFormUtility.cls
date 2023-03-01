@@ -28,6 +28,7 @@ public without sharing class SiteFormUtility{
         pickValByField.put('Sources', getPicklistValues('Lead', 'LeadSource'));
         pickValByField.put('LeadGenPath', getPicklistValues('Lead', 'Lead_Gen_Path__c'));
         pickValByField.put('Medium', getPicklistValues('Lead', 'UTM_Medium__c'));
+        pickValByField.put('TypeofCourse', getPicklistValues('Lead', 'Type_of_Course__c'));
 
 
         // ======================================== task Related Picklist Values ========================================

@@ -1147,7 +1147,7 @@ export default class voiceForm extends LightningElement {
         && (this.LeadTobeCreated.UTM_Medium__c != undefined && this.LeadTobeCreated.UTM_Medium__c != null && this.LeadTobeCreated.UTM_Medium__c != '') &&(this.SelectedMedium!=null && this.SelectedMedium!= '' && this.SelectedMedium != undefined)&&(this.selectedresultValue!=null && this.selectedresultValue!=undefined && this.selectedresultValue!=''))
               {
 
-            this.HandleLeadCreatedisable = true;
+            
 
 
 
@@ -1155,6 +1155,7 @@ export default class voiceForm extends LightningElement {
             //var phoneregexreturnvalue = this.handleCorrectPhone(this.LeadTobeCreated.Phone)
             console.log('returnVALUE=', returnvalue);
             if (returnvalue == true && this.handleCorrectPhone(this.LeadTobeCreated.Phone)) { // firstname: this.namValue, 
+                this.HandleLeadCreatedisable = true;
                 createLead({ Leadrec: this.LeadTobeCreated, countrycode : this.CountryCode, countrycodealternate :this.CountryCodeAlt,mediumValue:this.SelectedMedium,city:this.selectedresultValue })
                     .then(data => {
 

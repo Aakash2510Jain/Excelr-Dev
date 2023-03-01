@@ -726,7 +726,7 @@ export default class chatForm extends LightningElement {
 
     createNewLead() {
         debugger;
-        
+            //this.HandleLeadCreatedisable = true;
             if(this.FetchedcityList.find((picklistOption) => picklistOption.value === this.selectedresultValue)){
                 console.log('Selected City Is Correct');
             }else{
@@ -741,11 +741,13 @@ export default class chatForm extends LightningElement {
             && (this.LeadTobeCreated.UTM_Medium__c != undefined && this.LeadTobeCreated.UTM_Medium__c != null && this.LeadTobeCreated.UTM_Medium__c != '') &&(this.SelectedMedium!=null && this.SelectedMedium!= '' && this.SelectedMedium != undefined)&&(this.selectedresultValue!=null && this.selectedresultValue!=undefined && this.selectedresultValue!='')&&
             (this.LeadTobeCreated.Visitor_ID__c != undefined && this.LeadTobeCreated.Visitor_ID__c != null && this.LeadTobeCreated.Visitor_ID__c != '') && (this.LeadTobeCreated.Transcript__c != undefined && this.LeadTobeCreated.Transcript__c != null && this.LeadTobeCreated.Transcript__c != '') && (this.LeadTobeCreated.Enter_UTM_Link__c != undefined && this.LeadTobeCreated.Enter_UTM_Link__c != null && this.LeadTobeCreated.Enter_UTM_Link__c != '')) {
 
-                this.HandleLeadCreatedisable = true;
+                //this.HandleLeadCreatedisable = true;
 
             var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
 
             if (returnvalue == true && this.handleCorrectPhone(this.LeadTobeCreated.Phone)) {
+                this.HandleLeadCreatedisable = true;
+
                 createLead({ Leadrec: this.LeadTobeCreated, countrycode : this.CountryCode, countrycodealternate :this.CountryCodeAlt,mediumValue:this.SelectedMedium,city:this.selectedresultValue })
                     .then(data => {
 

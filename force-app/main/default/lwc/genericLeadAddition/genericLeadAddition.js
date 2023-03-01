@@ -797,12 +797,14 @@ export default class WaklInLead extends LightningElement {
                 (this.LeadTobeCreated.Visitor_ID__c != undefined && this.LeadTobeCreated.Visitor_ID__c != null && this.LeadTobeCreated.Visitor_ID__c != '') && (this.LeadTobeCreated.Transcript__c != undefined && this.LeadTobeCreated.Transcript__c != null && this.LeadTobeCreated.Transcript__c != '') && (this.LeadTobeCreated.Enter_UTM_Link__c != undefined && this.LeadTobeCreated.Enter_UTM_Link__c != null && this.LeadTobeCreated.Enter_UTM_Link__c != '')) {
 
 
-            this.HandleLeadCreatedisable = true;
+            
 
            
             debugger;
             var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
             if (returnvalue == true && this.handleCorrectPhone(this.LeadTobeCreated.Phone)) { //firstname: this.namValue, 
+
+                this.HandleLeadCreatedisable = true;
                 createLead({ Leadrec: this.LeadTobeCreated, countrycode : this.CountryCode, countrycodealternate :this.CountryCodeAlt,mediumValue:this.SelectedMedium,city:this.selectedresultValue })
                     .then(data => {
 

@@ -11,16 +11,16 @@ public class CaseTriggerHeper {
             system.debug('newCaseMap :: ' + newCaseMap);
             Map<Id,Case> freshCaseMap = new Map<Id,Case>([SELECT Id, Owner.UserRoleId FROM Case WHERE Id IN:newCaseMap.keySet()]);
             system.debug('freshCaseMap :: ' + freshCaseMap);
-            Utility.ApprovalWrapper approvalQAWrapper = Utility.getUserQAMap();
+            Utility.ApprovalWrapper approvalQAWrapper = Utility.getParentUserMap();
             
             for(Case caseRec : newCaseList){
                 Id caseOwnersRoleId = freshCaseMap.get(caseRec.Id).Owner.UserRoleId;
                 system.debug('caseOwnersRoleId :: ' + caseOwnersRoleId);
-                Id QAId = approvalQAWrapper.smToManagerMap.containsKey(caseOwnersRoleId) && approvalQAWrapper.managerRoleToUserIdMap.containsKey(approvalQAWrapper.smToManagerMap.get(caseOwnersRoleId)) ? approvalQAWrapper.managerRoleToUserIdMap.get(approvalQAWrapper.smToManagerMap.get(caseOwnersRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
-                system.debug('QAId :: ' + QAId);
+                Id approverId = approvalQAWrapper.smToManagerMap.containsKey(caseOwnersRoleId) && approvalQAWrapper.managerRoleToUserIdMap.containsKey(approvalQAWrapper.smToManagerMap.get(caseOwnersRoleId)) ? approvalQAWrapper.managerRoleToUserIdMap.get(approvalQAWrapper.smToManagerMap.get(caseOwnersRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
+                system.debug('approverId :: ' + approverId);
                 
-                if(QAId != null){
-                    createTask('Define Severity on Case Number ' + caseRec.CaseNumber, QAId, caseRec.Id);
+                if(approverId != null){
+                    createTask('Define Severity on Case Number ' + caseRec.CaseNumber, approverId, caseRec.Id);
                 }
             }
         }
@@ -40,12 +40,13 @@ public class CaseTriggerHeper {
                                                           FROM Case WHERE Id IN:oldCaseMap.keySet()]);
             List<ProcessInstance> recordUnderApprovalList = [Select ID, Status,TargetObjectID, TargetObject.Name From ProcessInstance Where Status =: Constants.PENDING AND TargetObjectID IN :oldCaseMap.keySet()];
             Set<Id> underApprovalCaseSet = new Set<Id>();
-            Id financeUserId = [SELECT Id, Name FROM User WHERE Profile.Name = 'Finance' LIMIT 1].Id;
+            //Id financeUserId = [SELECT Id, Name FROM User WHERE Profile.Name = 'Finance' LIMIT 1].Id;
             for(ProcessInstance approvalOpp : recordUnderApprovalList) {
                 underApprovalCaseSet.add(approvalOpp.TargetObjectID);
             }
             
             Utility.ApprovalWrapper approvalBHWrapper = Utility.getUserBHMap();
+            Utility.ApprovalWrapper approvalAppWrapper = Utility.getParentUserMap();
             
             for(Case csRec : newCaseList){
                 if(underApprovalCaseSet.contains(csRec.Id)) {
@@ -54,7 +55,8 @@ public class CaseTriggerHeper {
                 }
                 if(csRec.Severity__c != oldCaseMap.get(csRec.Id).Severity__c && csRec.Severity__c != NULL && freshCaseMap.get(csRec.Id).Account.OwnerId != null){
                     
-                    if(csRec.Severity__c == 'L1' &&  freshCaseMap.get(csRec.Id).Account.Owner.ManagerId != null){
+                    if(csRec.Severity__c == 'L1'){
+                                               
                         createTask('L1 Severity Case assigned!', freshCaseMap.get(csRec.Id).Account.OwnerId, csRec.AccountId);
                         
                         String emailBody = 'Dear ' + freshCaseMap.get(csRec.Id).Account.Owner.Name;
@@ -62,29 +64,74 @@ public class CaseTriggerHeper {
                         emailBody += ' <a href="'+URL.getSalesforceBaseUrl().toExternalForm() +'/'+csRec.Id+'">'+ csRec.CaseNumber +'</a><br>' ; 
                         emailBody += '<br> With Regards';
                         emailBody += '<br> ExcelR';
-                        List <String> toAddresses = new List <String>{freshCaseMap.get(csRec.Id).Account.Owner.Email /*'anjali.singh@utilitarianlab.com'*/};
-                        List <String> toCcAddresses = new List <String>{freshCaseMap.get(csRec.Id).Account.Owner.Manager.Email /*'anju5588singh@gmail.com'*/};
-                        if(toCcAddresses != null && toAddresses != null){
-                            sendEmail(emailBody, toAddresses, toCcAddresses, 'Case assigned');
+                        List <String> toAddresses = new List <String>{freshCaseMap.get(csRec.Id).Account.Owner.Email};
+                        List <String> toCcAddresses = new List <String>();
+                        if(freshCaseMap.get(csRec.Id).Account.Owner.Manager.Email != null){
+                            toCcAddresses = new List <String>{freshCaseMap.get(csRec.Id).Account.Owner.Manager.Email};
+                        }
+                        else{
+                            toCcAddresses = new List <String>{};
+                        }
+                        sendEmail(emailBody, toAddresses, toCcAddresses, 'Case assigned');
+                        
+                        Id approverId;
+                        Id caseOwnersRoleId = freshCaseMap.get(csRec.Id).Account.Owner.UserRoleId;
+                        if(freshCaseMap.get(csRec.Id).Account.Owner.ManagerId != null){
+                            approverId = freshCaseMap.get(csRec.Id).Account.Owner.ManagerId;
+                        }
+                        else{
+                            approverId = approvalAppWrapper.smToManagerMap.containsKey(caseOwnersRoleId) && approvalAppWrapper.managerRoleToUserIdMap.containsKey(approvalAppWrapper.smToManagerMap.get(caseOwnersRoleId)) ? approvalAppWrapper.managerRoleToUserIdMap.get(approvalAppWrapper.smToManagerMap.get(caseOwnersRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
                         }
                         
-                        doApproval(csRec.AccountId, freshCaseMap.get(csRec.Id).Account.Owner.ManagerId);
+                        if(approverId != null){
+                            doApproval(csRec.AccountId, approverId);
+                        }
                     }
                     
-                    if(csRec.Severity__c == 'L2' && freshCaseMap.get(csRec.Id).Account.Owner.ManagerId != null){
-                        createTask('L2 Severity Case assigned!', freshCaseMap.get(csRec.Id).Account.Owner.ManagerId, csRec.AccountId);
-                        String emailBody = 'Dear ' + freshCaseMap.get(csRec.Id).Account.Owner.Manager.Name;
+                    if(csRec.Severity__c == 'L2'){
+                        Id approverId;
+                        Id caseOwnersRoleId = freshCaseMap.get(csRec.Id).Account.Owner.UserRoleId;
+                        if(freshCaseMap.get(csRec.Id).Account.Owner.ManagerId != null){
+                            approverId = freshCaseMap.get(csRec.Id).Account.Owner.ManagerId;
+                        }
+                        else{
+                            approverId = approvalAppWrapper.smToManagerMap.containsKey(caseOwnersRoleId) && approvalAppWrapper.managerRoleToUserIdMap.containsKey(approvalAppWrapper.smToManagerMap.get(caseOwnersRoleId)) ? approvalAppWrapper.managerRoleToUserIdMap.get(approvalAppWrapper.smToManagerMap.get(caseOwnersRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
+                        }
+                        
+                        if(approverId != null){
+                            createTask('L2 Severity Case assigned!', approverId, csRec.AccountId);
+                            doApproval(csRec.AccountId, approverId);
+                        }
+                        String name;
+                        if(freshCaseMap.get(csRec.Id).Account.Owner.ManagerId == null){
+                            name = freshCaseMap.get(csRec.Id).Account.Owner.Name;
+                        }
+                        else{
+                            name = freshCaseMap.get(csRec.Id).Account.Owner.Manager.Name;
+                        }
+                        String emailBody = 'Dear ' + name;
                         emailBody += ' <br> <br> L2 Case has been assigned to you. Click on the below link to access the record. <br>';
                         emailBody += ' <a href="'+URL.getSalesforceBaseUrl().toExternalForm() +'/'+csRec.Id+'">'+ csRec.CaseNumber +'</a><br>' ; 
                         emailBody += '<br> With Regards';
                         emailBody += '<br> ExcelR';
-                        List <String> toAddresses = new List <String>{freshCaseMap.get(csRec.Id).Account.Owner.Manager.Email /*'anjali.singh@utilitarianlab.com'*/};
-                        List <String> toCcAddresses = new List <String>{freshCaseMap.get(csRec.Id).Account.Owner.Email /*'anju5588singh@gmail.com'*/};
-                        if(toCcAddresses != null && toAddresses != null){
-                            sendEmail(emailBody, toAddresses, toCcAddresses, 'Case assigned');
+                        
+                        String addrss ;
+                        if(freshCaseMap.get(csRec.Id).Account.Owner.Manager.Email == null){
+                            addrss = freshCaseMap.get(csRec.Id).Account.Owner.Email;
+                        }
+                        else{
+                            addrss = freshCaseMap.get(csRec.Id).Account.Owner.Manager.Email;
                         }
                         
-                        doApproval(csRec.AccountId, freshCaseMap.get(csRec.Id).Account.Owner.ManagerId);
+                        List <String> toAddresses = new List <String>{addrss};
+                        List <String> toCcAddresses = new List <String>();
+                        if(addrss == freshCaseMap.get(csRec.Id).Account.Owner.Email){
+                            toCcAddresses = new List <String>{};
+                        }
+                        else{
+                            toCcAddresses = new List <String>{freshCaseMap.get(csRec.Id).Account.Owner.Email};
+                        }                        
+                        sendEmail(emailBody, toAddresses, toCcAddresses, 'Case assigned');
                     }
                     
                     if(csRec.Severity__c == 'L3'){
@@ -104,7 +151,14 @@ public class CaseTriggerHeper {
                             emailBody += '<br> With Regards';
                             emailBody += '<br> ExcelR';
                             List <String> toAddresses = new List <String>{bhEmail};
-                            List <String> toCcAddresses = new List <String>{freshCaseMap.get(csRec.Id).Account.Owner.Manager.Email, freshCaseMap.get(csRec.Id).Account.Owner.Email /*'anjali.singh@utilitarianlab.com', 'anju5588singh@gmail.com'*/};
+                            List <String> toCcAddresses = new List <String>(); 
+                            
+                            if(freshCaseMap.get(csRec.Id).Account.Owner.Manager.Email == null){
+                                toCcAddresses = new List <String>{freshCaseMap.get(csRec.Id).Account.Owner.Email};
+                            }
+                            else{
+                                toCcAddresses = new List <String>{freshCaseMap.get(csRec.Id).Account.Owner.Manager.Email, freshCaseMap.get(csRec.Id).Account.Owner.Email};
+                            }
                             sendEmail(emailBody, toAddresses, toCcAddresses, 'Case assigned');
                             doApproval(csRec.AccountId, BHId);
                         }
@@ -158,7 +212,9 @@ public class CaseTriggerHeper {
             List<Messaging.SingleEmailMessage> emailsList = new List<Messaging.SingleEmailMessage>();
             sendEmail.setSubject(subject);
             sendEmail.setToAddresses(toAddresses);
-            sendEmail.setCcAddresses(toCcAddresses);
+            if(toCcAddresses != null){
+                sendEmail.setCcAddresses(toCcAddresses);
+            }
             sendEmail.setReplyTo(owea.Address);
             sendEmail.setHtmlBody(emailBody);
             emailsList.add(sendEmail);

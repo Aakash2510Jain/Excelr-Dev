@@ -33,7 +33,7 @@ public without sharing class LeadTriggerHandler{
             
             for (Lead ld : leadList){
                 system.debug('ld.OwnerId--->'+ld.OwnerId);
-                if (ld.LeadSource == 'Reference' || ld.Lead_Gen_Path__c == 'Reference'){
+                if (ld.LeadSource == 'Reference' || ld.Lead_Gen_Path__c == 'Reference' || ld.To_Be_Deleted__c == true){
                     //asign lead to creator
                 }else if ( (ld.Lead_Generation_Method__c == 'Voice Form' || ld.Lead_Generation_Method__c == 'Chat Form' || (ld.Lead_Generation_Method__c == 'Generic Form' && ld.Is_User_Assigned__c == 'Not-Assigned' ) || (ld.Lead_Generation_Method__c == 'Walk-in Form' && ld.Is_User_Assigned__c == 'Not-Assigned' ) )){
                     system.debug('Owner is Queue');
@@ -251,7 +251,6 @@ public without sharing class LeadTriggerHandler{
                                 system.debug('dead or junk and course is same');
                                 system.debug('Create new Lead');
                                 leadRec.Customers__c = existingLeadByEmail.get(leadRec.Email).Customers__c;
-                                leadRec.CID__c = existingLeadByEmail.get(leadRec.Email).CID__c;
                             } else if((existingLeadByEmail.get(leadRec.Email).status != 'Dead' && existingLeadByEmail.get(leadRec.Email).Status != 'Junk') && existingLeadByEmail.get(leadRec.Email).Course__c == leadRec.Course__c){
                                 system.debug('Status is not Dead/Junk and course is same');
                                 system.debug('Create Task');
@@ -271,7 +270,6 @@ public without sharing class LeadTriggerHandler{
                                 system.debug('dead or junk and course is same');
                                 system.debug('Create new Lead');
                                 leadRec.Customers__c = existingLeadByEmail.get(leadRec.Alternate_Email__c).Customers__c;
-                                leadRec.CID__c = existingLeadByEmail.get(leadRec.Alternate_Email__c).CID__c;
                             }else if((existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).status == 'Dead' && existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Status == 'Junk') && existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Course__c == leadRec.Course__c){
                                 system.debug('Status is not Dead/Junk and course is same');
                                 system.debug('Create Task');
@@ -291,7 +289,6 @@ public without sharing class LeadTriggerHandler{
                                 system.debug('dead or junk and course is same');
                                 system.debug('Create new Lead');
                                 leadRec.Customers__c = existingLeadByEmail.get(leadRec.Phone).Customers__c;
-                                leadRec.CID__c = existingLeadByEmail.get(leadRec.Phone).CID__c;
                             } else if ((existingLeadByPhone.get(leadRec.Phone).Status == 'Dead' && existingLeadByPhone.get(leadRec.Phone).Status == 'Junk') && existingLeadByPhone.get(leadRec.Phone).Course__c == leadRec.Course__c){
                                 system.debug('Status is not Dead/Junk and course is same');
                                 system.debug('Create Task');
@@ -311,7 +308,6 @@ public without sharing class LeadTriggerHandler{
                                 system.debug('dead or junk and course is same');
                                 system.debug('Create new Lead');
                                 leadRec.Customers__c = existingLeadByEmail.get(leadRec.Alternate_Phone__c).Customers__c;
-                                leadRec.CID__c = existingLeadByEmail.get(leadRec.Alternate_Phone__c).CID__c;
                             }else if ((existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Status == 'Dead' && existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Status == 'Junk')&& existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Course__c == leadRec.Course__c){
                                 system.debug('Status is not Dead/Junk and course is same');
                                 system.debug('Create Task');
@@ -329,7 +325,6 @@ public without sharing class LeadTriggerHandler{
                     }else{
                         Customers__c insertedCustomerRec = Utility.returnCustomerInstance(leadRec);
                         leadRec.Customers__c = insertedCustomerRec.Id;
-                        leadRec.CID__c = insertedCustomerRec.CID__c;
                         //applicationListToInsert.add(Utility.returnApplicationInstance(accountId, course));
                     }
                 }

@@ -21,7 +21,7 @@ global without sharing class API_GetCallDetailsFromKnowlarity {
     }
 
 
-    
+    @AuraEnabled
     public static void fecthCallDetails(string leadId){
         system.debug('leadId--->'+leadId);
             
