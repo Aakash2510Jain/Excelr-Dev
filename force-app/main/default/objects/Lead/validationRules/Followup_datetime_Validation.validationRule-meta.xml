@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Followup_datetime_Validation</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( ISCHANGED( Status ) ,
+ Or(DATEVALUE(Next_follow_up_date_time__c ) &lt; TODAY(),ISNULL(Next_follow_up_date_time__c )) ,
+OR(
+( AND(Prior_Status__c == &apos;Open&apos;,
+OR( ISPICKVAL(Status, &apos;In Conversation&apos;), ISPICKVAL(Status, &apos;On Hold&apos;), ISPICKVAL(Status,&apos;Deferred&apos;)
+
+) )
+),
+
+( AND(Prior_Status__c == &apos;ATC&apos;,
+OR( ISPICKVAL(Status, &apos;In Conversation&apos;), ISPICKVAL(Status, &apos;On Hold&apos;), ISPICKVAL(Status,&apos;Deferred&apos;)
+) )
+),
+
+( AND(Prior_Status__c == &apos;In Conversation&apos;,
+OR( ISPICKVAL(Status, &apos;On Hold&apos;), ISPICKVAL(Status,&apos;Deferred&apos;) ) )
+),
+
+( AND(Prior_Status__c == &apos;On Hold&apos;,
+OR(ISPICKVAL(Status,&apos;Deferred&apos;),  ISPICKVAL(Status, &apos;In Conversation&apos;)
+) )
+),
+
+( AND(Prior_Status__c == &apos;Deferred&apos;,
+OR(ISPICKVAL(Status, &apos;In Conversation&apos;)
+) )
+)
+)
+)</errorConditionFormula>
+    <errorDisplayField>Next_follow_up_date_time__c</errorDisplayField>
+    <errorMessage>Please enter a Follow-Up date greater than Today.</errorMessage>
+</ValidationRule>

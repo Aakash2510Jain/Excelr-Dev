@@ -99,12 +99,25 @@
 
         <template if:true={SecondScreen}>
             <div class="stepTwo slds-hide"></div>
+
             <div style="background-color: gray;">
                 <lightning-input type="search" placeholder="Search Product" onchange={HandleProduct}> </lightning-input>
                 <br />
             </div>
+
+            <template if:false={Firstdata.length}>
+                <div style=" border-radius: 10px; width:500px; height:50px; font-size: 25px; margin-top:115px;"
+                    class="slds-align_absolute-center slds-notify slds-notify_alert slds-alert_warning"
+                    role="alert">
+
+                    No  Products Found!!!!!
+
+                </div>
+            </template>
             <!--div style="height:400px;"-->
             <lightning-card>
+
+                <template if:true={Firstdata.length}>
                 <template if:true={FirstTable}>
                     <div class="slds-scrollable" style="height: 400px; ">
                         <!--lightning-datatable
@@ -135,13 +148,13 @@
                                         <tr key={rec.Id} class="slds-hint-parent">
                                             <td>
                                                 <lightning-input class="slds-p-left_xx-large" type="checkbox"
-                                                    data-index="checkbox" data-id={rec.Id} value={checkedvalue}
+                                                    data-index="checkbox" data-id={rec.Id} checked={rec.checkedvalue}
                                                     onchange={changeHandler}></lightning-input>
                                             </td>
                                             <td>
                                                 <lightning-input type="text" name="Name" data-id={rec.Id}
                                                     value={rec.Name} disabled></lightning-input>
-                                                <br />
+                                                
                                             </td>
                                             <td>
                                                 <template if:true={rec.Mode__c}>
@@ -175,7 +188,7 @@
                                             <td>
                                                 <lightning-input type="number" name="Price" label="" data-id={rec.Id}
                                                     value={recp.UnitPrice} disabled></lightning-input>
-                                                <br />
+                                                
                                             </td>
                                             <td>
                                                 <lightning-textarea name="AddOns" label="" data-id={rec.Id}
@@ -219,7 +232,7 @@
                         </table>
                     </div>
                 </template>
-
+            </template>
 
 
                 <!--I Have Set AddOn's For TempArray Length-->
@@ -253,13 +266,13 @@
                                         <tr key={rec.Id} class="slds-hint-parent">
                                             <td>
                                                 <lightning-input class="slds-p-left_xx-large" type="checkbox"
-                                                    data-index="checkbox" data-id={rec.Id} value={checkedvalue}
+                                                    data-index="checkbox" data-id={rec.Id} value={rec.checkedvalue}
                                                     onchange={changeHandler}></lightning-input>
                                             </td>
                                             <td>
                                                 <lightning-input type="text" name="Name" data-id={rec.Id}
                                                     value={rec.Name} disabled></lightning-input>
-                                                <br />
+                                                
                                             </td>
                                             <td>
                                                 <template if:true={rec.Mode__c}>
@@ -293,7 +306,7 @@
                                             <td>
                                                 <lightning-input type="number" name="Price" label="" data-id={rec.Id}
                                                     value={recp.UnitPrice} disabled></lightning-input>
-                                                <br />
+                                                
                                             </td>
                                             <!--td>
                                                     <lightning-textarea name="AddOns" label="" data-id={rec.Id} value={rec.AddOnNames} disabled></lightning-textarea>
@@ -319,6 +332,7 @@
                 <div>
 
                 </div>
+           
 
 
                 <!--template if:false={TempArray}>
@@ -343,7 +357,7 @@
             </lightning-card>
             <!--/div-->
         </template>
-
+      
         <template if:true={ThirdScreen}>
             <div class="stepThree slds-hide"></div>
             <lightning-card>
@@ -417,7 +431,6 @@
                                     <td>
                                         <lightning-input type="text" data-id={rec.Id} name="Name" value={rec.Name}
                                             disabled></lightning-input>
-                                        <br />
                                     </td>
                                     <td>
                                         <template if:true={rec.Mode__c}>
@@ -447,7 +460,7 @@
                                             <lightning-input type="text" data-id={rec.Id} name="Name"
                                                 value={rec.Price__c} disabled></lightning-input>
                                         </template>
-                                        <br />
+                                        
                                     </td>
                                     <td>
                                     <template if:true={rec.PricebookEntries}>
@@ -462,7 +475,7 @@
                                             onchange={handleInputChange} disabled>
                                         </lightning-combobox>
                                     </template>
-                                        <br />
+                                        
                                         <!--lightning-input type="number" variant="label-hidden" label="" data-id={rec.Id} name="Discount" value={rec.Discount__c} onchange={handleInputChange}></lightning-input-->
 
                                     </td>
@@ -483,13 +496,14 @@
                                                     value={rec.Price__c} disabled></lightning-input>
                                             </template>
                                         </template>
-                                        <br />
+                                        
                                     </td>
                                     <td>
-                                        <lightning-button-icon icon-name="utility:delete" alternative-text="Remove"
-                                            title="Remove" data-id={rec.Id}
-                                            onclick={removeRowFinalArray}></lightning-button-icon>
-
+                                        <template if:false={rec.PricebookEntries}>
+                                            <lightning-button-icon icon-name="utility:delete" alternative-text="Remove"
+                                                title="Remove" data-id={rec.Id}
+                                                onclick={removeRowFinalArray}></lightning-button-icon>
+                                        </template>
                                     </td>
                                 </tr>
                             </template>

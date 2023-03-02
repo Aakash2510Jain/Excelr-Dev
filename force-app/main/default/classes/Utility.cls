@@ -73,14 +73,14 @@ public without sharing class Utility{
     
     public static ApprovalWrapper getParentUserMap() {
         Map<Id,Id> userRoleToParentRoleMap = new Map<Id,Id>();
-
+        
         allRolesMap = allRolesMap == null ? new Map<Id, UserRole>([SELECT Id, ParentRoleId, Name FROM UserRole]) : allRolesMap;
         for(UserRole ur : allRolesMap.values()) {
             if(!ur.Name.containsIgnoreCase('CEO') && !ur.Name.containsIgnoreCase('CEO')) {
                 userRoleToParentRoleMap.put(ur.Id, getParentIdRecursive(allRolesMap, ur));
             }
         }
-
+        
         Map<Id,Id> roleIdToParentIdMap = new Map<Id,Id>();
         if(!userRoleToParentRoleMap.isEmpty()) {
             List<User> userList = [SELECT Id, UserRoleId FROM User WHERE UserRoleId IN :userRoleToParentRoleMap.values()];
@@ -138,10 +138,10 @@ public without sharing class Utility{
             return null;
         }
         /*else if(currentRole.ParentRoleId != null){
-            return getParentIdRecursive(userRoleMap, userRoleMap.get(currentRole.ParentRoleId));
-        }else {
-            return null; //TOP Role - CEO.
-        }*/
+return getParentIdRecursive(userRoleMap, userRoleMap.get(currentRole.ParentRoleId));
+}else {
+return null; //TOP Role - CEO.
+}*/
     }
     
     public class ApprovalWrapper{
@@ -436,6 +436,7 @@ priceBookIdByProductId.put(pbe.Product2Id, pbe.Id);
         Task taskRec = new Task();
         taskRec.Subject = Constants.taskSubjectViaLeadCreationAPI;
         taskRec.WhoId = leadRec.Id;
+        taskRec.ActivityDate = system.today().addDays(1);
         taskRec.OwnerId = leadRec.OwnerId;
         insert taskRec;
         return taskRec.Id;
@@ -443,6 +444,7 @@ priceBookIdByProductId.put(pbe.Product2Id, pbe.Id);
     public static Task returnTaskInstance(Lead leadRec){
         Task taskRec = new Task();
         taskRec.Subject = Constants.taskSubjectViaLeadCreationAPI;
+        taskRec.ActivityDate = system.today().addDays(1);
         taskRec.WhoId = leadRec.Id;
         taskRec.OwnerId = leadRec.OwnerId;
         return taskRec;
@@ -473,11 +475,21 @@ priceBookIdByProductId.put(pbe.Product2Id, pbe.Id);
             customerId = customerList[0].Id;
         }else{
             Customers__c customerRec = new Customers__c();
-            customerRec.Name__c = accRec.Name;
-            customerRec.Email__c = accRec.Email__c;
-            customerRec.Alternate_Email__c = accRec.Alternate_Email__c;
-            customerRec.Alternate_Phone__c = accRec.Alternate_Phone__c;
-            customerRec.Phone__c = accRec.Phone;
+            customerRec.Name__c 					= 	accRec.Name;
+            customerRec.Email__c 					= 	accRec.Email__c;
+            customerRec.Alternate_Email__c 			= 	accRec.Alternate_Email__c;
+            customerRec.Alternate_Phone__c 			= 	accRec.Alternate_Phone__c;
+            customerRec.Phone__c 					=	accRec.Phone;
+            customerRec.Profession__c				=	accRec.Profession__c;
+            customerRec.Qualification__c			=	accRec.Qualification__c;
+            customerRec.Branch__c					=	accRec.Branch__c;
+            customerRec.Specialization__c			=	accRec.Specialization__c;
+            //customerRec.Year_of_Graduation__c		=	accRec.Year_of_Graduation__c;
+            customerRec.Why_This_Course__c			=	accRec.Why_This_Course__c;
+            customerRec.Designation__c				=	accRec.Designation__c;
+            customerRec.Year_of_Experience__c		=   accRec.Year_of_Experience__c;
+            customerRec.Current_Domain__c			=	accRec.Current_Domain__c;
+            customerRec.Relevant_Experience__c		=	accRec.Relevant_Experience__c;
             insert customerRec;
             customerId = customerRec.id;
         }
@@ -492,11 +504,21 @@ priceBookIdByProductId.put(pbe.Product2Id, pbe.Id);
             customerId = customerList[0].Id;
         }else{
             Customers__c customerRec = new Customers__c();
-            customerRec.Name__c = leadRec.Firstname+' '+leadRec.LastName;
-            customerRec.Email__c = leadRec.Email;
-            customerRec.Alternate_Email__c = leadRec.Alternate_Email__c;
-            customerRec.Alternate_Phone__c = leadRec.Alternate_Phone__c;
-            customerRec.Phone__c = leadRec.Phone;
+            customerRec.Name__c 					= 	leadRec.Name;
+            customerRec.Email__c 					= 	leadRec.Email;
+            customerRec.Alternate_Email__c 			= 	leadRec.Alternate_Email__c;
+            customerRec.Alternate_Phone__c 			= 	leadRec.Alternate_Phone__c;
+            customerRec.Phone__c 					=	leadRec.Phone;
+            customerRec.Profession__c				=	leadRec.Profession__c;
+            customerRec.Qualification__c			=	leadRec.Qualification__c;
+            customerRec.Branch__c					=	leadRec.Branch__c;
+            customerRec.Specialization__c			=	leadRec.Specialization__c;
+            //customerRec.Year_of_Graduation__c		=	leadRec.Year_of_Graduation__c;
+            customerRec.Why_This_Course__c			=	leadRec.Why_This_Course__c;
+            customerRec.Designation__c				=	leadRec.Designation__c;
+            customerRec.Year_of_Experience__c		=   leadRec.Year_of_Experience__c;
+            customerRec.Current_Domain__c			=	leadRec.Current_Domain__c;
+            customerRec.Relevant_Experience__c		=	leadRec.Relevant_Experience__c;
             insert customerRec;
             customerId = customerRec.id;
         }
@@ -506,11 +528,21 @@ priceBookIdByProductId.put(pbe.Product2Id, pbe.Id);
     public static Customers__c returnCustomerInstance(Lead leadRec){
         
         Customers__c customerRec = new Customers__c();
-        customerRec.Name__c = leadRec.Firstname+' '+leadRec.LastName;
-        customerRec.Email__c = leadRec.Email;
-        customerRec.Alternate_Email__c = leadRec.Alternate_Email__c;
-        customerRec.Alternate_Phone__c = leadRec.Alternate_Phone__c;
-        customerRec.Phone__c = leadRec.Phone;
+        customerRec.Name__c 					= 	leadRec.Name;
+        customerRec.Email__c 					= 	leadRec.Email;
+        customerRec.Alternate_Email__c 			= 	leadRec.Alternate_Email__c;
+        customerRec.Alternate_Phone__c 			= 	leadRec.Alternate_Phone__c;
+        customerRec.Phone__c 					=	leadRec.Phone;
+        customerRec.Profession__c				=	leadRec.Profession__c;
+        customerRec.Qualification__c			=	leadRec.Qualification__c;
+        customerRec.Branch__c					=	leadRec.Branch__c;
+        customerRec.Specialization__c			=	leadRec.Specialization__c;
+        //customerRec.Year_of_Graduation__c		=	leadRec.Year_of_Graduation__c;
+        customerRec.Why_This_Course__c			=	leadRec.Why_This_Course__c;
+        customerRec.Designation__c				=	leadRec.Designation__c;
+        customerRec.Year_of_Experience__c		=   leadRec.Year_of_Experience__c;
+        customerRec.Current_Domain__c			=	leadRec.Current_Domain__c;
+        customerRec.Relevant_Experience__c		=	leadRec.Relevant_Experience__c;
         insert customerRec;
         return customerRec;
     }

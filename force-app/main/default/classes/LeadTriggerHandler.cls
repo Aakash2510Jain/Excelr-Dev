@@ -93,6 +93,9 @@ public without sharing class LeadTriggerHandler{
                     //alternatePhoneSet.add('%'+ld.Alternate_Phone__c);
                     alternatePhoneList.add(ld.Alternate_Phone__c); 
                 }
+                if(ld.Course__c != null){
+                    ld.Enquired_Course__c = ld.Course__c;
+                }
             }
             string queryStringForNonConvertedLead = 'select Id, Email, status, course__c, CID__c,Customers__c,OwnerId,Alternate_Phone__c,Phone,Alternate_Email__c From Lead';
             String queryStringForConvertedLead = 'select Id, Email, status, course__c,CID__c,ConvertedAccountId, Customers__c,LID__c,OwnerId,Alternate_Phone__c,Phone,Alternate_Email__c From Lead ';
@@ -127,10 +130,23 @@ public without sharing class LeadTriggerHandler{
             }
             
             system.debug('whereClauses'+whereClauses);   
-            
-            queryStringForNonConvertedLead = queryStringForNonConvertedLead +' Where '+ whereClauses+ ' )  and isConverted = false order by CreatedDate Desc';
-            queryStringForConvertedLead = queryStringForConvertedLead +' Where '+ whereClauses+ ' ) and isConverted = true order by CreatedDate Desc';
-            
+            system.debug('whereClauses'+whereClauses.length());
+            if (whereClauses.length() > 2 ) {
+                queryStringForNonConvertedLead = queryStringForNonConvertedLead +' Where '+ whereClauses+ ' )  and isConverted = false order by CreatedDate Desc';
+                queryStringForConvertedLead = queryStringForConvertedLead +' Where '+ whereClauses+ ' ) and isConverted = true order by CreatedDate Desc';
+                
+            }
+            else {
+                queryStringForNonConvertedLead = queryStringForNonConvertedLead +' Where '+ ' isConverted = false order by CreatedDate Desc';
+            //System.debug('queryStringForNonConvertedLead ====> ' + queryStringForNonConvertedLead);
+                queryStringForConvertedLead = queryStringForConvertedLead +' Where '+ ' isConverted = true order by CreatedDate Desc';
+                
+            }
+            //queryStringForNonConvertedLead = queryStringForNonConvertedLead +' Where '+ whereClauses+ ' )  and isConverted = false order by CreatedDate Desc';
+            System.debug('queryStringForNonConvertedLead ====> ' + queryStringForNonConvertedLead);
+            //queryStringForConvertedLead = queryStringForConvertedLead +' Where '+ whereClauses+ ' ) and isConverted = true order by CreatedDate Desc';
+            System.debug('queryStringForConvertedLead =====> ' + queryStringForConvertedLead);
+
             duplicateExistingLeadList = Database.query(queryStringForNonConvertedLead);
             duplicateConvertedLeadList = Database.query(queryStringForConvertedLead);
             
@@ -211,28 +227,28 @@ public without sharing class LeadTriggerHandler{
                     
                     if(convertedLeadByEmail.containsKey(leadRec.Email)){
                         course = leadRec.course__c;
-                        leadId = leadRec.id;
-                        accountId = string.valueOf(lead.ConvertedAccountId);
-                        LID = leadRec.LID__c;
-                        CustomerId = leadRec.Customers__c;
+                        leadId = convertedLeadByEmail.get(leadRec.Email).id;
+                        accountId = string.valueOf(convertedLeadByEmail.get(leadRec.Email).ConvertedAccountId);
+                        LID = convertedLeadByEmail.get(leadRec.Email).LID__c;
+                        CustomerId = convertedLeadByEmail.get(leadRec.Email).Customers__c;
                     }else if(convertedLeadByAlternateEmail.containsKey(leadRec.Alternate_Email__c)){
                         course = leadRec.course__c;
-                        leadId = leadRec.id;
-                        accountId = string.valueOf(lead.ConvertedAccountId);
-                        LID = leadRec.LID__c;
-                        CustomerId = leadRec.Customers__c;
+                        leadId = convertedLeadByEmail.get(leadRec.Alternate_Email__c).id;
+                        accountId = string.valueOf(convertedLeadByEmail.get(leadRec.Alternate_Email__c).ConvertedAccountId);
+                        LID = convertedLeadByEmail.get(leadRec.Alternate_Email__c).LID__c;
+                        CustomerId = convertedLeadByEmail.get(leadRec.Alternate_Email__c).Customers__c;
                     }else if(convertedLeadByPhone.containsKey(leadRec.Phone)){
                         course = leadRec.course__c;
-                        leadId = leadRec.id;
-                        accountId = string.valueOf(lead.ConvertedAccountId);
-                        LID = leadRec.LID__c;
-                        CustomerId = leadRec.Customers__c;
+                        leadId = convertedLeadByEmail.get(leadRec.Phone).id;
+                        accountId = string.valueOf(convertedLeadByEmail.get(leadRec.Phone).ConvertedAccountId);
+                        LID = convertedLeadByEmail.get(leadRec.Phone).LID__c;
+                        CustomerId = convertedLeadByEmail.get(leadRec.Phone).Customers__c;
                     }else if(convertedLeadByAlternatePhone.containsKey(leadRec.Alternate_Phone__c)){
                         course = leadRec.course__c;
-                        leadId = leadRec.id;
-                        accountId = string.valueOf(lead.ConvertedAccountId);
-                        LID = leadRec.LID__c;
-                        CustomerId = leadRec.Customers__c;
+                        leadId = convertedLeadByEmail.get(leadRec.Alternate_Phone__c).id;
+                        accountId = string.valueOf(convertedLeadByEmail.get(leadRec.Alternate_Phone__c).ConvertedAccountId);
+                        LID = convertedLeadByEmail.get(leadRec.Alternate_Phone__c).LID__c;
+                        CustomerId = convertedLeadByEmail.get(leadRec.Alternate_Phone__c).Customers__c;
                     }
                     applicationListToInsert.add(Utility.returnApplicationInstance(accountId, course));
                     Opportunity opportunityRec = new Opportunity(Name = course, AccountId = accountId, CloseDate = Date.today().addDays(2), StageName = 'Proposal',LID__c=LID,Customers__c=CustomerId);
@@ -243,9 +259,7 @@ public without sharing class LeadTriggerHandler{
                     system.debug('Non-Converted Lead doesnot exist');
                     system.debug('duplicateExistingLeadList--->'+duplicateExistingLeadList);
                     if (!duplicateExistingLeadList.isEmpty()){
-                        system.debug('leadRec.Email--->'+leadRec.Email);
-                        system.debug('existingLeadByEmail.get(leadRec.Email).status--->'+existingLeadByEmail.get(leadRec.Email).status);
-                                                
+
                         if(existingLeadByEmail.ContainsKey(leadRec.Email)){
                             if((existingLeadByEmail.get(leadRec.Email).status == 'Dead' || existingLeadByEmail.get(leadRec.Email).Status == 'Junk')){
                                 system.debug('dead or junk and course is same');

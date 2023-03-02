@@ -251,6 +251,7 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
                      this.Firstdata=result;
                      console.log('If Part data====',this.data);
                      console.log('If Part this.Firstdata====',this.Firstdata);
+                     this.FirstTable=true;
                     //  this.data.forEach(element => { 
                     //          console.log('element==',element);
                     //          if(element.Add_Ons__r > 0){
@@ -284,6 +285,7 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
                      this.Firstdata=result;
                      console.log('In Else data====',this.data);
                      console.log('In Else this.Firstdata====',this.Firstdata);
+                     this.FirstTable=true;
                     //  this.data.forEach(element => { 
                     //          console.log('element==',element);
                     //          if(element.Add_Ons__r > 0){
@@ -316,6 +318,7 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
                      this.Firstdata=result;
                      console.log('If Part data====',this.data);
                      console.log('If Part this.Firstdata====',this.Firstdata);
+                     this.FirstTable=true;
                     //  this.data.forEach(element => { 
                     //          console.log('element==',element);
                     //             element.Add_Ons__r.forEach(element=>{
@@ -370,6 +373,10 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
         }
         else if(this.selectedRecords.length > 0){
 
+             for(let i=0;i<this.selectedRecords.length;i++){
+                     //delete this.selectedRecords[i].checkedvalue;
+               }
+
             this.NewFunction();
             
             this.FirstScreen=false;
@@ -393,6 +400,14 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
         this.FirstScreen=true;
 
         this.currentStep = '1';
+        this.TempArray=[];
+            this.data=[];
+            this.Firstdata=[];
+            this.Searchvalue='';
+
+        if(this.selectedRecords.length>0){
+            this.selectedRecords=[];    
+        }
 
         // this.template.querySelector('div.stepTwo').class.add('slds-hide');
         // this.template
@@ -405,18 +420,19 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
     @track ProductValue;
     @track TempArray=[];
     @track SecondTable=false;
+    @track Searchvalue;
     //@track Tempdata=[];
 
     //Search Bar second Screen
     HandleProduct(event){
         debugger;
-        let value=event.target.value;
+        this.Searchvalue=event.target.value;
         //this.TempValue=value;
         let TempValue;
-        if(value){
+        if(this.Searchvalue){
             //this.ProductValue=value;
            
-            TempValue=value;
+            TempValue=this.Searchvalue;
         }
         //const DELAY=300;
     //     typingTimer;
@@ -699,10 +715,15 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
                  //              this.showNotification();
                 this.navigateToList(urlString);
             }
+            disableButton=false;
 
         HandleClickSave(){
             //this.LoadingSpinner=true;
             debugger;
+            this.disableButton=true;
+            for(let i=0;i<this.AllSelectedProductsXRelatedAddOns.length;i++){
+                delete this.AllSelectedProductsXRelatedAddOns[i].checkedvalue;
+          }
             this.AllSelectedProductsXRelatedAddOns.forEach(element => {
                 
                   if(element.Addon_Product__c!=null){
@@ -792,21 +813,48 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
                 debugger;
                 
                  const recordId = event.target.dataset.id;
-                if (event.target.checked) {
-                    this.checkedvalue=event.target.checked;
-                    if(this.selectedRecords.find(item=>item.Id==recordId)){
-                        console.log('This Id Exists')
+                 const recId = event.target.dataset.id;
+                 if (event.target.checked){
+                    for (let i = 0; i < this.data.length; i++) {
+                        if (this.data[i].Id == recId ) {
+                            this.data[i].checkedvalue = true;
+                            this.selectedRecords.push(this.data[i]);
+                        }
+                        else{
+                            this.data[i].checkedvalue = false;
+                           // if (this.selectedRecords.length >0) {
+                                var recordfound = this.selectedRecords.find(record => record.Id === this.data[i].Id);
+                                console.log('recordfound',recordfound);
+                                if(recordfound != null && recordfound!= undefined){
+                                    this.selectedRecords = this.selectedRecords.filter(record => record.Id !== recordfound.Id);
+                                }  
+                            
+                        }   
                     }
-                    else{
-                         // push the selected record to the array
-                        this.selectedRecords.push(this.data.find(record => record.Id === recordId));
-                    }
-                  } else {
-                    // remove the unselected record from the array
-                    this.checkedvalue=event.target.checked;
-                    this.selectedRecords = this.selectedRecords.filter(record => record.Id !== recordId);
-                }
-                console.log('selectedRecords===',this.selectedRecords);
+
+                 }else{
+                    //this.checkedvalue=event.target.checked;
+                    
+
+                 }
+                 console.log('this.selectedRecords-',this.selectedRecords);
+                 
+                // if (event.target.checked) {
+                //     this.checkedvalue=event.target.checked;
+                    
+                //     if(this.selectedRecords.find(item=>item.Id==recordId)){
+                //         console.log('This Id Exists')
+                //     }
+                //     else{
+                //          // push the selected record to the array
+                //         this.selectedRecords.push(this.data.find(record => record.Id === recordId));
+                //     }
+                //   } else {
+                //     // remove the unselected record from the array
+                //     this.checkedvalue=event.target.checked;
+                //     this.selectedRecords = this.selectedRecords.filter(record => record.Id !== recordId);
+                // }
+                // console.log('selectedRecords===',this.selectedRecords);
 
                 
 
@@ -885,26 +933,26 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
                 });
                  
                 //-----Here Deleting The AddOn Record----Starts HERE-----
-                if(foundRecord.Add_Ons__r!=null){
-                    console.log('AddOns Exist');
+            //     if(foundRecord.Add_Ons__r!=null){
+            //         console.log('AddOns Exist');
                     
-                    foundRecord.Add_Ons__r.forEach(element => {
-                        console.log('Element--',element);
-                       if(this.AllSelectedProductsXRelatedAddOns.find(item=>item.Id==element.Id)){
-                           console.log('This Addon Id  Exist');
-                           let AddOnRecord = this.AllSelectedProductsXRelatedAddOns.find((record) => {
-                            return record.Id === element.Id;
-                        });
-                           console.log('AddOnRecord',AddOnRecord);
-                         let AddOnIndex=this.AllSelectedProductsXRelatedAddOns.indexOf(AddOnRecord);
-                            console.log('AddOnIndex',AddOnIndex);
-                         this.AllSelectedProductsXRelatedAddOns.splice(AddOnIndex, 1);
-                         this.TotalAddonXProd=this.TotalAddonXProd-AddOnRecord.Price__c;
-                         console.log('TotalAddonxProd After Addon&Product Delete',this.TotalAddonXProd);
-                       }
-                 });
+            //         foundRecord.Add_Ons__r.forEach(element => {
+            //             console.log('Element--',element);
+            //            if(this.AllSelectedProductsXRelatedAddOns.find(item=>item.Id==element.Id)){
+            //                console.log('This Addon Id  Exist');
+            //                let AddOnRecord = this.AllSelectedProductsXRelatedAddOns.find((record) => {
+            //                 return record.Id === element.Id;
+            //             });
+            //                console.log('AddOnRecord',AddOnRecord);
+            //              let AddOnIndex=this.AllSelectedProductsXRelatedAddOns.indexOf(AddOnRecord);
+            //                 console.log('AddOnIndex',AddOnIndex);
+            //              this.AllSelectedProductsXRelatedAddOns.splice(AddOnIndex, 1);
+            //              this.TotalAddonXProd=this.TotalAddonXProd-AddOnRecord.Price__c;
+            //              console.log('TotalAddonxProd After Addon&Product Delete',this.TotalAddonXProd);
+            //            }
+            //      });
 
-            }
+            // }
             //----------------------Ends Here------------------
 
 
@@ -918,17 +966,17 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
                  index=this.AllSelectedProductsXRelatedAddOns.indexOf(foundRecord);
                 console.log('index==',index);
 
-                SelectedRecodIndex=this.selectedRecords.indexOf(foundRecord);
-                console.log('index==',index);
+                // SelectedRecodIndex=this.selectedRecords.indexOf(foundRecord);
+                // console.log('index==',index);
 
-                if(this.AllSelectedProductsXRelatedAddOns[index].Discount__c!=null){
+                // if(this.AllSelectedProductsXRelatedAddOns[index].Discount__c!=null){
                      
-                    this.AllSelectedProductsXRelatedAddOns[index].Discount__c=0;
-                    //this.AllSelectedProductsXRelatedAddOns[index].ActualPriceValue=this.AllSelectedProductsXRelatedAddOns[index].PricebookEntries[0].UnitPrice;
-                }
+                //     this.AllSelectedProductsXRelatedAddOns[index].Discount__c=0;
+                //     //this.AllSelectedProductsXRelatedAddOns[index].ActualPriceValue=this.AllSelectedProductsXRelatedAddOns[index].PricebookEntries[0].UnitPrice;
+                // }
                  
                 this.AllSelectedProductsXRelatedAddOns.splice(index, 1);
-                this.selectedRecords.splice(SelectedRecodIndex, 1);
+                //this.selectedRecords.splice(SelectedRecodIndex, 1);
                 
 
                 if(foundRecord.Price__c!=null){
@@ -954,15 +1002,20 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
                      
                       let  remainingvalue=value;
                       this.AddOnXTotalPrice=remainingvalue;
-                    this.TotalAddonXProd=this.AddOnXTotalPrice.toFixed(2);
+                    this.TotalAddonXProd=this.AddOnXTotalPrice;
                     console.log('TotalAddonxProd After Product Delete',this.TotalAddonXProd);
                 }
                 console.log('this.AllSelectedProductsXRelatedAddOns',this.AllSelectedProductsXRelatedAddOns.length);
 
-                if(this.AllSelectedProductsXRelatedAddOns.length==0){
-                    this.TotalAddonXProd=0;
-                    console.log('this.TotalAddonXProd',this.TotalAddonXProd);
-                }
+                // if(this.AllSelectedProductsXRelatedAddOns.length==0){
+                //     this.TotalAddonXProd=0;
+                //     console.log('this.TotalAddonXProd',this.TotalAddonXProd);
+
+                //     // for(let i=0;i<this.selectedRecords.length;i++){
+                //     //         this.selectedRecords[i].checkedvalue=false;  
+
+                //     //  }
+                // }
 
                 //this.AllSelectedProductsXRelatedAddOns.splice(this.AllSelectedProductsXRelatedAddOns.findIndex(row => row.Id === recordId), 1);
 
@@ -1404,6 +1457,23 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
  @track AddOnXTotalPrice=0;
   NewFunction(){
         debugger;
+
+        if(this.AllSelectedProductsXRelatedAddOns.length>0){
+
+            for(let i=0;i<this.selectedRecords.length;i++){
+                if(this.selectedRecords[i].Id===this.AllSelectedProductsXRelatedAddOns[i].Id){
+                    console.log('No Need To Empty The List');
+                }else{
+                    this.AllSelectedProductsXRelatedAddOns[i].Discount__c=0;
+                    this.AllSelectedProductsXRelatedAddOns=[];
+                }
+                
+            }
+            if(this.AllSelectedProductsXRelatedAddOns.length==0){
+                this.TotalAddonXProd=0;
+            }
+         }
+
      for(let i=0;i<this.selectedRecords.length;i++){
 
         if(this.selectedRecords[i].Add_Ons__r!=null || this.selectedRecords[i].Add_Ons__r!=undefined){
@@ -1513,8 +1583,12 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
      console.log('AddOnPrice--',this.AddOnPrice);
      let TotalPrice=this.ProductPrice+this.AddOnPrice;
      this.AddOnXTotalPrice=TotalPrice;
+     if( this.AddOnXTotalPrice==0){
+        this.TotalAddonXProd = this.TotalAddonXProd;
+     }else{
+        this.TotalAddonXProd = parseInt(this.TotalAddonXProd) + this.AddOnXTotalPrice;
+     }
      
-     this.TotalAddonXProd = parseInt(this.TotalAddonXProd) + this.AddOnXTotalPrice;
      //this.TotalAddonXProd;
      console.log('TotalAddonXProd--',this.TotalAddonXProd);
      console.log('TotalPrice--',TotalPrice);

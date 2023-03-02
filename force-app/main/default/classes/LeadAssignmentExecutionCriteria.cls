@@ -6,29 +6,29 @@ public class LeadAssignmentExecutionCriteria {
         try{
             Set<Lead> assignedLead = new Set<Lead>();
             Boolean IsLeadAssigned = False;
-            list<lead> newLeadListTemp 												= new list<lead>();
-            list<lead> DefaultQueueList 											= new list<lead>();
-            list<String> matchedCriterias 											= new list<String>();
-            map<string,list<Lead>> mapofExecutionIdByListLead 						= new map<String,List<Lead>>();
-            map<String,integer> mapofExeIdByEntryCount								= new map<string,Integer>();
-            map<String,String> mapofExeIdByEvaluaationExp 							= new map<string,String>();
-            map<String,List<String>> mapByallFields 		            	        = new map<String,List<String>>();
-            map<String,List<String>> mapofFieldsWithPossibleValues 			        = new map<String,List<String>>();
-            map<String,map<String,Map<String,String>>> matchingTypeFieldByCriteria 	= new map<String,map<String,Map<String,String>>>();
-            map<string,map<string,List<String>>> multipleCriteriasForFields 	    = new map<string,map<string,List<String>>>();
-            map<string,map<string,List<Decimal>>> allotedFieldbySequenceList		= new map<string, map<string,List<Decimal>>>();
-            map<String,List<Lead>> mapofRMGroupNameByLeadList 						= new map<String,List<Lead>>();
-            map<string,map<string,String>> expectedValuebyCriteria 					= new map<string,map<string,String>>();
-            map<String,String> leadIdByMatchedCriterias 							= new map<String,String>();
-            map<string,map<string,Decimal>> allotedFieldbySequence 					= new map<string,map<string,Decimal>>();
-            map<string,String> criteriaNameById 									= new Map<String,String>();
-            map<String,map<string,list<String>>> fieldByMatchingType 				= new map<String,map<string,list<String>>>();
-            map<String,map<string,String>> fieldByFieldType 						= new map<String,map<string,String>>();
-            map<string,String> leadValueForFields 									= new Map<String,String>();
-            map<String,List<Lead>> mapofCriteriaIdByLeadList 						= new map<String,List<Lead>>();
-            map<String,List<Lead>> mapofFbGroupNameByLeadList 						= new map<String,List<Lead>>();
-            map<string,Decimal> allotedMarksbySequence 								= new Map<String,Decimal>();
-            set<String> newLeadsSet 												= new set<String>();
+            list<lead> newLeadListTemp                                              = new list<lead>();
+            list<lead> DefaultQueueList                                             = new list<lead>();
+            list<String> matchedCriterias                                           = new list<String>();
+            map<string,list<Lead>> mapofExecutionIdByListLead                       = new map<String,List<Lead>>();
+            map<String,integer> mapofExeIdByEntryCount                              = new map<string,Integer>();
+            map<String,String> mapofExeIdByEvaluaationExp                           = new map<string,String>();
+            map<String,List<String>> mapByallFields                                 = new map<String,List<String>>();
+            map<String,List<String>> mapofFieldsWithPossibleValues                  = new map<String,List<String>>();
+            map<String,map<String,Map<String,String>>> matchingTypeFieldByCriteria  = new map<String,map<String,Map<String,String>>>();
+            map<string,map<string,List<String>>> multipleCriteriasForFields         = new map<string,map<string,List<String>>>();
+            map<string,map<string,List<Decimal>>> allotedFieldbySequenceList        = new map<string, map<string,List<Decimal>>>();
+            map<String,List<Lead>> mapofRMGroupNameByLeadList                       = new map<String,List<Lead>>();
+            map<string,map<string,String>> expectedValuebyCriteria                  = new map<string,map<string,String>>();
+            map<String,String> leadIdByMatchedCriterias                             = new map<String,String>();
+            map<string,map<string,Decimal>> allotedFieldbySequence                  = new map<string,map<string,Decimal>>();
+            map<string,String> criteriaNameById                                     = new Map<String,String>();
+            map<String,map<string,list<String>>> fieldByMatchingType                = new map<String,map<string,list<String>>>();
+            map<String,map<string,String>> fieldByFieldType                         = new map<String,map<string,String>>();
+            map<string,String> leadValueForFields                                   = new Map<String,String>();
+            map<String,List<Lead>> mapofCriteriaIdByLeadList                        = new map<String,List<Lead>>();
+            map<String,List<Lead>> mapofFbGroupNameByLeadList                       = new map<String,List<Lead>>();
+            map<string,Decimal> allotedMarksbySequence                              = new Map<String,Decimal>();
+            set<String> newLeadsSet                                                 = new set<String>();
             
             string queueId = [SELECT Id, Type FROM Group WHERE Type = 'Queue' AND Name = 'Excelr Default Queue' limit 1].Id;
             list<Default_Assignment_Group__mdt> defaultGroupName = [select id,Group_Name__c from Default_Assignment_Group__mdt];
@@ -36,7 +36,7 @@ public class LeadAssignmentExecutionCriteria {
             
             list<lead> queueLeads = [SELECT Address,AD_Set_Id__c,AD_Set_Name__c,Assignment_Group__c,
                                      Branch__c,Capture_NBFC_Partner__c,Capture_Tenure__c,Capture_Upfront_payment__c,
-                                     CID_of_Referer__c,City,City__c,Comments__c,Company,Confidence_Level__c,Conversation_Comments__c
+                                     CID_of_Referer__c,City,City__c,Comments__c,Company,Confidence_Level__c
                                      ,ConvertedAccountId,ConvertedContactId,ConvertedDate,ConvertedOpportunityId,Country,Country__c,
                                      Course_Interested_Rating__c,Course__c,CreatedById,CreatedDate,Current_Domain__c,Date_of_Enrollment__c,
                                      Description,Designation__c,Do_you__c,Email,EmailBouncedDate,EmailBouncedReason,Email_Conversation_Done__c,
@@ -57,7 +57,7 @@ public class LeadAssignmentExecutionCriteria {
                                      UTM_Experiment__c,UTM_Location__c,UTM_Medium__c,UTM_Term__c,UTM_Type__c,UTM_Variety__c,Visitor_ID__c,Website,
                                      Whatsapp_Opt_in__c,Why_This_Course__c,Year_of_Experience__c 
                                      FROM Lead 
-                                     where ownerId =: queueId and Is_Lead_Assigned_to_User__c = false];
+                                     where ownerId =: queueId and Is_Lead_Assigned_to_User__c = false limit 10 FOR UPDATE];
             if(!queueLeads.isEmpty()){
                 newLeadListTemp.addAll(queueLeads);
                 System.debug(queueLeads.size()); 
@@ -65,12 +65,12 @@ public class LeadAssignmentExecutionCriteria {
             
             for(Execution_Criteria__c scr:AvailableCriterias){
                 map<string,string> fieldNameByMatching                                  = new Map<String,string>();
-                map<string,List<Decimal>> allotedFieldbySequenceListMap 				= new Map<String,List<Decimal>>();
-                map<string,Decimal> allotedFieldbySequenceMap 							= new Map<String,Decimal>();
+                map<string,List<Decimal>> allotedFieldbySequenceListMap                 = new Map<String,List<Decimal>>();
+                map<string,Decimal> allotedFieldbySequenceMap                           = new Map<String,Decimal>();
                 map<string,List<String>> fieldByMatchingTypeMap                        = new map<string,List<String>>();
                 map<string,String>fieldByFieldTypeMap                                 = new map<string,String>();
-                map<String,Map<String,String>> matchingTypeAndValuesByField 			= new map<String,Map<String,String>>();
-                List<String> allFields 													= new List<String>();  
+                map<String,Map<String,String>> matchingTypeAndValuesByField             = new map<String,Map<String,String>>();
+                List<String> allFields                                                  = new List<String>();  
                 
                 for(Execution_Criteria_Entry__c exe:scr.Execution_Criteria_Entry__R){
                     

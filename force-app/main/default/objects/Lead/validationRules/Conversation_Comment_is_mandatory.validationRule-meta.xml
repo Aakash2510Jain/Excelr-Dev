@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Conversation_Comment_is_mandatory</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+    ISBLANK(Conversation_Comments__c ) ,
+OR(
+( AND(Prior_Status__c == &apos;Open&apos;,
+OR( ISPICKVAL(Status, &apos;In Conversation&apos;), ISPICKVAL(Status, &apos;Junk&apos;), ISPICKVAL(Status,&apos;Deferred&apos;)
+    
+) )
+),
+
+( AND(Prior_Status__c == &apos;ATC&apos;,
+OR( ISPICKVAL(Status, &apos;In Conversation&apos;), ISPICKVAL(Status, &apos;Dead&apos;), ISPICKVAL(Status, &apos;On Hold&apos;),
+ISPICKVAL(Status,&apos;Deferred&apos;)
+) )
+),
+
+( AND(Prior_Status__c == &apos;In Conversation&apos;,
+OR( ISPICKVAL(Status, &apos;Dead&apos;), ISPICKVAL(Status, &apos;On Hold&apos;), ISPICKVAL(Status,&apos;Deferred&apos;)
+) )
+),
+
+( AND(Prior_Status__c == &apos;On Hold&apos;,
+OR(ISPICKVAL(Status,&apos;Deferred&apos;), ISPICKVAL(Status, &apos;Dead&apos;), ISPICKVAL(Status, &apos;In Conversation&apos;)
+) )
+),
+
+( AND(Prior_Status__c == &apos;Deferred&apos;,
+OR(ISPICKVAL(Status, &apos;In Conversation&apos;), ISPICKVAL(Status, &apos;Dead&apos;)
+) )
+
+
+)
+)
+)</errorConditionFormula>
+    <errorMessage>Comments of how the conversation went should be stated mandatorily</errorMessage>
+</ValidationRule>

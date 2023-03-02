@@ -417,6 +417,7 @@ export default class WaklInLead extends LightningElement {
           console.log('selectedresultValue--',this.selectedresultValue);
           
           this.clearSearchResults();
+          this.booleanValue = false;
         }
       
         clearSearchResults() {
@@ -608,6 +609,8 @@ export default class WaklInLead extends LightningElement {
         this.SelectedCountryStateList = [];
         this.CountryCode='';
 
+        this.booleanValue = false;
+        this.disableInput = true;
         this.LeadTobeCreated = {};
         if (this.SelectedCountryStateList.length == 0) {
             this.StateDisable = true;
@@ -786,9 +789,9 @@ TaskCreationHandler(event){
         window.alert('Choose a Correct City');
         }
         this.LeadTobeCreated.ExcelR_Training_User__c = this.agentrecid;
-        //(this.namValue!=undefined && this.namValue!=null && this.namValue!='') && 
+        //&& (this.LeadTobeCreated.Email != undefined && this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '') && (this.LeadTobeCreated.Phone != undefined && this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '')
 
-        if((this.LeadTobeCreated.LastName != undefined && this.LeadTobeCreated.LastName != null && this.LeadTobeCreated.LastName != '') && (this.LeadTobeCreated.Email != undefined && this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '') && (this.LeadTobeCreated.Phone != undefined && this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '')
+        if((this.LeadTobeCreated.LastName != undefined && this.LeadTobeCreated.LastName != null && this.LeadTobeCreated.LastName != '') 
         && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '')&& (this.selectedresultValue!=null && this.selectedresultValue!=undefined && this.selectedresultValue!='') && (this.selectedrecordDetails!=null && this.selectedrecordDetails!=undefined && this.selectedrecordDetails!='')) 
             
            {

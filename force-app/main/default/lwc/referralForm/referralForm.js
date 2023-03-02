@@ -338,7 +338,9 @@ export default class ReferralForm extends LightningElement {
     SaveReferralFormDetails() {
         debugger;
         this.handleSpinner();
-        if ((this.LeadTobeCreated.LastName != undefined && this.LeadTobeCreated.LastName != null && this.LeadTobeCreated.LastName != '') && (this.LeadTobeCreated.Email != undefined && this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '') && (this.LeadTobeCreated.Phone != undefined && this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '')
+
+        //&& (this.LeadTobeCreated.Email != undefined && this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '') && (this.LeadTobeCreated.Phone != undefined && this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '')
+        if ((this.LeadTobeCreated.LastName != undefined && this.LeadTobeCreated.LastName != null && this.LeadTobeCreated.LastName != '') 
             && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '')  && (this.LeadTobeCreated.CID_of_Referer__c != undefined && this.LeadTobeCreated.CID_of_Referer__c != null   && this.LeadTobeCreated.CID_of_Referer__c != '') && (this.LeadTobeCreated.Type_of_Course__c != undefined && this.LeadTobeCreated.Type_of_Course__c != null) 
             &&(this.selectedresultValue!=null && this.selectedresultValue!=undefined && this.selectedresultValue!='')) {
 

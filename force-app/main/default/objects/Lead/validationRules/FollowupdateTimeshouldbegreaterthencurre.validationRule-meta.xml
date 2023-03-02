@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>FollowupdateTimeshouldbegreaterthencurre</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( ISCHANGED( Next_follow_up_date_time__c ), ! ISNULL(Next_follow_up_date_time__c ) ,Next_follow_up_date_time__c &lt; NOW())</errorConditionFormula>
+    <errorDisplayField>Next_follow_up_date_time__c</errorDisplayField>
+    <errorMessage>Followup Date/Time should be greater then current time</errorMessage>
+</ValidationRule>

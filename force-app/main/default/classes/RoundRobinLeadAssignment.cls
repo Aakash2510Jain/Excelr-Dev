@@ -30,8 +30,10 @@ public without sharing class  RoundRobinLeadAssignment{
             BuildMaps.validateUserCapacity(courseName,leadIdList);
             
             for(String qName: qNameToListOfLeadsMap.keySet()){
+                System.debug('qName ====> ' + qName);
                 if(qName != null){
                     for(lead ld: qNameToListOfLeadsMap.get(qName)){
+                        System.debug('ld =====> ' + qName);
                         Boolean isAssigned = false;
                         Integer qMemberSize = 1;
                         While(QueueNameToQmemberIdList != null && qMemberSize != null && QueueNameToQmemberIdList.get(qName) != null && isAssigned == false && qMemberSize <= QueueNameToQmemberIdList.get(qName).size()){
@@ -183,7 +185,7 @@ public without sharing class  RoundRobinLeadAssignment{
            
             map<String,string> sourceIntentByGroupMap 			= new map<String,String>();
             Map<String, List<lead>> groupNameByLeads 			= new Map<String, List<lead>>();
-            List<Lead> leadsInQueue 							= [SELECT ID,Lead_Assigned_Date__c,OWNERID,Status FROM Lead WHERE id in:leadId limit 50000];
+            List<Lead> leadsInQueue 							= [SELECT ID,Lead_Assigned_Date__c,OWNERID,Status FROM Lead WHERE id in:leadId limit 50000 FOR UPDATE];
 
             if(!leadsInQueue.isEmpty()){
                 for(Lead ld: leadsInQueue){
@@ -206,6 +208,8 @@ public without sharing class  RoundRobinLeadAssignment{
     }
     
     public static Map<String, List<String>> makeCustomQueueNameToListOfUserId(string assignmentGroupName){
+
+        System.debug('assignmentGroupName ====> ' + assignmentGroupName);
         try{
             Map<String, List<String>> customQueueNameToListOfUserId 			= new Map<String, List<String>>();
             List<Assignment_Group__c> queueWithQueueMembers 					= new List<Assignment_Group__c>();
@@ -216,6 +220,7 @@ public without sharing class  RoundRobinLeadAssignment{
             listOfExistingQueueMembers 											= [select id, name,Out_Of_Office__c,Assignment_Group__c,Assignment_Group__r.name, Assignment_Id__c,Leave_End_Date__c,Leave_Start_Date__c,Group_Member__c,Group_Member__r.Id from Assignment_Group_Member__c where Assignment_Group__r.name =: assignmentGroupName ];
             Set<Id> existingQueueMembersQueueId 								= new Set<Id>();
             
+            System.debug('listOfExistingQueueMembers ===> ' + listOfExistingQueueMembers);
             if(!listOfExistingQueueMembers.isEmpty()){
                 for(Assignment_Group_Member__c agm : listOfExistingQueueMembers){
                     if(customQueueNameToListOfUserId.containsKey(agm.Assignment_Group__r.name)){

@@ -16,6 +16,8 @@ import ShowPriceIncludingGST from '@salesforce/apex/PaymentOnOpportunityApexCont
 //import CreateInvoice from '@salesforce/apex/PaymentOnOpportunityApexController.CreateInvoice';
 import UpdateOPPforFullPayment from '@salesforce/apex/PaymentOnOpportunityApexController.UpdateOPPforFullPayment';
 import UpdateOPPforPartialPayment from '@salesforce/apex/PaymentOnOpportunityApexController.UpdateOPPforPartialPayment';
+import { updateRecord } from 'lightning/uiRecordApi';
+
 
 export default class PaymentOnOpportunity extends LightningElement {
 
@@ -512,6 +514,7 @@ HandlePrevious(event){
        if(result=='Success'){
            this.showToast('Success','Invoice created successfully!','success');
            this.dispatchEvent(new CloseActionScreenEvent());
+           updateRecord({ fields: { Id: this.recordId } });
        }
        else{
 
@@ -533,6 +536,7 @@ HandlePrevious(event){
        if(result=='Success'){
            this.showToast('Success','Invoice created successfully!','success');
            this.dispatchEvent(new CloseActionScreenEvent());
+           updateRecord({ fields: { Id: this.recordId } });
        }
        else{
 
@@ -558,6 +562,7 @@ HandlePrevious(event){
             if(result=='Success'){
                 this.showToast('Success','Invoice created successfully!','success');
                 this.dispatchEvent(new CloseActionScreenEvent());
+                updateRecord({ fields: { Id: this.recordId } });
             }else{
                 this.showToast('Failed',result,'error');
             }
@@ -583,6 +588,7 @@ HandleCCAvenuePay(){
            if(result=='Success'){
                this.showToast('Success','Invoice created successfully!','success');
                this.dispatchEvent(new CloseActionScreenEvent());
+               updateRecord({ fields: { Id: this.recordId } });
            }
            else{
     
@@ -604,6 +610,7 @@ HandleCCAvenuePay(){
            if(result=='Success'){
                this.showToast('Success','Invoice created successfully!','success');
                this.dispatchEvent(new CloseActionScreenEvent());
+               updateRecord({ fields: { Id: this.recordId } });
            }
            else{
     
@@ -629,6 +636,7 @@ HandleCCAvenuePay(){
                 if(result=='Success'){
                     this.showToast('Success','Invoice created successfully!','success');
                     this.dispatchEvent(new CloseActionScreenEvent());
+                    updateRecord({ fields: { Id: this.recordId } });
                 }else{
                     this.showToast('Failed',result,'error');
                 }
@@ -652,6 +660,9 @@ HandleSave(){
 
             this.showToast('success','Invoice created successfully!','success');
             this.dispatchEvent(new CloseActionScreenEvent());
+            updateRecord({ fields: { Id: this.recordId } });
+
+
         }
         else{
             this.showToast('Failed',result,'error');

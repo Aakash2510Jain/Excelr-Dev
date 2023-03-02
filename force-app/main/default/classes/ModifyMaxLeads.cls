@@ -6,11 +6,8 @@ public class ModifyMaxLeads
             Set<Id> reporteeIds = new Set<Id>();
             List<Id> roleIds = new List<Id>();
             List<User> reportees = new List<User>();
-            string currentUserRoleId = '';
-            
-            
-            currentUserRoleId = [select Id,Max_Lead_Per_Day__c,Max_Lead_Per_Month__c,UserRoleId from User where Id =: UserInfo.getUserId()].UserRoleId;
-            if(!string.isBlank(currentUserRoleId)){
+            string currentUserRoleId = [select Id, Max_Lead_Per_Day__c, Max_Lead_Per_Month__c, UserRoleId from User where Id =: UserInfo.getUserId()].UserRoleId;
+            /*if(!string.isBlank(currentUserRoleId)){
                 for(UserRole role : [SELECT Id, Name FROM UserRole WHERE ParentRoleId =: currentUserRoleId]) {
                     roleIds.add(role.Id);
                 }
@@ -22,7 +19,9 @@ public class ModifyMaxLeads
                         reportees = [SELECT Id, Name,Username, Max_Lead_Per_Day__c,Max_Lead_Per_Month__c FROM User WHERE Id IN : reporteeIds];
                     }
                 }
-            }
+            }*/
+            
+            //Added by Anjali Singh
             reportees = hierarchialInfoController.getRoleSubordinateUsers(currentUserRoleId);
             return reportees ;
         }catch (Exception e){

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Restrict_to_Convert_Lead_Manually</fullName>
+    <active>false</active>
+    <errorConditionFormula>AND(
+    NOT(Should_be_Converted__c),  ISPICKVAL(Status, &apos;Converted&apos;)
+)</errorConditionFormula>
+    <errorMessage>Lead cannot be converted Manually</errorMessage>
+</ValidationRule>
