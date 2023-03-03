@@ -5,6 +5,9 @@ public without sharing class  RoundRobinLeadAssignment{
     public static map<string,string> mapofCouseByGroupName = new map<string,string>();
     @future
     public static void assignLeadsToBDS(String courseName,set<String> leadIdList){
+
+        System.debug('courseName ===> ' + courseName);
+        System.debug('leadIdList ===> ' + leadIdList);
         try{   
             boolean withinWorkingHour 										= false;
             string queueId 													= [SELECT Id, Type FROM Group WHERE Type = 'Queue' AND Name = 'Excelr Default Queue' limit 1].Id;

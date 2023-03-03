@@ -8,26 +8,44 @@ public class opportunityLineItemTriggerHelper {
             Utility.ApprovalWrapper approvalParentIdWrapper = Utility.getParentUserMap();
             
             for(OpportunityLineItem OLIRec : newMap.values()){
-                if(OLIRec.Discount > 20){
-                    Id approverId;
-                    Id userRoleId = oppItemMap.get(OLIRec.Id).Opportunity.Owner.UserRoleId;
-                    system.debug('userRoleId -- ' + userRoleId);
-                    Approval.ProcessSubmitRequest approvalRequest = new Approval.ProcessSubmitRequest();
-                    approvalRequest.setComments('Submitting for Manager Approval');
-                    approvalRequest.setObjectId(OLIRec.OpportunityId);
-                    approvalRequest.setProcessDefinitionNameOrId('Discount_exceeded_threshold_value');
-                    if(OLIRec.Opportunities_Owner_s_Manager_Id__c != null){
-                        approverId = OLIRec.Opportunities_Owner_s_Manager_Id__c;
+                if(!Approval.isLocked(OLIRec.OpportunityId)){
+                    if(OLIRec.Discount > 20 && OLIRec.Discount <= 30){
+                        Id approverId;
+                        Id userRoleId = oppItemMap.get(OLIRec.Id).Opportunity.Owner.UserRoleId;
+                        system.debug('userRoleId -- ' + userRoleId);
+                        Approval.ProcessSubmitRequest approvalRequest = new Approval.ProcessSubmitRequest();
+                        approvalRequest.setComments('Submitting for Manager Approval');
+                        approvalRequest.setObjectId(OLIRec.OpportunityId);
+                        approvalRequest.setProcessDefinitionNameOrId('Discount_exceeded_threshold_value');
+                        if(OLIRec.Opportunities_Owner_s_Manager_Id__c != null){
+                            approverId = OLIRec.Opportunities_Owner_s_Manager_Id__c;
+                        }
+                        else {
+                            approverId = approvalParentIdWrapper.smToManagerMap.containsKey(userRoleId) && approvalParentIdWrapper.managerRoleToUserIdMap.containsKey(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) ? approvalParentIdWrapper.managerRoleToUserIdMap.get(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
+                            //approvalRequest.setNextApproverIds(new List<Id> {system.label.Admin_User_Id});                        
+                        }
+                        approvalRequest.setNextApproverIds(new List<Id> {approverId});
+                        cdToapprovalRequestMap.put(OLIRec.Id, approvalRequest);
+                        
+                        if(!cdToapprovalRequestMap.isEmpty())
+                            List<Approval.ProcessResult> result = Approval.process(cdToapprovalRequestMap.values());
+                    }else if(OLIRec.Discount > 30 ){
+                        String syedUserId = [Select Id from User where name = 'Syed Moshin'].Id;
+                        Id approverId;
+                        Id userRoleId = oppItemMap.get(OLIRec.Id).Opportunity.Owner.UserRoleId;
+                        system.debug('userRoleId -- ' + userRoleId);
+                        Approval.ProcessSubmitRequest approvalRequest = new Approval.ProcessSubmitRequest();
+                        approvalRequest.setComments('Submitting for Manager Approval');
+                        approvalRequest.setObjectId(OLIRec.OpportunityId);
+                        approvalRequest.setProcessDefinitionNameOrId('Discount_exceeded_threshold_value');
+                        approverId = syedUserId;
+                        
+                        approvalRequest.setNextApproverIds(new List<Id> {approverId});
+                        cdToapprovalRequestMap.put(OLIRec.Id, approvalRequest);
+                        
+                        if(!cdToapprovalRequestMap.isEmpty())
+                            List<Approval.ProcessResult> result = Approval.process(cdToapprovalRequestMap.values());
                     }
-                    else {
-                        approverId = approvalParentIdWrapper.smToManagerMap.containsKey(userRoleId) && approvalParentIdWrapper.managerRoleToUserIdMap.containsKey(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) ? approvalParentIdWrapper.managerRoleToUserIdMap.get(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
-                        //approvalRequest.setNextApproverIds(new List<Id> {system.label.Admin_User_Id});                        
-                    }
-                    approvalRequest.setNextApproverIds(new List<Id> {approverId});
-                    cdToapprovalRequestMap.put(OLIRec.Id, approvalRequest);
-                    
-                    if(!cdToapprovalRequestMap.isEmpty())
-                        List<Approval.ProcessResult> result = Approval.process(cdToapprovalRequestMap.values());
                 }
             }
         } catch (Exception e){

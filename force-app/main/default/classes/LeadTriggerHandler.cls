@@ -428,7 +428,15 @@ public without sharing class LeadTriggerHandler{
                 } else if (ld.status != oldLeadMap.get(ld.Id).status &&  ld.status == 'Junk' && (ld.Is_Phone_Invalid__c == false)){
                     ld.Profession__c.addError('Lead Phone should be Invalid to mark lead as Junk');
                 }   
-                
+                if(ld.status != oldLeadMap.get(ld.Id).status && (ld.Status == 'On Hold' || ld.Status ==  'Deferred') ){
+                    dateTime currentDateTime = system.now();
+                    dateTime postOneMonth = system.now().addMonths(1);
+                    dateTime postThreeMonth = system.now().addMonths(3);
+                    if(ld.Next_follow_up_date_time__c < postOneMonth || ld.Next_follow_up_date_time__c > postThreeMonth){
+                        ld.Next_follow_up_date_time__c.addError('Follow up date should be > 1 month & < 3 month to park it in On Hold Stage');
+                    }
+                    
+                }
                 if(ld.Alternate_Email__c != oldLeadMap.get(ld.Id).Alternate_Email__c && ld.Alternate_Email__c != null){
                     emailSet.add(ld.Alternate_Email__c);
                     if(!emailSet.isEmpty()){

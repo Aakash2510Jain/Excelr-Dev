@@ -278,7 +278,7 @@ export default class chatForm extends LightningElement {
 
 
     // =========================================================Fetch Countries States with ISDCODe And Handle =================================================
-   
+
     //====================fetch Country
 
     @track countryList = [];
@@ -307,25 +307,25 @@ export default class chatForm extends LightningElement {
     HandleCountryChange(event) {
         debugger;
         //let selectedCountry=event.detail.value;
-       
+
         let SelectedcountryId = event.detail.value;
         this.SelectedcountryId = SelectedcountryId;
 
         var SelectedCountry = this.countryList.find(item => item.value == this.SelectedcountryId);
         this.LeadTobeCreated.Country__c = SelectedCountry.label;
 
-        if(SelectedCountry.label=='India'){
-            this.DefaultCountryCode="91";
-             this.CountryCode="91";
-             this.CountryCodeAlt="91";
-        }else if(SelectedCountry.label=='United Kingdom'){
-            this.DefaultCountryCode="44";
-            this.CountryCode="44";
-            this.CountryCodeAlt="44";
-        }else if(SelectedCountry.label=='United States'){
-            this.DefaultCountryCode="1";
-            this.CountryCode="1";
-            this.CountryCodeAlt="1";
+        if (SelectedCountry.label == 'India') {
+            this.DefaultCountryCode = "91";
+            this.CountryCode = "91";
+            this.CountryCodeAlt = "91";
+        } else if (SelectedCountry.label == 'United Kingdom') {
+            this.DefaultCountryCode = "44";
+            this.CountryCode = "44";
+            this.CountryCodeAlt = "44";
+        } else if (SelectedCountry.label == 'United States') {
+            this.DefaultCountryCode = "1";
+            this.CountryCode = "1";
+            this.CountryCodeAlt = "1";
         }
 
         GettingStates({
@@ -344,10 +344,10 @@ export default class chatForm extends LightningElement {
             }
 
             );
-            if(this.SelectedStateId!=null){
-                this.selectedCityValue='';
-            }
-            
+        if (this.SelectedStateId != null) {
+            this.selectedCityValue = '';
+        }
+
     }
 
 
@@ -355,18 +355,18 @@ export default class chatForm extends LightningElement {
 
     //getting States List
     @track stateList = [];
-   
+
 
 
     @track SelectedCountryStateList = [];
     @track SelectedCountryISCode;
-    
 
-    @track FetchedcityList=[];
-    @track cityList=[];
-    @track CityDisable=true;
-    @track searchResults=[];
-    @track disableInput=true;
+
+    @track FetchedcityList = [];
+    @track cityList = [];
+    @track CityDisable = true;
+    @track searchResults = [];
+    @track disableInput = true;
 
     HandleChangeState(event) {
         debugger;
@@ -376,9 +376,9 @@ export default class chatForm extends LightningElement {
 
         this.LeadTobeCreated.State__c = SelectedState.label;
         this.StateDisable = false;
-        console.log('SelectedStateId-',this.SelectedStateId);
-        console.log('SelectedcountryId-',this.SelectedcountryId);
-        
+        console.log('SelectedStateId-', this.SelectedStateId);
+        console.log('SelectedcountryId-', this.SelectedcountryId);
+
         GettingCities({
             SelectedStateId: this.SelectedStateId, SelectedCountryId: this.SelectedcountryId
         })
@@ -390,8 +390,8 @@ export default class chatForm extends LightningElement {
                     arr.push({ label: result[i].City__c, value: result[i].City__c });
                 }
                 this.FetchedcityList = arr;
-                this.disableInput=false;
-                this.CityDisable=false;
+                this.disableInput = false;
+                this.CityDisable = false;
 
                 console.log('PicklistvalueCity=', this.cityList);
             }
@@ -400,29 +400,29 @@ export default class chatForm extends LightningElement {
     }
 
     @track selectedValue
-    @track booleanValue=false;
-    search(event){
+    @track booleanValue = false;
+    search(event) {
         debugger;
-        let value=event.target.value;
+        let value = event.target.value;
 
         let TempValue;
-        if(value){
-            TempValue=value;
+        if (value) {
+            TempValue = value;
         }
 
-        let arr=[];
-        if(TempValue){
+        let arr = [];
+        if (TempValue) {
             TempValue = TempValue.charAt(0).toUpperCase() + TempValue.slice(1);
-            console.log('TempValue=',TempValue);
+            console.log('TempValue=', TempValue);
             const results = this.FetchedcityList.filter(product => product.value.includes(TempValue));
-          
-            console.log('results====',results);
+
+            console.log('results====', results);
             results.forEach(element => {
-                arr.push({label:element.value,value:element.value});
+                arr.push({ label: element.value, value: element.value });
             });
-            
-            
-            console.log('arr====',arr);
+
+
+            console.log('arr====', arr);
         }
 
         // if(this.FetchedcityList.filter(product => product.value.includes(TempValue))){
@@ -433,39 +433,39 @@ export default class chatForm extends LightningElement {
         //     window.alert('Choose a Correct City');
         //   }
 
-        this.searchResults=arr;
-        if(this.searchResults.length>0){
-            this.booleanValue=true;
-        }else{
-            this.booleanValue=false;
+        this.searchResults = arr;
+        if (this.searchResults.length > 0) {
+            this.booleanValue = true;
+        } else {
+            this.booleanValue = false;
         }
-        console.log('this.searchResults====',this.searchResults);
+        console.log('this.searchResults====', this.searchResults);
     }
 
-  
 
-    @track selectedSearchResult ;
+
+    @track selectedSearchResult;
     @track selectedresultValue;
 
-    selectSearchResult(event){
+    selectSearchResult(event) {
         debugger;
         const selectedValue = event.currentTarget.dataset.value;
-        this.selectedresultValue=selectedValue;
-        console.log('selectedValue--',selectedValue);
+        this.selectedresultValue = selectedValue;
+        console.log('selectedValue--', selectedValue);
         this.selectedSearchResult = this.searchResults.find(
             (picklistOption) => picklistOption.value === selectedValue
-          );
-          console.log('selectedSearchResult--',this.selectedSearchResult);
-          console.log('selectedresultValue--',this.selectedresultValue);
-          
-          this.clearSearchResults();
-        }
-      
-        clearSearchResults() {
-          this.searchResults = null;
-        }
+        );
+        console.log('selectedSearchResult--', this.selectedSearchResult);
+        console.log('selectedresultValue--', this.selectedresultValue);
 
-    
+        this.clearSearchResults();
+    }
+
+    clearSearchResults() {
+        this.searchResults = null;
+    }
+
+
 
     @track selectedCityValue;
     HandleCityValue(event) {
@@ -479,7 +479,7 @@ export default class chatForm extends LightningElement {
 
 
     @track StateCountryValue = [];
-   
+
 
     @track countryCodeList = [];
     @wire(fetchCountryAndCountryCode)
@@ -488,9 +488,9 @@ export default class chatForm extends LightningElement {
         if (data) {
 
             let arr = [];
-                for (let i = 0; i < data.length; i++) {
-                    arr.push({ label: data[i].CountryCode__c, value: data[i].CountryCode__c });
-                }
+            for (let i = 0; i < data.length; i++) {
+                arr.push({ label: data[i].CountryCode__c, value: data[i].CountryCode__c });
+            }
             this.countryCodeList = arr;
         }
         else if (error) {
@@ -499,11 +499,11 @@ export default class chatForm extends LightningElement {
 
     }
 
-   
+
 
     @track CityPicklistValue = [];
     @track cityValue;
-   
+
 
     @track CountryDisable = true;
     @track StateDisable = true;
@@ -515,9 +515,9 @@ export default class chatForm extends LightningElement {
     createTaskRec() {
         debugger;
         console.log('captureownerId', this.CaptureOwnerId);
-        if ((this.CaptureOwnerId != null && this.CaptureOwnerId != undefined && this.CaptureOwnerId != '') && (this.recordId != null && this.recordId != undefined && this.recordId != '')){
-            createTask({assignto: this.CaptureOwnerId,leadId: this.recordId,TaskRecord:this.taskTobeCreated})
-                  //subject: this.subjectvalue, assignto: this.CaptureOwnerId, priority: this.priorityValue, status: this.statusValue, duedate: this.DuedateValue, comments: this.comValue, followupDate: this.followupValue, leadId: this.recordId 
+        if ((this.CaptureOwnerId != null && this.CaptureOwnerId != undefined && this.CaptureOwnerId != '') && (this.recordId != null && this.recordId != undefined && this.recordId != '')) {
+            createTask({ assignto: this.CaptureOwnerId, leadId: this.recordId, TaskRecord: this.taskTobeCreated })
+                //subject: this.subjectvalue, assignto: this.CaptureOwnerId, priority: this.priorityValue, status: this.statusValue, duedate: this.DuedateValue, comments: this.comValue, followupDate: this.followupValue, leadId: this.recordId 
                 .then((result) => {
                     console.log('result', result);
                     if (result == 'Success') {
@@ -571,9 +571,9 @@ export default class chatForm extends LightningElement {
         this.CountryValue = '';
         this.selectedCityValue = '';
         this.Leadvalue = '';
-        this.SelectedMedium='';
-        this.selectedresultValue='';
-        this.DefaultCountryCode='';
+        this.SelectedMedium = '';
+        this.selectedresultValue = '';
+        this.DefaultCountryCode = '';
         this.SelectedCountryStateList = [];
 
         this.booleanValue = false;
@@ -637,9 +637,9 @@ export default class chatForm extends LightningElement {
             this.CountryCodeAlt = event.target.value;
         }
         if (InputName == 'AltPH') {
-            if(event.target.value!=null || event.target.value!=undefined || event.target.value!=''){
+            if (event.target.value != null || event.target.value != undefined || event.target.value != '') {
                 this.LeadTobeCreated.Alternate_Phone__c = event.target.value;
-            } 
+            }
         }
         if (InputName == 'course') {
             this.LeadTobeCreated.Course__c = event.target.value;
@@ -651,7 +651,7 @@ export default class chatForm extends LightningElement {
             this.LeadTobeCreated.LeadSource = event.target.value;
         }
         if (InputName == 'Medium') {
-            this.SelectedMedium=event.detail.value;
+            this.SelectedMedium = event.detail.value;
             this.LeadTobeCreated.UTM_Medium__c = event.detail.value;
         }
         if (InputName == 'VID') {
@@ -670,37 +670,37 @@ export default class chatForm extends LightningElement {
 
 
     }
-    
+
 
 
     // ==================================== task Handlers ========================================
 
-    TaskCreationHandler(event){
+    TaskCreationHandler(event) {
 
         var TaskInputName = event.currentTarget.name;
-        if (TaskInputName == 'subject'){
+        if (TaskInputName == 'subject') {
 
-            this.taskTobeCreated.Subject=event.target.value;
+            this.taskTobeCreated.Subject = event.target.value;
         }
-        if(TaskInputName == 'Priority'){
+        if (TaskInputName == 'Priority') {
 
-            this.taskTobeCreated.Priority=event.target.value;
+            this.taskTobeCreated.Priority = event.target.value;
 
-        }if(TaskInputName == 'Status'){
+        } if (TaskInputName == 'Status') {
 
-            this.taskTobeCreated.Status=event.target.value;
+            this.taskTobeCreated.Status = event.target.value;
 
-        }if(TaskInputName == 'Duedate'){
+        } if (TaskInputName == 'Duedate') {
 
-            this.taskTobeCreated.ActivityDate=event.target.value;
+            this.taskTobeCreated.ActivityDate = event.target.value;
 
-        }if(TaskInputName =='Followupdatetime'){
+        } if (TaskInputName == 'Followupdatetime') {
 
-            this.taskTobeCreated.Followup_Date_Time__c=event.target.value;
+            this.taskTobeCreated.Followup_Date_Time__c = event.target.value;
 
-        }if(TaskInputName =='Comments'){
+        } if (TaskInputName == 'Comments') {
 
-            this.taskTobeCreated.Description=event.target.value;
+            this.taskTobeCreated.Description = event.target.value;
         }
 
     }
@@ -722,74 +722,111 @@ export default class chatForm extends LightningElement {
             })
     }
 
-    
+
 
     @track HandleLeadCreatedisable = false;
 
     createNewLead() {
         debugger;
-            //this.HandleLeadCreatedisable = true;
-            if(this.FetchedcityList.find((picklistOption) => picklistOption.value === this.selectedresultValue)){
-                console.log('Selected City Is Correct');
-            }else{
+        //this.HandleLeadCreatedisable = true;
+        if (this.FetchedcityList.find((picklistOption) => picklistOption.value === this.selectedresultValue)) {
+            console.log('Selected City Is Correct');
+        } else {
             window.alert('Choose a Correct City');
-            }
-        
-        this.LeadTobeCreated.ExcelR_Training_User__c = this.agentrecid;
-        
-            //&& (this.LeadTobeCreated.Email != undefined && this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '') && (this.LeadTobeCreated.Phone != undefined && this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '')
+        }
 
-            
-        if ((this.LeadTobeCreated.LastName != undefined && this.LeadTobeCreated.LastName != null && this.LeadTobeCreated.LastName != '') 
+        this.LeadTobeCreated.ExcelR_Training_User__c = this.agentrecid;
+
+        //&& (this.LeadTobeCreated.Email != undefined && this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '') && (this.LeadTobeCreated.Phone != undefined && this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '')
+
+
+        if ((this.LeadTobeCreated.LastName != undefined && this.LeadTobeCreated.LastName != null && this.LeadTobeCreated.LastName != '')
             && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '') && (this.LeadTobeCreated.LeadSource != undefined && this.LeadTobeCreated.LeadSource != null && this.LeadTobeCreated.LeadSource != '')
-            && (this.LeadTobeCreated.UTM_Medium__c != undefined && this.LeadTobeCreated.UTM_Medium__c != null && this.LeadTobeCreated.UTM_Medium__c != '') &&(this.SelectedMedium!=null && this.SelectedMedium!= '' && this.SelectedMedium != undefined)&&(this.selectedresultValue!=null && this.selectedresultValue!=undefined && this.selectedresultValue!='')&&
+            && (this.LeadTobeCreated.UTM_Medium__c != undefined && this.LeadTobeCreated.UTM_Medium__c != null && this.LeadTobeCreated.UTM_Medium__c != '') && (this.SelectedMedium != null && this.SelectedMedium != '' && this.SelectedMedium != undefined) && (this.selectedresultValue != null && this.selectedresultValue != undefined && this.selectedresultValue != '') &&
             (this.LeadTobeCreated.Visitor_ID__c != undefined && this.LeadTobeCreated.Visitor_ID__c != null && this.LeadTobeCreated.Visitor_ID__c != '') && (this.LeadTobeCreated.Transcript__c != undefined && this.LeadTobeCreated.Transcript__c != null && this.LeadTobeCreated.Transcript__c != '') && (this.LeadTobeCreated.Enter_UTM_Link__c != undefined && this.LeadTobeCreated.Enter_UTM_Link__c != null && this.LeadTobeCreated.Enter_UTM_Link__c != '')) {
 
-                //this.HandleLeadCreatedisable = true;
-
-            var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
-
-            if (returnvalue == true && this.handleCorrectPhone(this.LeadTobeCreated.Phone)) {
-                this.HandleLeadCreatedisable = true;
-
-                createLead({ Leadrec: this.LeadTobeCreated, countrycode : this.CountryCode, countrycodealternate :this.CountryCodeAlt,mediumValue:this.SelectedMedium,city:this.selectedresultValue })
-                    .then(data => {
-
-                        if (data == 'SUCCESS') {
-                            this.handleConfirm('Lead Created Successfully');
-                            console.log(data)
-                            //alert('Lead Record created successfully');
-                            this.handleCancel();
-                            this.HandleLeadCreatedisable = false;
-                            this.LeadTobeCreated = {};
-                            this.handleSpinner();
-
-                        }
-                        else if (data == 'FAIL') {
-                            this.handleSpinner();
-                           // this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
-                            this.HandleLeadCreatedisable = false;
-                        }
-
-                    })
-                    .catch(error => {
-                        this.handleSpinner();
-                        this.handleAlert('Error updating or reloading records');
-                        this.HandleLeadCreatedisable = false;
-                        this.handleCancel();
-                    })
-
+            //this.HandleLeadCreatedisable = true;
+            if (this.LeadTobeCreated.Email != null) {
+                var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
             }
-            else {
-                alert('Incorrect Email or Phone Pattern');
-                this.HandleLeadCreatedisable = false;
+            if (this.LeadTobeCreated.Phone != null ) {
+                var phoneReturnvalue = this.handleCorrectPhone(this.LeadTobeCreated.Phone);
             }
 
+            if (this.LeadTobeCreated.Email != null && (this.LeadTobeCreated.Phone == null || this.LeadTobeCreated.Phone == '' || this.LeadTobeCreated.Phone == undefined  )) {
+                if ( returnvalue == true) {
+                    this.createLeadFromJS();
+                    
+                }
+                else{
+                    alert('Incorrect Email Pattern');
+                    this.HandleLeadCreatedisable = false;
+
+                }
+                
+            }
+            else if ( this.LeadTobeCreated.Phone != null && (this.LeadTobeCreated.Email == null || this.LeadTobeCreated.Email == '' || this.LeadTobeCreated.Email == undefined  )) {
+                if (phoneReturnvalue == true) {
+                    this.createLeadFromJS();
+                }
+                else{
+                    alert('Incorrect Phone Pattern');
+                    this.HandleLeadCreatedisable = false;
+                }
+                
+            }
+            else if (this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Phone != null) {
+                if (returnvalue == true && phoneReturnvalue == true) {
+                    this.HandleLeadCreatedisable = true;
+                    this.createLeadFromJS();
+                   
+
+                }
+                else {
+                    alert('Incorrect Email or Phone Pattern');
+                    this.HandleLeadCreatedisable = false;
+                }
+            }
+            else{
+                this.createLeadFromJS();
+            }
         }
         else {
             alert('Some of the mandatory fields are not filled');
             this.HandleLeadCreatedisable = false;
         }
+    }
+
+    createLeadFromJS(){
+        debugger;
+
+        createLead({ Leadrec: this.LeadTobeCreated, countrycode: this.CountryCode, countrycodealternate: this.CountryCodeAlt, mediumValue: this.SelectedMedium, city: this.selectedresultValue })
+        .then(data => {
+
+            if (data == 'SUCCESS') {
+                this.handleConfirm('Lead Created Successfully');
+                console.log(data)
+                //alert('Lead Record created successfully');
+                this.handleCancel();
+                this.HandleLeadCreatedisable = false;
+                this.LeadTobeCreated = {};
+                this.handleSpinner();
+
+            }
+            else if (data == 'FAIL') {
+                this.handleSpinner();
+                // this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
+                this.HandleLeadCreatedisable = false;
+            }
+
+        })
+        .catch(error => {
+            this.handleSpinner();
+            this.handleAlert('Error updating or reloading records');
+            this.HandleLeadCreatedisable = false;
+            this.handleCancel();
+        })
+
     }
 
     @track spinnerLoading = false;
@@ -799,161 +836,161 @@ export default class chatForm extends LightningElement {
 
     async handleConfirm(message) {
 
-            await LightningAlert.open({
-                message: message,
-                theme: "SUCCESS",
-                label: "SUCCESS"
-            }).then(() => {
-                console.log("###Alert Closed");
-            });
-        }
-        //success
+        await LightningAlert.open({
+            message: message,
+            theme: "SUCCESS",
+            label: "SUCCESS"
+        }).then(() => {
+            console.log("###Alert Closed");
+        });
+    }
+    //success
 
-        lookupRecord(event) {
-            debugger;
-            this.selectedrecordDetails = event.detail.selectedRecord;
-            //alert('Selected Record Value on Parent Component is ' + JSON.stringify(event.detail.selectedRecord));
-        }
+    lookupRecord(event) {
+        debugger;
+        this.selectedrecordDetails = event.detail.selectedRecord;
+        //alert('Selected Record Value on Parent Component is ' + JSON.stringify(event.detail.selectedRecord));
+    }
     async handleAlert(message) {
-            await LightningAlert.open({
-                message: message,
-                theme: "error",
-                label: "Alert"
-            }).then(() => {
-                console.log("###Alert Closed");
-            });
-        }
+        await LightningAlert.open({
+            message: message,
+            theme: "error",
+            label: "Alert"
+        }).then(() => {
+            console.log("###Alert Closed");
+        });
+    }
 
-        handleCorrectPhone(PhoneToverify) {
-            var regExpPhoneformat = /^[0-9]{1,10}$/g;
-            if (PhoneToverify.match(regExpPhoneformat)) {
-                return true;
-            }
-            else {
-                return false;
-            }
+    handleCorrectPhone(PhoneToverify) {
+        var regExpPhoneformat = /^[0-9]{1,10}$/g;
+        if (PhoneToverify.match(regExpPhoneformat)) {
+            return true;
         }
-
-        @api isLoaded = false;
-        // change isLoaded to the opposite of its current value
-        handleClick() {
-            this.isLoaded = !this.isLoaded;
+        else {
+            return false;
         }
+    }
 
-        ShowPastLeadPage() {
-            this.handleClick();
-            debugger;
-            QueryPastLeads({ ExcelRagentid: this.agentrecid })
+    @api isLoaded = false;
+    // change isLoaded to the opposite of its current value
+    handleClick() {
+        this.isLoaded = !this.isLoaded;
+    }
+
+    ShowPastLeadPage() {
+        this.handleClick();
+        debugger;
+        QueryPastLeads({ ExcelRagentid: this.agentrecid })
+            .then(data => {
+                debugger;
+                this.handleClick();
+                console.log('ertygutr54----', data);
+                this.showPastLeads = true;
+                this.showSearchDetails = false;
+                this.columns = LeadListcolumns;
+
+                if (data.length > 0) {
+                    this.Leaddata = data;
+
+
+                    this.error = undefined;
+                    this.LeadrecordsFound = true;
+                    //this.Leaddata = tempRecords;
+
+                }
+                else {
+                    this.LeadrecordsNotFound = true;
+                }
+
+            })
+            .catch(error => {
+                this.handleAlert('Error updating or reloading records');
+
+            })
+    }
+
+    ShowSearchpage() {
+        debugger;
+
+        this.showPastLeads = false;
+        this.showSearchDetails = true;
+        this.columns = applicationcolumns;
+    }
+
+
+    HandleCreateDisable = false;
+    @track isLoadedApplication = false;
+
+    createapplicationForm() {
+        this.HandleCreateDisable = true;
+        debugger;
+        this.isLoadedApplication = true;
+        if (this.courseforApp != null) {
+            // this.handleClick();
+            createApplication({ Course: this.courseforApp, LeadId: this.recordId })
                 .then(data => {
                     debugger;
-                    this.handleClick();
-                    console.log('ertygutr54----', data);
-                    this.showPastLeads = true;
-                    this.showSearchDetails = false;
-                    this.columns = LeadListcolumns;
 
-                    if (data.length > 0) {
-                        this.Leaddata = data;
+                    this.showapplicationMOdal = false;
+                    this.HandleCreateDisable = false;
+                    this.handleConfirm('Application Created Successfully');
+                    this.isLoadedApplication = false;
+                    this.appbtndisAble = true;
 
-                       
-                        this.error = undefined;
-                        this.LeadrecordsFound = true;
-                        //this.Leaddata = tempRecords;
+                    refreshApex(this.dataForApp);
 
-                    }
-                    else {
-                        this.LeadrecordsNotFound = true;
-                    }
 
                 })
                 .catch(error => {
+                    this.HandleCreateDisable = false;
+                    this.isLoadedApplication = false;
                     this.handleAlert('Error updating or reloading records');
-
                 })
+
         }
-
-        ShowSearchpage() {
-            debugger;
-
-            this.showPastLeads = false;
-            this.showSearchDetails = true;
-            this.columns = applicationcolumns;
+        else {
+            alert('Course is Empty. Please Provide Course');
+            this.HandleCreateDisable = false;
+            this.handleClick();
         }
-
-
-        HandleCreateDisable = false;
-        @track isLoadedApplication = false;
-
-        createapplicationForm() {
-            this.HandleCreateDisable = true;
-            debugger;
-            this.isLoadedApplication = true;
-            if (this.courseforApp != null) {
-                // this.handleClick();
-                createApplication({ Course: this.courseforApp, LeadId: this.recordId })
-                    .then(data => {
-                        debugger;
-
-                        this.showapplicationMOdal = false;
-                        this.HandleCreateDisable = false;
-                        this.handleConfirm('Application Created Successfully');
-                        this.isLoadedApplication = false;
-                        this.appbtndisAble = true;
-                       
-                        refreshApex(this.dataForApp);
-
-
-                    })
-                    .catch(error => {
-                        this.HandleCreateDisable = false;
-                        this.isLoadedApplication = false;
-                        this.handleAlert('Error updating or reloading records');
-                    })
-
-            }
-            else {
-                alert('Course is Empty. Please Provide Course');
-                this.HandleCreateDisable = false;
-                this.handleClick();
-            }
-        }
-
-        courseforapphandler(event) {
-            let selectecourse = event.detail.value;
-            this.courseforApp = selectecourse;
-        }
-
-        showpplicationForm() {
-            debugger;
-            this.showapplicationMOdal = true;
-        }
-
-        handleappCancel() {
-            debugger;
-            this.showapplicationMOdal = false;
-        }
-
-        handleOnselect(event) {
-            debugger;
-            var selectedVal = event.detail.value;
-            if (selectedVal == 'Walk-In') {
-                var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
-                window.open(urlString, "_self");
-
-            }
-            if (selectedVal == 'Voice') {
-                var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
-                window.open(urlString, "_self");
-
-            }
-            if (selectedVal == 'Generic') {
-                var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
-                window.open(urlString, "_self");
-            }
-            if (selectedVal == 'Chat') {
-                var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
-                window.location.replace(urlString, "_self");
-            }
-        }
-
     }
+
+    courseforapphandler(event) {
+        let selectecourse = event.detail.value;
+        this.courseforApp = selectecourse;
+    }
+
+    showpplicationForm() {
+        debugger;
+        this.showapplicationMOdal = true;
+    }
+
+    handleappCancel() {
+        debugger;
+        this.showapplicationMOdal = false;
+    }
+
+    handleOnselect(event) {
+        debugger;
+        var selectedVal = event.detail.value;
+        if (selectedVal == 'Walk-In') {
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
+            window.open(urlString, "_self");
+
+        }
+        if (selectedVal == 'Voice') {
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
+            window.open(urlString, "_self");
+
+        }
+        if (selectedVal == 'Generic') {
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
+            window.open(urlString, "_self");
+        }
+        if (selectedVal == 'Chat') {
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
+            window.location.replace(urlString, "_self");
+        }
+    }
+
+}

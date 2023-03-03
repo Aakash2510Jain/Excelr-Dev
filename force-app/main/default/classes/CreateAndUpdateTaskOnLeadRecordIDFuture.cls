@@ -1,5 +1,5 @@
-public class CreateAndUpdateTaskOnLeadRecordID{
-    
+public class CreateAndUpdateTaskOnLeadRecordIDFuture {
+    @future(callout=true)
     public static void CreateandUpdatetask(string jsonstring, string leadId){
         
         try{
@@ -138,5 +138,4 @@ public class CreateAndUpdateTaskOnLeadRecordID{
         }
         
     }
-    
 }

@@ -373,6 +373,7 @@ public class LeadAssignmentExecutionCriteria {
                         leadTemp = BooleanExpressionCalculation.evaluateExpression(Booleanvalues);    
                     }
                     
+                    System.debug('leadTemp ===> ' +leadTemp);
                     if(leadTemp == true){
                         assignedLead.add(ld);
                         matchedCriterias.add(criteriaName);
@@ -383,6 +384,9 @@ public class LeadAssignmentExecutionCriteria {
                         }
                     }
                 }
+
+                System.debug('mapofExecutionIdByListLead ====> ' + mapofExecutionIdByListLead);
+                System.debug('assignedLead ===> ' + assignedLead);
                 if(assignedLead.contains(ld)){
                 }else{
                     DefaultQueueList.add(ld);    
@@ -404,13 +408,17 @@ public class LeadAssignmentExecutionCriteria {
     }
     
     public static void getGroupNameByLeads(map<string,list<lead>> mapofExecutionIdByLeadList,map<String,List<Lead>> mapofGlobalGroupNameByLeadList){
+
+        System.debug('mapofExecutionIdByLeadList ===> ' + mapofExecutionIdByLeadList);
+        System.debug('mapofGlobalGroupNameByLeadList ===> ' + mapofGlobalGroupNameByLeadList);
         try{
             
             list<Assignment_Group__c> agList = [SELECT id,name,Lead_Assigning_Criteria__c from assignment_group__c where Lead_Assigning_Criteria__c in: mapofExecutionIdByLeadList.keySet()];
             map<string,list<lead>> mapOfGroupNameByListLead = new map<string,list<lead>>();
-            
+            System.debug('agList ===> ' + agList);
             
             if(!agList.isEmpty()){
+                System.debug('agList is not Empty !!');
                 for(assignment_group__c assGroup : agList){
                     mapOfGroupNameByListLead.put(assGroup.name, mapofExecutionIdByLeadList.get(assGroup.Lead_Assigning_Criteria__c));
                 }
@@ -425,16 +433,24 @@ public class LeadAssignmentExecutionCriteria {
                         }
                     }
                     Set<string> tempId = new Set<String>(mapofGroupnameByLeadIdList.get(mapKey));
+                    System.debug('RR about to Start when agList Is not Empty!!');
+                    System.debug('mapKey ====> ' + mapKey);
+                    System.debug('tempId ====> ' + tempId);
                     RoundRobinLeadAssignment.assignLeadsToBDS(mapKey,tempId);
                 }
             }
             //this is else Part.....
+            System.debug('mapofGlobalGroupNameByLeadList ======> ' + mapofGlobalGroupNameByLeadList);
             if(!mapofGlobalGroupNameByLeadList.isEmpty()){
+                System.debug('mapofGlobalGroupNameByLeadList is not Empty !!');
                 set<String> tempId = new set<String>();
                 for(string mapKey : mapofGlobalGroupNameByLeadList.keySet()){
                     for(Lead ld : mapofGlobalGroupNameByLeadList.get(mapKey)){
                         tempId.add(ld.id);
                     }
+                    System.debug('RR about to Start when mapofGlobalGroupNameByLeadList Is not Empty!!');
+                    System.debug('mapKey ====> ' + mapKey);
+                    System.debug('tempId ====> ' + tempId);
                     RoundRobinLeadAssignment.assignLeadsToBDS(mapKey,tempId);
                 }
             }
