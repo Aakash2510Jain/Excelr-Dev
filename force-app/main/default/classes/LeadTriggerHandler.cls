@@ -100,6 +100,12 @@ public without sharing class LeadTriggerHandler{
             string queryStringForNonConvertedLead = 'select Id, Email, status, course__c, CID__c,Customers__c,OwnerId,Alternate_Phone__c,Phone,Alternate_Email__c From Lead';
             String queryStringForConvertedLead = 'select Id, Email, status, course__c,CID__c,ConvertedAccountId, Customers__c,LID__c,OwnerId,Alternate_Phone__c,Phone,Alternate_Email__c From Lead ';
             
+
+            System.debug('emailList ====> ' + emailList);
+            System.debug('alternateEmailList ====> ' + alternateEmailList);
+            System.debug('phoneList ====> ' + phoneList);
+            System.debug('alternatePhoneList ====> ' + alternatePhoneList);
+
             // dynamic query part :              
             String whereClauses  = '( ';
             
@@ -134,49 +140,41 @@ public without sharing class LeadTriggerHandler{
             if (whereClauses.length() > 2 ) {
                 queryStringForNonConvertedLead = queryStringForNonConvertedLead +' Where '+ whereClauses+ ' )  and isConverted = false order by CreatedDate Desc';
                 queryStringForConvertedLead = queryStringForConvertedLead +' Where '+ whereClauses+ ' ) and isConverted = true order by CreatedDate Desc';
-                
+                duplicateExistingLeadList = Database.query(queryStringForNonConvertedLead);
+                duplicateConvertedLeadList = Database.query(queryStringForConvertedLead);
             }
-            else {
+            /*else {
                 queryStringForNonConvertedLead = queryStringForNonConvertedLead +' Where '+ ' isConverted = false order by CreatedDate Desc';
             //System.debug('queryStringForNonConvertedLead ====> ' + queryStringForNonConvertedLead);
                 queryStringForConvertedLead = queryStringForConvertedLead +' Where '+ ' isConverted = true order by CreatedDate Desc';
                 
-            }
+            }*/
             //queryStringForNonConvertedLead = queryStringForNonConvertedLead +' Where '+ whereClauses+ ' )  and isConverted = false order by CreatedDate Desc';
             System.debug('queryStringForNonConvertedLead ====> ' + queryStringForNonConvertedLead);
             //queryStringForConvertedLead = queryStringForConvertedLead +' Where '+ whereClauses+ ' ) and isConverted = true order by CreatedDate Desc';
             System.debug('queryStringForConvertedLead =====> ' + queryStringForConvertedLead);
 
-            duplicateExistingLeadList = Database.query(queryStringForNonConvertedLead);
-            duplicateConvertedLeadList = Database.query(queryStringForConvertedLead);
+            
             
             if(!duplicateExistingLeadList.isEmpty()){
                 for(Lead leadrec : duplicateExistingLeadList){
                     if(!string.isEmpty(leadrec.Email)){
-                        if(existingLeadByEmail.ContainsKey(leadrec.Email)){
-                            
-                        }else{
-                            existingLeadByEmail.put(leadrec.Email,leadrec);
+                        if(!existingLeadByEmail.ContainsKey(leadrec.Email)){
+                             existingLeadByEmail.put(leadrec.Email,leadrec);
                         }
                     }
                     if(!string.isEmpty(leadrec.Alternate_Email__c)){
-                        if(existingLeadByAlternateEmail.ContainsKey(leadrec.Alternate_Email__c)){
-                            
-                        }else{
+                        if(!existingLeadByAlternateEmail.ContainsKey(leadrec.Alternate_Email__c)){
                             existingLeadByAlternateEmail.put(leadrec.Alternate_Email__c,leadrec);
                         }
                     }
                     if(!string.isEmpty(leadrec.Phone)){
-                        if(existingLeadByPhone.ContainsKey(leadrec.Phone)){
-                            
-                        }else{
+                        if(!existingLeadByPhone.ContainsKey(leadrec.Phone)){
                             existingLeadByPhone.put(leadrec.Phone,leadrec);
                         }
                     }
                     if(!string.isEmpty(leadrec.Alternate_Phone__c)){
-                        if(existingLeadByAlternatePhone.ContainsKey(leadrec.Alternate_Phone__c)){
-                            
-                        }else{
+                        if(!existingLeadByAlternatePhone.ContainsKey(leadrec.Alternate_Phone__c)){
                             existingLeadByAlternatePhone.put(leadrec.Alternate_Phone__c,leadrec);
                         }
                     }
@@ -185,37 +183,39 @@ public without sharing class LeadTriggerHandler{
             if(!duplicateConvertedLeadList.isEmpty()){
                 for(Lead leadrec : duplicateConvertedLeadList){
                     if(!string.isEmpty(leadrec.Email)){
-                        if(convertedLeadByEmail.ContainsKey(leadrec.Email)){
-                            
-                        }else{
+                        if(!convertedLeadByEmail.ContainsKey(leadrec.Email)){
                             convertedLeadByEmail.put(leadrec.Email,leadrec);
                         }
                     }
                     if(!string.isEmpty(leadrec.Alternate_Email__c)){
-                        if(convertedLeadByAlternateEmail.ContainsKey(leadrec.Alternate_Email__c)){
-                            
-                        }else{
+                        if(!convertedLeadByAlternateEmail.ContainsKey(leadrec.Alternate_Email__c)){
                             convertedLeadByAlternateEmail.put(leadrec.Alternate_Email__c,leadrec);
                         }
                     }
                     if(!string.isEmpty(leadrec.Phone)){
-                        if(convertedLeadByPhone.ContainsKey(leadrec.Phone)){
-                            
-                        }else{
+                        if(!convertedLeadByPhone.ContainsKey(leadrec.Phone)){
                             convertedLeadByPhone.put(leadrec.Phone,leadrec);
                         }
                     }
                     if(!string.isEmpty(leadrec.Alternate_Phone__c)){
-                        if(convertedLeadByAlternatePhone.ContainsKey(leadrec.Alternate_Phone__c)){
-                            
-                        }else{
+                        if(!convertedLeadByAlternatePhone.ContainsKey(leadrec.Alternate_Phone__c)){
                             convertedLeadByAlternatePhone.put(leadrec.Alternate_Phone__c,leadrec);
                         }
                     }
                 }
             }
-            
-            
+
+            System.debug('existingLeadByEmail ====> ' + existingLeadByEmail);
+            System.debug('existingLeadByAlternateEmail ====> ' + existingLeadByAlternateEmail);
+            System.debug('existingLeadByPhone ====> ' + existingLeadByPhone);            
+            System.debug('existingLeadByAlternatePhone ====> ' + existingLeadByAlternatePhone); 
+
+
+            System.debug('convertedLeadByEmail ====> ' + convertedLeadByEmail); 
+            System.debug('convertedLeadByAlternateEmail ====> ' + convertedLeadByAlternateEmail); 
+            System.debug('convertedLeadByPhone ====> ' + convertedLeadByPhone); 
+            System.debug('convertedLeadByAlternatePhone ====> ' + convertedLeadByAlternatePhone); 
+
             for(Lead leadRec : leadList){
                 system.debug('leadRec---->'+leadRec);
                 if (!duplicateConvertedLeadList.isEmpty()){
@@ -250,6 +250,11 @@ public without sharing class LeadTriggerHandler{
                         LID = convertedLeadByEmail.get(leadRec.Alternate_Phone__c).LID__c;
                         CustomerId = convertedLeadByEmail.get(leadRec.Alternate_Phone__c).Customers__c;
                     }
+                    System.debug('course ====> ' + course);
+                    System.debug('leadId ====> ' + leadId);
+                    System.debug('accountId ====> ' + accountId);
+                    System.debug('LID ====> ' + LID);
+                    System.debug('CustomerId ====> ' + CustomerId);
                     applicationListToInsert.add(Utility.returnApplicationInstance(accountId, course));
                     Opportunity opportunityRec = new Opportunity(Name = course, AccountId = accountId, CloseDate = Date.today().addDays(2), StageName = 'Proposal',LID__c=LID,Customers__c=CustomerId);
                     opportunityListToInsert.add(opportunityRec);
@@ -374,6 +379,10 @@ public without sharing class LeadTriggerHandler{
     public void beforeUpdate(Map<Id, Lead> newLeadMap, Map<Id, Lead> oldLeadMap){
         try{
             system.debug('Before Update');
+            List<lead> duplicateLeadsByEmail = new List<Lead>();
+            List<lead> duplicateLeadsByPhone = new List<Lead>();
+            Set<String> emailSet = new Set<String>();
+            Set<String> PhoneSet = new Set<String>();
             
             for (Lead ld : newLeadMap.values()){
                 if (ld.Enter_UTM_Link__c != null && ld.Lead_Generation_Method__c != null && (ld.Lead_Generation_Method__c == 'Chat Form' || ld.Lead_Generation_Method__c == 'Generic Form' )){
@@ -394,32 +403,55 @@ public without sharing class LeadTriggerHandler{
                 if(ld.Profession__c != null && ld.Profession__c != oldLeadMap.get(ld.Id).Profession__c){
                     addValidationForProfilling(ld, oldLeadMap);
                 }
-                if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Open' && (ld.status == 'ATC' || ld.status == 'In Conversation' || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred') && (ld.Email_Conversation_Done__c == false || ld.Telephonic_Conversation__c == false) ){
-                    ld.status.addError('Email and Telephonic conversation is required to proceed');
+                if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Open' && (ld.status == 'ATC' || ld.status == 'In Conversation' || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred') && (ld.Email_Conversation_Done__c == false && ld.Telephonic_Conversation__c == false) ){
+                    ld.status.addError('Email or Telephonic conversation is required to proceed');
                 }else if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Open' && (ld.status == 'In Conversation' || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && ld.Profession__c == null ){
                     ld.Profession__c.addError('Profiling Details are required to proceed (Profession,Experience...)');
-                }else  if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'ATC' && ( ld.status == 'In Conversation' || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && (ld.Email_Conversation_Done__c == false || ld.Telephonic_Conversation__c == false) ){
-                    ld.status.addError('Email and Telephonic conversation is required to proceed');
+                }else  if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'ATC' && ( ld.status == 'In Conversation' || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && (ld.Email_Conversation_Done__c == false && ld.Telephonic_Conversation__c == false) ){
+                    ld.status.addError('Email or Telephonic conversation is required to proceed');
                 }else if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'ATC' && (ld.status == 'In Conversation' || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && ld.Profession__c == null ){
                     ld.Profession__c.addError('Profiling Details are required to proceed (Profession,Experience...)');
-                }else  if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'In Conversation' && (ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && (ld.Email_Conversation_Done__c == false || ld.Telephonic_Conversation__c == false) ){
-                    ld.status.addError('Email and Telephonic conversation is required to proceed');
+                }else  if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'In Conversation' && (ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && (ld.Email_Conversation_Done__c == false && ld.Telephonic_Conversation__c == false) ){
+                    ld.status.addError('Email or Telephonic conversation is required to proceed');
                 }else if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'In Conversation' && (ld.status == 'Promote') && ld.Profession__c == null ){
                     ld.Profession__c.addError('Profiling Details are required to proceed (Profession,Experience...)');
-                }else  if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'On Hold' && (ld.status == 'Deferred' || ld.status == 'Promote' || ld.status == 'Dead' || ld.status == 'In Conversation') && (ld.Email_Conversation_Done__c == false || ld.Telephonic_Conversation__c == false) ){
-                    ld.status.addError('Email and Telephonic conversation is required to proceed');
+                }else  if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'On Hold' && (ld.status == 'Deferred' || ld.status == 'Promote' || ld.status == 'Dead' || ld.status == 'In Conversation') && (ld.Email_Conversation_Done__c == false && ld.Telephonic_Conversation__c == false) ){
+                    ld.status.addError('Email or Telephonic conversation is required to proceed');
                 }else  if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'On Hold' && (ld.status == 'Promote' ) && (ld.Profession__c == null) ){
                     ld.Profession__c.addError('Profiling Details are required to proceed (Profession,Experience...)');
-                }else  if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Deferred' && (ld.status == 'Promote' || ld.status == 'Dead' || ld.status == 'In Conversation') && (ld.Email_Conversation_Done__c == false || ld.Telephonic_Conversation__c == false) ){
-                    ld.status.addError('Email and Telephonic conversation is required to proceed');
+                }else  if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Deferred' && (ld.status == 'Promote' || ld.status == 'Dead' || ld.status == 'In Conversation') && (ld.Email_Conversation_Done__c == false && ld.Telephonic_Conversation__c == false) ){
+                    ld.status.addError('Email or Telephonic conversation is required to proceed');
                 }else  if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Deferred' && (ld.status == 'Promote' ) && (ld.Profession__c == null) ){
                     ld.Profession__c.addError('Profiling Details are required to proceed (Profession,Experience...)');
                 }else if (ld.status != oldLeadMap.get(ld.Id).status &&  ld.status == 'Junk' && (ld.Is_Email_Invalid__c == false)){
                     ld.Profession__c.addError('Lead Email should be Invalid to mark lead as Junk');
                 } else if (ld.status != oldLeadMap.get(ld.Id).status &&  ld.status == 'Junk' && (ld.Is_Phone_Invalid__c == false)){
                     ld.Profession__c.addError('Lead Phone should be Invalid to mark lead as Junk');
+                }   
+                
+                if(ld.Alternate_Email__c != oldLeadMap.get(ld.Id).Alternate_Email__c && ld.Alternate_Email__c != null){
+                    emailSet.add(ld.Alternate_Email__c);
+                    if(!emailSet.isEmpty()){
+                        duplicateLeadsByEmail = [Select Id,Email,Alternate_Email__c From Lead Where Email In : emailSet or Alternate_Email__c In : emailSet limit 1];
+                        if(!duplicateLeadsByEmail.isEmpty()){
+                            ld.Alternate_Email__c.addError('Other Leads exists with Same Email');
+                        }
+                    }
+                }
+                if(ld.Alternate_Phone__c != oldLeadMap.get(ld.Id).Alternate_Phone__c && ld.Alternate_Phone__c != null){
+                    
+                    PhoneSet.add('%'+(ld.Alternate_Phone__c).replaceAll('\\+', ''));
+                    system.debug('PhoneSet-->'+PhoneSet);
+                    if(!PhoneSet.isEmpty()){
+                        duplicateLeadsByPhone = [Select Id,Phone,Alternate_Phone__c From Lead Where Phone Like : PhoneSet or Alternate_Phone__c Like : PhoneSet limit 1];
+                        if(!duplicateLeadsByPhone.isEmpty()){
+                            ld.Alternate_Phone__c.addError('Other Leads exists with Same Phone No.');
+                        }
+                    }
                 }                
             }
+        
+            
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
             HandleBusinessException.captureError('LeadTriggerHandler', 'Before Lead Update', e, null);
