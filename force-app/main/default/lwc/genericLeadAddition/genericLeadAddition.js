@@ -796,14 +796,53 @@ export default class WaklInLead extends LightningElement {
                 && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '') && (this.LeadTobeCreated.LeadSource != undefined && this.LeadTobeCreated.LeadSource != null && this.LeadTobeCreated.LeadSource != '')
                 && (this.LeadTobeCreated.UTM_Medium__c != undefined && this.LeadTobeCreated.UTM_Medium__c != null && this.LeadTobeCreated.UTM_Medium__c != '') &&(this.SelectedMedium!=null && this.SelectedMedium!= '' && this.SelectedMedium != undefined)&&(this.selectedresultValue!=null && this.selectedresultValue!=undefined && this.selectedresultValue!='')&&
                 (this.LeadTobeCreated.Visitor_ID__c != undefined && this.LeadTobeCreated.Visitor_ID__c != null && this.LeadTobeCreated.Visitor_ID__c != '') && (this.LeadTobeCreated.Transcript__c != undefined && this.LeadTobeCreated.Transcript__c != null && this.LeadTobeCreated.Transcript__c != '') && (this.LeadTobeCreated.Enter_UTM_Link__c != undefined && this.LeadTobeCreated.Enter_UTM_Link__c != null && this.LeadTobeCreated.Enter_UTM_Link__c != '')) {
-
-
-            
-
-           
+                    if (this.LeadTobeCreated.Email != null) {
+                        var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
+                    }
+                    if (this.LeadTobeCreated.Phone != null ) {
+                        var phoneReturnvalue = this.handleCorrectPhone(this.LeadTobeCreated.Phone);
+                    }
+        
+                    if (this.LeadTobeCreated.Email != null && (this.LeadTobeCreated.Phone == null || this.LeadTobeCreated.Phone == '' || this.LeadTobeCreated.Phone == undefined  )) {
+                        if ( returnvalue == true) {
+                            this.createLeadFromJS();
+                            
+                        }
+                        else{
+                            alert('Incorrect Email Pattern');
+                            this.HandleLeadCreatedisable = false;
+        
+                        }
+                        
+                    }
+                    else if ( this.LeadTobeCreated.Phone != null && (this.LeadTobeCreated.Email == null || this.LeadTobeCreated.Email == '' || this.LeadTobeCreated.Email == undefined  )) {
+                        if (phoneReturnvalue == true) {
+                            this.createLeadFromJS();
+                        }
+                        else{
+                            alert('Incorrect Phone Pattern');
+                            this.HandleLeadCreatedisable = false;
+                        }
+                        
+                    }
+                    else if (this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Phone != null) {
+                        if (returnvalue == true && phoneReturnvalue == true) {
+                            this.HandleLeadCreatedisable = true;
+                            this.createLeadFromJS();
+                           
+        
+                        }
+                        else {
+                            alert('Incorrect Email or Phone Pattern');
+                            this.HandleLeadCreatedisable = false;
+                        }
+                    }
+                    else{
+                        this.createLeadFromJS();
+                    }
             debugger;
-            var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
-            if (returnvalue == true && this.handleCorrectPhone(this.LeadTobeCreated.Phone)) { //firstname: this.namValue, 
+            //var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
+            /*if (returnvalue == true && this.handleCorrectPhone(this.LeadTobeCreated.Phone)) { //firstname: this.namValue, 
 
                 this.HandleLeadCreatedisable = true;
                 createLead({ Leadrec: this.LeadTobeCreated, countrycode : this.CountryCode, countrycodealternate :this.CountryCodeAlt,mediumValue:this.SelectedMedium,city:this.selectedresultValue })
@@ -844,13 +883,48 @@ export default class WaklInLead extends LightningElement {
             else {
                 alert('Incorrect Email or Phone Pattern');
                 this.HandleLeadCreatedisable = false;
-            }
+            }*/
         }
         else {
             alert('Some of the mandatory fields are not filled');
             this.HandleLeadCreatedisable = false;
         }
     }
+
+
+    createLeadFromJS(){
+        debugger;
+
+        createLead({ Leadrec: this.LeadTobeCreated, countrycode: this.CountryCode, countrycodealternate: this.CountryCodeAlt, mediumValue: this.SelectedMedium, city: this.selectedresultValue })
+        .then(data => {
+
+            if (data == 'SUCCESS') {
+                this.handleConfirm('Lead Created Successfully');
+                console.log(data)
+                //alert('Lead Record created successfully');
+                this.handleCancel();
+                this.HandleLeadCreatedisable = false;
+                this.LeadTobeCreated = {};
+                this.handleSpinner();
+
+            }
+            else if (data == 'FAIL') {
+                this.handleSpinner();
+                // this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
+                this.HandleLeadCreatedisable = false;
+            }
+
+        })
+        .catch(error => {
+            this.handleSpinner();
+            this.handleAlert('Error updating or reloading records');
+            this.HandleLeadCreatedisable = false;
+            this.handleCancel();
+        })
+
+    }
+
+
 
     async handleConfirm(message) {
         /*const result = await LightningConfirm.open({

@@ -208,7 +208,7 @@ export default class voiceForm extends LightningElement {
     @track StatusList = [];
 
     //==============================Getting All Picklist Fields From Lead and Task Object=====Starts Here===================================================
-    
+
     @wire(getallPicklistvlaues)
     wiredResponsePicklist({ data, error }) {
         debugger;
@@ -321,25 +321,25 @@ export default class voiceForm extends LightningElement {
     HandleCountryChange(event) {
         debugger;
         //let selectedCountry=event.detail.value;
-       
+
         let SelectedcountryId = event.detail.value;
         this.SelectedcountryId = SelectedcountryId;
 
         var SelectedCountry = this.countryList.find(item => item.value == this.SelectedcountryId);
         this.LeadTobeCreated.Country__c = SelectedCountry.label;
 
-        if(SelectedCountry.label=='India'){
-            this.DefaultCountryCode="91";
-            this.CountryCode="91";
-            this.CountryCodeAlt="91";
-        }else if(SelectedCountry.label=='United Kingdom'){
-            this.DefaultCountryCode="44";
-            this.CountryCode="44";
-            this.CountryCodeAlt="44";
-        }else if(SelectedCountry.label=='United States'){
-            this.DefaultCountryCode="1";
-            this.CountryCode="1";
-            this.CountryCodeAlt="1";
+        if (SelectedCountry.label == 'India') {
+            this.DefaultCountryCode = "91";
+            this.CountryCode = "91";
+            this.CountryCodeAlt = "91";
+        } else if (SelectedCountry.label == 'United Kingdom') {
+            this.DefaultCountryCode = "44";
+            this.CountryCode = "44";
+            this.CountryCodeAlt = "44";
+        } else if (SelectedCountry.label == 'United States') {
+            this.DefaultCountryCode = "1";
+            this.CountryCode = "1";
+            this.CountryCodeAlt = "1";
         }
 
         GettingStates({
@@ -358,26 +358,26 @@ export default class voiceForm extends LightningElement {
             }
 
             );
-            if(this.SelectedStateId!=null){
-                this.selectedCityValue='';
-            }
-            
+        if (this.SelectedStateId != null) {
+            this.selectedCityValue = '';
+        }
+
     }
 
     //getting States List
     @track stateList = [];
-   
+
 
 
     @track SelectedCountryStateList = [];
     @track SelectedCountryISCode;
-    
 
-    @track FetchedcityList=[];
-    @track cityList=[];
-    @track CityDisable=true;
-    @track searchResults=[];
-    @track disableInput=true;
+
+    @track FetchedcityList = [];
+    @track cityList = [];
+    @track CityDisable = true;
+    @track searchResults = [];
+    @track disableInput = true;
 
     HandleChangeState(event) {
         debugger;
@@ -387,9 +387,9 @@ export default class voiceForm extends LightningElement {
 
         this.LeadTobeCreated.State__c = SelectedState.label;
         this.StateDisable = false;
-        console.log('SelectedStateId-',this.SelectedStateId);
-        console.log('SelectedcountryId-',this.SelectedcountryId);
-        
+        console.log('SelectedStateId-', this.SelectedStateId);
+        console.log('SelectedcountryId-', this.SelectedcountryId);
+
         GettingCities({
             SelectedStateId: this.SelectedStateId, SelectedCountryId: this.SelectedcountryId
         })
@@ -401,8 +401,8 @@ export default class voiceForm extends LightningElement {
                     arr.push({ label: result[i].City__c, value: result[i].City__c });
                 }
                 this.FetchedcityList = arr;
-                this.disableInput=false;
-                this.CityDisable=false;
+                this.disableInput = false;
+                this.CityDisable = false;
 
                 console.log('PicklistvalueCity=', this.cityList);
             }
@@ -411,64 +411,64 @@ export default class voiceForm extends LightningElement {
     }
 
     @track selectedValue
-    @track booleanValue=false;
-    search(event){
+    @track booleanValue = false;
+    search(event) {
         debugger;
-        let value=event.target.value;
+        let value = event.target.value;
 
         let TempValue;
-        if(value){
-            TempValue=value;
+        if (value) {
+            TempValue = value;
         }
 
-        let arr=[];
-        if(TempValue){
+        let arr = [];
+        if (TempValue) {
             TempValue = TempValue.charAt(0).toUpperCase() + TempValue.slice(1);
-            console.log('TempValue=',TempValue);
+            console.log('TempValue=', TempValue);
             const results = this.FetchedcityList.filter(product => product.value.includes(TempValue));
-          
-            console.log('results====',results);
+
+            console.log('results====', results);
             results.forEach(element => {
-                arr.push({label:element.value,value:element.value});
+                arr.push({ label: element.value, value: element.value });
             });
-            
-            
-            console.log('arr====',arr);
+
+
+            console.log('arr====', arr);
         }
-        this.searchResults=arr;
-        if(this.searchResults.length>0){
-            this.booleanValue=true;
-        }else{
-            this.booleanValue=false;
+        this.searchResults = arr;
+        if (this.searchResults.length > 0) {
+            this.booleanValue = true;
+        } else {
+            this.booleanValue = false;
         }
-        console.log('this.searchResults====',this.searchResults);
+        console.log('this.searchResults====', this.searchResults);
     }
 
-  
 
-    @track selectedSearchResult ;
+
+    @track selectedSearchResult;
     @track selectedresultValue;
 
-    selectSearchResult(event){
+    selectSearchResult(event) {
         debugger;
         const selectedValue = event.currentTarget.dataset.value;
-        this.selectedresultValue=selectedValue;
-        console.log('selectedValue--',selectedValue);
+        this.selectedresultValue = selectedValue;
+        console.log('selectedValue--', selectedValue);
         this.selectedSearchResult = this.searchResults.find(
             (picklistOption) => picklistOption.value === selectedValue
-          );
-          console.log('selectedSearchResult--',this.selectedSearchResult);
-          console.log('selectedresultValue--',this.selectedresultValue);
-          
-          this.clearSearchResults();
-          this.booleanValue = false;
-        }
-      
-        clearSearchResults() {
-          this.searchResults = null;
-        }
+        );
+        console.log('selectedSearchResult--', this.selectedSearchResult);
+        console.log('selectedresultValue--', this.selectedresultValue);
 
-    
+        this.clearSearchResults();
+        this.booleanValue = false;
+    }
+
+    clearSearchResults() {
+        this.searchResults = null;
+    }
+
+
 
     @track selectedCityValue;
     HandleCityValue(event) {
@@ -485,7 +485,7 @@ export default class voiceForm extends LightningElement {
         debugger;
 
         if ((this.CaptureOwnerId != null && this.CaptureOwnerId != undefined && this.CaptureOwnerId != '') && (this.recordId != null && this.recordId != undefined && this.recordId != '')) {
-            createTask({assignto: this.CaptureOwnerId,leadId: this.recordId,TaskRecord:this.taskTobeCreated})
+            createTask({ assignto: this.CaptureOwnerId, leadId: this.recordId, TaskRecord: this.taskTobeCreated })
 
                 .then((result) => {
                     console.log('result', result);
@@ -534,40 +534,40 @@ export default class voiceForm extends LightningElement {
 
     handleCancel() {
         debugger;
-        
 
-    
-            this.isShowModal = false;
-            this.showtaskModal = false;
-            // this.namValue = '';
-            // this.lNameValue = '';
-            this.commentsValue = '';
-            // this.emailValue = '';
-            // this.phoneValue = '';
-            // this.alterMobileValue = '';
-            // this.alterEmailValue = '';
-            this.CourceLead = '';
-            this.CountryValue = '';
-            this.selectedCityValue = '';
-            this.Leadvalue = '';
-            this.SelectedMedium='';
-            this.selectedresultValue='';
-            this.DefaultCountryCode='';
-            this.CountryCode='';
-            this.SelectedCountryStateList = [];
-            this.booleanValue = false;
-            this.disableInput = true;
-    
-            this.LeadTobeCreated = {};
-            if (this.SelectedCountryStateList.length == 0) {
-                this.StateDisable = true;
-            }
-    
-       
+
+
+        this.isShowModal = false;
+        this.showtaskModal = false;
+        // this.namValue = '';
+        // this.lNameValue = '';
+        this.commentsValue = '';
+        // this.emailValue = '';
+        // this.phoneValue = '';
+        // this.alterMobileValue = '';
+        // this.alterEmailValue = '';
+        this.CourceLead = '';
+        this.CountryValue = '';
+        this.selectedCityValue = '';
+        this.Leadvalue = '';
+        this.SelectedMedium = '';
+        this.selectedresultValue = '';
+        this.DefaultCountryCode = '';
+        this.CountryCode = '';
+        this.SelectedCountryStateList = [];
+        this.booleanValue = false;
+        this.disableInput = true;
+
+        this.LeadTobeCreated = {};
+        if (this.SelectedCountryStateList.length == 0) {
+            this.StateDisable = true;
+        }
+
+
 
     }
 
-    
+
 
     @track StateCountryValue = [];
     @wire(FetchStateCounty)
@@ -735,9 +735,9 @@ export default class voiceForm extends LightningElement {
         if (data) {
 
             let arr = [];
-                for (let i = 0; i < data.length; i++) {
-                    arr.push({ label: data[i].CountryCode__c, value: data[i].CountryCode__c });
-                }
+            for (let i = 0; i < data.length; i++) {
+                arr.push({ label: data[i].CountryCode__c, value: data[i].CountryCode__c });
+            }
             this.countryCodeList = arr;
         }
         else if (error) {
@@ -854,9 +854,9 @@ export default class voiceForm extends LightningElement {
             this.CountryCodeAlt = event.target.value;
         }
         if (InputName == 'AltPH') {
-            if(event.target.value!=null || event.target.value!=undefined || event.target.value!=''){
+            if (event.target.value != null || event.target.value != undefined || event.target.value != '') {
                 this.LeadTobeCreated.Alternate_Phone__c = event.target.value;
-            } 
+            }
         }
         if (InputName == 'course') {
             this.LeadTobeCreated.Course__c = event.target.value;
@@ -868,7 +868,7 @@ export default class voiceForm extends LightningElement {
             this.LeadTobeCreated.LeadSource = event.target.value;
         }
         if (InputName == 'Medium') {
-            this.SelectedMedium=event.detail.value;
+            this.SelectedMedium = event.detail.value;
             this.LeadTobeCreated.UTM_Medium__c = event.detail.value;
         }
         if (InputName == 'Comments') {
@@ -917,33 +917,33 @@ export default class voiceForm extends LightningElement {
 
     //==============================================For Task Creation========================================================================
 
-    
-    TaskCreationHandler(event){
+
+    TaskCreationHandler(event) {
 
         var TaskInputName = event.currentTarget.name;
-        if (TaskInputName == 'subject'){
+        if (TaskInputName == 'subject') {
 
-            this.taskTobeCreated.Subject=event.target.value;
+            this.taskTobeCreated.Subject = event.target.value;
         }
-        if(TaskInputName == 'Priority'){
+        if (TaskInputName == 'Priority') {
 
-            this.taskTobeCreated.Priority=event.target.value;
+            this.taskTobeCreated.Priority = event.target.value;
 
-        }if(TaskInputName == 'Status'){
+        } if (TaskInputName == 'Status') {
 
-            this.taskTobeCreated.Status=event.target.value;
+            this.taskTobeCreated.Status = event.target.value;
 
-        }if(TaskInputName == 'Duedate'){
+        } if (TaskInputName == 'Duedate') {
 
-            this.taskTobeCreated.ActivityDate=event.target.value;
+            this.taskTobeCreated.ActivityDate = event.target.value;
 
-        }if(TaskInputName =='Followupdatetime'){
+        } if (TaskInputName == 'Followupdatetime') {
 
-            this.taskTobeCreated.Followup_Date_Time__c=event.target.value;
+            this.taskTobeCreated.Followup_Date_Time__c = event.target.value;
 
-        }if(TaskInputName =='Comments'){
+        } if (TaskInputName == 'Comments') {
 
-            this.taskTobeCreated.Description=event.target.value;
+            this.taskTobeCreated.Description = event.target.value;
         }
 
     }
@@ -998,7 +998,7 @@ export default class voiceForm extends LightningElement {
     //     let selectedStatus = event.detail.value;
     //     this.statusValue = selectedStatus;
     // }
-//===========================================================================================Ends Here========================================================
+    //===========================================================================================Ends Here========================================================
 
     notifyismBTN() {
         debugger;
@@ -1136,76 +1136,149 @@ export default class voiceForm extends LightningElement {
     HandleLeadCreatedisable = false;
     createNewLead() {
         debugger;
-        
-        if(this.FetchedcityList.find((picklistOption) => picklistOption.value === this.selectedresultValue)){
+
+        if (this.FetchedcityList.find((picklistOption) => picklistOption.value === this.selectedresultValue)) {
             console.log('Selected City Is Correct');
-        }else{
-        window.alert('Choose a Correct City');
+        } else {
+            window.alert('Choose a Correct City');
         }
-        
+
         this.LeadTobeCreated.ExcelR_Training_User__c = this.agentrecid;
         //&& (this.LeadTobeCreated.Email != undefined && this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '') && (this.LeadTobeCreated.Phone != undefined && this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '')
-        if ((this.LeadTobeCreated.LastName != undefined && this.LeadTobeCreated.LastName != null && this.LeadTobeCreated.LastName != '') 
-        && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '') && (this.LeadTobeCreated.LeadSource != undefined && this.LeadTobeCreated.LeadSource != null && this.LeadTobeCreated.LeadSource != '')
-        && (this.LeadTobeCreated.UTM_Medium__c != undefined && this.LeadTobeCreated.UTM_Medium__c != null && this.LeadTobeCreated.UTM_Medium__c != '') &&(this.SelectedMedium!=null && this.SelectedMedium!= '' && this.SelectedMedium != undefined)&&(this.selectedresultValue!=null && this.selectedresultValue!=undefined && this.selectedresultValue!=''))
-              {
+        if ((this.LeadTobeCreated.LastName != undefined && this.LeadTobeCreated.LastName != null && this.LeadTobeCreated.LastName != '')
+            && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '') && (this.LeadTobeCreated.LeadSource != undefined && this.LeadTobeCreated.LeadSource != null && this.LeadTobeCreated.LeadSource != '')
+            && (this.LeadTobeCreated.UTM_Medium__c != undefined && this.LeadTobeCreated.UTM_Medium__c != null && this.LeadTobeCreated.UTM_Medium__c != '') && (this.SelectedMedium != null && this.SelectedMedium != '' && this.SelectedMedium != undefined) && (this.selectedresultValue != null && this.selectedresultValue != undefined && this.selectedresultValue != '')) {
 
-            
+            if (this.LeadTobeCreated.Email != null) {
+                var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
+            }
+            if (this.LeadTobeCreated.Phone != null) {
+                var phoneReturnvalue = this.handleCorrectPhone(this.LeadTobeCreated.Phone);
+            }
 
+            if (this.LeadTobeCreated.Email != null && (this.LeadTobeCreated.Phone == null || this.LeadTobeCreated.Phone == '' || this.LeadTobeCreated.Phone == undefined)) {
+                if (returnvalue == true) {
+                    this.createLeadFromJS();
 
+                }
+                else {
+                    alert('Incorrect Email Pattern');
+                    this.HandleLeadCreatedisable = false;
 
-            var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
-            //var phoneregexreturnvalue = this.handleCorrectPhone(this.LeadTobeCreated.Phone)
-            console.log('returnVALUE=', returnvalue);
-            if (returnvalue == true && this.handleCorrectPhone(this.LeadTobeCreated.Phone)) { // firstname: this.namValue, 
-                this.HandleLeadCreatedisable = true;
-                createLead({ Leadrec: this.LeadTobeCreated, countrycode : this.CountryCode, countrycodealternate :this.CountryCodeAlt,mediumValue:this.SelectedMedium,city:this.selectedresultValue })
-                    .then(data => {
+                }
 
-                        if (data == 'SUCCESS') {
-                            this.handleConfirm('Lead Created Successfully');
-                            this.HandleLeadCreatedisable = false;
-                            console.log(data)
-                            //alert('Lead Record created successfully');
-                            this.handleCancel();
-                            this.namValue = '';
-                            this.lNameValue = '';
-                            this.commentsValue = '';
-                            this.emailValue = '';
-                            this.phoneValue = '';
-                            this.AlternateMobile = '';
-                            this.alterEmailValue = '';
-                            this.CourceLead = '';
-                            this.CountryValue = '';
-                            this.cityValue = '';
-                            this.StateValue = '';
-                            this.Leadvalue = '';
+            }
+            else if (this.LeadTobeCreated.Phone != null && (this.LeadTobeCreated.Email == null || this.LeadTobeCreated.Email == '' || this.LeadTobeCreated.Email == undefined)) {
+                if (phoneReturnvalue == true) {
+                    this.createLeadFromJS();
+                }
+                else {
+                    alert('Incorrect Phone Pattern');
+                    this.HandleLeadCreatedisable = false;
+                }
 
-                        }
-                        else if (data == 'FAIL') {
-                            this.HandleLeadCreatedisable = false;
-                            //this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
-                        }
+            }
+            else if (this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Phone != null) {
+                if (returnvalue == true && phoneReturnvalue == true) {
+                    this.HandleLeadCreatedisable = true;
+                    this.createLeadFromJS();
 
 
-                    })
-                    .catch(error => {
-                        this.handleAlert('Error updating or reloading records');
-                        this.handleCancel();
-                        this.HandleLeadCreatedisable = false;
-
-                    })
+                }
+                else {
+                    alert('Incorrect Email or Phone Pattern');
+                    this.HandleLeadCreatedisable = false;
+                }
             }
             else {
-                alert('Incorrect Email or Phone Pattern');
-                this.HandleLeadCreatedisable = false;
+                this.createLeadFromJS();
             }
+
+
+            /* var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
+             //var phoneregexreturnvalue = this.handleCorrectPhone(this.LeadTobeCreated.Phone)
+             console.log('returnVALUE=', returnvalue);
+             if (returnvalue == true && this.handleCorrectPhone(this.LeadTobeCreated.Phone)) { // firstname: this.namValue, 
+                 this.HandleLeadCreatedisable = true;
+                 createLead({ Leadrec: this.LeadTobeCreated, countrycode : this.CountryCode, countrycodealternate :this.CountryCodeAlt,mediumValue:this.SelectedMedium,city:this.selectedresultValue })
+                     .then(data => {
+ 
+                         if (data == 'SUCCESS') {
+                             this.handleConfirm('Lead Created Successfully');
+                             this.HandleLeadCreatedisable = false;
+                             console.log(data)
+                             //alert('Lead Record created successfully');
+                             this.handleCancel();
+                             this.namValue = '';
+                             this.lNameValue = '';
+                             this.commentsValue = '';
+                             this.emailValue = '';
+                             this.phoneValue = '';
+                             this.AlternateMobile = '';
+                             this.alterEmailValue = '';
+                             this.CourceLead = '';
+                             this.CountryValue = '';
+                             this.cityValue = '';
+                             this.StateValue = '';
+                             this.Leadvalue = '';
+ 
+                         }
+                         else if (data == 'FAIL') {
+                             this.HandleLeadCreatedisable = false;
+                             //this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
+                         }
+ 
+ 
+                     })
+                     .catch(error => {
+                         this.handleAlert('Error updating or reloading records');
+                         this.handleCancel();
+                         this.HandleLeadCreatedisable = false;
+ 
+                     })
+             }
+             else {
+                 alert('Incorrect Email or Phone Pattern');
+                 this.HandleLeadCreatedisable = false;
+             }*/
 
         }
         else {
             alert('Some of the mandatory fields are not filled');
             this.HandleLeadCreatedisable = false;
         }
+
+    }
+
+    createLeadFromJS() {
+        debugger;
+
+        createLead({ Leadrec: this.LeadTobeCreated, countrycode: this.CountryCode, countrycodealternate: this.CountryCodeAlt, mediumValue: this.SelectedMedium, city: this.selectedresultValue })
+            .then(data => {
+
+                if (data == 'SUCCESS') {
+                    this.handleConfirm('Lead Created Successfully');
+                    console.log(data)
+                    //alert('Lead Record created successfully');
+                    this.handleCancel();
+                    this.HandleLeadCreatedisable = false;
+                    this.LeadTobeCreated = {};
+                    this.handleSpinner();
+
+                }
+                else if (data == 'FAIL') {
+                    this.handleSpinner();
+                    // this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
+                    this.HandleLeadCreatedisable = false;
+                }
+
+            })
+            .catch(error => {
+                this.handleSpinner();
+                this.handleAlert('Error updating or reloading records');
+                this.HandleLeadCreatedisable = false;
+                this.handleCancel();
+            })
 
     }
 
@@ -1230,7 +1303,7 @@ export default class voiceForm extends LightningElement {
         this.selectedrecordDetails = event.detail.selectedRecord;
         //alert('Selected Record Value on Parent Component is ' + JSON.stringify(event.detail.selectedRecord));
     }
-    
+
     async handleAlert(message) {
         await LightningAlert.open({
             message: message,
