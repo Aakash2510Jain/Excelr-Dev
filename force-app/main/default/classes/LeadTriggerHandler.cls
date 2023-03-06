@@ -100,12 +100,6 @@ public without sharing class LeadTriggerHandler{
             string queryStringForNonConvertedLead = 'select Id, Email, status, course__c, CID__c,Customers__c,OwnerId,Alternate_Phone__c,Phone,Alternate_Email__c From Lead';
             String queryStringForConvertedLead = 'select Id, Email, status, course__c,CID__c,ConvertedAccountId, Customers__c,LID__c,OwnerId,Alternate_Phone__c,Phone,Alternate_Email__c From Lead ';
             
-
-            System.debug('emailList ====> ' + emailList);
-            System.debug('alternateEmailList ====> ' + alternateEmailList);
-            System.debug('phoneList ====> ' + phoneList);
-            System.debug('alternatePhoneList ====> ' + alternatePhoneList);
-
             // dynamic query part :              
             String whereClauses  = '( ';
             
@@ -143,24 +137,15 @@ public without sharing class LeadTriggerHandler{
                 duplicateExistingLeadList = Database.query(queryStringForNonConvertedLead);
                 duplicateConvertedLeadList = Database.query(queryStringForConvertedLead);
             }
-            /*else {
-                queryStringForNonConvertedLead = queryStringForNonConvertedLead +' Where '+ ' isConverted = false order by CreatedDate Desc';
-            //System.debug('queryStringForNonConvertedLead ====> ' + queryStringForNonConvertedLead);
-                queryStringForConvertedLead = queryStringForConvertedLead +' Where '+ ' isConverted = true order by CreatedDate Desc';
-                
-            }*/
-            //queryStringForNonConvertedLead = queryStringForNonConvertedLead +' Where '+ whereClauses+ ' )  and isConverted = false order by CreatedDate Desc';
-            System.debug('queryStringForNonConvertedLead ====> ' + queryStringForNonConvertedLead);
-            //queryStringForConvertedLead = queryStringForConvertedLead +' Where '+ whereClauses+ ' ) and isConverted = true order by CreatedDate Desc';
-            System.debug('queryStringForConvertedLead =====> ' + queryStringForConvertedLead);
-
             
+            System.debug('queryStringForNonConvertedLead ====> ' + queryStringForNonConvertedLead);
+            System.debug('queryStringForConvertedLead =====> ' + queryStringForConvertedLead);
             
             if(!duplicateExistingLeadList.isEmpty()){
                 for(Lead leadrec : duplicateExistingLeadList){
                     if(!string.isEmpty(leadrec.Email)){
                         if(!existingLeadByEmail.ContainsKey(leadrec.Email)){
-                             existingLeadByEmail.put(leadrec.Email,leadrec);
+                            existingLeadByEmail.put(leadrec.Email,leadrec);
                         }
                     }
                     if(!string.isEmpty(leadrec.Alternate_Email__c)){
@@ -204,18 +189,18 @@ public without sharing class LeadTriggerHandler{
                     }
                 }
             }
-
+            
             System.debug('existingLeadByEmail ====> ' + existingLeadByEmail);
             System.debug('existingLeadByAlternateEmail ====> ' + existingLeadByAlternateEmail);
             System.debug('existingLeadByPhone ====> ' + existingLeadByPhone);            
             System.debug('existingLeadByAlternatePhone ====> ' + existingLeadByAlternatePhone); 
-
-
+            
+            
             System.debug('convertedLeadByEmail ====> ' + convertedLeadByEmail); 
             System.debug('convertedLeadByAlternateEmail ====> ' + convertedLeadByAlternateEmail); 
             System.debug('convertedLeadByPhone ====> ' + convertedLeadByPhone); 
             System.debug('convertedLeadByAlternatePhone ====> ' + convertedLeadByAlternatePhone); 
-
+            
             for(Lead leadRec : leadList){
                 system.debug('leadRec---->'+leadRec);
                 if (!duplicateConvertedLeadList.isEmpty()){
@@ -271,7 +256,7 @@ public without sharing class LeadTriggerHandler{
                     Opportunity opportunityRec = new Opportunity(Name = course, AccountId = accountId, CloseDate = Date.today().addDays(2), StageName = 'Proposal',LID__c=LID,Customers__c=CustomerId);
                     opportunityListToInsert.add(opportunityRec);
                 }
-               
+                
                 else{
                     system.debug('Non-Converted Lead doesnot exist');
                     system.debug('duplicateExistingLeadList--->'+duplicateExistingLeadList);
@@ -281,7 +266,7 @@ public without sharing class LeadTriggerHandler{
                         system.debug('existingLeadByAlternateEmail.ContainsKey(leadRec.Alternate_Email__c)--->'+existingLeadByAlternateEmail.ContainsKey(leadRec.Alternate_Email__c));
                         system.debug('existingLeadByPhone.ContainsKey(leadRec.Phone)--->'+existingLeadByPhone.ContainsKey(leadRec.Phone));
                         system.debug('existingLeadByPhone.ContainsKey(leadRec.Alternate_Phone__c)--->'+existingLeadByPhone.ContainsKey(leadRec.Alternate_Phone__c));
-
+                        
                         if(existingLeadByEmail.ContainsKey(leadRec.Email)){
                             if((existingLeadByEmail.get(leadRec.Email).status == 'Dead' || existingLeadByEmail.get(leadRec.Email).Status == 'Junk')){
                                 system.debug('dead or junk and course is same');
@@ -306,18 +291,18 @@ public without sharing class LeadTriggerHandler{
                             if((existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).status == 'Dead' || existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Status == 'Junk')){
                                 system.debug('dead or junk and course is same');
                                 system.debug('Create new Lead');
-                                leadRec.Customers__c = existingLeadByEmail.get(leadRec.Alternate_Email__c).Customers__c;
+                                leadRec.Customers__c = existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Customers__c;
                             }else if((existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).status != 'Dead' && existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Status != 'Junk') && existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Course__c == leadRec.Course__c){
                                 system.debug('Status is not Dead/Junk and course is same');
                                 system.debug('Create Task');
                                 leadRec.To_Be_Deleted__c = true;  
-                                leadRec.Parent_Lead_Id__c = existingLeadByEmail.get(leadRec.Alternate_Email__c).Id;
+                                leadRec.Parent_Lead_Id__c = existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Id;
                                 taskListToInsert.add(Utility.returnTaskInstance(existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c)));
                             }else if((existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).status != 'Dead' && existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Status != 'Junk') && existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Course__c != leadRec.Course__c){
                                 system.debug('Status is not Dead/Junk and course is different');
                                 system.debug('Create Application');
                                 leadRec.To_Be_Deleted__c = true;
-                                leadRec.Parent_Lead_Id__c = existingLeadByEmail.get(leadRec.Alternate_Email__c).Id;
+                                leadRec.Parent_Lead_Id__c = existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Id;
                                 applicationListToInsert.add(Utility.returnApplicationInstance(existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c)));
                             }
                         }
@@ -325,18 +310,18 @@ public without sharing class LeadTriggerHandler{
                             if ((existingLeadByPhone.get(leadRec.Phone).Status == 'Dead' || existingLeadByPhone.get(leadRec.Phone).Status == 'Junk')){
                                 system.debug('dead or junk and course is same');
                                 system.debug('Create new Lead');
-                                leadRec.Customers__c = existingLeadByEmail.get(leadRec.Phone).Customers__c;
+                                leadRec.Customers__c = existingLeadByPhone.get(leadRec.Phone).Customers__c;
                             } else if ((existingLeadByPhone.get(leadRec.Phone).Status != 'Dead' && existingLeadByPhone.get(leadRec.Phone).Status != 'Junk') && existingLeadByPhone.get(leadRec.Phone).Course__c == leadRec.Course__c){
                                 system.debug('Status is not Dead/Junk and course is same');
                                 system.debug('Create Task');
                                 leadRec.To_Be_Deleted__c = true;   
-                                leadRec.Parent_Lead_Id__c = existingLeadByEmail.get(leadRec.Phone).Id;                                
+                                leadRec.Parent_Lead_Id__c = existingLeadByPhone.get(leadRec.Phone).Id;                                
                                 taskListToInsert.add(Utility.returnTaskInstance(existingLeadByPhone.get(leadRec.Phone)));
                             }else if ((existingLeadByPhone.get(leadRec.Phone).Status != 'Dead' && existingLeadByPhone.get(leadRec.Phone).Status != 'Junk') && existingLeadByPhone.get(leadRec.Phone).Course__c != leadRec.Course__c){
                                 system.debug('Status is not Dead/Junk and course is different');
                                 system.debug('Create Application');
                                 leadRec.To_Be_Deleted__c = true;
-                                leadRec.Parent_Lead_Id__c = existingLeadByEmail.get(leadRec.Phone).Id;
+                                leadRec.Parent_Lead_Id__c = existingLeadByPhone.get(leadRec.Phone).Id;
                                 applicationListToInsert.add(Utility.returnApplicationInstance(existingLeadByPhone.get(leadRec.Phone)));
                             }
                         }
@@ -344,18 +329,18 @@ public without sharing class LeadTriggerHandler{
                             if ((existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Status == 'Dead' || existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Status == 'Junk')){
                                 system.debug('dead or junk and course is same');
                                 system.debug('Create new Lead');
-                                leadRec.Customers__c = existingLeadByEmail.get(leadRec.Alternate_Phone__c).Customers__c;
+                                leadRec.Customers__c = existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Customers__c;
                             }else if ((existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Status != 'Dead' && existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Status != 'Junk')&& existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Course__c == leadRec.Course__c){
                                 system.debug('Status is not Dead/Junk and course is same');
                                 system.debug('Create Task');
                                 leadRec.To_Be_Deleted__c = true; 
-                                leadRec.Parent_Lead_Id__c = existingLeadByEmail.get(leadRec.Alternate_Phone__c).Id;    
+                                leadRec.Parent_Lead_Id__c = existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Id;    
                                 taskListToInsert.add(Utility.returnTaskInstance(existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c)));
                             }else if ((existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Status != 'Dead' && existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Status != 'Junk')&& existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Course__c != leadRec.Course__c){
                                 system.debug('Status is not Dead/Junk and course is different');
                                 system.debug('Create Application');
                                 leadRec.To_Be_Deleted__c = true;
-                                leadRec.Parent_Lead_Id__c = existingLeadByEmail.get(leadRec.Alternate_Phone__c).Id;
+                                leadRec.Parent_Lead_Id__c = existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Id;
                                 applicationListToInsert.add(Utility.returnApplicationInstance(existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c)));
                             }
                         }
@@ -476,7 +461,7 @@ public without sharing class LeadTriggerHandler{
                     }
                 }                
             }
-        
+            
             
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());

@@ -118,6 +118,23 @@ public class LeadAssignmentExecutionCriteria {
                 criteriaNameById.put(scr.Name,scr.Id);
                 
             }
+
+            System.debug('fieldByMatchingType ===> ' + fieldByMatchingType);
+            System.debug('fieldByFieldType ===> ' + fieldByFieldType);
+
+            System.debug('mapByallFields ===> ' + mapByallFields);
+            System.debug('allotedFieldbySequence ===> ' + allotedFieldbySequence);
+            System.debug('allotedFieldbySequenceList ===> ' + allotedFieldbySequenceList);
+            System.debug('matchingTypeFieldByCriteria ===> ' + matchingTypeFieldByCriteria);
+
+            System.debug('mapofExeIdByEntryCount ===> ' + mapofExeIdByEntryCount);
+            System.debug('mapofExeIdByEvaluaationExp ===> ' + mapofExeIdByEvaluaationExp);
+            System.debug('expectedValuebyCriteria ===> ' + expectedValuebyCriteria);
+            System.debug('multipleCriteriasForFields ===> ' + multipleCriteriasForFields);
+            System.debug('criteriaNameById ===> ' + criteriaNameById);
+
+
+
             String logicalValues = '';
             
             for(Lead ld:newLeadListTemp){
