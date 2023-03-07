@@ -894,7 +894,7 @@ export default class WaklInLead extends LightningElement {
 
     createLeadFromJS(){
         debugger;
-
+        this.handleSpinner();
         createLead({ Leadrec: this.LeadTobeCreated, countrycode: this.CountryCode, countrycodealternate: this.CountryCodeAlt, mediumValue: this.SelectedMedium, city: this.selectedresultValue })
         .then(data => {
 
@@ -919,12 +919,16 @@ export default class WaklInLead extends LightningElement {
             this.handleSpinner();
             this.handleAlert('Error updating or reloading records');
             this.HandleLeadCreatedisable = false;
-            this.handleCancel();
+            //this.handleCancel();
         })
 
     }
 
+    showLoading = false;
+    handleSpinner(){
+        this.showLoading = !this.showLoading;
 
+    }
 
     async handleConfirm(message) {
         /*const result = await LightningConfirm.open({

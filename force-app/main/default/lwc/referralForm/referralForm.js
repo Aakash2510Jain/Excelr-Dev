@@ -344,7 +344,53 @@ export default class ReferralForm extends LightningElement {
             && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '')  && (this.LeadTobeCreated.CID_of_Referer__c != undefined && this.LeadTobeCreated.CID_of_Referer__c != null   && this.LeadTobeCreated.CID_of_Referer__c != '') && (this.LeadTobeCreated.Type_of_Course__c != undefined && this.LeadTobeCreated.Type_of_Course__c != null) 
             &&(this.selectedresultValue!=null && this.selectedresultValue!=undefined && this.selectedresultValue!='')) {
 
-                var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email);
+
+                if (this.LeadTobeCreated.Email != null) {
+                    var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
+                }
+                if (this.LeadTobeCreated.Phone != null) {
+                    var phoneReturnvalue = this.handleCorrectPhone(this.LeadTobeCreated.Phone);
+                }
+    
+                if (this.LeadTobeCreated.Email != null && (this.LeadTobeCreated.Phone == null || this.LeadTobeCreated.Phone == '' || this.LeadTobeCreated.Phone == undefined  )) {
+                    if ( returnvalue == true) {
+                        this.createLeadFromJS();
+                        
+                    }
+                    else{
+                        alert('Incorrect Email Pattern');
+                        this.HandleLeadCreatedisable = false;
+    
+                    }
+                    
+                }
+                else if ( this.LeadTobeCreated.Phone != null && (this.LeadTobeCreated.Email == null || this.LeadTobeCreated.Email == '' || this.LeadTobeCreated.Email == undefined  )) {
+                    if (phoneReturnvalue == true) {
+                        this.createLeadFromJS();
+                    }
+                    else{
+                        alert('Incorrect Phone Pattern');
+                        this.HandleLeadCreatedisable = false;
+                    }
+                    
+                }
+                else if (this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Phone != null) {
+                    if (returnvalue == true && phoneReturnvalue == true) {
+                        this.HandleLeadCreatedisable = true;
+                        this.createLeadFromJS();
+                       
+    
+                    }
+                    else {
+                        alert('Incorrect Email or Phone Pattern');
+                        this.HandleLeadCreatedisable = false;
+                    }
+                }
+                else{
+                    this.createLeadFromJS();
+                }
+
+                /*var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email);
                 if (returnvalue == true && this.handleCorrectPhone(this.LeadTobeCreated.Phone)) {
                     this.HandleLeadCreatedisable = true;
                     SubmitReferralDetails({ Leadrec: this.LeadTobeCreated, countrycode : this.CountryCode, countrycodealternate :this.CountryCodeAlt })
@@ -386,7 +432,7 @@ export default class ReferralForm extends LightningElement {
                     this.HandleLeadCreatedisable = false;
                     this.handleSpinner();
 
-                }
+                }*/
 
             }
             else{
@@ -395,6 +441,47 @@ export default class ReferralForm extends LightningElement {
                 this.HandleLeadCreatedisable = false;
 
             }
+    }
+
+    createLeadFromJS() {
+        SubmitReferralDetails({ Leadrec: this.LeadTobeCreated, countrycode: this.CountryCode, countrycodealternate: this.CountryCodeAlt })
+            .then(data => {
+
+                if (data == 'SUCCESS') {
+                    this.handleConfirm('Lead Created Successfully');
+                    console.log(data)
+                    //alert('Lead Record created successfully');
+                    this.LeadTobeCreated = {};
+                    this.CountryCode = '';
+                    this.CountryCodeAlt = '';
+                    this.searchResults = [];
+                    this.handleSpinner();
+                    this.HandleLeadCreatedisable = false;
+                    eval("$A.get('e.force:refreshView').fire();");
+
+                }
+                else if (data == 'Referral CID does not found in the system') {
+                    this.handleAlert(data);
+                    this.HandleLeadCreatedisable = false;
+                    this.handleSpinner();
+
+                }
+                else if (data == 'FAIL') {
+                    this.handleSpinner();
+                    this.HandleLeadCreatedisable = false;
+                }
+                else{
+                    this.handleSpinner();
+                    this.HandleLeadCreatedisable = false;
+                }
+
+            })
+            .catch(error => {
+                this.handleSpinner();
+                this.handleAlert('Error updating or reloading records');
+                this.HandleLeadCreatedisable = false;
+            })
+
     }
     handleClick(event) {
         debugger;

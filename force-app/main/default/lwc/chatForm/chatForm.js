@@ -800,7 +800,7 @@ export default class chatForm extends LightningElement {
 
     createLeadFromJS(){
         debugger;
-
+        this.handleSpinner();
         createLead({ Leadrec: this.LeadTobeCreated, countrycode: this.CountryCode, countrycodealternate: this.CountryCodeAlt, mediumValue: this.SelectedMedium, city: this.selectedresultValue })
         .then(data => {
 
@@ -830,9 +830,10 @@ export default class chatForm extends LightningElement {
 
     }
 
-    @track spinnerLoading = false;
-    handleSpinner() {
-        this.spinnerLoading = !this.spinnerLoading;
+    showLoading = false;
+    handleSpinner(){
+        this.showLoading = !this.showLoading;
+
     }
 
     async handleConfirm(message) {

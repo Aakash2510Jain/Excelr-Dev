@@ -238,12 +238,6 @@
                         </div>
                     </div -->
 
-                    <div class="exampleHolder">
-
-                        <template if:true={spinnerLoading}>
-                            <lightning-spinner alternative-text="Loading"></lightning-spinner>
-                        </template>
-                    </div>
 
                     <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
                         aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
@@ -261,6 +255,10 @@
                             </header>
                             <!-- Modal/Popup Box LWC body starts here -->
                             <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+
+                                <template if:true={showLoading}>
+                                    <lightning-spinner alternative-text="Loading" size="medium" class="spinnerClass"></lightning-spinner>
+                                </template>
                                 
 
                                 <lightning-input name="LN" label="Name" required="true"

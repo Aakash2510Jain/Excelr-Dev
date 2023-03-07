@@ -67,10 +67,10 @@ public with sharing class ProductUpdateOnOppApexController{
                 system.debug('I am Searching For Two Course');
 
                 ProdList = [SELECT City__c, Course_1__c, Course_2__c, Discount__c, Description, Family, Id, IsActive, Mode_One__c, Mode_Two__c, Mode__c, Name, Offer__c, ProductCode, Type__c, (Select UnitPrice
-                                                                                                                                                                                                                            From PricebookEntries
-                                                                                                                                                                                                                            where IsActive = true)
+                                                                                                                                                                                                From PricebookEntries
+                                                                                                                                                                                                where IsActive = true)
                             From Product2
-                            Where IsActive = true AND (Course_3__c = null AND Mode_Three__c = null ) AND ((Course_1__r.Name = :CourseOne AND Mode_One__c = :ModeOne) OR (Course_2__r.Name = :CourseOne AND Mode_Two__c = :ModeOne)) AND ((Course_1__r.Name = :CourseTwo AND Mode_One__c = :ModeTwo) OR (Course_2__r.Name = :CourseTwo AND Mode_Two__c = :ModeTwo))];
+                            Where IsActive = true AND (Course_3__c = null AND Mode_Three__c = null) AND ((Course_1__r.Name = :CourseOne AND Mode_One__c = :ModeOne) OR (Course_2__r.Name = :CourseOne AND Mode_Two__c = :ModeOne)) AND ((Course_1__r.Name = :CourseTwo AND Mode_One__c = :ModeTwo) OR (Course_2__r.Name = :CourseTwo AND Mode_Two__c = :ModeTwo))];
             } else if (CourseOne != null && CourseTwo != null && ModeOne != null && ModeTwo != null && CourseThree != null && ModeThree != null){
                 system.debug('I am Searching For Three Course');
                 system.debug('CourseOne-->' + CourseOne);
@@ -102,7 +102,7 @@ public with sharing class ProductUpdateOnOppApexController{
 
     @AuraEnabled
     Public Static List<Add_On__c> FetchAddOns(String ProdId){
-        List<Add_On__c> AddOnRecList = [Select Id, Name, Price__c, Addon_Product__c,Addon_Product__r.Name
+        List<Add_On__c> AddOnRecList = [Select Id, Name, Price__c, Addon_Product__c, Addon_Product__r.Name
                                         From Add_On__c
                                         Where ProductId__c = :ProdId];
         system.debug('AddOnRecList==' + AddOnRecList);
@@ -115,56 +115,81 @@ public with sharing class ProductUpdateOnOppApexController{
         system.debug('Prodlist=' + Prodlist);
         system.debug('AddOnList=' + AddOnList);
         List<OpportunityLineItem> oppLitemList = new List<OpportunityLineItem>();
+        string message = '';
 
-        for (Product2 prodRec : Prodlist){
+        try{
+            for (Product2 prodRec : Prodlist){
 
-            PricebookEntry PBentryRec = [Select Id, UnitPrice
-                                         From PricebookEntry
-                                         where Pricebook2.Name = 'Standard Price Book' AND Product2Id = :prodRec.Id];
-            system.debug('PBentryRec==' + PBentryRec);
-            OpportunityLineItem oppLitemRec = new OpportunityLineItem();
-            oppLitemRec.Product2Id = prodRec.Id;
-            oppLitemRec.Mode__c = prodRec.Mode__c;
-            oppLitemRec.Type__c = prodRec.Type__c;
-            //oppLitemRec.UnitPrice=prodRec.Amount__c;
-            oppLitemRec.Discount = prodRec.Discount__c;
-            oppLitemRec.OpportunityId = oppId;
-            oppLitemRec.PricebookEntryId = PBentryRec.Id;
-            if(prodRec.Discount__c!=null){
-                oppLitemRec.TotalPrice = PBentryRec.UnitPrice - (PBentryRec.UnitPrice * (prodRec.Discount__c / 100));
-            }
-            else{
-                oppLitemRec.TotalPrice = PBentryRec.UnitPrice ; 
-            }
-            
-            system.debug('oppLitemRec.TotalPrice===' + oppLitemRec.TotalPrice);
-            oppLitemRec.Quantity = 1;
-            oppLitemList.add(oppLitemRec);
-        }
+                PricebookEntry PBentryRec = [Select Id, UnitPrice
+                                             From PricebookEntry
+                                             where Pricebook2.Name = 'Standard Price Book' AND Product2Id = :prodRec.Id];
+                system.debug('PBentryRec==' + PBentryRec);
+                OpportunityLineItem oppLitemRec = new OpportunityLineItem();
+                oppLitemRec.Product2Id = prodRec.Id;
+                oppLitemRec.Mode__c = prodRec.Mode__c;
+                oppLitemRec.Type__c = prodRec.Type__c;
+                //oppLitemRec.UnitPrice=prodRec.Amount__c;
+                oppLitemRec.Discount = prodRec.Discount__c;
+                oppLitemRec.OpportunityId = oppId;
+                oppLitemRec.PricebookEntryId = PBentryRec.Id;
+                if (prodRec.Discount__c != null){
+                    oppLitemRec.TotalPrice = PBentryRec.UnitPrice - (PBentryRec.UnitPrice * (prodRec.Discount__c / 100));
+                } else{
+                    oppLitemRec.TotalPrice = PBentryRec.UnitPrice;
+                }
 
-        for (Add_On__c AddOnRec : AddOnList){
-            PricebookEntry PBentryRec = [Select Id, UnitPrice
-                                         From PricebookEntry
-                                         where Pricebook2.Name = 'Standard Price Book' AND Product2Id = :AddOnRec.Addon_Product__c];
-            OpportunityLineItem oppLineitemRec = new OpportunityLineItem();
-            oppLineitemRec.Product2Id = AddOnRec.Addon_Product__c;
-            oppLineitemRec.Discount = AddOnRec.Discount__c;
-            oppLineitemRec.OpportunityId = oppId;
-            oppLineitemRec.PricebookEntryId = PBentryRec.Id;
-            if(AddOnRec.Discount__c!=null){
-                oppLineitemRec.TotalPrice = PBentryRec.UnitPrice - (PBentryRec.UnitPrice * (AddOnRec.Discount__c / 100));
-            }else{
-                oppLineitemRec.TotalPrice = PBentryRec.UnitPrice ;
+                system.debug('oppLitemRec.TotalPrice===' + oppLitemRec.TotalPrice);
+                oppLitemRec.Quantity = 1;
+                oppLitemList.add(oppLitemRec);
             }
-            
-            system.debug('oppLitemRec.TotalPrice===' + oppLineitemRec.TotalPrice);
-            oppLineitemRec.Quantity = 1;
-            oppLitemList.add(oppLineitemRec);
+
+            for (Add_On__c AddOnRec : AddOnList){
+                PricebookEntry PBentryRec = [Select Id, UnitPrice
+                                             From PricebookEntry
+                                             where Pricebook2.Name = 'Standard Price Book' AND Product2Id = :AddOnRec.Addon_Product__c];
+                OpportunityLineItem oppLineitemRec = new OpportunityLineItem();
+                oppLineitemRec.Product2Id = AddOnRec.Addon_Product__c;
+                oppLineitemRec.Discount = AddOnRec.Discount__c;
+                oppLineitemRec.OpportunityId = oppId;
+                oppLineitemRec.PricebookEntryId = PBentryRec.Id;
+                if (AddOnRec.Discount__c != null){
+                    oppLineitemRec.TotalPrice = PBentryRec.UnitPrice - (PBentryRec.UnitPrice * (AddOnRec.Discount__c / 100));
+                } else{
+                    oppLineitemRec.TotalPrice = PBentryRec.UnitPrice;
+                }
+
+                system.debug('oppLitemRec.TotalPrice===' + oppLineitemRec.TotalPrice);
+                oppLineitemRec.Quantity = 1;
+                oppLitemList.add(oppLineitemRec);
+            }
+            if (!oppLitemList.IsEmpty()){
+
+                Database.SaveResult[] results = Database.update (oppLitemList, false);
+                for (Integer i = 0, s = results.size(); i < s; i++){
+                    if (!results[i].isSuccess()){
+                        // report an error here //
+
+                        // You can tell if it was an approval lock by: //
+                        for (Database.Error e : results[i].getErrors()){
+                            if (e.getStatusCode() == StatusCode.ENTITY_IS_LOCKED){
+                                System.debug('Entity is locked !!!!');
+                                // Record was locked by an approval process
+                            }
+                        }
+                    }
+                }
+                //insert oppLitemList;
+            }
+            message = 'SUCCESS';
+            return message;
+
+        } catch (Exception e){
+            System.debug(' the error occure due to ' + e.getMessage());
+            System.debug(' the error occure at line ' + e.getLineNumber());
+            System.debug(' the error tack string  ' + e.getStackTraceString());
+            return null;
+
         }
-        if (!oppLitemList.IsEmpty()){
-            insert oppLitemList;
-        }
-        return 'SUCCESS';
     }
 
 }

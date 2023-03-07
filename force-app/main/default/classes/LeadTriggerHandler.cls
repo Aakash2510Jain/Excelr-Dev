@@ -33,16 +33,7 @@ public without sharing class LeadTriggerHandler{
             
             for (Lead ld : leadList){
                 system.debug('ld.OwnerId--->'+ld.OwnerId);
-                if (ld.LeadSource == 'Reference' || ld.Lead_Gen_Path__c == 'Reference' || ld.To_Be_Deleted__c == true){
-                    //asign lead to creator
-                }else if ( (ld.Lead_Generation_Method__c == 'Voice Form' || ld.Lead_Generation_Method__c == 'Chat Form' || (ld.Lead_Generation_Method__c == 'Generic Form' && ld.Is_User_Assigned__c == 'Not-Assigned' ) || (ld.Lead_Generation_Method__c == 'Walk-in Form' && ld.Is_User_Assigned__c == 'Not-Assigned' ) )){
-                    system.debug('Owner is Queue');
-                    ld.Is_Lead_Assigned_to_User__c = false;
-                    ld.OwnerId = constants.queueId;
-                }else{
-                    ld.Is_Lead_Assigned_to_User__c = false;
-                    ld.OwnerId = constants.queueId;
-                }
+               
                 if (ld.Enter_UTM_Link__c != null && ld.Lead_Generation_Method__c != null && (ld.Lead_Generation_Method__c == 'Chat Form' || ld.Lead_Generation_Method__c == 'Generic Form' )){
                     Utility.UTMLinkParams(ld);
                 }
@@ -96,6 +87,7 @@ public without sharing class LeadTriggerHandler{
                 if(ld.Course__c != null){
                     ld.Enquired_Course__c = ld.Course__c;
                 }
+                ld.Enquired_Type_of_Course__c = !String.isBlank(ld.Type_of_Course__c)?ld.Type_of_Course__c:'Single';
             }
             string queryStringForNonConvertedLead = 'select Id, Email, status, course__c, CID__c,Customers__c,OwnerId,Alternate_Phone__c,Phone,Alternate_Email__c From Lead';
             String queryStringForConvertedLead = 'select Id, Email, status, course__c,CID__c,ConvertedAccountId, Customers__c,LID__c,OwnerId,Alternate_Phone__c,Phone,Alternate_Email__c From Lead ';
@@ -350,6 +342,16 @@ public without sharing class LeadTriggerHandler{
                         //applicationListToInsert.add(Utility.returnApplicationInstance(accountId, course));
                     }
                 }
+                if (leadRec.LeadSource == 'Reference' || leadRec.Lead_Gen_Path__c == 'Reference' || leadRec.To_Be_Deleted__c == true){
+                    //asign lead to creator
+                }else if ( (leadRec.Lead_Generation_Method__c == 'Voice Form' || leadRec.Lead_Generation_Method__c == 'Chat Form' || (leadRec.Lead_Generation_Method__c == 'Generic Form' && leadRec.Is_User_Assigned__c == 'Not-Assigned' ) || (leadRec.Lead_Generation_Method__c == 'Walk-in Form' && leadRec.Is_User_Assigned__c == 'Not-Assigned' ) )){
+                    system.debug('Owner is Queue');
+                    leadRec.Is_Lead_Assigned_to_User__c = false;
+                    leadRec.OwnerId = constants.queueId;
+                }else{
+                    leadRec.Is_Lead_Assigned_to_User__c = false;
+                    leadRec.OwnerId = constants.queueId;
+                }
             }
             if(!opportunityListToInsert.isEmpty()){
                 insert opportunityListToInsert;
@@ -369,9 +371,16 @@ public without sharing class LeadTriggerHandler{
     
     public void afterInsert(List<Lead> leadList){
         try{
+            set<String> leadIds = new set<String>();
             
             for (Lead ld : leadList){
                 Utility.createApplicationInstance(ld.Id, ld.Course__c,null);
+                if(ld.To_Be_Deleted__c){
+                    leadIds.add(ld.Id);
+                }
+            }
+            if(!leadIds.isEmpty()){
+                DeleteDuplicateLeads.deleteLeads();
             }
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
@@ -431,12 +440,20 @@ public without sharing class LeadTriggerHandler{
                 } else if (ld.status != oldLeadMap.get(ld.Id).status &&  ld.status == 'Junk' && (ld.Is_Phone_Invalid__c == false)){
                     ld.Profession__c.addError('Lead Phone should be Invalid to mark lead as Junk');
                 }   
-                if(ld.status != oldLeadMap.get(ld.Id).status && (ld.Status == 'On Hold' || ld.Status ==  'Deferred') ){
+                if(ld.status != oldLeadMap.get(ld.Id).status && (ld.Status == 'On Hold') ){
                     dateTime currentDateTime = system.now();
                     dateTime postOneMonth = system.now().addMonths(1);
                     dateTime postThreeMonth = system.now().addMonths(3);
                     if(ld.Next_follow_up_date_time__c < postOneMonth || ld.Next_follow_up_date_time__c > postThreeMonth){
                         ld.Next_follow_up_date_time__c.addError('Follow up date should be > 1 month & < 3 month to park it in On Hold Stage');
+                    }
+                    
+                }
+                if(ld.status != oldLeadMap.get(ld.Id).status && (ld.Status ==  'Deferred') ){
+                    dateTime currentDateTime = system.now();
+                    dateTime postThreeMonth = system.now().addMonths(3);
+                    if(ld.Next_follow_up_date_time__c < postThreeMonth){
+                        ld.Next_follow_up_date_time__c.addError('Follow up date should be > 3 month to park it in Deferred Stage');
                     }
                     
                 }

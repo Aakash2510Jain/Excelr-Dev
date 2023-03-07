@@ -1252,7 +1252,7 @@ export default class voiceForm extends LightningElement {
 
     createLeadFromJS() {
         debugger;
-
+        this.handleSpinner();
         createLead({ Leadrec: this.LeadTobeCreated, countrycode: this.CountryCode, countrycodealternate: this.CountryCodeAlt, mediumValue: this.SelectedMedium, city: this.selectedresultValue })
             .then(data => {
 
@@ -1279,6 +1279,12 @@ export default class voiceForm extends LightningElement {
                 this.HandleLeadCreatedisable = false;
                 this.handleCancel();
             })
+
+    }
+
+    showLoading = false;
+    handleSpinner(){
+        this.showLoading = !this.showLoading;
 
     }
 

@@ -258,6 +258,10 @@
                             </header>
                             <!-- Modal/Popup Box LWC body starts here -->
                             <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+
+                                <template if:true={showLoading}>
+                                    <lightning-spinner alternative-text="Loading" size="medium" class="spinnerClass"></lightning-spinner>
+                                </template>
                                 <!--lightning-input label="First Name" onchange={FnameChange} required="true"></lightning-input -->
 
                                 <lightning-input name="LN" label="Name" required="true"

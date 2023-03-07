@@ -896,7 +896,7 @@ export default class WaklInLead extends LightningElement {
 
     createLeadFromJS() {
         debugger;
-
+        this.handleSpinner();
         createLead({ Leadrec: this.LeadTobeCreated, countrycode: this.CountryCode, countrycodealternate: this.CountryCodeAlt, mediumValue: this.SelectedMedium, city: this.selectedresultValue })
             .then(data => {
 
@@ -923,6 +923,12 @@ export default class WaklInLead extends LightningElement {
                 this.HandleLeadCreatedisable = false;
                 this.handleCancel();
             })
+
+    }
+
+    showLoading = false;
+    handleSpinner(){
+        this.showLoading = !this.showLoading;
 
     }
 
@@ -975,11 +981,6 @@ export default class WaklInLead extends LightningElement {
     // change isLoaded to the opposite of its current value
     handleClick() {
         this.isLoaded = !this.isLoaded;
-    }
-
-    @track spinnerLoading = false;
-    handleSpinner() {
-        this.spinnerLoading = !this.spinnerLoading;
     }
 
 
