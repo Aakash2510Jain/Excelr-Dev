@@ -3,7 +3,7 @@ global class BatchForOverdueTasks implements Database.Batchable<sObject>{
         Date todayDate = system.today();
         todayDate = todayDate.addDays(-1);
         
-        String query = 'SELECT Id,Name,whoId FROM Task where ActivityDate	=: todayDate limit 10000';
+        String query = 'SELECT Id,whoId FROM Task where ActivityDate	=: todayDate limit 10000';
         return Database.getQueryLocator(query);
     }
     

@@ -36,7 +36,7 @@ public without sharing class ReferralFormController{
                     Leadrec.LeadSource = 'Reference';
                     Leadrec.Lead_Gen_Path__c = 'Reference';
                     Leadrec.OwnerId = UserInfo.getUserId();
-                    if (countrycode != null){
+                    if (countrycode != null && Leadrec.Phone!=null){
                         Leadrec.Phone = countrycode + Leadrec.Phone;
                     }
 

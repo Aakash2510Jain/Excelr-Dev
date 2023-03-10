@@ -14,7 +14,7 @@ public with sharing class Opportunitytriggerhandler{
         Map<Id, Account> ReferralAccountMap = new Map<id, Account>();
         List<task> TaskListTobeCreated = new List<Task>();
         map<string, Opportunity> AccountIdwithOpportunity = new Map<String, Opportunity>();
-        map<id, Opportunity> OppWithReferralAccount = new Map<Id, Opportunity>();
+       // map<id, Opportunity> OppWithReferralAccount = new Map<Id, Opportunity>();
 
         List<Invoice__c> invoiceListtobeInserted = new List<Invoice__c>();
         try{

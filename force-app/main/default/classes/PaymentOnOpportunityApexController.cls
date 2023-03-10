@@ -119,6 +119,7 @@ public class PaymentOnOpportunityApexController {
             invRec.Opportunity__c=recordId;
             invRec.Status__c='Initiated';
             invRec.Amount__c=Amount;
+            invRec.Type__c = 'Payment';
             invRec.Mode_Terms_of_Payment__c='Online';
             invRec.Initiated_Date__c=System.Today();
             invRec.Invoice_Due_Date__c=System.Today() + 2;
@@ -144,11 +145,11 @@ public class PaymentOnOpportunityApexController {
     }
     
     @AuraEnabled
-    Public Static string UpdateOPPforPartialPayment(string recordId,Decimal Amount,Decimal PendingAmount, String paymentType,String PaymentOptiontype){
+    Public Static string UpdateOPPforPartialPayment(string recordId,Decimal Amount,Decimal PendingAmount, String paymentType,String PaymentOptiontype,Date nextPaymentDueDate){
         
         try{
             List<Invoice__c> invoiceListToInsert = new List<Invoice__c>();
-
+            
             Opportunity OppRec=new Opportunity();
             OppRec.Id=recordId;
             OppRec.Payment_Mode__c=paymentType;
@@ -159,15 +160,16 @@ public class PaymentOnOpportunityApexController {
             OppRec.Payment_Initiated_Date_Time__c = system.now();
             OppRec.Payment_Initiated__c = true;
             OppRec.Upfront_Amount__c=Amount;
-            oppRec.Due_Amount__c = Amount - PendingAmount;
-           
-
+            oppRec.Due_Amount__c =PendingAmount-Amount;
+            
+            
             update OppRec;
             
             Invoice__c invRec=new Invoice__c();
             invRec.Opportunity__c=recordId;
             invRec.Status__c='Initiated';
             invRec.Amount__c=Amount;
+            invRec.Type__c = 'Payment';
             invRec.Mode_Terms_of_Payment__c='Online';
             invRec.Initiated_Date__c=System.Today();
             invRec.Invoice_Due_Date__c=System.Today() + 2;
@@ -175,16 +177,23 @@ public class PaymentOnOpportunityApexController {
             
             Invoice__c invRecord=new Invoice__c();
             invRecord.Opportunity__c=recordId;
-            invRecord.Status__c='Initiated';
+            invRecord.Status__c='Pending';
+            invRec.Type__c = 'Payment';
+            invRecord.Mode_Terms_of_Payment__c='Online';
             invRecord.Amount__c=PendingAmount;
             invRecord.Initiated_Date__c=System.Today();
-            invRecord.Invoice_Due_Date__c=System.Today() + 2;
+            
+            Time myTime = Time.newInstance(11, 0, 0, 0); // 11:00 AM
+            
+            invRecord.Next_Followup_Date_Time__c = DateTime.newInstance(nextPaymentDueDate.year(), nextPaymentDueDate.month(), nextPaymentDueDate.day(), myTime.hour(), myTime.minute(), myTime.second());
+            invRecord.Invoice_Due_Date__c=nextPaymentDueDate + 2;
             invoiceListToInsert.add(invRecord);
             
             if(!invoiceListToInsert.isEmpty())
-                insert invRecord;
+                insert invoiceListToInsert;
             
             if(paymentType=='razorpay'){
+                system.debug('invRec Id-'+invRec.Id);
                 return RazorpayPaymentHandler.initateRazorpayPament(invRec.id);
                 
             }else{
@@ -220,6 +229,7 @@ public class PaymentOnOpportunityApexController {
             OppRec.Payment_Initiated_Date_Time__c = system.now();
             OppRec.Payment_Initiated__c = true;
             OppRec.Upfront_Amount__c = 0;
+            OppRec.Due_Amount__c = 0;
             OppRec.NBFCPartner__c=FullNBFCValue;
             Update OppRec;
             
@@ -227,6 +237,9 @@ public class PaymentOnOpportunityApexController {
             invRec.Opportunity__c=recordId;
             invRec.Status__c='Initiated';
             invRec.Amount__c=Amount;
+            invRec.Type__c = 'Loan';
+            invRec.Due_Amount__c = 0;
+            invRec.Mode_Terms_of_Payment__c = 'Full Loan';
             invRec.Initiated_Date__c=System.Today();
             invRec.Invoice_Due_Date__c=System.Today() + 2;
             
@@ -268,6 +281,8 @@ public class PaymentOnOpportunityApexController {
             invRec.Opportunity__c=recordId;
             invRec.Status__c='Initiated';
             invRec.Amount__c=PartialUpfrontValue;
+            invRec.Type__c = 'Payment';
+            invRec.Mode_Terms_of_Payment__c = 'Online';
             invRec.Initiated_Date__c=System.Today();
             invRec.Invoice_Due_Date__c=System.Today() + 2;
             invoiceListToUpdate.add(invRec);
@@ -275,6 +290,8 @@ public class PaymentOnOpportunityApexController {
             Invoice__c invRecLoan = new Invoice__c();
             invRecLoan.Opportunity__c = recordId;
             invRecLoan.Status__c = 'Pending';
+            invRecLoan.Type__c = 'Loan';
+            invRecLoan.Mode_Terms_of_Payment__c = 'Partial Loan';
             invRecLoan.Amount__c = Amount - PartialUpfrontValue;
             invRecLoan.Initiated_Date__c = System.Today();
             invRecLoan.Invoice_Due_Date__c = System.Today() + 2;

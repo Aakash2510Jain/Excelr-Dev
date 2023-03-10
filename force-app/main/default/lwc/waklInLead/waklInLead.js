@@ -371,6 +371,7 @@ export default class WaklInLead extends LightningElement {
     search(event) {
         debugger;
         let value = event.target.value;
+        this.selectedresultValue = value;
 
         let TempValue;
         if (value) {
@@ -780,17 +781,13 @@ export default class WaklInLead extends LightningElement {
     createNewLead() {
         debugger;
 
-        if (this.FetchedcityList.find((picklistOption) => picklistOption.value === this.selectedresultValue)) {
-            console.log('Selected City Is Correct');
-        } else {
-            window.alert('Choose a Correct City');
-        }
+        
         this.LeadTobeCreated.ExcelR_Training_User__c = this.agentrecid;
         //&& (this.LeadTobeCreated.Email != undefined && this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '') && (this.LeadTobeCreated.Phone != undefined && this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '')
 
+        
         if ((this.LeadTobeCreated.LastName != undefined && this.LeadTobeCreated.LastName != null && this.LeadTobeCreated.LastName != '')
-            && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '') && (this.selectedresultValue != null && this.selectedresultValue != undefined && this.selectedresultValue != '') && (this.selectedrecordDetails != null && this.selectedrecordDetails != undefined && this.selectedrecordDetails != '')) {
-
+            && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '') && (this.selectedresultValue != null && this.selectedresultValue != undefined && this.selectedresultValue != '') && (this.selectedrecordDetails != null && this.selectedrecordDetails != undefined && this.selectedrecordDetails != '')) {  
             if (this.LeadTobeCreated.Email != null) {
                 var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
             }
@@ -893,9 +890,12 @@ export default class WaklInLead extends LightningElement {
 
     }
 
+    
 
     createLeadFromJS() {
         debugger;
+        
+        if (this.FetchedcityList.find((picklistOption) => picklistOption.value === this.selectedresultValue)) {       
         this.handleSpinner();
         createLead({ Leadrec: this.LeadTobeCreated, countrycode: this.CountryCode, countrycodealternate: this.CountryCodeAlt, mediumValue: this.SelectedMedium, city: this.selectedresultValue })
             .then(data => {
@@ -924,7 +924,11 @@ export default class WaklInLead extends LightningElement {
                 this.handleCancel();
             })
 
+    }else{
+        this.HandleLeadCreatedisable = false;
+        window.alert('Choose a Correct City');
     }
+}
 
     showLoading = false;
     handleSpinner(){

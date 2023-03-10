@@ -30,10 +30,16 @@ public without sharing class LeadTriggerHandler{
             List<Application__c> applicationListToInsert = new List<Application__C>();
             List<Customers__c> customersListToInsert = new List<Customers__c>();
             List<task> taskListToInsert = new List<task>();
+
+            map<String, Lead> NewLeadEmailwithLead = new map<String, Lead>();
+            map<String, Lead> NewLeadAlternateEmailwithLead = new map<String, Lead>();
+            map<String, Lead> NewLeadPhonewithLead = new map<String, Lead>();
+            map<String, Lead> NewLeadAlternatePhonewithLead = new map<String, Lead>();
             
             for (Lead ld : leadList){
                 system.debug('ld.OwnerId--->'+ld.OwnerId);
-               
+                
+                
                 if (ld.Enter_UTM_Link__c != null && ld.Lead_Generation_Method__c != null && (ld.Lead_Generation_Method__c == 'Chat Form' || ld.Lead_Generation_Method__c == 'Generic Form' )){
                     Utility.UTMLinkParams(ld);
                 }
@@ -72,17 +78,21 @@ public without sharing class LeadTriggerHandler{
                 
                 if(ld.Email != null){
                     emailList.add(ld.Email);
+                    NewLeadEmailwithLead.put(ld.email, ld);
                 }
                 if(ld.Alternate_Email__c != null){
                     alternateEmailList.add(ld.Alternate_Email__c);
+                    NewLeadAlternateEmailwithLead.put(ld.Alternate_Email__c, ld);
                 }
                 if(ld.Phone != null){
                     //phoneSet.add('%'+ld.Phone);
                     phoneList.add(ld.Phone); 
+                    NewLeadPhonewithLead.put(ld.Phone, ld);
                 }
                 if(ld.Alternate_Phone__c != null){
                     //alternatePhoneSet.add('%'+ld.Alternate_Phone__c);
                     alternatePhoneList.add(ld.Alternate_Phone__c); 
+                    NewLeadAlternatePhonewithLead.put(ld.Alternate_Phone__c, ld);
                 }
                 if(ld.Course__c != null){
                     ld.Enquired_Course__c = ld.Course__c;
@@ -96,28 +106,32 @@ public without sharing class LeadTriggerHandler{
             String whereClauses  = '( ';
             
             if (!emailList.isEmpty()) {
-                whereClauses = whereClauses + '( Email IN : emailList )';
+                System.debug(' string.isBlank(whereClauses) ====> ' +string.isBlank(whereClauses));
+                whereClauses = whereClauses + '( Email IN : emailList ) ';
             }
             if (!alternateEmailList.isEmpty()) {
-                if(!string.isBlank(whereClauses))
-                    whereClauses = whereClauses + 'OR  (Alternate_Email__c IN : alternateEmailList)';
+                System.debug(' string.isBlank(whereClauses) ====> ' +string.isBlank(whereClauses));
+                if(!string.isBlank(whereClauses) && whereClauses.length() > 2)
+                    whereClauses = whereClauses + 'OR  (Alternate_Email__c IN : alternateEmailList) ';
                 else
-                    whereClauses = whereClauses + ' (Alternate_Email__c IN : alternateEmailList)';
+                    whereClauses = whereClauses + ' (Alternate_Email__c IN : alternateEmailList) ';
                 //whereClauses.add(' AND Alternate_Email__c IN : alternateEmailSet');
             }
             if (!phoneList.isEmpty()) {
-                if(!string.isBlank(whereClauses))
-                    whereClauses = whereClauses + 'OR  (Phone Like : phoneList)';
+                System.debug(' string.isBlank(whereClauses) ====> ' +string.isBlank(whereClauses));
+                if(!string.isBlank(whereClauses) && whereClauses.length() > 2)
+                    whereClauses = whereClauses + 'OR  (Phone Like : phoneList) ';
                 else                       
-                    whereClauses = whereClauses + ' (Phone Like : phoneList)';
+                    whereClauses = whereClauses + ' (Phone Like : phoneList) ';
                 
                 //whereClauses.add('AND (Phone IN : phoneSet');
             }
             if (!alternatePhoneList.isEmpty()) {
-                if(!string.isBlank(whereClauses))
-                    whereClauses = whereClauses + 'OR  (Alternate_Phone__c Like : alternatePhoneList)';
+                System.debug(' string.isBlank(whereClauses) ====> ' +string.isBlank(whereClauses));
+                if(!string.isBlank(whereClauses) && whereClauses.length() > 2)
+                    whereClauses = whereClauses + 'OR  (Alternate_Phone__c Like : alternatePhoneList) ';
                 else
-                    whereClauses = whereClauses + ' (Alternate_Phone__c Like : alternatePhoneList)';
+                    whereClauses = whereClauses + ' (Alternate_Phone__c Like : alternatePhoneList) ';
                 //whereClauses.add('Alternate_Phone__c IN : alternatePhoneSet');
             }
             
@@ -258,6 +272,11 @@ public without sharing class LeadTriggerHandler{
                         system.debug('existingLeadByAlternateEmail.ContainsKey(leadRec.Alternate_Email__c)--->'+existingLeadByAlternateEmail.ContainsKey(leadRec.Alternate_Email__c));
                         system.debug('existingLeadByPhone.ContainsKey(leadRec.Phone)--->'+existingLeadByPhone.ContainsKey(leadRec.Phone));
                         system.debug('existingLeadByPhone.ContainsKey(leadRec.Alternate_Phone__c)--->'+existingLeadByPhone.ContainsKey(leadRec.Alternate_Phone__c));
+                        // NewLeadEmailwithLead.put(ld.email, ld);
+                        // NewLeadAlternateEmailwithLead.put(ld.Alternate_Email__c, ld);
+                        // NewLeadPhonewithLead.put(ld.Phone, ld);
+                        // NewLeadAlternatePhonewithLead.put(ld.Alternate_Phone__c, ld);
+                        
                         
                         if(existingLeadByEmail.ContainsKey(leadRec.Email)){
                             if((existingLeadByEmail.get(leadRec.Email).status == 'Dead' || existingLeadByEmail.get(leadRec.Email).Status == 'Junk')){
@@ -275,7 +294,7 @@ public without sharing class LeadTriggerHandler{
                                 system.debug('Create Application');
                                 leadRec.To_Be_Deleted__c = true;
                                 leadRec.Parent_Lead_Id__c = existingLeadByEmail.get(leadRec.Email).Id;
-                                applicationListToInsert.add(Utility.returnApplicationInstance(existingLeadByEmail.get(leadRec.Email)));
+                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadEmailwithLead.get(leadRec.Email)));
                             } 
                         }
                         else if(existingLeadByAlternateEmail.ContainsKey(leadRec.Alternate_Email__c)){
@@ -295,7 +314,7 @@ public without sharing class LeadTriggerHandler{
                                 system.debug('Create Application');
                                 leadRec.To_Be_Deleted__c = true;
                                 leadRec.Parent_Lead_Id__c = existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Id;
-                                applicationListToInsert.add(Utility.returnApplicationInstance(existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c)));
+                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadAlternateEmailwithLead.get(leadRec.Alternate_Email__c)));
                             }
                         }
                         else if(existingLeadByPhone.ContainsKey(leadRec.Phone)){
@@ -314,7 +333,7 @@ public without sharing class LeadTriggerHandler{
                                 system.debug('Create Application');
                                 leadRec.To_Be_Deleted__c = true;
                                 leadRec.Parent_Lead_Id__c = existingLeadByPhone.get(leadRec.Phone).Id;
-                                applicationListToInsert.add(Utility.returnApplicationInstance(existingLeadByPhone.get(leadRec.Phone)));
+                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadPhonewithLead.get(leadRec.Phone)));
                             }
                         }
                         else if(existingLeadByAlternatePhone.ContainsKey(leadRec.Alternate_Phone__c)){
@@ -333,7 +352,7 @@ public without sharing class LeadTriggerHandler{
                                 system.debug('Create Application');
                                 leadRec.To_Be_Deleted__c = true;
                                 leadRec.Parent_Lead_Id__c = existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Id;
-                                applicationListToInsert.add(Utility.returnApplicationInstance(existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c)));
+                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadAlternatePhonewithLead.get(leadRec.Alternate_Phone__c)));
                             }
                         }
                     }else{
@@ -349,8 +368,8 @@ public without sharing class LeadTriggerHandler{
                     leadRec.Is_Lead_Assigned_to_User__c = false;
                     leadRec.OwnerId = constants.queueId;
                 }else{
-                    leadRec.Is_Lead_Assigned_to_User__c = false;
-                    leadRec.OwnerId = constants.queueId;
+                    leadRec.Is_Lead_Assigned_to_User__c = true;
+                    //leadRec.OwnerId = constants.queueId;
                 }
             }
             if(!opportunityListToInsert.isEmpty()){

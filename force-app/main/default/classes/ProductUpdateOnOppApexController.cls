@@ -164,7 +164,7 @@ public with sharing class ProductUpdateOnOppApexController{
             }
             if (!oppLitemList.IsEmpty()){
 
-                Database.SaveResult[] results = Database.update (oppLitemList, false);
+                Database.SaveResult[] results = Database.insert (oppLitemList, false);
                 for (Integer i = 0, s = results.size(); i < s; i++){
                     if (!results[i].isSuccess()){
                         // report an error here //
@@ -178,7 +178,7 @@ public with sharing class ProductUpdateOnOppApexController{
                         }
                     }
                 }
-                //insert oppLitemList;
+               // insert oppLitemList;
             }
             message = 'SUCCESS';
             return message;

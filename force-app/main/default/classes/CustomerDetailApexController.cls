@@ -25,7 +25,7 @@ public class CustomerDetailApexController{
     Public Static Map<String, String> GetAllFieldsLabelXValue(string recordId){
         //string recordId
         try{
-            Customers__c CustomerRec = [Select Alternate_Email__c,Alternate_Phone__c,Branch__c,CID__c,Company__c,CreatedById,CreatedDate,Current_Domain__c,Designation__c,Email__c,Id,IsDeleted,LastModifiedById,LastModifiedDate,LastReferencedDate,LastViewedDate,Name,Name__c,OwnerId,Phone__c,Profession__c,Qualification__c,Relevant_Experience__c,Specialization__c,SystemModstamp,Why_This_Course__c,Year_of_Experience__c,Year_of_Graduation__c FROM Customers__c
+            Customers__c CustomerRec = [Select Alternate_Email__c,Alternate_Phone__c,Branch__c,CID__c,Company__c,CreatedById,CreatedDate,Current_Domain__c,Designation__c,Email__c,Id,IsDeleted,LastModifiedById,LastModifiedDate,Name,Name__c,OwnerId,Phone__c,Profession__c,Qualification__c,Relevant_Experience__c,Specialization__c,SystemModstamp,Why_This_Course__c,Year_of_Experience__c,Year_of_Graduation__c FROM Customers__c
                                         Where Id = :recordId];//Where Id=:a0XN0000009rprxMAA
             Map<String, Object> customerRecMap = (Map<String, Object>)JSON.deserializeUntyped(JSON.serialize(CustomerRec));
 

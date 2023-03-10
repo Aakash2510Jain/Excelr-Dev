@@ -32,80 +32,124 @@ public class ManualpaymentController {
     }
     
     @AuraEnabled
-    public static Id SaveFile(Id parentId, String fileName, String base64Data, String contentType) {
+    public static void SaveFile(Id parentId, String fileName, String base64Data, String contentType) {
         try{
-        base64Data = EncodingUtil.urlDecode(base64Data, 'UTF-8');
-        Attachment attach = new Attachment();
-        attach.parentId = parentId;
-        attach.Body = EncodingUtil.base64Decode(base64Data);
-        attach.Name = fileName;
-        attach.ContentType = contentType;
-        Insert attach;
-        return attach.Id;
-    } catch (Exception e){
-        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-      HandleBusinessException.captureError('ManualpaymentcreateInvoice', 'SaveFile', e , null);
-       return null;
+            base64Data = EncodingUtil.urlDecode(base64Data, 'UTF-8');
+            String attachmentOwner = [Select ownerId from Invoice__c where id =: parentId].ownerId;
+            Attachment attach = new Attachment();
+            attach.parentId = parentId;
+            attach.Body = EncodingUtil.base64Decode(base64Data);
+            attach.Name = fileName;
+            attach.ContentType = contentType;
+            
+            //Insert ContentVersion
+            ContentVersion cVersion = new ContentVersion();
+            cVersion.ContentLocation = 'S'; //S-Document is in Salesforce. E-Document is outside of Salesforce. L-Document is on a Social Netork.
+            cVersion.PathOnClient = attach.Name;//File name with extention
+            cVersion.Origin = 'H';//C-Content Origin. H-Chatter Origin.
+            cVersion.OwnerId = attachmentOwner;//Owner of the file
+            cVersion.Title = attach.Name;//Name of the file
+            cVersion.VersionData = attach.Body;//File content
+            Insert cVersion;
+            
+            //After saved the Content Verison, get the ContentDocumentId
+            Id conDocument = [SELECT ContentDocumentId FROM ContentVersion WHERE Id =:cVersion.Id].ContentDocumentId;
+            
+            //Insert ContentDocumentLink
+            ContentDocumentLink cDocLink = new ContentDocumentLink();
+            cDocLink.ContentDocumentId = conDocument;//Add ContentDocumentId
+            cDocLink.LinkedEntityId = attach.ParentId;//Add attachment parentId
+            cDocLink.ShareType = 'V';//V - Viewer permission. C - Collaborator permission. I - Inferred permission.
+            cDocLink.Visibility = 'AllUsers';//AllUsers, InternalUsers, SharedUsers
+            Insert cDocLink;
+            
+            
+            /*
+            Attachment attach = new Attachment();
+            attach.parentId = parentId;
+            attach.Body = EncodingUtil.base64Decode(base64Data);
+            attach.Name = fileName;
+            attach.ContentType = contentType;
+            Insert attach;
+            return attach.Id;*/
+        } catch (Exception e){
+            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+            HandleBusinessException.captureError('ManualpaymentcreateInvoice', 'SaveFile', e , null);
+        }
     }
-}
     
     @AuraEnabled
-    public static  Invoice__c insertInvoiceBasedOppAmount(Decimal insertingInvAmount,String oppId,  String description){
+    public static  Invoice__c insertInvoiceBasedOppAmount(Decimal insertingInvAmount,String oppId,  String description,date nextPaymentDueDate){
+        system.debug('nextPaymentDueDate--->'+nextPaymentDueDate);
         try{
-        List<Invoice__c> invoiceListToInsert = new List<Invoice__c>();
-        Invoice__c invoiceRecToReturn = new Invoice__c();
-        Decimal remaingAmount = 0.0;
-                
-        System.debug('insertingInvAmount ::'+insertingInvAmount);
-        
-        Opportunity oppRec = [SELECT Id,Name,Amount,Due_Amount__c FROM Opportunity WHERE ID =: oppId];
-        System.debug('oppRec ::'+oppRec);
-
-        if(oppRec.Amount != insertingInvAmount){
-            remaingAmount = oppRec.Amount - insertingInvAmount;
-            Invoice__c inv = new Invoice__c();
-            inv.Opportunity__c = oppRec.Id;
-            inv.Amount__c = insertingInvAmount;
-            inv.Status__c = 'Realized';
-            inv.Delivery_Note__c = description;
-            invoiceListToInsert.add(inv);
-            System.debug('invoiceListToInsert Realized ::'+invoiceListToInsert);
-
-            Invoice__c pendingInvoice = new Invoice__c();
-            pendingInvoice.Opportunity__c = oppRec.Id;
-            pendingInvoice.Status__c = 'Pending';
-            pendingInvoice.Amount__c = remaingAmount;
-            invoiceListToInsert.add(pendingInvoice);
-            System.debug('invoiceListToInsert Pending ::'+invoiceListToInsert);
-            Insert invoiceListToInsert;            
-        }else {
-            Invoice__c inv1 = new Invoice__c();
-            inv1.Opportunity__c =oppRec.Id;
-            inv1.Amount__c = insertingInvAmount;
-            inv1.Status__c = 'Realized';
-            invoiceListToInsert.add(inv1);
-            Insert invoiceListToInsert;
-            System.debug('Ok Amount ::'+invoiceListToInsert);
-        }
-    
-        if(remaingAmount > 0.0 ){
-            oppRec.Due_Amount__c = remaingAmount;
+            List<Invoice__c> invoiceListToInsert = new List<Invoice__c>();
+            Invoice__c invoiceRecToReturn = new Invoice__c();
+            Decimal remaingAmount = 0.0;
+            
+            System.debug('insertingInvAmount ::'+insertingInvAmount);
+            
+            Opportunity oppRec = [SELECT Id,Name,Amount,Due_Amount__c FROM Opportunity WHERE ID =: oppId];
+            System.debug('oppRec ::'+oppRec);
+            OppRec.Payment_Type__c = 'Manual Payment';
             update oppRec;
-            System.debug('Updated Record ::'+oppRec);
-        }
-        if(!invoiceListToInsert.isEmpty()){
-            for(Invoice__c invoiceRec : invoiceListToInsert){
-                if(invoiceRec.status__c == 'Realized'){
-                    System.debug('Attachment Invoice Id ::');
-                    invoiceRecToReturn =invoiceRec;
+            if(oppRec.Amount != insertingInvAmount){
+                remaingAmount = oppRec.Amount - insertingInvAmount;
+                Invoice__c inv = new Invoice__c();
+                inv.Opportunity__c = oppRec.Id;
+                inv.Amount__c = insertingInvAmount;
+                inv.Status__c = 'Initiated';
+                inv.Type__c = 'Payment';
+                inv.Mode_Terms_of_Payment__c = 'Offline';
+                inv.Delivery_Note__c = description;
+                inv.Initiated_Date__c = system.today();
+                inv.Invoice_Due_Date__c = system.today() +2;
+                invoiceListToInsert.add(inv);
+                
+                Invoice__c pendingInvoice = new Invoice__c();
+                pendingInvoice.Opportunity__c = oppRec.Id;
+                pendingInvoice.Status__c = 'Pending';
+                pendingInvoice.Type__c = 'Payment';
+                pendingInvoice.Mode_Terms_of_Payment__c = 'Offline';
+                Time myTime = Time.newInstance(11, 0, 0, 0); // 11:00 AM
+                pendingInvoice.Next_Followup_Date_Time__c = DateTime.newInstance(nextPaymentDueDate.year(), nextPaymentDueDate.month(), nextPaymentDueDate.day(), myTime.hour(), myTime.minute(), myTime.second());
+                pendingInvoice.Invoice_Due_Date__c=nextPaymentDueDate + 2;
+                pendingInvoice.Initiated_Date__c = system.today();
+                pendingInvoice.Amount__c = remaingAmount;
+                invoiceListToInsert.add(pendingInvoice);
+                System.debug('invoiceListToInsert Pending ::'+invoiceListToInsert);
+                Insert invoiceListToInsert;            
+            }else {
+                Invoice__c inv1 = new Invoice__c();
+                inv1.Opportunity__c =oppRec.Id;
+                inv1.Amount__c = insertingInvAmount;
+                inv1.Status__c = 'Initiated';
+                inv1.Type__c = 'Payment';
+                inv1.Mode_Terms_of_Payment__c = 'Offline';
+                inv1.Initiated_Date__c = system.today();
+                inv1.Invoice_Due_Date__c = system.today() +2;
+                invoiceListToInsert.add(inv1);
+                Insert invoiceListToInsert;
+                System.debug('Ok Amount ::'+invoiceListToInsert);
+            }
+            
+            if(remaingAmount > 0.0 ){
+                oppRec.Due_Amount__c = remaingAmount;
+                update oppRec;
+                System.debug('Updated Record ::'+oppRec);
+            }
+            if(!invoiceListToInsert.isEmpty()){
+                for(Invoice__c invoiceRec : invoiceListToInsert){
+                    if(invoiceRec.status__c == 'Initiated'){
+                        System.debug('Attachment Invoice Id ::');
+                        invoiceRecToReturn =invoiceRec;
+                    }
                 }
             }
+            return invoiceRecToReturn;
+        } catch (Exception e){
+            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+            HandleBusinessException.captureError('ManualpaymentcreateInvoice', 'insertInvoiceBasedOppAmount', e , null);
+            return null;
         }
-        return invoiceRecToReturn;
-    } catch (Exception e){
-        system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-      HandleBusinessException.captureError('ManualpaymentcreateInvoice', 'insertInvoiceBasedOppAmount', e , null);
-       return null;
     }
-}
 }

@@ -8,7 +8,7 @@ public with sharing class RazorpayPaymentHandler {
             // 2) check if invoice is related with lead or opp and pass the value under email,contact,name,amount;
             // 3) 
             
-            Opportunity opp = [Select Id,Name,Amount,AccountId,Account.Email__c,Account.Name,Account.Phone From Opportunity Where Id=:recordId];
+            Opportunity opp = [Select Id,Name,Amount,Email__c,Phone__c,AccountId,Account.Email__c,Account.Name,Account.Phone From Opportunity Where Id=:recordId];
             
             String email;
             String contact;
@@ -19,11 +19,11 @@ public with sharing class RazorpayPaymentHandler {
                 return 'Account is not tagged';
             }
             
-            if(opp.AccountId!=null && String.isEmpty(opp.Account.Email__c)){
+            if(String.isEmpty(opp.Email__c)){
                 return 'Account email is empty';
             }
             
-            if(String.isEmpty(opp.Account.Phone)){
+            if(String.isEmpty(opp.Phone__c)){
                 return 'Account phone is empty';
             }
             
@@ -32,8 +32,8 @@ public with sharing class RazorpayPaymentHandler {
             }
             
             
-            email = opp.Account.Email__c;
-            contact = opp.Account.Phone;
+            email = opp.Email__c;
+            contact = opp.Phone__c;
             name = opp.Account.Name;
             amount = opp.Amount*100;
             
@@ -80,7 +80,7 @@ public with sharing class RazorpayPaymentHandler {
     
     public static String initateRazorpayPament(String recId){
         try{
-            Invoice__c iv = [Select Id,Name,Amount__c,Opportunity__c,Opportunity__r.Account.Name,Opportunity__r.Account.Email__c,Opportunity__r.Account.Phone,LeadInvoice__c,LeadInvoice__r.Name,LeadInvoice__r.Phone,LeadInvoice__r.Email From Invoice__c Where Id=:recId];
+            Invoice__c iv = [Select Id,Name,Amount__c,Opportunity__c,Opportunity__r.Email__c,Opportunity__r.Phone__c,Opportunity__r.Account.Name,Opportunity__r.Account.Email__c,Opportunity__r.Account.Phone,LeadInvoice__c,LeadInvoice__r.Name,LeadInvoice__r.Phone,LeadInvoice__r.Email From Invoice__c Where Id=:recId];
             
             String email;
             String contact;
@@ -94,8 +94,8 @@ public with sharing class RazorpayPaymentHandler {
             
             
             if(iv.Opportunity__c!=null){
-                email = iv.Opportunity__r.Account.Email__c;
-                contact = iv.Opportunity__r.Account.Phone;
+                email = iv.Opportunity__r.Email__c;
+                contact = iv.Opportunity__r.Phone__c;
                 name = iv.Opportunity__r.Account.Name;
                 objName = 'Opportunity';
                 triggeredRecordId = iv.Opportunity__c;

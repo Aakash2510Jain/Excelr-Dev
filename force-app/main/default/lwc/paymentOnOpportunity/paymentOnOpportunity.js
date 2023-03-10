@@ -43,6 +43,13 @@ export default class PaymentOnOpportunity extends LightningElement {
 
     @track ShowOriginalAmount=true;
     @track maximumvalue;
+@track selectedDate;
+
+HandleNextDueDate(event){
+    debugger;
+    this.selectedDate=event.detail.value;
+}
+  minDate = new Date().toISOString().slice(0, 10);
 
     //Getting Amount From Opportunity
     @wire(ShowOppAmount,{recordId: '$recordId'})
@@ -167,7 +174,7 @@ export default class PaymentOnOpportunity extends LightningElement {
     @track PartialAmount;
 
     HandlePartialLoanInputUpfrontAmount(event){
-          
+          debugger;
           this.PartialUpfrontAmount=event.target.value;
    
           this.PartialAmount=this.originalPrice-this.PartialUpfrontAmount;
@@ -530,16 +537,17 @@ HandlePrevious(event){
 
     }
     else if(this.Paymentvalue=='Partial Payment'){
-        UpdateOPPforPartialPayment({recordId:this.recordId,paymentType:'razorpay',Amount:this.PartialUpfrontAmount,PendingAmount:this.PartialAmount,PaymentOptiontype:'Partial Payment'})
+        UpdateOPPforPartialPayment({recordId:this.recordId,paymentType:'razorpay',Amount:this.PartialUpfrontAmount,PendingAmount:this.PartialAmount,PaymentOptiontype:'Partial Payment',nextPaymentDueDate:this.selectedDate })
        .then(result=>{
 
        if(result=='Success'){
+          console.log('result',result);
            this.showToast('Success','Invoice created successfully!','success');
            this.dispatchEvent(new CloseActionScreenEvent());
            updateRecord({ fields: { Id: this.recordId } });
        }
        else{
-
+           console.log('result',result);
            this.showToast('Failed',result,'error');
        }
        
@@ -547,7 +555,7 @@ HandlePrevious(event){
        .catch(error=>{
 
              this.showToast('Failed',error,'error');
-             console.log('error='+error);
+             console.log('error=',error);
       })
     }
    }
@@ -582,7 +590,7 @@ HandleCCAvenuePay(){
          debugger;
          if(this.Paymentvalue=='100% Payment'){
 
-            UpdateOPPforFullPayment({recordId:this.recordId,paymentType:'razorpay'})
+            UpdateOPPforFullPayment({recordId:this.recordId,paymentType:'CC Avenue'})
            .then(result=>{
     
            if(result=='Success'){
@@ -604,7 +612,8 @@ HandleCCAvenuePay(){
     
         }
         else if(this.Paymentvalue=='Partial Payment'){
-            UpdateOPPforPartialPayment({recordId:this.recordId,paymentType:'razorpay'})
+            UpdateOPPforPartialPayment({recordId:this.recordId,paymentType:'CC Avenue',Amount:this.PartialUpfrontAmount,PendingAmount:this.PartialAmount,PaymentOptiontype:'Partial Payment',nextPaymentDueDate:this.selectedDate })
+            //UpdateOPPforPartialPayment({recordId:this.recordId,paymentType:'CC Avenue'})
            .then(result=>{
     
            if(result=='Success'){
@@ -630,7 +639,7 @@ HandleCCAvenuePay(){
 
         if(this.PartialLoanTenureValue!=undefined && this.PartialLoanNBFCPartnervalue!=undefined && this.PartialLoanUpfrontpaymentvalue!=undefined){
             debugger;
-            OppUpdateOnPartialLoan({recordId:this.recordId,PartialTenureValue:this.PartialLoanTenureValue,partialNBFCValue:this.PartialLoanNBFCPartnervalue,PartialUpfrontValue:this.PartialLoanUpfrontpaymentvalue,Quantity:this.QuantityValue,ProductName:this.ProductValue,Amount:this.priceIncludingGst,paymentType:'razorpay',LoanType:this.Loanvalue})
+            OppUpdateOnPartialLoan({recordId:this.recordId,PartialTenureValue:this.PartialLoanTenureValue,partialNBFCValue:this.PartialLoanNBFCPartnervalue,PartialUpfrontValue:this.PartialLoanUpfrontpaymentvalue,Quantity:this.QuantityValue,ProductName:this.ProductValue,Amount:this.priceIncludingGst,paymentType:'CC Avenue',LoanType:this.Loanvalue})
              .then(result=>{
 
                 if(result=='Success'){

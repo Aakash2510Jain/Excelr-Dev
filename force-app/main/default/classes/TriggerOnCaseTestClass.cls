@@ -24,7 +24,7 @@ public   class TriggerOnCaseTestClass {
         
         Profile p = [Select Id from Profile where Name = 'System Administrator'];
         User user1 = new User();
-        user1.Username = 'us1@test.com';
+        user1.Username = 'usqqqqqqqqqqqqqqqqqqqq1@test.com';
         user1.Email = 'us1@test.com';
         user1.LastName = 'LastName1';
         user1.FirstName = 'FirstName1';
@@ -45,7 +45,7 @@ public   class TriggerOnCaseTestClass {
         insert user1;
         
         User user2 = new User();
-        user2.Username = 'us2@test.com';
+        user2.Username = 'usasasasasasasa2@test.com';
         user2.Email = 'us2@test.com';
         user2.LastName = 'LastName';
         user2.FirstName = 'FirstName2';
@@ -67,19 +67,17 @@ public   class TriggerOnCaseTestClass {
         insert user2;
         
         string userId = user1.Id;
-        Account acclist = [Select id,Name From Account Where Id=: userId];
+        //Account acclist = [Select id,Name From Account Where Id=: userId];
         Account acc = new Account();
         acc.Name = 'Manager';
         acc.OwnerId = userId ;
         insert acc;
         
-        list<Refund__c> refunReclist = new list<Refund__C>{[Select id,Name,Account__c from Refund__c where Account__c =: acc.id]};        
-            Refund__c refundRec = new Refund__c();
+             Refund__c refundRec = new Refund__c();
         refundRec.Account__c = acc.id;
         insert refundRec;
         
-        list<Bank_Details__c> bdlist = new list<Bank_Details__c>{[Select id,Name,Account__c  From Bank_Details__c where Account__c =:acc.id]};
-            Bank_Details__c bdRec = new Bank_Details__c();
+             Bank_Details__c bdRec = new Bank_Details__c();
         bdRec.Account__c = acc.id;
         insert bdRec;
         

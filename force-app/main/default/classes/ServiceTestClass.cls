@@ -13,7 +13,7 @@ public class ServiceTestClass {
         API_CreateAccount.doPost();
         API_CreateAccount.insertLead(null, null);
         API_CreateAccount.updateLead(null);
-        API_CreateAccount.insertApplication(null);
+        API_CreateAccount.insertApplication(null,null);
     }  
     @IsTest static void test_API_CreateAccount_V1(){
         
@@ -53,15 +53,16 @@ public class ServiceTestClass {
     
     @IsTest static Application__c test_AppWithLead()  {
         Application__c appRec = new Application__c();
-         appRec.Course__c = 'Core Python Training';
+         appRec.Course__c = 'Cloud Computing';
         Datetime myDate = Datetime.newInstance(2008, 12, 1, 12, 30, 2);
-         Lead ld = new Lead(LastName ='Akash');
+         Lead ld = new Lead(LastName ='Akash',Company='util',Course__c='ACP');
         insert ld;
         appRec.Applied_Date_Time__c = myDate ;  
         appRec.Lead__c = ld.id;
         insert appRec;
         string appId = apprec.id;
         AppWithLead var = new AppWithLead();
+        
         AppWithLead.fetchApp(appId);
         return apprec;
      }  
@@ -70,14 +71,14 @@ public class ServiceTestClass {
         Contact conRec = new Contact(LastName='Jain');
         insert conRec;
         list<Task> tasklist = new list<TasK>();
-        Task taskRec = new Task(WhoId =conRec.id);
+        Task taskRec = new Task( Subject='call',Priority='High',Status='Open',WhoId =conRec.id);
         tasklist.add(taskRec);
         insert tasklist;
         
          
         Case caseRec  = new Case();
         caseRec.Subject = 'Define Severity on Case Number 00001054';
-        caseRec.Lead__c = taskRec.WhoId;
+        caseRec.ContactId = taskRec.WhoId;
         insert caseRec;
         BatchForOverdueTasks batchInstance =  new BatchForOverdueTasks();
         database.executeBatch(batchInstance);

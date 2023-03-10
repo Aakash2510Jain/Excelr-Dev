@@ -1,5 +1,5 @@
 ({
-
+    
     MAX_FILE_SIZE: 4500000, //Max file size 4.5 MB 
     CHUNK_SIZE: 750000,      //Chunk Max size 750Kb 
     uploadHelper : function(component, event) {
@@ -13,8 +13,8 @@
         }
         var objFileReader = new FileReader();
         objFileReader.onload = $A.getCallback(function(){
-             var fileContents = objFileReader.result;
-             var base64 = 'base64,';
+            var fileContents = objFileReader.result;
+            var base64 = 'base64,';
             var dataStart = fileContents.indexOf(base64) + base64.length;
             fileContents = fileContents.substring(dataStart);
             self.uploadProcess(component, file, fileContents);
@@ -31,7 +31,7 @@
     
     uploadInChunk: function(component, file, fileContents, startPosition, endPosition, attachId) {
         debugger;
-         var getchunk = fileContents.substring(startPosition, endPosition);
+        var getchunk = fileContents.substring(startPosition, endPosition);
         var action= component.get("c.SaveFile");
         action.setParams({
             "parentId" : component.get("v.fileParentId"),
@@ -46,26 +46,26 @@
                 var data = response.getReturnValue();
                 if (data != null) {
                     var toastEvent = $A.get("e.force:showToast");
-        toastEvent.setParams({
-            title : 'SUCCESS',
-            message: 'Details Saved Successfully !',
-            duration:' 5000',
-            key: 'info_alt',
-            type: 'success',
-            mode: 'pester'
-        });
-        toastEvent.fire();
-               }
+                    toastEvent.setParams({
+                        title : 'SUCCESS',
+                        message: 'Details Saved Successfully !',
+                        duration:' 5000',
+                        key: 'info_alt',
+                        type: 'success',
+                        mode: 'pester'
+                    });
+                    toastEvent.fire();
+                }
                 var dismissActionPanel = $A.get("e.force:closeQuickAction");
                 dismissActionPanel.fire();
             }
         });
         $A.enqueueAction(action);
     },
-
+    
     getCurrentInoiceRecord : function(component,event) {
         debugger;
-     var action = component.get("c.ManualpaymentcreateInvoice");
+        var action = component.get("c.ManualpaymentcreateInvoice");
         action.setParams({
             "recordId" : component.get("v.recordId")
         });
@@ -79,5 +79,5 @@
         });
         $A.enqueueAction(action);
     },
-  
+    
 })

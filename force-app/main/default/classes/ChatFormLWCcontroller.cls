@@ -109,7 +109,7 @@ public without sharing class ChatFormLWCcontroller{
             System.debug('countrycode =======> ' + countrycode);
             System.debug('countrycodealternate =======> ' + countrycodealternate);
 
-            if (countrycode != null){
+            if (countrycode != null && Leadrec.Phone!=null){
                 Leadrec.Phone = countrycode + Leadrec.Phone;
             }
 

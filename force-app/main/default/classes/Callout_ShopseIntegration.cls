@@ -23,9 +23,9 @@ public with sharing class Callout_ShopseIntegration{
 
                     Shopwarp.amount = Double.valueof(opportunityDetails[0].Amount);
                     Shopwarp.orderId = String.valueOf(opportunityDetails[0].OID__c);
-                    List<Account> OppAccountDetails = [SELECT AccountSource, Address__c, BillingAddress, BillingCity, BillingCountry, BillingCountryCode, BillingPostalCode, BillingState, BillingStateCode,
+                    List<Account> OppAccountDetails = [SELECT AccountSource, Address__c, BillingAddress, BillingCity, BillingCountry, BillingPostalCode, BillingState,
                                                          BillingStreet, City__c, Country__c, Course__c, CreatedDate, Current_Domain__c, Date_of_Enrollment__c, Description, Designation__c, Email__c, Id, Name,Profession__c, 
-                                                         Qualification__c,ShippingAddress, ShippingCity, ShippingCountry, ShippingPostalCode, ShippingState, ShippingStateCode, Source__c, Specialization__c, State__c, 
+                                                         Qualification__c,ShippingAddress, ShippingCity, ShippingCountry, ShippingPostalCode, ShippingState, Source__c, Specialization__c, State__c, 
                                                          Type_of_Course__c, Website
                                                         FROM Account
                                                         where id = :opportunityDetails[0].AccountId];

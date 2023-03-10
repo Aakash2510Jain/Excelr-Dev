@@ -123,15 +123,15 @@ public without sharing class Utility{
         if(currentRole.ParentRoleId != null ) { //&& userRoleMap.get(currentRole.ParentRoleId).Name != null
             //System.debug('parentRoleId =====> ' + userRoleMap.get(currentRole.ParentRoleId).Id);
             //System.debug('parentRole Name =====> ' + userRoleMap.get(currentRole.ParentRoleId).Name);
-            userlist = [Select id from User where UserRoleId =: currentRole.ParentRoleId];
+            //userlist = [Select id from User where UserRoleId =: currentRole.ParentRoleId];
             
             //return userRoleMap.get(currentRole.ParentRoleId).Id;
         }
-        if (currentRole.ParentRoleId != null  && userlist.size() >0 && !userlist.isEmpty()) {
+        if (currentRole.ParentRoleId != null  /*&& userlist.size() >0 && !userlist.isEmpty()*/) {
             
             return userRoleMap.get(currentRole.ParentRoleId).Id;
         }
-        else if(currentRole.ParentRoleId != null && userlist.isEmpty() ){
+        else if(currentRole.ParentRoleId != null /*&& userlist.isEmpty() */){
             return getParentIdRecursive(userRoleMap, userRoleMap.get(currentRole.ParentRoleId));
         }
         else {

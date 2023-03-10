@@ -21,7 +21,8 @@ public class ContentDocumentLinkTrigger {
             Utility.ApprovalWrapper approvalParentIdWrapper = Utility.getParentUserMap();
             
             for (Invoice__c iRec : invList) {
-                if(iRec.Opportunity__r.Payment_Type__c == 'Cash' || iRec.Opportunity__r.Payment_Type__c == 'Cheque' || iRec.Opportunity__r.Payment_Type__c == 'POS'){
+                system.debug('iRec.Opportunity__r.Payment_Type__c--> '+iRec.Opportunity__r.Payment_Type__c);
+                if(iRec.Opportunity__r.Payment_Type__c == 'Cash' || iRec.Opportunity__r.Payment_Type__c == 'Cheque' || iRec.Opportunity__r.Payment_Type__c == 'POS' || iRec.Opportunity__r.Payment_Type__c == 'Manual Payment' ){
                     Id approverId;
                     String userRoleId;
                     Approval.ProcessSubmitRequest approvalRequest = new Approval.ProcessSubmitRequest();

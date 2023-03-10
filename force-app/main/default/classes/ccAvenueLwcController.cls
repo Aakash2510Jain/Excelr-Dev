@@ -8,7 +8,7 @@ public class ccAvenueLwcController {
            
             Opportunity OppRec=[Select Id,Name,AccountId,Account.Name,Account.Email__c From Opportunity where Id=:recordId];
         
-            EmailTemplate Etemplate = [Select id,body from EmailTemplate where name = 'Cc Avenue Payment Link'];
+            EmailTemplate Etemplate = [Select id, Body from EmailTemplate where name = 'Cc Avenue Payment Link'];
             system.debug('Etemplate='+Etemplate);
             
             String TemplateBody=Etemplate.Body;

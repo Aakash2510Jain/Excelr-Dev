@@ -50,7 +50,7 @@ public class LeadAssignmentExecutionCriteria {
                                      Owner_Email__c,Payment_Initiated_Date_Time__c,Payment_Type__c,Phone,PhotoUrl,PostalCode,
                                      Prior_Status__c,Profession__c,Qualification__c,Quality_of_Lead__c,Rating,Reason_For_Dead__c,
                                      Reason_for_On_Hold__c,Referral_Email__c,Referral_Phone__c,referrer__c,Refree_Mob_No__c,Relevant_Experience__c,Salutation,
-                                     sfleadcaphfprod__External_Lead_ID__c,Specialization__c,State,State__c,Status,Street,Suffix,
+                                    Specialization__c,State,State__c,Status,Street,Suffix,
                                      SyncedInCallyzer__c,SystemModstamp,Telephonic_Conversation__c,Title,Total_Applications_Submitted__c,
                                      Total_Calls__c,Total_Call_Duration__c,Total_Connected_Call__c,Total_Conversation_Duration__c,Total_Course_Interests__c,
                                      Total_Emails__c,Transcript__c,Type_of_Course__c,UTM_AdGroup__c,UTM_Campaign__c,UTM_Channel__c,UTM_Device__c,
@@ -58,10 +58,14 @@ public class LeadAssignmentExecutionCriteria {
                                      Whatsapp_Opt_in__c,Why_This_Course__c,Year_of_Experience__c 
                                      FROM Lead 
                                      where ownerId =: queueId and Is_Lead_Assigned_to_User__c = false limit 10 FOR UPDATE];
+
+            System.debug('queueLeads ==> ' + queueLeads);
             if(!queueLeads.isEmpty()){
                 newLeadListTemp.addAll(queueLeads);
                 System.debug(queueLeads.size()); 
             }
+
+            System.debug('AvailableCriterias ====> ' + AvailableCriterias);
             
             for(Execution_Criteria__c scr:AvailableCriterias){
                 map<string,string> fieldNameByMatching                                  = new Map<String,string>();
@@ -137,20 +141,33 @@ public class LeadAssignmentExecutionCriteria {
 
             String logicalValues = '';
             
+            System.debug('newLeadListTemp ====> ' + newLeadListTemp);
             for(Lead ld:newLeadListTemp){
-                
+                System.debug('ld =====> ' + ld);
                 boolean leadTemp = false;
                 List<String> matchedCriteriasName = new List<String>();
                 for(String criteriaName : expectedValuebyCriteria.keyset()){
+
+                    System.debug('criteriaName ====> ' +criteriaName);
                     String Booleanvalues = mapofExeIdByEvaluaationExp.get(criteriaName);
                     integer matchedValues = 0;
                     Decimal recursionValue = 0;
                     
                     for(String field:mapByallFields.get(criteriaName))  {
+
+                        System.debug('field ====> ' + field);
                         recursionValue = allotedFieldbySequence.get(criteriaName).get(field);
+                        System.debug('recursionValue ====> ' + recursionValue);
+
+
+                        System.debug('matchingTypeFieldByCriteria.get(criteriaName).get(field).size() =====> ' + matchingTypeFieldByCriteria.get(criteriaName).get(field).size());
                         if(matchingTypeFieldByCriteria.get(criteriaName).get(field).size() <= 1){
                             if(fieldByFieldType.get(criteriaName).get(field) == 'Number'){
+                                System.debug('I am Number dude @123');
+
                                 for(String str : fieldByMatchingType.get(criteriaName).get(field)){
+
+                                    System.debug('str =====> ' + str);
                                     if(str == '<' || str == '<='){
                                         if(Integer.valueOf(expectedValuebyCriteria.get(criteriaName).get(field)) >= Integer.valueOf(ld.get(field))){
                                             matchedValues++;
@@ -179,6 +196,7 @@ public class LeadAssignmentExecutionCriteria {
                                 }
                             }
                             else if(fieldByFieldType.get(criteriaName).get(field) == 'Checkbox'){
+                                System.debug('I am Checkbox Bro @true/False');
                                 
                                 if(ld.get(field) == Boolean.valueOf(expectedValuebyCriteria.get(criteriaName).get(field))){
                                     matchedValues++;
