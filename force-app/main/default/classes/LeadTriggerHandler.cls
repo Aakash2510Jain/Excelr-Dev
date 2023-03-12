@@ -30,7 +30,7 @@ public without sharing class LeadTriggerHandler{
             List<Application__c> applicationListToInsert = new List<Application__C>();
             List<Customers__c> customersListToInsert = new List<Customers__c>();
             List<task> taskListToInsert = new List<task>();
-
+            
             map<String, Lead> NewLeadEmailwithLead = new map<String, Lead>();
             map<String, Lead> NewLeadAlternateEmailwithLead = new map<String, Lead>();
             map<String, Lead> NewLeadPhonewithLead = new map<String, Lead>();
@@ -39,19 +39,8 @@ public without sharing class LeadTriggerHandler{
             for (Lead ld : leadList){
                 system.debug('ld.OwnerId--->'+ld.OwnerId);
                 
-                
                 if (ld.Enter_UTM_Link__c != null && ld.Lead_Generation_Method__c != null && (ld.Lead_Generation_Method__c == 'Chat Form' || ld.Lead_Generation_Method__c == 'Generic Form' )){
                     Utility.UTMLinkParams(ld);
-                }
-                // quality of Leads
-                if (ld.LeadSource != null && ld.UTM_Medium__c != null){
-                    if ((ld.LeadSource == 'Reference' && ld.UTM_Medium__c == 'NA') || (ld.LeadSource == 'Walkin' && ld.UTM_Medium__c == 'NA') || (ld.LeadSource == 'LMS References' && ld.UTM_Medium__c == 'NA') || (ld.LeadSource == 'GoogleAds' && ld.UTM_Medium__c == 'Search') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'GoogleOrganic') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'GoogleLocal') || (ld.LeadSource == 'BingAds' && ld.UTM_Medium__c == 'Search') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'BingOrganic') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'BingLocal') || (ld.LeadSource == 'NA' && ld.UTM_Medium__c == 'Direct')){
-                        ld.Quality_of_Lead__c = 'PLM';
-                    } else if ((ld.LeadSource == 'Google' && ld.UTM_Medium__c == 'Discovery') || (ld.LeadSource == '3rd Party' && ld.UTM_Medium__c == 'Referral') || (ld.LeadSource == 'Facebook' && ld.UTM_Medium__c == 'Lead form') || (ld.LeadSource == 'Facebook' && ld.UTM_Medium__c == 'Conversion campaign') || (ld.LeadSource == 'Facebook' && ld.UTM_Medium__c == 'Boost Post') || (ld.LeadSource == 'Instagram' && ld.UTM_Medium__c == 'Lead form') || (ld.LeadSource == 'Instagram' && ld.UTM_Medium__c == 'Conversion campaign') || (ld.LeadSource == 'Instagram' && ld.UTM_Medium__c == 'Boost Post') || (ld.LeadSource == 'LinkedIn' && ld.UTM_Medium__c == 'Lead Generation') || (ld.LeadSource == 'LinkedIn' && ld.UTM_Medium__c == 'Website conversions') || (ld.LeadSource == 'LinkedIn' && ld.UTM_Medium__c == 'Sponsored Content')){
-                        ld.Quality_of_Lead__c = 'SLM';
-                    } else{
-                        ld.Quality_of_Lead__c = 'TLM';
-                    }
                 }
                 
                 //handle necessary fields
@@ -74,6 +63,28 @@ public without sharing class LeadTriggerHandler{
                 if (string.isEmpty(ld.Course__c) || string.isBlank(ld.Course__c)){
                     ld.Course__c = 'NA';
                 }
+                if (string.isEmpty(ld.UTM_Medium__c) || string.isBlank(ld.UTM_Medium__c)){
+                    ld.UTM_Medium__c = 'NA';
+                }
+                if (string.isEmpty(ld.Type_of_Course__c) || string.isBlank(ld.Type_of_Course__c)){
+                    ld.UTM_Medium__c = 'Single';
+                }
+                // quality of Leads
+                system.debug('ld.LeadSource--->'+ld.LeadSource);
+                system.debug('ld.UTM_Medium__c--->'+ld.UTM_Medium__c);
+                if (ld.LeadSource != null && ld.UTM_Medium__c != null){
+                    if ((ld.LeadSource == 'Reference' && ld.UTM_Medium__c == 'NA') || (ld.LeadSource == 'Walkin' && ld.UTM_Medium__c == 'NA') || (ld.LeadSource == 'LMS References' && ld.UTM_Medium__c == 'NA') || (ld.LeadSource == 'GoogleAds' && ld.UTM_Medium__c == 'Search') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'GoogleOrganic') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'GoogleLocal') || (ld.LeadSource == 'BingAds' && ld.UTM_Medium__c == 'Search') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'BingOrganic') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'BingLocal') || (ld.LeadSource == 'NA' && ld.UTM_Medium__c == 'Direct')){
+                        system.debug('Inside PLM');
+                        ld.Quality_of_Lead__c = 'PLM';
+                    } else if ((ld.LeadSource == 'Google' && ld.UTM_Medium__c == 'Discovery') || (ld.LeadSource == '3rd Party' && ld.UTM_Medium__c == 'Referral') || (ld.LeadSource == 'Facebook' && ld.UTM_Medium__c == 'Lead form') || (ld.LeadSource == 'Facebook' && ld.UTM_Medium__c == 'Conversion campaign') || (ld.LeadSource == 'Facebook' && ld.UTM_Medium__c == 'Boost Post') || (ld.LeadSource == 'Instagram' && ld.UTM_Medium__c == 'Lead form') || (ld.LeadSource == 'Instagram' && ld.UTM_Medium__c == 'Conversion campaign') || (ld.LeadSource == 'Instagram' && ld.UTM_Medium__c == 'Boost Post') || (ld.LeadSource == 'LinkedIn' && ld.UTM_Medium__c == 'Lead Generation') || (ld.LeadSource == 'LinkedIn' && ld.UTM_Medium__c == 'Website conversions') || (ld.LeadSource == 'LinkedIn' && ld.UTM_Medium__c == 'Sponsored Content')){
+                        system.debug('Inside SLM');
+                        ld.Quality_of_Lead__c = 'SLM';
+                    } else{
+                        system.debug('Inside TLM');
+                        ld.Quality_of_Lead__c = 'TLM';
+                    }
+                }
+                
                 system.debug('ld.OwnerId--->'+ld.OwnerId);
                 
                 if(ld.Email != null){
@@ -422,7 +433,12 @@ public without sharing class LeadTriggerHandler{
                 if (ld.Enter_UTM_Link__c != null && ld.Lead_Generation_Method__c != null && (ld.Lead_Generation_Method__c == 'Chat Form' || ld.Lead_Generation_Method__c == 'Generic Form' )){
                     Utility.UTMLinkParams(ld);
                 }
-                if (ld.LeadSource != null && ld.UTM_Medium__c != null){
+                System.debug('ld.LeadSource-->'+ld.LeadSource);
+                System.debug('ld.UTM_Medium__c--->'+ld.UTM_Medium__c);
+                System.debug('ld.LeadSource-->'+oldLeadMap.get(ld.Id).LeadSource);
+                System.debug('ld.UTM_Medium__c--->'+oldLeadMap.get(ld.Id).UTM_Medium__c);
+                
+                if ( (ld.LeadSource != oldLeadMap.get(ld.Id).LeadSource || ld.UTM_Medium__c != oldLeadMap.get(ld.Id).UTM_Medium__c) && ld.LeadSource != null && ld.UTM_Medium__c != null ){
                     if ((ld.LeadSource == 'Reference' && ld.UTM_Medium__c == 'NA' && ld.Lead_Gen_Path__c == 'NA') || (ld.LeadSource == 'Walkin' && ld.UTM_Medium__c == 'NA' && ld.Lead_Gen_Path__c == 'NA') || (ld.LeadSource == 'LMS References' && ld.UTM_Medium__c == 'NA' && ld.Lead_Gen_Path__c == 'NA') || (ld.LeadSource == 'GoogleAds' && ld.UTM_Medium__c == 'Search') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'GoogleOrganic') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'GoogleLocal') || (ld.LeadSource == 'BingAds' && ld.UTM_Medium__c == 'Search') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'BingOrganic') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'BingLocal') || (ld.LeadSource == 'NA' && ld.UTM_Medium__c == 'Direct')){
                         system.debug('PLM');
                         ld.Quality_of_Lead__c = 'PLM';
@@ -439,11 +455,11 @@ public without sharing class LeadTriggerHandler{
                 }
                 if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Open' && (ld.status == 'ATC' || ld.status == 'In Conversation' || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred') && (ld.Email_Conversation_Done__c == false && ld.Telephonic_Conversation__c == false) ){
                     ld.status.addError('Email or Telephonic conversation is required to proceed');
-                }else if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Open' && (ld.status == 'In Conversation' || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && ld.Profession__c == null ){
+                }else if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Open' && (ld.status == 'In Conversation' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && ld.Profession__c == null ){
                     ld.Profession__c.addError('Profiling Details are required to proceed (Profession,Experience...)');
                 }else  if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'ATC' && ( ld.status == 'In Conversation' || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && (ld.Email_Conversation_Done__c == false && ld.Telephonic_Conversation__c == false) ){
                     ld.status.addError('Email or Telephonic conversation is required to proceed');
-                }else if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'ATC' && (ld.status == 'In Conversation' || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && ld.Profession__c == null ){
+                }else if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'ATC' && (ld.status == 'In Conversation' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && ld.Profession__c == null ){
                     ld.Profession__c.addError('Profiling Details are required to proceed (Profession,Experience...)');
                 }else  if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'In Conversation' && (ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && (ld.Email_Conversation_Done__c == false && ld.Telephonic_Conversation__c == false) ){
                     ld.status.addError('Email or Telephonic conversation is required to proceed');
@@ -512,8 +528,27 @@ public without sharing class LeadTriggerHandler{
         try{
             system.debug('After Update');
             set<String> leadQuality = new set<String>();
+            List<Account> accountListToUpdate = new List<Account>();
+            List<Opportunity> OpportunityListToUpdate = new List<Opportunity>();
+            
             for (Lead ld : newLeadMap.values()){
-                
+                if (ld.IsConverted) {
+                    Account account = new Account(Id = ld.ConvertedAccountId);
+                    account.Email__c = ld.Email;
+                    account.Phone = ld.Phone;
+                    accountListToUpdate.add(account);
+                    
+                    Opportunity opportunity = new Opportunity(Id = ld.ConvertedOpportunityId);
+                    opportunity.Email__c = ld.Email;
+                    opportunity.Phone__c = ld.Phone;
+                    OpportunityListToUpdate.add(opportunity); 
+                }
+            }
+            if(!accountListToUpdate.isEmpty()){
+                Update accountListToUpdate;
+            }
+            if(!OpportunityListToUpdate.isEmpty()){
+                update OpportunityListToUpdate;
             }
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());

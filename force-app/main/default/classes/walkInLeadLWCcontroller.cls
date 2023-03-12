@@ -109,6 +109,7 @@ public without sharing class walkInLeadLWCcontroller{
                 Leadrec.City__c=city;
             }
             Leadrec.Lead_Generation_Method__c = 'Walk-in Form';
+            leadRec.LeadSource = 'Walkin';
             leadRec.Company = Leadrec.Lastname;
             
             insert Leadrec;

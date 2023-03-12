@@ -13,6 +13,7 @@ global without sharing class RazorpayWebhookHandler{
             Map<String, Object> m3 = (Map<String, Object>)m2.get('payment');
             Map<String, Object> m4 = (Map<String, Object>)m3.get('entity');
             Map<String, Object> m5 = new Map<String, Object>();
+            Map<Id, Approval.ProcessSubmitRequest> cdToapprovalRequestMap = new Map<Id, Approval.ProcessSubmitRequest>();
 
             if (m4.containsKey('captured')){
                 m5 = (Map<String, Object>)m4.get('notes');
@@ -37,17 +38,49 @@ global without sharing class RazorpayWebhookHandler{
                 } else if (objName == 'Opportunity'){
                     //attah invoice pdf under invoice
                     //Email to customer
-                    Opportunity opp = new Opportunity(Id = recId, Payment_Captured__c = m4.get('captured') == true ? true : false);
+                    /*Opportunity opp = new Opportunity(Id = recId, Payment_Captured__c = m4.get('captured') == true ? true : false);
                     opp.StageName = 'Closed Won';
-                    update opp;
-                    Invoice__c invoiceRec = [Select Id, Status__c
+                    update opp;*/
+                    Utility.ApprovalWrapper approvalParentIdWrapper = Utility.getParentUserMap();
+
+                    Invoice__c invoiceRec = [Select Id, Status__c,LeadInvoice__c,LeadInvoice__r.Owner.UserRoleId,Lead_ManagerId__c,Opportunity__c,Opportunity__r.Owner.UserRoleId
                                              From Invoice__c
                                              Where Opportunity__c = :recId
                                              ORDER BY CreatedDate DESC
                                              limit 1];
                     if (m4.get('captured') == true){
-                        invoiceRec.Status__c = 'Realized';
+                        //invoiceRec.Status__c = 'Realized';
                         invoiceRec.TranactionId__c = String.ValueOf(m4.get('id'));
+                        Id approverId;
+                        String userRoleId;
+                        Approval.ProcessSubmitRequest approvalRequest = new Approval.ProcessSubmitRequest();
+                        approvalRequest.setComments('Submitting for Manager Approval');
+                        approvalRequest.setObjectId(invoiceRec.Id);
+                        approvalRequest.setProcessDefinitionNameOrId('Invoice_Payment_Approval');
+                        if(invoiceRec.LeadInvoice__c != null){
+                            userRoleId = invoiceRec.LeadInvoice__r.Owner.UserRoleId;
+                            if(invoiceRec.Lead_ManagerId__c != null){
+                                approverId = invoiceRec.Lead_ManagerId__c;
+                            }
+                            else{
+                                approverId = approvalParentIdWrapper.smToManagerMap.containsKey(userRoleId) && approvalParentIdWrapper.managerRoleToUserIdMap.containsKey(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) ? approvalParentIdWrapper.managerRoleToUserIdMap.get(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
+                            }
+                        }
+                        else if(invoiceRec.Opportunity__c != null ){
+                            userRoleId = invoiceRec.Opportunity__r.Owner.UserRoleId;
+                            if(invoiceRec.Opportunity__r.Owner.managerid != null){
+                                approverId = invoiceRec.Opportunity__r.Owner.managerid;
+                            }
+                            else{
+                                approverId = approvalParentIdWrapper.smToManagerMap.containsKey(userRoleId) && approvalParentIdWrapper.managerRoleToUserIdMap.containsKey(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) ? approvalParentIdWrapper.managerRoleToUserIdMap.get(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
+                            }
+                        }
+                        approvalRequest.setNextApproverIds(new List<Id> {approverId});
+                        cdToapprovalRequestMap.put(invoiceRec.Id, approvalRequest);
+                        
+                        if(!cdToapprovalRequestMap.isEmpty())
+                            List<Approval.ProcessResult> result = Approval.process(cdToapprovalRequestMap.values());
+                        
                     }
                     if (m4.get('captured') == false){
                         invoiceRec.Status__c = 'Not realized';

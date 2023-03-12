@@ -103,15 +103,17 @@
                     <div class="slds-grid slds-wrap">
                         <div class="slds-col slds-size_2-of-12">
                             <span>
-                                <lightning-combobox  name="CountryISDcode" placeholder="Select Your CountryCode"
-                                    options={countryCodeList} onchange={ReferralFormInputHandler} value={CountryCode} variant = "label-hidden" >
-                                </lightning-combobox>                                 
+                                <lightning-combobox name="CountryISDcode" placeholder="Select Your CountryCode"
+                                    options={countryCodeList} onchange={ReferralFormInputHandler} value={CountryCode}
+                                    variant="label-hidden">
+                                </lightning-combobox>
                             </span>
                         </div>
                         <div class="slds-col slds-size_10-of-12">
-                            <span> 
-                                <lightning-input  min-length="10" onchange={ReferralFormInputHandler} name="PH"
-                                    value={LeadTobeCreated.Phone} max-length="10" variant = "label-hidden"></lightning-input>
+                            <span>
+                                <lightning-input min-length="10" onchange={ReferralFormInputHandler} name="PH"
+                                    value={LeadTobeCreated.Phone} max-length="10"
+                                    variant="label-hidden"></lightning-input>
                             </span>
                         </div>
 
@@ -121,8 +123,8 @@
                         <div class="slds-col slds-size_2-of-12">
                             <span>
                                 <lightning-combobox name="CountryISDcodeAlt" placeholder="Select Your CountryCode"
-                                    options={countryCodeList} onchange={ReferralFormInputHandler}
-                                    value={CountryCodeAlt} variant = "label-hidden">
+                                    options={countryCodeList} onchange={ReferralFormInputHandler} value={CountryCodeAlt}
+                                    variant="label-hidden">
                                 </lightning-combobox>
 
                             </span>
@@ -130,16 +132,15 @@
                         <div class="slds-col slds-size_10-of-12">
                             <span>
                                 <lightning-input min-length="10" max-length="10" name="AltPH"
-                                    value={LeadTobeCreated.Alternate_Phone__c}
-                                    onchange={ReferralFormInputHandler} variant = "label-hidden"></lightning-input>
+                                    value={LeadTobeCreated.Alternate_Phone__c} onchange={ReferralFormInputHandler}
+                                    variant="label-hidden"></lightning-input>
                             </span>
                         </div>
 
                     </div>
 
-                    <lightning-input name="EM" label="Email Id of Reference" required="true"
-                        onchange={ReferralFormInputHandler} style="margin-top:8px;"
-                        value={LeadTobeCreated.Email}></lightning-input>
+                    <lightning-input name="EM" label="Email Id of Reference" onchange={ReferralFormInputHandler}
+                        style="margin-top:8px;" value={LeadTobeCreated.Email}></lightning-input>
                     <lightning-input name="AltEm" label="Alternate Email" value={LeadTobeCreated.Alternate_Email__c}
                         onchange={ReferralFormInputHandler}></lightning-input>
 
@@ -167,8 +168,8 @@
 
     <lightning-modal-footer class="my-modal-footer">
         <div class=" slds-align_absolute-center">
-            <lightning-button title="Save" label="Submit" onclick={SaveReferralFormDetails} variant="brand" disabled={HandleLeadCreatedisable}
-                style="margin-top:8px ;"></lightning-button>
+            <lightning-button title="Save" label="Submit" onclick={SaveReferralFormDetails} variant="brand"
+                disabled={HandleLeadCreatedisable} style="margin-top:8px ;"></lightning-button>
 
         </div>
 
