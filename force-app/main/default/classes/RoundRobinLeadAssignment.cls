@@ -67,6 +67,7 @@ public without sharing class  RoundRobinLeadAssignment{
                                     ld.Lead_Assigned_Date_TIme__c = system.now();
                                     ld.Lead_Assigned_Time__c = Time.newInstance(Datetime.now().hour(), Datetime.now().minute(), Datetime.now().second(), 0);
                                     ld.status = 'Open';
+                                    ld.Assignment_Group__c = qName;
                                     ld.Is_Lead_Assigned_to_User__c = true;
                                     updateLeadList.add(ld); 
                                     System.debug('updateLeadList ====> ' + updateLeadList);

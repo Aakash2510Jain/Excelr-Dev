@@ -367,9 +367,12 @@ public without sharing class LeadTriggerHandler{
                     system.debug('Owner is Queue');
                     leadRec.Is_Lead_Assigned_to_User__c = false;
                     leadRec.OwnerId = constants.queueId;
-                }else{
+                }else if ((leadRec.Lead_Generation_Method__c == 'Generic Form' && leadRec.Is_User_Assigned__c == 'Assigned' ) || (leadRec.Lead_Generation_Method__c == 'Walk-in Form' && leadRec.Is_User_Assigned__c == 'Assigned' )) {
                     leadRec.Is_Lead_Assigned_to_User__c = true;
-                    //leadRec.OwnerId = constants.queueId;
+                }
+                else{
+                    leadRec.Is_Lead_Assigned_to_User__c = false;
+                    leadRec.OwnerId = constants.queueId;
                 }
             }
             if(!opportunityListToInsert.isEmpty()){

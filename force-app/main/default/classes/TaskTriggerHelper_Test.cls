@@ -1,11 +1,11 @@
 @isTest
 public class TaskTriggerHelper_Test {
-    Public static  testMethod void testOnOpportunity(){
+    Public static  testMethod void testOnTask(){
         
-         Profile p1 = [Select Id from Profile where Name = 'Senior Inside Sales Manager' limit 1];   
+         /*Profile p1 = [Select Id from Profile where Name = 'Sales Manager' limit 1];   
         User user2 = new User();
-        user2.Username = 'us2@test.com';
-        user2.Email = 'us2@test.com';
+        user2.Username = 'us2222@test.com';
+        user2.Email = 'us222@test.com';
         user2.LastName = 'LastName';
         user2.FirstName = 'FirstName2';
         user2.Alias ='u2';
@@ -22,16 +22,17 @@ public class TaskTriggerHelper_Test {
         user2.Working_Start_Time__c = time.newInstance(12, 30, 3, 3); 
         user2.Start_Date__c = system.today(); 
         user2.End_Date__c = system.today();   
-        insert user2;
+        insert user2;*/
         
         Account acc = new Account();
         acc.Name = 'Test';
-        acc.OwnerId = user2.id;
+        acc.OwnerId = UserInfo.getUserId();
         insert acc;
         
         Map<id,Task> mapNew = new Map<id,Task>();
         Task taskRec = new Task();
-        taskRec.OwnerId = acc.id;
+        taskRec.Subject = 'Call';
+        taskRec.OwnerId = acc.OwnerId;
         taskRec.WhatId = acc.id;
         taskRec.Updated_Time__c = 0;
         taskRec.CallObject = 'jjkjf';
@@ -41,11 +42,18 @@ public class TaskTriggerHelper_Test {
         Map<id,Task> mapold = new Map<id,Task>();
         Task taskRec1 = new Task();
         taskRec1.id = taskRec.id;
-        taskRec1.OwnerId = acc.id;
+        taskRec.Subject = 'Send Letter';
+        taskRec1.OwnerId = acc.OwnerId;
         taskRec1.WhatId = acc.id;
         taskRec1.Updated_Time__c = 0;
+        taskRec.CallObject = 'jjkjfxvvxf';
         update taskRec1;
         mapold.put(taskRec1.id,taskRec1);
+        
+        /*test.startTest();
+        TaskTriggerHelper var = TaskTriggerHelper ();
+        var.beforeUpdate(mapNew, mapold);
+        test.stopTest();*/
     }
 
 }

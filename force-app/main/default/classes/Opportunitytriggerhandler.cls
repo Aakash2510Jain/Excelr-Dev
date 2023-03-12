@@ -8,6 +8,8 @@ public with sharing class Opportunitytriggerhandler{
     }
 
     public void createtaskForIsm(map<id, Opportunity> oldOppMap, map<id, Opportunity> newOppMap){
+        System.debug('oldOppMap ----> '+oldOppMap);
+          System.debug('newOppMap ----> '+newOppMap);
         set<id> accountIds = new set<id>();
         list<account> accountList = new List<Account>();
         list<account> ReferralAccountList = new List<Account>();
@@ -20,11 +22,13 @@ public with sharing class Opportunitytriggerhandler{
         try{
             if ( !newOppMap.isEmpty() ){
                 for ( Opportunity opp : newOppMap.values() ){
-                    if ( opp.StageName != null && opp.StageName == 'Converted' && opp.StageName != oldOppMap.get(opp.id).StageName ){
+                    System.debug(' opp.StageName  ::'+ opp);
+                   // System.debug(' opp.oldOppMap.get(opp.id).StageName   ::'+ oldOppMap.get(opp.id).StageName );
+                  //  if ( opp.StageName != null && opp.StageName == 'Converted' && opp.StageName != oldOppMap.get(opp.id).StageName ){
                         accountIds.add(opp.AccountId);
                         //OppWithReferralAccount.put(opp.id, value)
                         AccountIdwithOpportunity.put(opp.AccountId, opp);
-                    }
+                  //  }
                 }
 
                 if ( !accountIds.isEmpty() ){

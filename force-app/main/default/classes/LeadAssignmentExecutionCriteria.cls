@@ -168,46 +168,58 @@ public class LeadAssignmentExecutionCriteria {
                                 for(String str : fieldByMatchingType.get(criteriaName).get(field)){
 
                                     System.debug('str =====> ' + str);
-                                    if(str == '<' || str == '<='){
-                                        if(Integer.valueOf(expectedValuebyCriteria.get(criteriaName).get(field)) >= Integer.valueOf(ld.get(field))){
-                                            matchedValues++;
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
-                                            matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
+
+                                    if ((ld.get(field)) != null) {
+                                        if(str == '<' || str == '<='){
+                                            if(Integer.valueOf(expectedValuebyCriteria.get(criteriaName).get(field)) >= Integer.valueOf(ld.get(field))){
+                                                matchedValues++;
+                                                Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
+                                                matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
+                                            }else{
+                                                Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
+                                            } 
+                                        }else if(str == '>' || str == '>='){
+                                            if(Integer.valueOf(expectedValuebyCriteria.get(criteriaName).get(field)) <= Integer.valueOf(ld.get(field))){
+                                                matchedValues++;
+                                                Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
+                                                matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
+                                            }else{
+                                                Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
+                                            }
                                         }else{
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
-                                        } 
-                                    }else if(str == '>' || str == '>='){
-                                        if(Integer.valueOf(expectedValuebyCriteria.get(criteriaName).get(field)) <= Integer.valueOf(ld.get(field))){
-                                            matchedValues++;
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
-                                            matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
-                                        }else{
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
+                                            if(Integer.valueOf(expectedValuebyCriteria.get(criteriaName).get(field)) == Integer.valueOf(ld.get(field))){
+                                                matchedValues++;
+                                                Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
+                                                matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
+                                            }else{
+                                                Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
+                                            }
                                         }
-                                    }else{
-                                        if(Integer.valueOf(expectedValuebyCriteria.get(criteriaName).get(field)) == Integer.valueOf(ld.get(field))){
-                                            matchedValues++;
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
-                                            matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
-                                        }else{
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
-                                        }
+                                    }
+                                    else {
+                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
                                     }
                                 }
                             }
                             else if(fieldByFieldType.get(criteriaName).get(field) == 'Checkbox'){
                                 System.debug('I am Checkbox Bro @true/False');
-                                
-                                if(ld.get(field) == Boolean.valueOf(expectedValuebyCriteria.get(criteriaName).get(field))){
-                                    matchedValues++;
-                                    Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
-                                    matchedCriteriasName.add(getLabelNameOfField(field)+' '+'== '+expectedValuebyCriteria.get(criteriaName).get(field));
-                                }else{
+                                if ((ld.get(field)) != null){
+                                    if(ld.get(field) == Boolean.valueOf(expectedValuebyCriteria.get(criteriaName).get(field))){
+                                        matchedValues++;
+                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
+                                        matchedCriteriasName.add(getLabelNameOfField(field)+' '+'== '+expectedValuebyCriteria.get(criteriaName).get(field));
+                                    }else{
+                                        Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
+                                    }
+                                }
+                                else {
                                     Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
                                 }
+                                
                             }
                             else{
                                 for(String str : fieldByMatchingType.get(criteriaName).get(field)){
+                                    
                                     if(str == '=='){
                                         if(expectedValuebyCriteria.get(criteriaName).get(field).contains(',')){
                                             List<String> commaSeparatedValues = expectedValuebyCriteria.get(criteriaName).get(field).split(',');
@@ -265,14 +277,20 @@ public class LeadAssignmentExecutionCriteria {
                                         
                                     }
                                     else if(str == 'DOES NOT CONTAIN'){
-                                        if(!expectedValuebyCriteria.get(criteriaName).get(field).contains(String.valueOf(ld.get(field)))){
-                                            matchedValues++;
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
-                                            matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
+
+                                        if (String.valueOf(ld.get(field)) != null) {
+                                            if(!expectedValuebyCriteria.get(criteriaName).get(field).contains(String.valueOf(ld.get(field)))){
+                                                matchedValues++;
+                                                Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'True');
+                                                matchedCriteriasName.add(getLabelNameOfField(field)+' '+str+' '+expectedValuebyCriteria.get(criteriaName).get(field));
+                                            }else{
+                                                Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
+                                            }                                            
                                         }
-                                        else{
-                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
+                                        else {
+                                            Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False'); 
                                         }
+                                        
                                     }else{
                                         Booleanvalues = Booleanvalues.replaceFirst(string.valueOf(recursionValue),'False');
                                     }
@@ -417,6 +435,7 @@ public class LeadAssignmentExecutionCriteria {
                         }else{
                             mapofExecutionIdByListLead.put(criteriaNameById.get(criteriaName),new list<lead>{ld});
                         }
+                        break;
                     }
                 }
 

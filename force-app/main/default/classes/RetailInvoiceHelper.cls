@@ -1,18 +1,18 @@
 global class RetailInvoiceHelper {
-    global CustomInformation__c getcustomData {get;set;} 
-    global Invoice__c getinvoiceData {get;set;}
-    global Opportunity getoppData {get;set;} 
-    global Account getAccData {get;set;} 
-    global List<OpportunityLineItem> getOLIData {get;set;} 
-    global Decimal PercentageTotal {get;set;}
-    global Decimal TotalAmountWithPercentage {get;set;}
-    global Decimal TotalTaXAmount {get;set;}
-    global String TotalTaXAmountInword {get;set;}
-    global String AmountTotalAmountWithPercentageInWords {get;set;}
-    global Integer wordAmount {get;set;}
-    global List<GST_State_Code__c> gstdata {get;set;}
-    global Decimal StateCode {get;set;}
-    global String currentState {get;set;}
+    global static CustomInformation__c getcustomData {get;set;} 
+    global static Invoice__c getinvoiceData {get;set;}
+    global static Opportunity getoppData {get;set;} 
+    global static Account getAccData {get;set;} 
+    global static List<OpportunityLineItem> getOLIData {get;set;} 
+    global static Decimal PercentageTotal {get;set;}
+    global static Decimal TotalAmountWithPercentage {get;set;}
+    global static Decimal TotalTaXAmount {get;set;}
+    global static String TotalTaXAmountInword {get;set;}
+    global static String AmountTotalAmountWithPercentageInWords {get;set;}
+    global static Integer wordAmount {get;set;}
+    global static List<GST_State_Code__c> gstdata {get;set;}
+    global static Decimal StateCode {get;set;}
+    global static String currentState {get;set;}
     
     global String getOLIDataName {get;set;}
     global Decimal getInvoiceQuantity {get;set;}
@@ -25,7 +25,7 @@ global class RetailInvoiceHelper {
         String AccId = '';
         Decimal TotalPrice = 0.0;
         Decimal Rate = 0.0;
-        
+         
         recordId = ApexPages.currentPage().getParameters().get('Id');
 
         getcustomData=[Select Name,Address__c,City__c,Pin_Code__c,State_Code__c,GSTIN__c,State_Name__c,EMail__c,Central_GST__c,State_GST__c,HSN_SAC__c,Rate__c from CustomInformation__c LIMIT 1];
@@ -70,18 +70,11 @@ global class RetailInvoiceHelper {
             if(!getOLIData.isEmpty()){
                 TotalPrice = getOLIData[0].TotalPrice;
                 Rate = getcustomData.Rate__c;
-                //PercentageTotal = (TotalPrice) * (Rate) / 100;
                 TotalAmountWithPercentage = TotalPrice + (PercentageTotal * 2);
                 wordAmount =Integer.valueOf(TotalAmountWithPercentage);
-                //AmountTotalAmountWithPercentageInWords = NumberToText.convert(wordAmount);
-                //TotalTaXAmount = (PercentageTotal * 2);
                 getOLIDataName = getOLIData[0].Product2.Name;
-                //getOLIDataQuantity  = getOLIData[0].Quantity;
-                //getOLIDataTotalPrice = getOLIData[0].TotalPrice;
             }else{
                 getOLIDataName = '';
-                //getOLIDataQuantity  = 0.0;
-                //getOLIDataTotalPrice = 0.0;
             }
             
         }
@@ -120,10 +113,16 @@ global class RetailInvoiceHelper {
             } else{
                 system.debug('Internal User');
                 //internal user
+                
+                Opportunity oppToMarkClosedWon = new Opportunity();
+                oppToMarkClosedWon.Id = [Select Opportunity__c From Invoice__c where id =: recordId].Opportunity__c ;
+                oppToMarkClosedWon.StageName = 'Closed Won';
+                update oppToMarkClosedWon;
+                
                 pdfPage = Page.RetailInvoice_Attachment;
                 pdfPage.getParameters().put('id', recordId);
-                pdfBlob = pdfPage.getContent();
-                
+               // pdfBlob = pdfPage.getContent();
+                pdfBlob = (!Test.isRunningTest() ? pdfPage.getContent() : Blob.valueOf('Fake content'));
                 Attachment attach = new Attachment(parentId = recordId, Name = 'PaymentReceipt.pdf', body = pdfBlob);
                 insert attach;
                 reciepientEmail = [Select LeadInvoice__r.Email
