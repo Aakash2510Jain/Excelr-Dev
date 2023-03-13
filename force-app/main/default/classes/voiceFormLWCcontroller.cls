@@ -358,12 +358,14 @@ public without sharing class voiceFormLWCcontroller{
         return countryStatesMDT;
     }
 
-    // ============================================ This is check Whether hashcode is existing in Cookies as well as in user Record hashcode =============================
+    // ============================================ This is to check Whether hashcode is existing in Cookies as well as in user Record hashcode =============================
     public PageReference checkExistingHashKeyMatching(){
 
         //String LoginPageBaseurl = 'https://whitemart--partial.sandbox.my.salesforce-sites.com/Abasoft_LoginPage';
         //String CustomerDetailPageBaseUrl = 'https://whitemart--partial.sandbox.my.salesforce-sites.com/CusomerDetailAURA_IN_VFPage';
         try{
+
+            List<String> DepartmentArr = new List<String>();
             String LoginPageBaseurl = System.Label.LoginPageBaseurl;
             String ExistingHashcode = '';
             string FinalPageToRedirect = '';
@@ -380,8 +382,10 @@ public without sharing class voiceFormLWCcontroller{
                                                              WHERE id = :LGEMemberRecordid
                                                              LIMIT 1];
 
-
-            List<String> DepartmentArr = ExcelRTrainUser[0].Departments__c.split(';');
+            if (ExcelRTrainUser.size() >0) {
+                DepartmentArr = ExcelRTrainUser[0].Departments__c.split(';');                
+            }
+            
 
             System.debug('hashCode ======> ' + Apexpages.currentPage().getparameters().get('hascode'));
             System.debug('Reloading ====> ' + Reloading);

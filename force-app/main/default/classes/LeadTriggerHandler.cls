@@ -67,7 +67,7 @@ public without sharing class LeadTriggerHandler{
                     ld.UTM_Medium__c = 'NA';
                 }
                 if (string.isEmpty(ld.Type_of_Course__c) || string.isBlank(ld.Type_of_Course__c)){
-                    ld.UTM_Medium__c = 'Single';
+                    ld.Type_of_Course__c = 'Single';
                 }
                 // quality of Leads
                 system.debug('ld.LeadSource--->'+ld.LeadSource);
@@ -305,7 +305,7 @@ public without sharing class LeadTriggerHandler{
                                 system.debug('Create Application');
                                 leadRec.To_Be_Deleted__c = true;
                                 leadRec.Parent_Lead_Id__c = existingLeadByEmail.get(leadRec.Email).Id;
-                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadEmailwithLead.get(leadRec.Email)));
+                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadEmailwithLead.get(leadRec.Email), existingLeadByEmail.get(leadRec.Email).Id));
                             } 
                         }
                         else if(existingLeadByAlternateEmail.ContainsKey(leadRec.Alternate_Email__c)){
@@ -325,7 +325,7 @@ public without sharing class LeadTriggerHandler{
                                 system.debug('Create Application');
                                 leadRec.To_Be_Deleted__c = true;
                                 leadRec.Parent_Lead_Id__c = existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Id;
-                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadAlternateEmailwithLead.get(leadRec.Alternate_Email__c)));
+                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadAlternateEmailwithLead.get(leadRec.Alternate_Email__c), existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Id));
                             }
                         }
                         else if(existingLeadByPhone.ContainsKey(leadRec.Phone)){
@@ -344,7 +344,7 @@ public without sharing class LeadTriggerHandler{
                                 system.debug('Create Application');
                                 leadRec.To_Be_Deleted__c = true;
                                 leadRec.Parent_Lead_Id__c = existingLeadByPhone.get(leadRec.Phone).Id;
-                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadPhonewithLead.get(leadRec.Phone)));
+                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadPhonewithLead.get(leadRec.Phone), existingLeadByPhone.get(leadRec.Phone).Id));
                             }
                         }
                         else if(existingLeadByAlternatePhone.ContainsKey(leadRec.Alternate_Phone__c)){
@@ -363,7 +363,7 @@ public without sharing class LeadTriggerHandler{
                                 system.debug('Create Application');
                                 leadRec.To_Be_Deleted__c = true;
                                 leadRec.Parent_Lead_Id__c = existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Id;
-                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadAlternatePhonewithLead.get(leadRec.Alternate_Phone__c)));
+                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadAlternatePhonewithLead.get(leadRec.Alternate_Phone__c), existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Id));
                             }
                         }
                     }else{
@@ -389,6 +389,7 @@ public without sharing class LeadTriggerHandler{
             if(!opportunityListToInsert.isEmpty()){
                 insert opportunityListToInsert;
             }
+            System.debug('applicationListToInsert =====> '+ applicationListToInsert);
             if(!applicationListToInsert.isEmpty()){
                 insert applicationListToInsert;
             }
@@ -433,11 +434,7 @@ public without sharing class LeadTriggerHandler{
                 if (ld.Enter_UTM_Link__c != null && ld.Lead_Generation_Method__c != null && (ld.Lead_Generation_Method__c == 'Chat Form' || ld.Lead_Generation_Method__c == 'Generic Form' )){
                     Utility.UTMLinkParams(ld);
                 }
-                System.debug('ld.LeadSource-->'+ld.LeadSource);
-                System.debug('ld.UTM_Medium__c--->'+ld.UTM_Medium__c);
-                System.debug('ld.LeadSource-->'+oldLeadMap.get(ld.Id).LeadSource);
-                System.debug('ld.UTM_Medium__c--->'+oldLeadMap.get(ld.Id).UTM_Medium__c);
-                
+                 
                 if ( (ld.LeadSource != oldLeadMap.get(ld.Id).LeadSource || ld.UTM_Medium__c != oldLeadMap.get(ld.Id).UTM_Medium__c) && ld.LeadSource != null && ld.UTM_Medium__c != null ){
                     if ((ld.LeadSource == 'Reference' && ld.UTM_Medium__c == 'NA' && ld.Lead_Gen_Path__c == 'NA') || (ld.LeadSource == 'Walkin' && ld.UTM_Medium__c == 'NA' && ld.Lead_Gen_Path__c == 'NA') || (ld.LeadSource == 'LMS References' && ld.UTM_Medium__c == 'NA' && ld.Lead_Gen_Path__c == 'NA') || (ld.LeadSource == 'GoogleAds' && ld.UTM_Medium__c == 'Search') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'GoogleOrganic') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'GoogleLocal') || (ld.LeadSource == 'BingAds' && ld.UTM_Medium__c == 'Search') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'BingOrganic') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'BingLocal') || (ld.LeadSource == 'NA' && ld.UTM_Medium__c == 'Direct')){
                         system.debug('PLM');
@@ -453,9 +450,9 @@ public without sharing class LeadTriggerHandler{
                 if(ld.Profession__c != null && ld.Profession__c != oldLeadMap.get(ld.Id).Profession__c){
                     addValidationForProfilling(ld, oldLeadMap);
                 }
-                if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Open' && (ld.status == 'ATC' || ld.status == 'In Conversation' || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred') && (ld.Email_Conversation_Done__c == false && ld.Telephonic_Conversation__c == false) ){
+                if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Open' && (ld.status == 'ATC' || ld.status == 'In Conversation' || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && (ld.Email_Conversation_Done__c == false && ld.Telephonic_Conversation__c == false) ){
                     ld.status.addError('Email or Telephonic conversation is required to proceed');
-                }else if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Open' && (ld.status == 'In Conversation' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && ld.Profession__c == null ){
+                }else if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Open' && (ld.status == 'ATC' || ld.status == 'In Conversation' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && ld.Profession__c == null ){
                     ld.Profession__c.addError('Profiling Details are required to proceed (Profession,Experience...)');
                 }else  if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'ATC' && ( ld.status == 'In Conversation' || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && (ld.Email_Conversation_Done__c == false && ld.Telephonic_Conversation__c == false) ){
                     ld.status.addError('Email or Telephonic conversation is required to proceed');
@@ -485,7 +482,6 @@ public without sharing class LeadTriggerHandler{
                     if(ld.Next_follow_up_date_time__c < postOneMonth || ld.Next_follow_up_date_time__c > postThreeMonth){
                         ld.Next_follow_up_date_time__c.addError('Follow up date should be > 1 month & < 3 month to park it in On Hold Stage');
                     }
-                    
                 }
                 if(ld.status != oldLeadMap.get(ld.Id).status && (ld.Status ==  'Deferred') ){
                     dateTime currentDateTime = system.now();
@@ -493,7 +489,13 @@ public without sharing class LeadTriggerHandler{
                     if(ld.Next_follow_up_date_time__c < postThreeMonth){
                         ld.Next_follow_up_date_time__c.addError('Follow up date should be > 3 month to park it in Deferred Stage');
                     }
-                    
+                }
+                if(ld.status != oldLeadMap.get(ld.Id).status && (oldLeadMap.get(ld.Id).status ==  'Deferred' || oldLeadMap.get(ld.Id).status == 'On Hold') ){
+                    dateTime currentDateTime = system.now();
+                    dateTime postOneMonth = system.now().addMonths(1);
+                    if(ld.Next_follow_up_date_time__c > postOneMonth){
+                        ld.Next_follow_up_date_time__c.addError('Follow up date should be < 1 month to change Stage');
+                    }
                 }
                 if(ld.Alternate_Email__c != oldLeadMap.get(ld.Id).Alternate_Email__c && ld.Alternate_Email__c != null){
                     emailSet.add(ld.Alternate_Email__c);

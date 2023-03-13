@@ -128,7 +128,7 @@ public without sharing class GenericLeadLWCcontroller{
         } catch (Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());
             System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
-            HandleBusinessException.captureError('ChatFormLWCcontroller', 'createLead', e, null);
+            HandleBusinessException.captureError('GenericLeadLWCcontroller', 'createLead', e, null);
             message = 'FAIL';
 
         }

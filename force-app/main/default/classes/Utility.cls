@@ -458,9 +458,9 @@ priceBookIdByProductId.put(pbe.Product2Id, pbe.Id);
         insert appRec;
         return appRec.Id;
     }
-    public static Application__c returnApplicationInstance(Lead leadRec){
+    public static Application__c returnApplicationInstance(Lead leadRec, String LeadRecId){
         Application__c appRec = new Application__c();
-        appRec.Lead__c = leadRec.Id;
+        appRec.Lead__c = LeadRecId;
         appRec.Applied_Date_Time__c = System.now();
         appRec.Status__c = 'Open';
         appRec.Course__c = leadRec.course__c;

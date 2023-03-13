@@ -91,6 +91,8 @@ public class ManualpaymentController {
             Opportunity oppRec = [SELECT Id,Name,Amount,Due_Amount__c FROM Opportunity WHERE ID =: oppId];
             System.debug('oppRec ::'+oppRec);
             OppRec.Payment_Type__c = 'Manual Payment';
+            OppRec.Payment_Initiated__c = true;
+            OppRec.Payment_Initiated_Date_Time__c = system.now();
             update oppRec;
             if(oppRec.Amount != insertingInvAmount){
                 remaingAmount = oppRec.Amount - insertingInvAmount;
