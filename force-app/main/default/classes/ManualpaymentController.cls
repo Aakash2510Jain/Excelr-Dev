@@ -93,6 +93,12 @@ public class ManualpaymentController {
             OppRec.Payment_Type__c = 'Manual Payment';
             OppRec.Payment_Initiated__c = true;
             OppRec.Payment_Initiated_Date_Time__c = system.now();
+            OppRec.Payment_Mode__c = null;
+            OppRec.Loan_Amount__c= null;
+            OppRec.Loan_Tenure__c= null;
+            OppRec.NBFCPartner__c= null;
+            OppRec.Loan_Type__c= null;
+            
             update oppRec;
             if(oppRec.Amount != insertingInvAmount){
                 remaingAmount = oppRec.Amount - insertingInvAmount;

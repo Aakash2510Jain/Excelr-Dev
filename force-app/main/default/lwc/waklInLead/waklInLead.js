@@ -4,6 +4,8 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getLead from '@salesforce/apex/walkInLeadLWCcontroller.getLead';
 import getApplication from '@salesforce/apex/walkInLeadLWCcontroller.getApplication';
 import EmailIsm from '@salesforce/apex/walkInLeadLWCcontroller.EmailIsm';
+import LogoutAgent from '@salesforce/apex/walkInLeadLWCcontroller.LogoutAgent';
+
 
 //import getPuckistOflead from '@salesforce/apex/walkInLeadLWCcontroller.getPuckistOflead';
 
@@ -95,8 +97,10 @@ export default class WaklInLead extends LightningElement {
     @api agentrecid;
     @api DepartmentListstring;
     @api hashcode;
+    @api agentNameLWC;
     @track DepartmentList = [];
     @track mapData = [];
+    @track profileLogout = [];
     @track showFromOrEmpty = false;
 
     @track dataForApp;
@@ -1108,5 +1112,77 @@ export default class WaklInLead extends LightningElement {
             window.location.replace(urlString, "_self");
         }
     }
+
+    handleOnselectprofile(event){
+        debugger;
+        var agId = this.agentrecid;
+        var Hashes = this.hashcode;
+        var selectedVal = event.detail.value;
+        if (selectedVal == 'My Past Leads') {
+            this.ShowPastLeadPage();
+            
+        }
+        if (selectedVal == 'Logout') {
+            this.LogoutAgentfromForm();
+        }
+
+    }
+
+    LogoutAgentfromForm() {
+        debugger;
+        var agId = this.agentrecid;
+        var Hashes = this.hashcode;
+        LogoutAgent({ AgrecId: this.agentrecid, AgentHashCode: this.hashcode })
+            .then(data => {
+                debugger;
+                if (data) {
+                    if (data.Message != null && data.Message != undefined  ) {
+                        var apexcookies = 'apex_' + data.HashcodeName;
+                       // this.getCookie(apexcookies);
+                    //    let x = document.cookie;
+                    //     let username = getCookie(apexcookies);
+                    //     if (username != '' ) {
+                    //         document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    //     }
+                        var urlString = data.Message;
+                        window.location.replace(urlString, "_self");
+                        
+                    }
+                    
+                }
+
+            })
+            .catch(error => {
+                this.handleAlert('Some error in logout');
+            })
+
+
+
+    }
+
+    getCookie(cname) {
+        debugger;
+        let name = cname + "=";
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+        for(let i = 0; i <ca.length; i++) {
+          let c = ca[i];
+          while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+          }
+          if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+          }
+        }
+        return "";
+      }
+
+    // LogoutPage(){
+    //     debugger;
+    //     var agId = this.agentrecid;
+    //     var Hashes = this.hashcode;
+
+
+    // }
 
 }

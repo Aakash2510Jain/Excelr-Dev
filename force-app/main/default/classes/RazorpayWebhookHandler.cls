@@ -51,45 +51,15 @@ global without sharing class RazorpayWebhookHandler{
                     if (m4.get('captured') == true){
                         //invoiceRec.Status__c = 'Realized';
                         invoiceRec.TranactionId__c = String.ValueOf(m4.get('id'));
-                        Id approverId;
-                        String userRoleId;
-                        Approval.ProcessSubmitRequest approvalRequest = new Approval.ProcessSubmitRequest();
-                        approvalRequest.setComments('Submitting for Manager Approval');
-                        approvalRequest.setObjectId(invoiceRec.Id);
-                        approvalRequest.setProcessDefinitionNameOrId('Invoice_Payment_Approval');
-                        if(invoiceRec.LeadInvoice__c != null){
-                            userRoleId = invoiceRec.LeadInvoice__r.Owner.UserRoleId;
-                            if(invoiceRec.Lead_ManagerId__c != null){
-                                approverId = invoiceRec.Lead_ManagerId__c;
-                            }
-                            else{
-                                approverId = approvalParentIdWrapper.smToManagerMap.containsKey(userRoleId) && approvalParentIdWrapper.managerRoleToUserIdMap.containsKey(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) ? approvalParentIdWrapper.managerRoleToUserIdMap.get(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
-                            }
-                        }
-                        else if(invoiceRec.Opportunity__c != null ){
-                            userRoleId = invoiceRec.Opportunity__r.Owner.UserRoleId;
-                            if(invoiceRec.Opportunity__r.Owner.managerid != null){
-                                approverId = invoiceRec.Opportunity__r.Owner.managerid;
-                            }
-                            else{
-                                approverId = approvalParentIdWrapper.smToManagerMap.containsKey(userRoleId) && approvalParentIdWrapper.managerRoleToUserIdMap.containsKey(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) ? approvalParentIdWrapper.managerRoleToUserIdMap.get(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
-                            }
-                        }
-                        approvalRequest.setNextApproverIds(new List<Id> {approverId});
-                        cdToapprovalRequestMap.put(invoiceRec.Id, approvalRequest);
                         
-                        if(!cdToapprovalRequestMap.isEmpty())
-                            List<Approval.ProcessResult> result = Approval.process(cdToapprovalRequestMap.values());
-                        
+                        if (m4.get('captured') == false){
+                            invoiceRec.Status__c = 'Not realized';
+                        }
+                        update invoiceRec;
                     }
-                    if (m4.get('captured') == false){
-                        invoiceRec.Status__c = 'Not realized';
-                    }
-                    update invoiceRec;
-                }
             }
 
-
+            }
             return 'Success';
         } catch (Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());

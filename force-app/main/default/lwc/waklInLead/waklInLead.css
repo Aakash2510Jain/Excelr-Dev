@@ -69,3 +69,7 @@
     }
 
 }
+
+.my-button-menu {
+    --slds-c-button-color-background: orange;
+}

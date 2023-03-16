@@ -452,7 +452,7 @@ public without sharing class LeadTriggerHandler{
                 }
                 if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Open' && (ld.status == 'ATC' || ld.status == 'In Conversation' || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && (ld.Email_Conversation_Done__c == false && ld.Telephonic_Conversation__c == false) ){
                     ld.status.addError('Email or Telephonic conversation is required to proceed');
-                }else if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Open' && (ld.status == 'ATC' || ld.status == 'In Conversation' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && ld.Profession__c == null ){
+                }else if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Open' && (ld.status == 'In Conversation' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && ld.Profession__c == null ){
                     ld.Profession__c.addError('Profiling Details are required to proceed (Profession,Experience...)');
                 }else  if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'ATC' && ( ld.status == 'In Conversation' || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && (ld.Email_Conversation_Done__c == false && ld.Telephonic_Conversation__c == false) ){
                     ld.status.addError('Email or Telephonic conversation is required to proceed');
@@ -475,6 +475,9 @@ public without sharing class LeadTriggerHandler{
                 } else if (ld.status != oldLeadMap.get(ld.Id).status &&  ld.status == 'Junk' && (ld.Is_Phone_Invalid__c == false)){
                     ld.Profession__c.addError('Lead Phone should be Invalid to mark lead as Junk');
                 }   
+                if(ld.Next_follow_up_date_time__c != oldLeadMap.get(ld.Id).Next_follow_up_date_time__c && ld.Next_follow_up_date_time__c == null){
+                    ld.Next_follow_up_date_time__c.addError('Next Followup Date cannot be Empty!!');
+                }
                 if(ld.status != oldLeadMap.get(ld.Id).status && (ld.Status == 'On Hold') ){
                     dateTime currentDateTime = system.now();
                     dateTime postOneMonth = system.now().addMonths(1);
@@ -490,7 +493,7 @@ public without sharing class LeadTriggerHandler{
                         ld.Next_follow_up_date_time__c.addError('Follow up date should be > 3 month to park it in Deferred Stage');
                     }
                 }
-                if(ld.status != oldLeadMap.get(ld.Id).status && (oldLeadMap.get(ld.Id).status ==  'Deferred' || oldLeadMap.get(ld.Id).status == 'On Hold') ){
+                if(ld.status != oldLeadMap.get(ld.Id).status && (ld.status != 'Deferred' && ld.status != 'Dead' && ld.status != 'Junk') && ( oldLeadMap.get(ld.Id).status == 'On Hold') ){
                     dateTime currentDateTime = system.now();
                     dateTime postOneMonth = system.now().addMonths(1);
                     if(ld.Next_follow_up_date_time__c > postOneMonth){

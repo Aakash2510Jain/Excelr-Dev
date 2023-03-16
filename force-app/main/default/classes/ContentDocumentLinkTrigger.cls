@@ -22,7 +22,7 @@ public class ContentDocumentLinkTrigger {
             
             for (Invoice__c iRec : invList) {
                 system.debug('iRec.Opportunity__r.Payment_Type__c--> '+iRec.Opportunity__r.Payment_Type__c);
-                if(iRec.Opportunity__r.Payment_Type__c == 'Cash' || iRec.Opportunity__r.Payment_Type__c == 'Cheque' || iRec.Opportunity__r.Payment_Type__c == 'POS' || iRec.Opportunity__r.Payment_Type__c == 'Manual Payment' ){
+                if(iRec.Opportunity__r.Payment_Type__c == 'Cash' || iRec.Opportunity__r.Payment_Type__c == 'Cheque' || iRec.Opportunity__r.Payment_Type__c == 'POS' || iRec.Opportunity__r.Payment_Type__c == 'Manual Payment' || iRec.Opportunity__r.Payment_Type__c == 'Full Payment' || iRec.Opportunity__r.Payment_Type__c == '100% Loan'){
                     Id approverId;
                     String userRoleId;
                     Approval.ProcessSubmitRequest approvalRequest = new Approval.ProcessSubmitRequest();

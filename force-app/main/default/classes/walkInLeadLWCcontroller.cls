@@ -36,20 +36,17 @@ public without sharing class walkInLeadLWCcontroller{
 
     // @auraenabled
     // public static String createLead(string Lastname, string email, string phone, string Course, string typeofcour, string userId, string agentid, string comments, string city, string state, string country, string countrycode, string AlternateMobile, String AlternateEmail){
-
     //     System.debug('userId ====> ' + userId);
     //     System.debug('agentid ====> ' + agentid);
     //     lead leadRec = new lead();
     //     list<ExcelR_Training_User__c> existingTrainingUser = new list<ExcelR_Training_User__c>();
     //     String message = '';
     //     try{
-
     //         if (agentid != null){
     //             existingTrainingUser = [SELECT Email__c, First_Name__c, HashCode__c, Id, Last_Name__c, Name, Password__c, Username__c
     //                                     FROM ExcelR_Training_User__c
     //                                     Where id = :agentid];
     //         }
-
     //         system.debug(Lastname + ' : ' + email + ' : ' + phone + ' : ' + Lastname);
     //         //leadRec.FirstName = firstname;
     //         leadRec.LastName = Lastname;
@@ -87,31 +84,31 @@ public without sharing class walkInLeadLWCcontroller{
     //     }
     //     return message;
     // }
-
     @AuraEnabled
-    public static string createLead(Lead Leadrec, String countrycode, string countrycodealternate,string city){
+    public static string createLead(Lead Leadrec, String countrycode, string countrycodealternate, string city){
         string message = '';
         try{
             System.debug('LeadTobeCreated =======> ' + Leadrec);
             System.debug('countrycode =======> ' + countrycode);
             System.debug('countrycodealternate =======> ' + countrycodealternate);
+            System.debug('Leadrec.Phone =======> ' + Leadrec.Phone);
 
-            if (countrycode != null && Leadrec.Phone!=null){
+            if (countrycode != null && (Leadrec.Phone != null && Leadrec.Phone != '') ){
                 Leadrec.Phone = countrycode + Leadrec.Phone;
             }
 
-            if (countrycodealternate != null && Leadrec.Alternate_Phone__c!=null){
+            if (countrycodealternate != null && Leadrec.Alternate_Phone__c != null){
                 Leadrec.Alternate_Phone__c = countrycodealternate + Leadrec.Alternate_Phone__c;
 
             }
-            
-            if(city!=null){
-                Leadrec.City__c=city;
+
+            if (city != null){
+                Leadrec.City__c = city;
             }
             Leadrec.Lead_Generation_Method__c = 'Walk-in Form';
             leadRec.LeadSource = 'Walkin';
             leadRec.Company = Leadrec.Lastname;
-            
+
             insert Leadrec;
             if (leadRec.id != null){
                 message = 'SUCCESS';
@@ -130,7 +127,7 @@ public without sharing class walkInLeadLWCcontroller{
     }
 
     @AuraEnabled
-    public static String createTaskForVoice(Task TaskRecord,string assignto,string leadId){
+    public static String createTaskForVoice(Task TaskRecord, string assignto, string leadId){
         system.debug('assignto-->' + assignto);
         system.debug('leadId-->' + leadId);
         system.debug('');
@@ -325,7 +322,7 @@ public without sharing class walkInLeadLWCcontroller{
         System.debug(' ExcelRagentid =========> ' + ExcelRagentid);
         try{
             List<Lead> PastLeadRecords = [SELECT Course__c, Email, ExcelR_Training_User__c, Name, OwnerId, Owner.Name, Phone, Status, Total_Calls__c, Total_Connected_Call__c //Product__r.Name,
-                                          FROM Lead 
+                                          FROM Lead
                                           Where ExcelR_Training_User__c = :ExcelRagentid ANd isconverted = false
                                           Order by createdDate Desc];
             System.debug('PastLeadRecords ======> ' + PastLeadRecords);
@@ -377,7 +374,7 @@ public without sharing class walkInLeadLWCcontroller{
                         if (urlvalue.contains('apex')){
                             urlvalue = urlvalue.replace('apex', 'Loginpage');
                         }
-                        FinalPageToRedirect = 'https://' + headerdata + urlvalue + '&IsReloading=true';
+                        FinalPageToRedirect = 'https://' + headerdata + urlvalue + '&IsReloading=true' + '&AgentName=' + ExcelRTrainUser[0].First_Name__c + ' ' + ExcelRTrainUser[0].Last_Name__c;
                         // FinalPageToRedirect = LoginHashcode+ '?id='+ExistingHashcode +'&IsReloading=true';
                         System.debug('FinalPageToRedirect ====> ' + FinalPageToRedirect);
 
@@ -403,6 +400,64 @@ public without sharing class walkInLeadLWCcontroller{
             HandleBusinessException.captureError('walkInLeadLWCcontroller', 'checkExistingHashKeyMatching', e, null);
             return null;
         }
+    }
+
+    @AuraEnabled
+    public static ResponseWrapper LogoutAgent(String AgrecId, String AgentHashCode){
+        ResponseWrapper reswrap = new ResponseWrapper();
+        try{
+            System.debug('AgrecId ===> ' + AgrecId);
+            System.debug('AgentHashCode ===> ' + AgentHashCode);
+
+            
+            String LoginPageBaseurl = System.Label.LoginPageBaseurl;
+            string message = '';
+
+            // string headerdata = ApexPages.currentPage().getHeaders().get('Host');
+            // System.debug('headerdata ====> ' + headerdata);
+
+            // string urlvalue = Apexpages.currentPage().getUrl();
+            // System.debug('urlvalue =====> ' + urlvalue);
+
+            if (AgrecId != null && AgentHashCode != null){
+                List<ExcelR_Training_User__c> ExcelRTrainUser = [SELECT Departments__c, Email__c, First_Name__c, HashCode__c, Id, Last_Name__c, Name, Password__c, Username__c
+                                                                 FROM ExcelR_Training_User__c
+                                                                 WHERE id = :AgrecId AND HashCode__c = :AgentHashCode
+                                                                 LIMIT 1];
+                if (!ExcelRTrainUser.isEmpty() && ExcelRTrainUser.size() > 0){
+                    ExcelRTrainUser[0].HashCode__c = '';
+                    update ExcelRTrainUser[0];
+                    message = LoginPageBaseurl;
+                    reswrap.Message = LoginPageBaseurl;
+                    reswrap.HashcodeName = 'userHashCodeCookie';
+                    // Cookie userHashCodeCookie = ApexPages.currentPage().getCookies().get('userHashCodeCookie');
+                    // System.debug('userHashCodeCookie ===> ' + userHashCodeCookie);
+
+                    //Cookie ExistinguserHashCodeCookie = ApexPages.currentPage().getCookies().get('userHashCodeCookie');
+                    /*if (ExistinguserHashCodeCookie != null) {
+                        
+                        String ExistingHashcode = String.valueOf(ExistinguserHashCodeCookie.getValue());
+                        Cookie userHashCodeCookie = new Cookie('userHashCodeCookie', ExistingHashcode, null, 0, true);
+                        ApexPages.currentPage().setCookies(new Cookie[]{ userHashCodeCookie });
+                    }*/
+                }
+
+            }
+            return reswrap;
+
+        } catch (Exception e){
+            //throw new AuraHandledException(e.getMessage());
+            System.debug('The error has coccured due to =====> ' + e.getMessage());
+            System.debug('The error has coccured due to =====> ' + e.getLineNumber());
+            reswrap.Message = 'Error';
+            reswrap.HashcodeName = 'userHashCodeCookie';
+            return reswrap;
+        }
+    }
+    
+    public class ResponseWrapper {
+        @AuraEnabled public String HashcodeName;
+        @AuraEnabled public String Message;
     }
 
 }

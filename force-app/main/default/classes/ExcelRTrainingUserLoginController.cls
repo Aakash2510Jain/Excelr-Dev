@@ -88,6 +88,7 @@ public without sharing class ExcelRTrainingUserLoginController{
                 LGEMember.Id = currentExcelUserID;
                 hasCode = String.valueOf(LGEMember.HashCode__c);
                 System.debug('The Hash Code Value');
+                System.debug('LGEMember ===> ' + LGEMember);
                 update LGEMember;
 
                 if (LGEMember.id != null){
@@ -127,6 +128,7 @@ public without sharing class ExcelRTrainingUserLoginController{
 
             //String LoginPageBaseurl = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/';
             String LoginPageBaseurl = System.Label.LoginPageBaseurl;
+            System.debug('LoginPageBaseurl ===> ' + LoginPageBaseurl);
             String ExistingHashcode = '';
             string FinalPageToRedirect = '';
             Boolean redirecttoLoginPage;
@@ -182,22 +184,29 @@ public without sharing class ExcelRTrainingUserLoginController{
                         }
                         MyNewPage = new PageReference(FinalPageToRedirect);
                         MyNewPage.setRedirect(true);
+                        return MyNewPage;
                     }
                     //FinalPageToRedirect = CustomerDetailPageBaseUrl + '?id=' + ExistingHashcode + '&Phone=' + PhoneNumber + '&AgentId=' + AgentUniqueCode;
                     //redirecttoLoginPage = false;
                 } else{
-                    LoginHashcode = Utility.generateRandomString();
-                    FinalPageToRedirect = LoginPageBaseurl + '?&hascode=' + LoginHashcode;
-                    //FinalPageToRedirect = LoginPageBaseurl + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
+                    // if (ExistingHashcode == LoginHashcode){
+                    //     System.debug('I am in inside  loginhashcode not equals to ExistingHashcode ');
+                        
+                    //     System.debug('I am in inside  loginhashcode equals to ExistingHashcode ');
+                    //     LoginHashcode = Utility.generateRandomString();
+                    //     String LoginPageBaseurlsubstring = LoginPageBaseurl.Substring(0,LoginPageBaseurl.length()-1);
+                    //     FinalPageToRedirect = LoginPageBaseurlsubstring + '?hascode=' + LoginHashcode;
+
+                    // } else{
+                    // }
+
                 }
-                System.debug('FinalPageToRedirect  ====> ' + FinalPageToRedirect);
-                PageReference FormPage = new PageReference(FinalPageToRedirect);
-                FormPage.setRedirect(true);
-                return FormPage;
+                // System.debug('FinalPageToRedirect  ====> ' + FinalPageToRedirect);
+                // PageReference FormPage = new PageReference(FinalPageToRedirect);
+                // FormPage.setRedirect(true);
+                // return FormPage;
             } else if ((LoginHashcode == '' || LoginHashcode == null) && userHashCodeCookie == null){
-                //if (LoginHashcode == '' || LoginHashcode == null){
                 LoginHashcode = Utility.generateRandomString();
-                //}
                 System.debug('LoginHashcode =======> ' + LoginHashcode);
 
                 FinalPageToRedirect = LoginPageBaseurl + '?hascode=' + LoginHashcode;
@@ -212,9 +221,6 @@ public without sharing class ExcelRTrainingUserLoginController{
                                                                  FROM ExcelR_Training_User__c
                                                                  WHERE HashCode__c = :String.valueOf(userHashCodeCookie.getValue())];
 
-                //system.debug('ExcelRTrainUser----' + ExcelRTrainUser);
-                //System.debug('ExcelRTrainUser[0].Departments__c ===> ' + ExcelRTrainUser[0].Departments__c);
-                //system.debug('Size is ' + ExcelRTrainUser.size());
 
 
                 if (ExcelRTrainUser.size() > 0){
@@ -247,8 +253,8 @@ public without sharing class ExcelRTrainingUserLoginController{
                     //redirecttoLoginPage = false;
                 } else{
                     LoginHashcode = Utility.generateRandomString();
-                    FinalPageToRedirect = LoginPageBaseurl + '?&hascode=' + LoginHashcode;
-                    //FinalPageToRedirect = CustomerDetailPageBaseUrl + '?id=' + ExistingHashcode + '&Phone=' + PhoneNumber + '&AgentId=' + AgentUniqueCode;
+                    String LoginPageBaseurlsubstring = LoginPageBaseurl.Substring(0,LoginPageBaseurl.length()-1);
+                    FinalPageToRedirect = LoginPageBaseurlsubstring + '?hascode=' + LoginHashcode;
                 }
                 System.debug('FinalPageToRedirect  ====> ' + FinalPageToRedirect);
                 PageReference FormPage = new PageReference(FinalPageToRedirect);

@@ -100,17 +100,21 @@ public class PaymentOnOpportunityApexController {
             HandleBusinessException.captureError('PaymentOnOpportunityApexController', 'ShowPriceIncludingGST', e , null);
             return null;
         }
-    }
-    
-    
-    
+    }    
     @AuraEnabled
     Public Static string UpdateOPPforFullPayment(string recordId,Decimal Amount, String paymentType,String PaymentOptiontype){
         try{
             Opportunity OppRec=new Opportunity();
             OppRec.Id=recordId;
+            OppRec.Seek_Loan__c = null;
             OppRec.Payment_Mode__c=paymentType;
             OppRec.Payment_Type__c=PaymentOptiontype;
+            OppRec.Loan_Tenure__c = null;
+            OppRec.Loan_Amount__c= null;
+            OppRec.NBFCPartner__c= null;
+            OppRec.Loan_Type__c= null;
+            OppRec.Upfront_Amount__c = Amount;
+            OppRec.Due_Amount__c = null;
             update OppRec;
             
             
@@ -154,13 +158,13 @@ public class PaymentOnOpportunityApexController {
             OppRec.Id=recordId;
             OppRec.Payment_Mode__c=paymentType;
             OppRec.Payment_Type__c = 'Partial Payment';
-            OppRec.Loan_Amount__c=PendingAmount;
+            OppRec.Loan_Amount__c= null;
             OppRec.Seek_Loan__c = 'No';
             OppRec.Payment_Status__c = 'Initiated';
             OppRec.Payment_Initiated_Date_Time__c = system.now();
             OppRec.Payment_Initiated__c = true;
             OppRec.Upfront_Amount__c=Amount;
-            oppRec.Due_Amount__c =PendingAmount-Amount;
+            oppRec.Due_Amount__c = Amount - PendingAmount;
             
             
             update OppRec;
@@ -223,7 +227,7 @@ public class PaymentOnOpportunityApexController {
             OppRec.Loan_Amount__c=Amount;
             OppRec.Loan_Type__c =LoanType;
             OppRec.Seek_Loan__c = 'Yes';
-            OppRec.Payment_Type__c = 'Full Payment';
+            OppRec.Payment_Type__c = '100% Loan';
             OppRec.Payment_Status__c = 'Initiated';
             OppRec.Payment_Mode__c = 'Loan';
             OppRec.Payment_Initiated_Date_Time__c = system.now();

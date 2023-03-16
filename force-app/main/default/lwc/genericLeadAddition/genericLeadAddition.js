@@ -451,7 +451,7 @@ export default class WaklInLead extends LightningElement {
           );
           console.log('selectedSearchResult--',this.selectedSearchResult);
           console.log('selectedresultValue--',this.selectedresultValue);
-          
+          this.booleanValue=false;
           this.clearSearchResults();
         }
       
@@ -902,7 +902,7 @@ export default class WaklInLead extends LightningElement {
                 this.handleConfirm('Lead Created Successfully');
                 console.log(data)
                 //alert('Lead Record created successfully');
-                this.handleCancel();
+                //this.handleCancel();
                 this.HandleLeadCreatedisable = false;
                 this.LeadTobeCreated = {};
                 this.handleSpinner();
@@ -910,7 +910,7 @@ export default class WaklInLead extends LightningElement {
             }
             else if (data == 'FAIL') {
                 this.handleSpinner();
-                // this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
+                this.handleAlert('Error in Creating record. Please provide correct and complete Data!');
                 this.HandleLeadCreatedisable = false;
             }
 

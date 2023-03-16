@@ -116,6 +116,7 @@ global class RetailInvoiceHelper {
                 
                 Opportunity oppToMarkClosedWon = new Opportunity();
                 oppToMarkClosedWon.Id = [Select Opportunity__c From Invoice__c where id =: recordId].Opportunity__c ;
+                oppToMarkClosedWon.Can_Convert__c = true; 
                 oppToMarkClosedWon.StageName = 'Closed Won';
                 update oppToMarkClosedWon;
                 

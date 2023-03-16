@@ -1,3 +1,4 @@
+<!-- sldsValidatorIgnore -->
 <template>
   <lightning-quick-action-panel header="Initiate Payment">
     <template if:true={ShowOriginalAmount}>
@@ -49,10 +50,11 @@
       <div>
         <div class="slds-grid slds-gutters" style="">
           <div class="slds-col ">
-            <p style="font-weight:bold">
+            <p style="font-weight:bold"><abbr class="slds-required" title="required">* </abbr>
               Select Next Due Date
             </p>
-            <lightning-input type="date" label="" value={selectedDate} min={minDate} onchange={HandleNextDueDate}></lightning-input>
+            <lightning-input type="date" label="" value={selectedDate} min={minDate}
+              onchange={HandleNextDueDate} ></lightning-input>
             <br />
           </div>
         </div>
@@ -62,15 +64,17 @@
       <div>
         <div class="slds-grid slds-gutters" style="margin-bottom:150px;">
           <div class="slds-col ">
-            <p style="font-weight:bold">
+            <p style="font-weight:bold"><abbr class="slds-required" title="required">* </abbr>
               Select Your Payment Type
             </p>
             <lightning-combobox label="" name="Payment" value={PaymentType} placeholder="Select Your Payment Type"
-              options={Paymentoptions} onchange={HandlePaymentType}></lightning-combobox>
+              options={Paymentoptions}  onchange={Showsavebutton}></lightning-combobox>
           </div>
         </div>
       </div>
     </template>
+
+    <!-- onchange={HandlePaymentType} -->
 
     <template if:true={ShowLoanOption}>
       <div>
@@ -174,6 +178,12 @@
       <template if:true={PaymentSectionButton}>
         <lightning-button type="Sumbit" variant="Brand" label="Previous" name="PaymentSection"
           onclick={HandlePrevious}></lightning-button>
+          <template if:true={showpaymentButton}>
+            <lightning-button type="Sumbit" variant="Brand" label="Save" name="PaymentSection"
+          onclick={HandlePaymentType}></lightning-button>
+
+          </template>
+          
       </template>
 
       <template if:true={FullLoanButton}>
