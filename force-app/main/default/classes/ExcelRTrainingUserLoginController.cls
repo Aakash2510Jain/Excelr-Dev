@@ -94,16 +94,16 @@ public without sharing class ExcelRTrainingUserLoginController{
                 if (LGEMember.id != null){
 
                     if (DepartmentArr[0] == 'Walk-In'){
-                        FormPageUrl = LoginPageBaseurl + 'walkInLeadPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + LGEMember.HashCode__c;
+                        FormPageUrl = LoginPageBaseurl + 'walkInLeadPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + LGEMember.HashCode__c + '&AgentName=' + ExcelRTrainUser[0].First_Name__c + ' ' + ExcelRTrainUser[0].Last_Name__c;
                     }
                     if (DepartmentArr[0] == 'Voice'){
-                        FormPageUrl = LoginPageBaseurl + 'voiceFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + LGEMember.HashCode__c;
+                        FormPageUrl = LoginPageBaseurl + 'voiceFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + LGEMember.HashCode__c + '&AgentName=' + ExcelRTrainUser[0].First_Name__c + ' ' + ExcelRTrainUser[0].Last_Name__c;
                     }
                     if (DepartmentArr[0] == 'Generic'){
-                        FormPageUrl = LoginPageBaseurl + 'genericLeadAdditionPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + LGEMember.HashCode__c;
+                        FormPageUrl = LoginPageBaseurl + 'genericLeadAdditionPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + LGEMember.HashCode__c + '&AgentName=' + ExcelRTrainUser[0].First_Name__c + ' ' + ExcelRTrainUser[0].Last_Name__c;
                     }
                     if (DepartmentArr[0] == 'Chat'){
-                        FormPageUrl = LoginPageBaseurl + 'chatFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + LGEMember.HashCode__c;
+                        FormPageUrl = LoginPageBaseurl + 'chatFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + LGEMember.HashCode__c + '&AgentName=' + ExcelRTrainUser[0].First_Name__c + ' ' + ExcelRTrainUser[0].Last_Name__c;
                     }
                     MyNewPage = new PageReference(FormPageUrl);
                     MyNewPage.setRedirect(true);
@@ -171,16 +171,16 @@ public without sharing class ExcelRTrainingUserLoginController{
                     if (ExcelRTrainUser[0].id != null){
 
                         if (DepartmentArr[0] == 'Walk-In'){
-                            FinalPageToRedirect = LoginPageBaseurl + 'walkInLeadPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
+                            FinalPageToRedirect = LoginPageBaseurl + 'walkInLeadPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c + '&AgentName=' + ExcelRTrainUser[0].First_Name__c + ' ' + ExcelRTrainUser[0].Last_Name__c;
                         }
                         if (DepartmentArr[0] == 'Voice'){
-                            FinalPageToRedirect = LoginPageBaseurl + 'voiceFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
+                            FinalPageToRedirect = LoginPageBaseurl + 'voiceFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c + '&AgentName=' + ExcelRTrainUser[0].First_Name__c + ' ' + ExcelRTrainUser[0].Last_Name__c;
                         }
                         if (DepartmentArr[0] == 'Generic'){
-                            FinalPageToRedirect = LoginPageBaseurl + 'genericLeadAdditionPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
+                            FinalPageToRedirect = LoginPageBaseurl + 'genericLeadAdditionPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c + '&AgentName=' + ExcelRTrainUser[0].First_Name__c + ' ' + ExcelRTrainUser[0].Last_Name__c;
                         }
                         if (DepartmentArr[0] == 'Chat'){
-                            FinalPageToRedirect = LoginPageBaseurl + 'chatFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
+                            FinalPageToRedirect = LoginPageBaseurl + 'chatFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + ExcelRTrainUser[0].Departments__c + '&hascode=' + ExcelRTrainUser[0].HashCode__c + '&AgentName=' + ExcelRTrainUser[0].First_Name__c + ' ' + ExcelRTrainUser[0].Last_Name__c;
                         }
                         MyNewPage = new PageReference(FinalPageToRedirect);
                         MyNewPage.setRedirect(true);
@@ -235,16 +235,16 @@ public without sharing class ExcelRTrainingUserLoginController{
                     if (ExcelRTrainUser[0].id != null){
 
                         if (DepartmentArr[0] == 'Walk-In'){
-                            FinalPageToRedirect = LoginPageBaseurl + 'walkInLeadPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + departments + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
+                            FinalPageToRedirect = LoginPageBaseurl + 'walkInLeadPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + departments + '&hascode=' + ExcelRTrainUser[0].HashCode__c + '&AgentName=' + ExcelRTrainUser[0].First_Name__c + ' ' + ExcelRTrainUser[0].Last_Name__c;
                         }
                         if (DepartmentArr[0] == 'Voice'){
-                            FinalPageToRedirect = LoginPageBaseurl + 'voiceFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + departments + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
+                            FinalPageToRedirect = LoginPageBaseurl + 'voiceFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + departments + '&hascode=' + ExcelRTrainUser[0].HashCode__c + '&AgentName=' + ExcelRTrainUser[0].First_Name__c + ' ' + ExcelRTrainUser[0].Last_Name__c;
                         }
                         if (DepartmentArr[0] == 'Generic'){
-                            FinalPageToRedirect = LoginPageBaseurl + 'genericLeadAdditionPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + departments + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
+                            FinalPageToRedirect = LoginPageBaseurl + 'genericLeadAdditionPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + departments + '&hascode=' + ExcelRTrainUser[0].HashCode__c + '&AgentName=' + ExcelRTrainUser[0].First_Name__c + ' ' + ExcelRTrainUser[0].Last_Name__c;
                         }
                         if (DepartmentArr[0] == 'Chat'){
-                            FinalPageToRedirect = LoginPageBaseurl + 'chatFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + departments + '&hascode=' + ExcelRTrainUser[0].HashCode__c;
+                            FinalPageToRedirect = LoginPageBaseurl + 'chatFormPage' + '?id=' + ExcelRTrainUser[0].Id + '&departments=' + departments + '&hascode=' + ExcelRTrainUser[0].HashCode__c + '&AgentName=' + ExcelRTrainUser[0].First_Name__c + ' ' + ExcelRTrainUser[0].Last_Name__c;
                         }
                         MyNewPage = new PageReference(FinalPageToRedirect);
                         MyNewPage.setRedirect(true);

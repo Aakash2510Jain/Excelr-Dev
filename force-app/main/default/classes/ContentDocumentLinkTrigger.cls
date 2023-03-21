@@ -47,6 +47,8 @@ public class ContentDocumentLinkTrigger {
                             approverId = approvalParentIdWrapper.smToManagerMap.containsKey(userRoleId) && approvalParentIdWrapper.managerRoleToUserIdMap.containsKey(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) ? approvalParentIdWrapper.managerRoleToUserIdMap.get(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
                         }
                     }
+                    system.debug('userRoleId -- ' + userRoleId);
+                    system.debug('approverId -- ' + approverId);
                     approvalRequest.setNextApproverIds(new List<Id> {approverId});
                     cdToapprovalRequestMap.put(iRec.Id, approvalRequest);
                     

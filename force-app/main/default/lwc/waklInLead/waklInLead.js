@@ -118,6 +118,7 @@ export default class WaklInLead extends LightningElement {
         //defined a varibale
         // this.handlecourseList();
         this.convertStringtoList();
+        this.lwcfilename();
 
     }
 
@@ -126,6 +127,15 @@ export default class WaklInLead extends LightningElement {
 
     // @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: TYPE_OF_COURSE_FIELD })
     // TypeofCoursePicklistValues
+
+    lwcfilename(){
+        console.log(
+            this.template.host.localName // c-test-component
+              .split('-')              // ['c', 'test', 'component'] 
+              .slice(1)                // removes ns prefix => ['test', 'component']
+              .reduce((a, b) => a + b.charAt(0).toUpperCase() + b.slice(1)) // converts to camelCase => testComponent 
+          );
+    }
 
     convertStringtoList() {
         this.DepartmentList = this.DepartmentListstring.split(';');
@@ -168,11 +178,11 @@ export default class WaklInLead extends LightningElement {
         debugger;
         if (data) {
 
-            if (data.Courses.length > 0) {
+            if (data.AllformsMapwrapper.Voice.course_names__c.length > 0) {
 
                 let tempcoursearr = [];
-                for (let i = 0; i < data.Courses.length; i++) {
-                    tempcoursearr.push({ label: data.Courses[i], value: data.Courses[i] });
+                for (let i = 0; i < data.AllformsMapwrapper.Voice.course_names__c.length; i++) {
+                    tempcoursearr.push({ label: data.AllformsMapwrapper.Voice.course_names__c[i], value: data.AllformsMapwrapper.Voice.course_names__c[i] });
                 }
                 this.courssweList = tempcoursearr;
                 this.courssweList.sort((a, b) => (a.label > b.label) ? 1 : -1);
@@ -203,25 +213,25 @@ export default class WaklInLead extends LightningElement {
 
             // }
 
-            if (data.TypeofCourse.length > 0) {
+            // if (data.AllformsMapwrapper.Voice.course_names__c.length.length > 0) {
 
-                let temptypeofcoursearr = [];
-                for (let i = 0; i < data.TypeofCourse.length; i++) {
-                    temptypeofcoursearr.push({ label: data.TypeofCourse[i], value: data.TypeofCourse[i] });
-                }
-                this.TypeofCoursePicklistValues = temptypeofcoursearr;
-                this.TypeofCoursePicklistValues.sort((a, b) => (a.label > b.label) ? 1 : -1);
-                console.log('Picklistvalue=', this.TypeofCoursePicklistValues);
+            //     let temptypeofcoursearr = [];
+            //     for (let i = 0; i < data.TypeofCourse.length; i++) {
+            //         temptypeofcoursearr.push({ label: data.AllformsMapwrapper.Voice.course_names__c.length[i], value: data.AllformsMapwrapper.Voice.course_names__c.length[i] });
+            //     }
+            //     this.TypeofCoursePicklistValues = temptypeofcoursearr;
+            //     this.TypeofCoursePicklistValues.sort((a, b) => (a.label > b.label) ? 1 : -1);
+            //     console.log('Picklistvalue=', this.TypeofCoursePicklistValues);
 
-            }
+            // }
 
             //TypeofCourse
 
-            if (data.TaskStatus.length > 0) {
+            if (data.pickValByFieldWrapper.TaskStatus.length > 0) {
 
                 let tempTaskStatusarr = [];
-                for (let i = 0; i < data.TaskStatus.length; i++) {
-                    tempTaskStatusarr.push({ label: data.TaskStatus[i], value: data.TaskStatus[i] });
+                for (let i = 0; i < data.pickValByFieldWrapper.TaskStatus.length; i++) {
+                    tempTaskStatusarr.push({ label: data.pickValByFieldWrapper.TaskStatus[i], value: data.pickValByFieldWrapper.TaskStatus[i] });
                 }
 
                 this.StatusList = tempTaskStatusarr;
@@ -230,10 +240,10 @@ export default class WaklInLead extends LightningElement {
 
             }
 
-            if (data.TaskPriority.length > 0) {
+            if (data.pickValByFieldWrapper.TaskPriority.length > 0) {
                 let tempTaskPriorityarr = [];
-                for (let i = 0; i < data.TaskPriority.length; i++) {
-                    tempTaskPriorityarr.push({ label: data.TaskPriority[i], value: data.TaskPriority[i] });
+                for (let i = 0; i < data.pickValByFieldWrapper.TaskPriority.length; i++) {
+                    tempTaskPriorityarr.push({ label: data.pickValByFieldWrapper.TaskPriority[i], value: data.pickValByFieldWrapper.TaskPriority[i] });
                 }
 
                 this.priorityList = tempTaskPriorityarr;
@@ -792,47 +802,47 @@ export default class WaklInLead extends LightningElement {
         
         if ((this.LeadTobeCreated.LastName != undefined && this.LeadTobeCreated.LastName != null && this.LeadTobeCreated.LastName != '')
             && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '') && (this.selectedresultValue != null && this.selectedresultValue != undefined && this.selectedresultValue != '') && (this.selectedrecordDetails != null && this.selectedrecordDetails != undefined && this.selectedrecordDetails != '')) {  
-            if (this.LeadTobeCreated.Email != null) {
-                var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
-            }
-            if (this.LeadTobeCreated.Phone != null) {
-                var phoneReturnvalue = this.handleCorrectPhone(this.LeadTobeCreated.Phone);
-            }
-
-            if (this.LeadTobeCreated.Email != null && (this.LeadTobeCreated.Phone == null || this.LeadTobeCreated.Phone == '' || this.LeadTobeCreated.Phone == undefined)) {
-                if (returnvalue == true) {
-                    this.createLeadFromJS();
-
+                if (this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '' && this.LeadTobeCreated.Email != undefined) {
+                    var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
                 }
-                else {
-                    alert('Incorrect Email Pattern');
-                    this.HandleLeadCreatedisable = false;
-
+                if (this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '' && this.LeadTobeCreated.Phone != undefined) {
+                    var phoneReturnvalue = this.handleCorrectPhone(this.LeadTobeCreated.Phone);
                 }
-
-            }
-            else if (this.LeadTobeCreated.Phone != null && (this.LeadTobeCreated.Email == null || this.LeadTobeCreated.Email == '' || this.LeadTobeCreated.Email == undefined)) {
-                if (phoneReturnvalue == true) {
-                    this.createLeadFromJS();
+    
+                if (this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '' && this.LeadTobeCreated.Email != undefined  && (this.LeadTobeCreated.Phone == null || this.LeadTobeCreated.Phone == '' || this.LeadTobeCreated.Phone == undefined  )) {
+                    if ( returnvalue == true) {
+                        this.createLeadFromJS();
+                        
+                    }
+                    else{
+                        alert('Incorrect Email Pattern');
+                        this.HandleLeadCreatedisable = false;
+    
+                    }
+                    
                 }
-                else {
-                    alert('Incorrect Phone Pattern');
-                    this.HandleLeadCreatedisable = false;
+                else if ( this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '' && this.LeadTobeCreated.Phone != undefined && (this.LeadTobeCreated.Email == null || this.LeadTobeCreated.Email == '' || this.LeadTobeCreated.Email == undefined )) {
+                    if (phoneReturnvalue == true) {
+                        this.createLeadFromJS();
+                    }
+                    else{
+                        alert('Incorrect Phone Pattern');
+                        this.HandleLeadCreatedisable = false;
+                    }
+                    
                 }
-
-            }
-            else if (this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Phone != null) {
-                if (returnvalue == true && phoneReturnvalue == true) {
-                    this.HandleLeadCreatedisable = true;
-                    this.createLeadFromJS();
-
-
+                else if ((this.LeadTobeCreated.Email != null  && this.LeadTobeCreated.Email != '' && this.LeadTobeCreated.Email != undefined) && (this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '' && this.LeadTobeCreated.Phone != undefined)) {
+                    if (returnvalue == true && phoneReturnvalue == true) {
+                        this.HandleLeadCreatedisable = true;
+                        this.createLeadFromJS();
+                       
+    
+                    }
+                    else {
+                        alert('Incorrect Email or Phone Pattern');
+                        this.HandleLeadCreatedisable = false;
+                    }
                 }
-                else {
-                    alert('Incorrect Email or Phone Pattern');
-                    this.HandleLeadCreatedisable = false;
-                }
-            }
             else {
                 this.createLeadFromJS();
             }
@@ -1093,22 +1103,22 @@ export default class WaklInLead extends LightningElement {
         var selectedVal = event.detail.value;
         //var selectedVal = event.currentTarget.dataset.id;
         if (selectedVal == 'Walk-In') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
             window.open(urlString, "_self");
 
         }
         if (selectedVal == 'Voice') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
             window.open(urlString, "_self");
 
         }
         if (selectedVal == 'Generic') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
             window.open(urlString, "_self");
 
         }
         if (selectedVal == 'Chat') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
             window.location.replace(urlString, "_self");
         }
     }

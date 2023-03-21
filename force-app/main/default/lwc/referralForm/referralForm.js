@@ -339,9 +339,9 @@ export default class ReferralForm extends LightningElement {
         debugger;
         this.handleSpinner();
 
-        //&& (this.LeadTobeCreated.Email != undefined && this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '') && (this.LeadTobeCreated.Phone != undefined && this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '')
+        //&& (this.LeadTobeCreated.Email != undefined && this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '') && (this.LeadTobeCreated.Phone != undefined && this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '') && (this.LeadTobeCreated.Type_of_Course__c != undefined && this.LeadTobeCreated.Type_of_Course__c != null) 
         if ((this.LeadTobeCreated.LastName != undefined && this.LeadTobeCreated.LastName != null && this.LeadTobeCreated.LastName != '') 
-            && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '')  && (this.LeadTobeCreated.CID_of_Referer__c != undefined && this.LeadTobeCreated.CID_of_Referer__c != null   && this.LeadTobeCreated.CID_of_Referer__c != '') && (this.LeadTobeCreated.Type_of_Course__c != undefined && this.LeadTobeCreated.Type_of_Course__c != null) 
+            && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '')  && (this.LeadTobeCreated.CID_of_Referer__c != undefined && this.LeadTobeCreated.CID_of_Referer__c != null   && this.LeadTobeCreated.CID_of_Referer__c != '') 
             &&(this.selectedresultValue!=null && this.selectedresultValue!=undefined && this.selectedresultValue!='')) {
 
 
@@ -461,6 +461,12 @@ export default class ReferralForm extends LightningElement {
 
                 }
                 else if (data == 'Referral CID does not found in the system') {
+                    this.handleAlert(data);
+                    this.HandleLeadCreatedisable = false;
+                    this.handleSpinner();
+
+                }
+                else if (data == 'lead is already existing with Other person') {
                     this.handleAlert(data);
                     this.HandleLeadCreatedisable = false;
                     this.handleSpinner();

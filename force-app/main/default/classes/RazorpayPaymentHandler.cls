@@ -85,6 +85,7 @@ public with sharing class RazorpayPaymentHandler {
             String email;
             String contact;
             String name;
+            String ISMEmail;
             Decimal amount = 0.0;
             if(iv.Amount__c != null)
                 amount = iv.Amount__c * 100;
@@ -153,6 +154,15 @@ public with sharing class RazorpayPaymentHandler {
             Map<String,Object> jsonBody = (Map<String,Object>) Json.deserializeUntyped(res.getBody());
             
             System.debug('RESPPPP'+jsonBody);
+            //
+            string PaymentUrl = String.valueof(jsonBody.get('short_url'));
+            System.debug('PaymentUrl ======> '+ PaymentUrl);
+            map<String,Object> NotesMap = (Map<String,Object>)jsonBody.get('Notes');
+
+            if (PaymentUrl != null) {
+                Utility.SendPaymentLinkToISM( RecId, PaymentUrl, NotesMap);
+                
+            }
             
             // return 'Success';     
         }

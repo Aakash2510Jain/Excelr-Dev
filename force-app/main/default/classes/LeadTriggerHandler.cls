@@ -404,14 +404,19 @@ public without sharing class LeadTriggerHandler{
     }
     
     public void afterInsert(List<Lead> leadList){
+        List<Application__c> applicationtobeinserted = new List<Application__c>();
         try{
             set<String> leadIds = new set<String>();
             
             for (Lead ld : leadList){
-                Utility.createApplicationInstance(ld.Id, ld.Course__c,null);
+                Application__c LeadApp = Utility.createApplicationInstance(ld.Id, ld.Course__c,null);
+                applicationtobeinserted.add(LeadApp);
                 if(ld.To_Be_Deleted__c){
                     leadIds.add(ld.Id);
                 }
+            }
+            if (!applicationtobeinserted.isEmpty()) {
+                insert applicationtobeinserted;
             }
             if(!leadIds.isEmpty()){
                 DeleteDuplicateLeads.deleteLeads();
@@ -450,11 +455,11 @@ public without sharing class LeadTriggerHandler{
                 if(ld.Profession__c != null && ld.Profession__c != oldLeadMap.get(ld.Id).Profession__c){
                     addValidationForProfilling(ld, oldLeadMap);
                 }
-                if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Open' && (ld.status == 'ATC' || ld.status == 'In Conversation' || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && (ld.Email_Conversation_Done__c == false && ld.Telephonic_Conversation__c == false) ){
+                if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Open' && (ld.status == 'ATC' || ld.status == 'Request a Call Back' || ld.status == 'In Conversation' || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && (ld.Email_Conversation_Done__c == false && ld.Telephonic_Conversation__c == false) ){
                     ld.status.addError('Email or Telephonic conversation is required to proceed');
                 }else if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Open' && (ld.status == 'In Conversation' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && ld.Profession__c == null ){
                     ld.Profession__c.addError('Profiling Details are required to proceed (Profession,Experience...)');
-                }else  if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'ATC' && ( ld.status == 'In Conversation' || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && (ld.Email_Conversation_Done__c == false && ld.Telephonic_Conversation__c == false) ){
+                }else  if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'ATC' && ( ld.status == 'In Conversation' || ld.status == 'Request a Call Back'  || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && (ld.Email_Conversation_Done__c == false && ld.Telephonic_Conversation__c == false) ){
                     ld.status.addError('Email or Telephonic conversation is required to proceed');
                 }else if(ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'ATC' && (ld.status == 'In Conversation' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && ld.Profession__c == null ){
                     ld.Profession__c.addError('Profiling Details are required to proceed (Profession,Experience...)');
@@ -478,6 +483,50 @@ public without sharing class LeadTriggerHandler{
                 if(ld.Next_follow_up_date_time__c != oldLeadMap.get(ld.Id).Next_follow_up_date_time__c && ld.Next_follow_up_date_time__c == null){
                     ld.Next_follow_up_date_time__c.addError('Next Followup Date cannot be Empty!!');
                 }
+                //Validation for data null points
+                if(ld.Email != oldLeadMap.get(ld.Id).Email && ld.Email == null){
+                    ld.Email.addError('Email cannot be Empty!!');
+                }
+                if(ld.Alternate_Email__c != oldLeadMap.get(ld.Id).Alternate_Email__c && ld.Alternate_Email__c == null){
+                    ld.Alternate_Email__c.addError('Alternate Email cannot be Empty!!');
+                }
+                if(ld.Alternate_Phone__c != oldLeadMap.get(ld.Id).Alternate_Phone__c && ld.Alternate_Phone__c == null){
+                    ld.Alternate_Phone__c.addError('Alternate Phone cannot be Empty!!');
+                }    
+                if(ld.Profession__c != oldLeadMap.get(ld.Id).Profession__c && ld.Profession__c == null){
+                    ld.Profession__c.addError('Profession cannot be Empty!!');
+                }
+                if(ld.Qualification__c != oldLeadMap.get(ld.Id).Qualification__c && ld.Qualification__c == null){
+                    ld.Qualification__c.addError('Qualification cannot be Empty!!');
+                }
+                if(ld.Branch__c != oldLeadMap.get(ld.Id).Branch__c && ld.Branch__c == null){
+                    ld.Branch__c.addError('Branch cannot be Empty!!');
+                }
+                if(ld.Specialization__c != oldLeadMap.get(ld.Id).Specialization__c && ld.Specialization__c == null){
+                    ld.Specialization__c.addError('Specialization cannot be Empty!!');
+                }
+                if(ld.Year_of_Graduation__c != oldLeadMap.get(ld.Id).Year_of_Graduation__c && ld.Year_of_Graduation__c == null){
+                    ld.Year_of_Graduation__c.addError('Year of Graduation cannot be Empty!!');
+                }
+                if(ld.Why_This_Course__c != oldLeadMap.get(ld.Id).Why_This_Course__c && ld.Why_This_Course__c == null){
+                    ld.Why_This_Course__c.addError('Why This Course cannot be Empty!!');
+                }
+                if(ld.Organisation__c != oldLeadMap.get(ld.Id).Organisation__c && ld.Organisation__c == null){
+                    ld.Organisation__c.addError('Organisation cannot be Empty!!');
+                }
+                if(ld.Designation__c != oldLeadMap.get(ld.Id).Designation__c && ld.Designation__c == null){
+                    ld.Designation__c.addError('Designation cannot be Empty!!');
+                }
+                if(ld.Year_of_Experience__c != oldLeadMap.get(ld.Id).Year_of_Experience__c && ld.Year_of_Experience__c == null){
+                    ld.Year_of_Experience__c.addError('Year of Experience cannot be Empty!!');
+                }
+                if(ld.Current_Domain__c != oldLeadMap.get(ld.Id).Current_Domain__c && ld.Current_Domain__c == null){
+                    ld.Current_Domain__c.addError('Current Domain cannot be Empty!!');
+                }
+                if(ld.Relevant_Experience__c != oldLeadMap.get(ld.Id).Relevant_Experience__c && ld.Relevant_Experience__c == null){
+                    ld.Relevant_Experience__c.addError('Relevant Experience cannot be Empty!!');
+                }
+                
                 if(ld.status != oldLeadMap.get(ld.Id).status && (ld.Status == 'On Hold') ){
                     dateTime currentDateTime = system.now();
                     dateTime postOneMonth = system.now().addMonths(1);
@@ -500,10 +549,18 @@ public without sharing class LeadTriggerHandler{
                         ld.Next_follow_up_date_time__c.addError('Follow up date should be < 1 month to change Stage');
                     }
                 }
+                 if(ld.status != oldLeadMap.get(ld.Id).status && (ld.Status == 'Request a Call Back') ){
+                    dateTime currentDateTime = system.now();
+                    dateTime postThreeDay = system.now().addDays(3);
+                    if(ld.Next_follow_up_date_time__c == null || ld.Next_follow_up_date_time__c < postThreeDay){
+                        ld.Next_follow_up_date_time__c.addError('Follow up date should be > 3 days to park it in Request a Call Back Stage');
+                    }
+                }
                 if(ld.Alternate_Email__c != oldLeadMap.get(ld.Id).Alternate_Email__c && ld.Alternate_Email__c != null){
                     emailSet.add(ld.Alternate_Email__c);
                     if(!emailSet.isEmpty()){
                         duplicateLeadsByEmail = [Select Id,Email,Alternate_Email__c From Lead Where Email In : emailSet or Alternate_Email__c In : emailSet limit 1];
+                        system.debug('duplicateLeadsByEmail-->'+duplicateLeadsByEmail);
                         if(!duplicateLeadsByEmail.isEmpty()){
                             ld.Alternate_Email__c.addError('Other Leads exists with Same Email');
                         }

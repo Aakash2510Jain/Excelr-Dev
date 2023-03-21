@@ -26,8 +26,11 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
         Map<String, Lead> PhoneWithLead = new Map<String, Lead>();
         Map<String, Contact> PhoneWithContact = new Map<String, Contact>();
 
+        Map<String, Opportunity> PhoneWithOpportunity = new Map<String, Opportunity>();
+
         Map<String, task> TaskCallObjectIdWithLeadTask = new Map<string, task>();
         Map<String, task> TaskCallObjectIdWithContactTask = new Map<string, task>();
+        Map<String, task> TaskCallObjectIdWithOppTask = new Map<string, task>();
         List<Task> ExistingtaskList;
         Set<String> PhoneStringNotExistintheSystem = new Set<String>();
         map<string, Callyzer_Sales_User__c> PhoneWithCallSalesUser = new Map<String, Callyzer_Sales_User__c>();
@@ -40,6 +43,7 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
         // ------------------------------------ Existing Leads ----------------------------------------
 
         list<Lead> ExistingLeadwithPhone = new List<Lead>();
+        list<Opportunity> ExistingOpportunitieswithPhone = new List<Opportunity>();
         LIst<Contact> ExistingContactwithPhone = new List<Contact>();
 		List<Lead> leadListToBeUpdatedForTelephonicConversation = new List<Lead>();
         
@@ -104,11 +108,29 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                             }
                             leadListToBeUpdatedForTelephonicConversation.add(new Lead(id = ld.Id,Telephonic_Conversation__c = true));
                         }
+
                         if(!leadListToBeUpdatedForTelephonicConversation.isEmpty()){
                             update leadListToBeUpdatedForTelephonicConversation;
                         }
                     }
                     System.debug('PhoneWithLead =====> ' + PhoneWithLead);
+
+                    ExistingOpportunitieswithPhone = [SELECT Alternate_Email__c,Alternate_Phone__c,Course__c,Customers__c,Email__c,Id,LeadSource,Lead_Gen_Path__c,Name,Phone__c,State__c,Type, OwnerId
+                                                        FROM Opportunity Where (Phone__c IN:CustomerPhones OR Alternate_Phone__c IN:CustomerPhones)];
+                    
+                    if (!ExistingOpportunitieswithPhone.isEmpty()) {
+                        for (Opportunity opp : ExistingOpportunitieswithPhone) {
+                            if (opp.Phone__c != null && CustomerPhoneWithObject.containskey((opp.Phone__c).right(10))) {
+                                PhoneWithOpportunity.put(opp.Phone__c, opp);
+                            }
+                            else if (opp.Alternate_Phone__c != null && CustomerPhoneWithObject.containskey((opp.Alternate_Phone__c).right(10))) {
+                                PhoneWithOpportunity.put(opp.Alternate_Phone__c, opp);
+                            }
+                            
+                        }
+                    }
+
+                    System.debug('PhoneWithOpportunity =====> ' + PhoneWithOpportunity);
 
                 }
                 if (CustomerPhonesForContact.size() > 0){
@@ -150,6 +172,9 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                             }
                             else if (tas.whoId != null && String.valueof((tas.whoId).getsobjecttype()) == 'Contact') {
                                 TaskCallObjectIdWithContactTask.put(tas.CallObject, tas);
+                            }
+                            else if (tas.whatId != null && String.valueof((tas.whoId).getsobjecttype()) == 'Opportunity') {
+                                TaskCallObjectIdWithOppTask.put(tas.CallObject, tas);
                             }
                             //TaskCallObjectIdWithTask.put(tas.CallObject, tas);
                         }
@@ -254,6 +279,56 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                                     TaskListTobeInserted.add(tsk);
                                 }
                             }
+                        }
+                        
+                    }
+
+                    for (Opportunity Opp : ExistingOpportunitieswithPhone) {
+                        if (!PhoneWithOpportunity.isEmpty()) {
+                            if ((Opp.Phone__c == ('+' + ((String) (TaskIdWithObject.get(str)).get('countryCode')) + ((String) (TaskIdWithObject.get(str)).get('number')).right(10))) || 
+                            (Opp.Alternate_Phone__c == ('+' + ((String) (TaskIdWithObject.get(str)).get('countryCode')) + ((String) (TaskIdWithObject.get(str)).get('number')).right(10))) ){
+                                //&& !PhoneWithContact.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))
+                                System.debug('I am inside to create task for Lead');
+                                if (!TaskCallObjectIdWithOppTask.isEmpty() && !TaskCallObjectIdWithOppTask.containsKey(str)){
+                                    Task tsk = CreateTaskForOpportunity(TaskIdWithObject, str, Opp);
+
+                                    if (LeadCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
+                                        string customerphone = ((String) (TaskIdWithObject.get(str)).get('number')).right(10);
+                                        String employeenumber = LeadCustomerPhoneWithEmployeePhone.get(customerphone);
+                                        if (!PhoneWithCallSalesUser.isEmpty() && PhoneWithCallSalesUser.containsKey(employeenumber)){
+                                            tsk.Callyzer_Sales_User__c = PhoneWithCallSalesUser.get(employeenumber).Id;
+                                        }
+                                    }
+
+                                    TaskListTobeInserted.add(tsk);
+                                } else if (!TaskCallObjectIdWithOppTask.isEmpty() && TaskCallObjectIdWithOppTask.containsKey(str)){
+                                    Task tsk = CreateTaskForOpportunity(TaskIdWithObject, str, Opp);
+                                    tsk.Id = TaskCallObjectIdWithOppTask.get(str).Id;
+                                    
+                                    if (LeadCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
+                                        string customerphone = ((String) (TaskIdWithObject.get(str)).get('number')).right(10);
+                                        String employeenumber = LeadCustomerPhoneWithEmployeePhone.get(customerphone);
+                                        if (!PhoneWithCallSalesUser.isEmpty() && PhoneWithCallSalesUser.containsKey(employeenumber)){
+                                            tsk.Callyzer_Sales_User__c = PhoneWithCallSalesUser.get(employeenumber).Id;
+                                        }
+                                    }
+                                    TaskListTobeInserted.add(tsk);
+                                } else{
+                                    Task tsk = CreateTaskForOpportunity(TaskIdWithObject, str, Opp);
+                                    
+                                    if (LeadCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
+                                        string customerphone = '+91' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10);
+                                        String employeenumber = LeadCustomerPhoneWithEmployeePhone.get(customerphone);
+                                        if (!PhoneWithCallSalesUser.isEmpty() && PhoneWithCallSalesUser.containsKey(employeenumber)){
+                                            tsk.Callyzer_Sales_User__c = PhoneWithCallSalesUser.get(employeenumber).Id;
+                                        }
+                                    }
+                                    TaskListTobeInserted.add(tsk);
+                                }
+
+                                //insert tsk;
+                            }
+                            
                         }
                         
                     }
@@ -395,5 +470,29 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
             return null;
         }
     }
+
+    Public static Task CreateTaskForOpportunity(map<String, Map<string, Object>> TaskIdWithObject, String str, Opportunity PhoneWithOpp){
+        try{
+            Task tsk = new Task();
+            tsk.Subject = (String) (TaskIdWithObject.get(str)).get('callType') + ' Callyzer Call Log';
+            tsk.CallObject = (String) (TaskIdWithObject.get(str)).get('id');
+            //This is the default...
+            tsk.OwnerId = PhoneWithOpp.OwnerId;//PhoneWithLead.get('+'+(String) (TaskIdWithObject.get(str)).get('countryCode')+ ((String) (TaskIdWithObject.get(str)).get('number')).right(10)).OwnerId;
+            tsk.whatId = PhoneWithOpp.Id;//PhoneWithLead.get('+'+(String) (TaskIdWithObject.get(str)).get('countryCode')+ ((String) (TaskIdWithObject.get(str)).get('number')).right(10)).Id;
+            tsk.Status = 'Completed';
+            tsk.Calling_Party__c = 'Callyzer';
+            tsk.Call_Type__c = (String) (TaskIdWithObject.get(str)).get('callType');
+            tsk.CallDurationInSeconds = Integer.valueof((TaskIdWithObject.get(str)).get('duration'));
+            String formatted = (String) (TaskIdWithObject.get(str)).get('callTime');
+            tsk.Call_Start_Date_Time__c = Datetime.valueof(formatted);
+            tsk.Call_End_Date_Time__c = (Datetime.valueof(formatted)).addSeconds(Integer.valueof((TaskIdWithObject.get(str)).get('duration')));
+            return tsk;
+        } catch (Exception e){
+            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+            HandleBusinessException.captureError('WebEngageWebhookHandler', 'CreateTaskForLead', e, null);
+            return null;
+        }
+    }
+
 
 }

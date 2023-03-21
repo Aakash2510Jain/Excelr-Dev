@@ -12,10 +12,10 @@ import createTask from '@salesforce/apex/voiceFormLWCcontroller.createTaskForVoi
 
 import createLead from '@salesforce/apex/voiceFormLWCcontroller.createLead';
 import createApplication from '@salesforce/apex/voiceFormLWCcontroller.CreateApplication';
+import LogoutAgent from '@salesforce/apex/voiceFormLWCcontroller.LogoutAgent';
 
 
 import FetchStateCounty from '@salesforce/apex/voiceFormLWCcontroller.FetchStateCounty';
-
 import fetchCountryAndCountryCode from '@salesforce/apex/GenericLeadLWCcontroller.fetchCountryAndCountryCode';
 
 
@@ -69,6 +69,7 @@ export default class voiceForm extends LightningElement {
     @track CourceLead;
     @track courseforApp;
     @api recordId;
+    @api agentNameLWC;
     @track newBTNdisAble = false;
     @track commentsValue;
     @track objectApiName = 'Lead';
@@ -112,8 +113,19 @@ export default class voiceForm extends LightningElement {
     connectedCallback() {
         //defined a varibale
         this.convertStringtoList();
+        this.lwcfilename();
 
     }
+
+    lwcfilename(){
+        console.log(
+            this.template.host.localName // c-test-component
+              .split('-')              // ['c', 'test', 'component'] 
+              .slice(1)                // removes ns prefix => ['test', 'component']
+              .reduce((a, b) => a + b.charAt(0).toUpperCase() + b.slice(1)) // converts to camelCase => testComponent 
+          );
+    }
+
     convertStringtoList() {
         this.DepartmentList = this.DepartmentListstring.split(';');
         for (var key in this.DepartmentList) {
@@ -214,22 +226,22 @@ export default class voiceForm extends LightningElement {
         debugger;
         if (data) {
 
-            if (data.Courses.length > 0) {
+            if (data.AllformsMapwrapper.Voice.course_names__c.length > 0) {
 
                 let tempcoursearr = [];
-                for (let i = 0; i < data.Courses.length; i++) {
-                    tempcoursearr.push({ label: data.Courses[i], value: data.Courses[i] });
+                for (let i = 0; i < data.AllformsMapwrapper.Voice.course_names__c.length; i++) {
+                    tempcoursearr.push({ label: data.AllformsMapwrapper.Voice.course_names__c[i], value: data.AllformsMapwrapper.Voice.course_names__c[i] });
                 }
                 this.courssweList = tempcoursearr;
                 this.courssweList.sort((a, b) => (a.label > b.label) ? 1 : -1);
 
             }
 
-            if (data.Sources.length > 0) {
+            if (data.AllformsMapwrapper.Voice.source__c.length > 0) {
 
                 let tempSourcearr = [];
-                for (let i = 0; i < data.Sources.length; i++) {
-                    tempSourcearr.push({ label: data.Sources[i], value: data.Sources[i] });
+                for (let i = 0; i < data.AllformsMapwrapper.Voice.source__c.length; i++) {
+                    tempSourcearr.push({ label: data.AllformsMapwrapper.Voice.source__c[i], value: data.AllformsMapwrapper.Voice.source__c[i] });
                 }
                 this.LeadSourcePicklist = tempSourcearr;
                 this.LeadSourcePicklist.sort((a, b) => (a.label > b.label) ? 1 : -1);
@@ -237,11 +249,11 @@ export default class voiceForm extends LightningElement {
 
             }
 
-            if (data.LeadGenPath.length > 0) {
+            if (data.AllformsMapwrapper.Voice.lead_gen_path__c.length > 0) {
 
                 let tempLeadGenPatharr = [];
-                for (let i = 0; i < data.LeadGenPath.length; i++) {
-                    tempLeadGenPatharr.push({ label: data.LeadGenPath[i], value: data.LeadGenPath[i] });
+                for (let i = 0; i < data.AllformsMapwrapper.Voice.lead_gen_path__c.length; i++) {
+                    tempLeadGenPatharr.push({ label: data.AllformsMapwrapper.Voice.lead_gen_path__c[i], value: data.AllformsMapwrapper.Voice.lead_gen_path__c[i] });
                 }
                 this.LeadGenPathPicklistvalue = tempLeadGenPatharr;
                 this.LeadGenPathPicklistvalue.sort((a, b) => (a.label > b.label) ? 1 : -1);
@@ -249,11 +261,11 @@ export default class voiceForm extends LightningElement {
 
             }
 
-            if (data.Medium.length > 0) {
+            if (data.AllformsMapwrapper.Voice.medium__c.length > 0) {
 
                 let tempMediumarr = [];
-                for (let i = 0; i < data.Medium.length; i++) {
-                    tempMediumarr.push({ label: data.Medium[i], value: data.Medium[i] });
+                for (let i = 0; i < data.AllformsMapwrapper.Voice.medium__c.length; i++) {
+                    tempMediumarr.push({ label: data.AllformsMapwrapper.Voice.medium__c[i], value: data.AllformsMapwrapper.Voice.medium__c[i] });
                 }
                 this.LeadMediumPicklist = tempMediumarr;
                 this.LeadMediumPicklist.sort((a, b) => (a.label > b.label) ? 1 : -1);
@@ -261,11 +273,11 @@ export default class voiceForm extends LightningElement {
 
             }
 
-            if (data.TaskStatus.length > 0) {
+            if (data.pickValByFieldWrapper.TaskStatus.length > 0) {
 
                 let tempTaskStatusarr = [];
-                for (let i = 0; i < data.TaskStatus.length; i++) {
-                    tempTaskStatusarr.push({ label: data.TaskStatus[i], value: data.TaskStatus[i] });
+                for (let i = 0; i < data.pickValByFieldWrapper.TaskStatus.length; i++) {
+                    tempTaskStatusarr.push({ label: data.pickValByFieldWrapper.TaskStatus[i], value: data.pickValByFieldWrapper.TaskStatus[i] });
                 }
 
                 this.StatusList = tempTaskStatusarr;
@@ -274,10 +286,10 @@ export default class voiceForm extends LightningElement {
 
             }
 
-            if (data.TaskPriority.length > 0) {
+            if (data.pickValByFieldWrapper.TaskPriority.length > 0) {
                 let tempTaskPriorityarr = [];
-                for (let i = 0; i < data.TaskPriority.length; i++) {
-                    tempTaskPriorityarr.push({ label: data.TaskPriority[i], value: data.TaskPriority[i] });
+                for (let i = 0; i < data.pickValByFieldWrapper.TaskPriority.length; i++) {
+                    tempTaskPriorityarr.push({ label: data.pickValByFieldWrapper.TaskPriority[i], value: data.pickValByFieldWrapper.TaskPriority[i] });
                 }
 
                 this.priorityList = tempTaskPriorityarr;
@@ -539,13 +551,7 @@ export default class voiceForm extends LightningElement {
 
         this.isShowModal = false;
         this.showtaskModal = false;
-        // this.namValue = '';
-        // this.lNameValue = '';
         this.commentsValue = '';
-        // this.emailValue = '';
-        // this.phoneValue = '';
-        // this.alterMobileValue = '';
-        // this.alterEmailValue = '';
         this.CourceLead = '';
         this.CountryValue = '';
         this.selectedCityValue = '';
@@ -586,147 +592,19 @@ export default class voiceForm extends LightningElement {
     // =========================================================Fetch Countries States with ISDCODe And Handle =================================================
     @track CountriesPicklistValue = [];
     @track countriesSateISDCodelist = [];
-    // @wire(FetchCountriesStateWithISDcode)
-    // wiredCounstriesStatesWithISD({ data, error }) {
-    //     debugger;
-    //     if (data) {
-    //         this.countriesSateISDCodelist = data;
-    //         console.log('CityValuedata=', data);
-
-    //         let arr = [];
-    //         for (let i = 0; i < data.length; i++) {
-    //             arr.push({ label: data[i].MasterLabel, value: data[i].MasterLabel });
-    //         }
-    //         this.CountriesPicklistValue = arr;
-    //         console.log('Picklistvalue=', this.CountriesPicklistValue);
-    //     }
-    //     else if (error) {
-    //         console.log('error=', error);
-    //     }
-
-    // }
 
     @track SelectedCountryStateList = [];
     @track SelectedCountryISCode;
-    // HandleChangeCountry(event) {
-    //     debugger;
-    //     let Selectedcountry = event.detail.value;
-    //     this.CountryValue = Selectedcountry;
-    //     var SelectedcountryStateISDCode = this.countriesSateISDCodelist.find(item => item.MasterLabel == Selectedcountry);
-    //     this.SelectedCountryISCode = SelectedcountryStateISDCode.Country_Code__c;
-    //     //this.countrycodevalue = countrycode.CountryCode__c;
-    //     let tempStateArr = [];
-    //     var tempStateString = SelectedcountryStateISDCode.States__c;
-    //     var tempStateArrafterCommaSeperated = tempStateString.split(',');
-    //     for (let i = 0; i < tempStateArrafterCommaSeperated.length; i++) {
-    //         tempStateArr.push({ label: tempStateArrafterCommaSeperated[i], value: tempStateArrafterCommaSeperated[i] });
-    //     }
-    //     this.SelectedCountryStateList = tempStateArr;
-    //     this.StateDisable = false;
-
-    // }
-
-    // HandleChangeState(event) {
-    //     debugger;
-    //     let SelectedState = event.detail.value;
-    //     this.StateValue = SelectedState;
-    //     //this.StateDisable = false;
-
-    // }
-
-    // HandleCityValue(event) {
-    //     this.cityValue = event.detail.value;
-    // }
 
 
     // ======================================================= Fetch Countries States with ISDCODe And Handle End Here ==================================================== 
 
-    // @track CityPicklistValue = [];
-    // @track cityValue;
-    // @wire(Fetchcities)
-    // WiredResponsecities({ data, error }) {
-    //     debugger;
-    //     if (data) {
-    //         console.log('CityValuedata=', data);
-    //         let arr = [];
-    //         for (let i = 0; i < data.length; i++) {
-    //             arr.push({ label: data[i].City__c, value: data[i].City__c });
-    //         }
-    //         this.CityPicklistValue = arr;
-    //         console.log('Picklistvalue=', this.CityPicklistValue);
-    //     }
-    //     else if (error) {
-    //         console.log('error=', error);
-    //     }
-
-    // }
-
-    // get CityOptions() {
-    //     return this.CityPicklistValue;
-    // }
 
     @track CountryDisable = true;
     @track StateDisable = true;
     @track StateValue;
     @track CountryValue;
     @track InputCity = false;
-    // HandleCityStatus(event) {
-
-    //     debugger;
-    //     let city = event.detail.value;
-    //     if (city) {
-    //         this.cityValue = city;
-    //         let state;
-    //         let TempValue;
-    //         let country;
-    //         TempValue = city;
-
-    //         console.log('Tempstate=', TempValue);
-
-    //         if (TempValue == "Other") {
-    //             this.StateDisable = false;
-    //             this.CountryDisable = false;
-    //             alert('Please Type Your State and Country');
-    //             this.InputCity = true;
-
-    //         }
-    //         else {
-    //             this.StateDisable = true;
-    //             this.CountryDisable = true;
-    //             this.InputCity = false;
-    //         }
-
-    //         if (TempValue) {
-    //             TempValue = TempValue.charAt(0).toUpperCase() + TempValue.slice(1);
-    //             console.log('Tempstate2=', TempValue);
-    //             state = this.StateCountryValue.find(item => item.City__c == TempValue);
-    //             country = this.StateCountryValue.find(item => item.City__c == TempValue);
-    //             console.log('state=', state);
-
-    //         }
-
-    //         if (state) {
-    //             this.StateValue = state.State__c;
-    //             this.CountryValue = country.Country__c;
-    //             console.log('StateValue=', this.StateValue);
-    //         }
-    //         else {
-    //             this.StateValue = '';
-    //             this.CountryValue = '';
-    //         }
-
-    //         if (this.CountryValue) {
-    //             //countrycode = this.countryCodeList.find(item => item.Name == this.CountryValue);
-    //             //this.countrycodevalue = countrycode.CountryCode__c;
-    //             this.handleCountrycode(this.CountryValue);
-    //         }
-
-
-
-    //         console.log('state=', this.StateValue);
-    //     }
-
-    // }
 
     @track countryCodeList = [];
     @wire(fetchCountryAndCountryCode)
@@ -755,42 +633,6 @@ export default class voiceForm extends LightningElement {
         this.countrycodevalue = countrycode.CountryCode__c;
 
     }
-
-    // @track UserInputCity
-    // HandleUserCityStatus(event) {
-    //     let value = event.target.value;
-    //     if (this.cityValue == 'Other') {
-    //         this.UserInputCity = value;
-    //     }
-
-    // }
-
-    // HandleChangeStateCountry(event) {
-    //     if (this.cityValue == 'Other') {
-    //         debugger;
-    //         let value = event.target.value;
-
-    //         if (event.target.name == "State") {
-
-    //             this.StateValue = value;
-    //         }
-    //         if (event.target.name == "Country") {
-
-    //             this.CountryValue = value;
-    //             if (this.CountryValue) {
-    //                 this.handleCountrycode(this.CountryValue);
-    //             }
-    //         }
-    //     }
-
-    // }
-
-    // @track LGEValue;
-    // HandleLGE(event){
-    //     debugger;
-    //     let LGE=event.target.value;
-    //     this.LGEValue=LGE;
-    // }
 
 
     handleIncorrectEmail(emailtocheck) {
@@ -879,41 +721,6 @@ export default class voiceForm extends LightningElement {
     }
     //=============================================ENDS Here============================================
 
-    // HandleComments(event) {
-    //     let comment = event.target.value;
-    //     this.commentsValue = comment;
-    // }
-    // PhoneChange(Event) {
-    //     debugger;
-    //     let phone = Event.target.value;
-    //     this.phoneValue = phone;
-    // }
-
-    // StatusChange(Event) {
-    //     debugger;
-    //     let statuss = Event.target.value;
-    //     this.lStatus = statuss;
-    // }
-
-    // CompanyChange(event) {
-    //     debugger;
-    //     let cname = event.target.value;
-    //     this.compnyValue = cname;
-    // }
-
-    // handleChange(event) {
-    //     debugger;
-    //     let selectedValue = event.detail.value;
-    //     this.ismeId = selectedValue;
-    //     console.log('MEMLIST---', this.groupMemList);
-    //     this.gruoMemberId = this.groupMemList.find(item => item.Group_Member__c == selectedValue).Id;
-    //     //this.groupMemList[this.ismeId];
-    // }
-    // courceHandler(event) {
-    //     debugger;
-    //     let selectedCource = event.detail.value;
-    //     this.CourceLead = selectedCource;
-    // }
 
     //==============================================For Task Creation========================================================================
 
@@ -947,57 +754,6 @@ export default class voiceForm extends LightningElement {
         }
 
     }
-
-
-    // @track subjectvalue
-    // subjectHandler(event) {
-    //     debugger;
-    //     let selectedSubject = event.target.value;
-    //     this.subjectvalue = selectedSubject;
-    // }
-
-    // @track statusValue;
-    // statusHandler(event) {
-    //     debugger;
-    //     let selectedStatus = event.detail.value;
-    //     this.statusValue = selectedStatus;
-    // }
-
-    // @track DuedateValue;
-    // duedateHandler(event) {
-    //     debugger;
-    //     let selectedDuedate = event.detail.value;
-    //     this.DuedateValue = selectedDuedate;
-
-    // }
-
-    // @track comValue;
-    // commentHandler(event) {
-    //     debugger;
-    //     let selectedComment = event.target.value;
-    //     this.comValue = selectedComment;
-    // }
-    // @track followupValue;
-    // followupHandler(event) {
-    //     debugger;
-    //     let selectedfollowup = event.target.value;
-    //     this.followupValue = selectedfollowup;
-    // }
-
-
-    // @track priorityValue;
-    // priorityHandler(event) {
-    //     debugger;
-    //     let selectedPriority = event.detail.value;
-    //     this.priorityValue = selectedPriority;
-    // }
-
-    // @track statusValue;
-    // statusHandler(event) {
-    //     debugger;
-    //     let selectedStatus = event.detail.value;
-    //     this.statusValue = selectedStatus;
-    // }
     //===========================================================================================Ends Here========================================================
 
     notifyismBTN() {
@@ -1013,104 +769,6 @@ export default class voiceForm extends LightningElement {
                 this.handleAlert('Email not sent');
             })
     }
-
-    // @wire(getMember)
-    // wireRes(data, error) {
-    //     if (data) {
-    //         debugger;
-    //         this.groupMemList = data.data;
-    //         console.log('Picklist-----', this.groupMemList);
-    //         let grmId = [];
-    //         let options = [];
-    //         if (data.data != undefined) {
-    //             console.log('Picklist-----', data);
-    //             for (var key in data.data) {
-    //                 options.push({ label: data.data[key].Group_Member__r.Name, value: data.data[key].Group_Member__c });
-    //                 grmId.push(data.data[key].Id)
-    //                 console.log(data.data[key].Id)
-    //             }
-    //             if (this.ismeId == data.data[key].Group_Member__c) {
-    //                 this.gruoMemberId = grmId;
-    //                 console.log(`im inside the for if to match the value ${this.gruoMemberId}`);
-    //             }
-    //             console.log(`im  the for if to match the value ${this.gruoMemberId}`);
-
-    //         }
-    //         console.log()
-    //         console.log(options);
-    //         this.objectList = options;
-    //         console.log(data);
-    //         console.log(this.objectList);
-
-    //     }
-    //     if (error) {
-
-    //     }
-    // }
-    //wire method name changed
-    // @wire(getPuckistOflead)
-    // wireRss({ error, data }) {
-    //     if (data) {
-    //         let options = []
-    //         for (const [key, value] of Object.entries(data)) {
-    //             options.push({
-    //                 label: key,
-    //                 value: value
-    //             })
-    //             console.log(`${key}: ${value}`);
-    //         }
-    //         this.courssweList = options;
-    //         this.courssweList.sort((a, b) => (a.label > b.label) ? 1 : -1);
-    //         console.log(data)
-    //     }
-    //     if (error) {
-
-    //     }
-    // }
-
-    // getPickiststatusOfTask
-    // @wire(getPickiststatusOfTask)
-    // wiredRs({ error, data }) {
-    //     debugger;
-    //     if (data) {
-    //         debugger;
-    //         let options = [];
-    //         for (const [key, value] of Object.entries(data)) {
-    //             options.push({
-    //                 label: key,
-    //                 value: value
-    //             })
-    //             console.log(`${key}: ${value}`);
-    //         }
-    //         this.StatusList = options;
-    //         this.StatusList.sort((a, b) => (a.label > b.label) ? 1 : -1);
-    //         console.log(data);
-    //         console.log('statusList--', this.StatusList);
-    //     }
-    //     if (error) {
-    //         console.log('error=', error);
-    //     }
-    // }
-    //getPickistpriorityOfTask
-    // @wire(getPickistpriorityOfTask)
-    // wireRs({ error, data }) {
-    //     if (data) {
-    //         let options = []
-    //         for (const [key, value] of Object.entries(data)) {
-    //             options.push({
-    //                 label: key,
-    //                 value: value
-    //             })
-    //             console.log(`${key}: ${value}`);
-    //         }
-    //         this.priorityList = options;
-    //         this.priorityList.sort((a, b) => (a.label > b.label) ? 1 : -1);
-    //         console.log(data)
-    //     }
-    //     if (error) {
-
-    //     }
-    // }
 
     /* 793 - 812 */
     handlecourseList() {
@@ -1149,47 +807,47 @@ export default class voiceForm extends LightningElement {
             && (this.LeadTobeCreated.Course__c != undefined && this.LeadTobeCreated.Course__c != null && this.LeadTobeCreated.Course__c != '') && (this.LeadTobeCreated.LeadSource != undefined && this.LeadTobeCreated.LeadSource != null && this.LeadTobeCreated.LeadSource != '')
             && (this.LeadTobeCreated.UTM_Medium__c != undefined && this.LeadTobeCreated.UTM_Medium__c != null && this.LeadTobeCreated.UTM_Medium__c != '') && (this.SelectedMedium != null && this.SelectedMedium != '' && this.SelectedMedium != undefined) && (this.selectedresultValue != null && this.selectedresultValue != undefined && this.selectedresultValue != '')) {
 
-            if (this.LeadTobeCreated.Email != null) {
-                var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
-            }
-            if (this.LeadTobeCreated.Phone != null) {
-                var phoneReturnvalue = this.handleCorrectPhone(this.LeadTobeCreated.Phone);
-            }
-
-            if (this.LeadTobeCreated.Email != null && (this.LeadTobeCreated.Phone == null || this.LeadTobeCreated.Phone == '' || this.LeadTobeCreated.Phone == undefined)) {
-                if (returnvalue == true) {
-                    this.createLeadFromJS();
-
+                if (this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '' && this.LeadTobeCreated.Email != undefined) {
+                    var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
                 }
-                else {
-                    alert('Incorrect Email Pattern');
-                    this.HandleLeadCreatedisable = false;
-
+                if (this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '' && this.LeadTobeCreated.Phone != undefined) {
+                    var phoneReturnvalue = this.handleCorrectPhone(this.LeadTobeCreated.Phone);
                 }
-
-            }
-            else if (this.LeadTobeCreated.Phone != null && (this.LeadTobeCreated.Email == null || this.LeadTobeCreated.Email == '' || this.LeadTobeCreated.Email == undefined)) {
-                if (phoneReturnvalue == true) {
-                    this.createLeadFromJS();
+    
+                if (this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '' && this.LeadTobeCreated.Email != undefined  && (this.LeadTobeCreated.Phone == null || this.LeadTobeCreated.Phone == '' || this.LeadTobeCreated.Phone == undefined  )) {
+                    if ( returnvalue == true) {
+                        this.createLeadFromJS();
+                        
+                    }
+                    else{
+                        alert('Incorrect Email Pattern');
+                        this.HandleLeadCreatedisable = false;
+    
+                    }
+                    
                 }
-                else {
-                    alert('Incorrect Phone Pattern');
-                    this.HandleLeadCreatedisable = false;
+                else if ( this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '' && this.LeadTobeCreated.Phone != undefined && (this.LeadTobeCreated.Email == null || this.LeadTobeCreated.Email == '' || this.LeadTobeCreated.Email == undefined )) {
+                    if (phoneReturnvalue == true) {
+                        this.createLeadFromJS();
+                    }
+                    else{
+                        alert('Incorrect Phone Pattern');
+                        this.HandleLeadCreatedisable = false;
+                    }
+                    
                 }
-
-            }
-            else if (this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Phone != null) {
-                if (returnvalue == true && phoneReturnvalue == true) {
-                    this.HandleLeadCreatedisable = true;
-                    this.createLeadFromJS();
-
-
+                else if ((this.LeadTobeCreated.Email != null  && this.LeadTobeCreated.Email != '' && this.LeadTobeCreated.Email != undefined) && (this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '' && this.LeadTobeCreated.Phone != undefined)) {
+                    if (returnvalue == true && phoneReturnvalue == true) {
+                        this.HandleLeadCreatedisable = true;
+                        this.createLeadFromJS();
+                       
+    
+                    }
+                    else {
+                        alert('Incorrect Email or Phone Pattern');
+                        this.HandleLeadCreatedisable = false;
+                    }
                 }
-                else {
-                    alert('Incorrect Email or Phone Pattern');
-                    this.HandleLeadCreatedisable = false;
-                }
-            }
             else {
                 this.createLeadFromJS();
             }
@@ -1426,22 +1084,64 @@ export default class voiceForm extends LightningElement {
         debugger;
         var selectedVal = event.detail.value;
         if (selectedVal == 'Walk-In') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
             window.open(urlString, "_self");
         }
         if (selectedVal == 'Voice') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
             window.open(urlString, "_self");
 
         }
         if (selectedVal == 'Generic') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
             window.open(urlString, "_self");
         }
         if (selectedVal == 'Chat') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
             window.location.replace(urlString, "_self");
         }
+    }
+
+
+    handleOnselectprofile(event){
+        debugger;
+        var agId = this.agentrecid;
+        var Hashes = this.hashcode;
+        var selectedVal = event.detail.value;
+        if (selectedVal == 'My Past Leads') {
+            this.ShowPastLeadPage();
+            
+        }
+        if (selectedVal == 'Logout') {
+            this.LogoutAgentfromForm();
+        }
+
+    }
+
+    LogoutAgentfromForm() {
+        debugger;
+        var agId = this.agentrecid;
+        var Hashes = this.hashcode;
+        LogoutAgent({ AgrecId: this.agentrecid, AgentHashCode: this.hashcode })
+            .then(data => {
+                debugger;
+                if (data) {
+                    if (data.Message != null && data.Message != undefined  ) {
+                        var apexcookies = 'apex_' + data.HashcodeName;
+                        var urlString = data.Message;
+                        window.location.replace(urlString, "_self");
+                        
+                    }
+                    
+                }
+
+            })
+            .catch(error => {
+                this.handleAlert('Some error in logout');
+            })
+
+
+
     }
 
 }

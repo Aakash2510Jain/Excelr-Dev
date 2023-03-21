@@ -118,7 +118,7 @@ public class CreateAndUpdateTaskOnLeadRecordID{
             String formatted = (String) (TaskIdWithObject.get(str)).get('start_time');
             
             Task tsk = new Task();
-            tsk.Subject = ' Knowlarity Call Log' + ' - ' + Datetime.valueof(formatted).addMinutes(330) ; //(String) (TaskIdWithObject.get(str)).get('Call_Type') +
+            tsk.Subject = ' Knowlarity Call Log' + ' - ' + Datetime.valueof(formatted).addMinutes(330)+ ' - '+ (String) (TaskIdWithObject.get(str)).get('customer_number') ; //(String) (TaskIdWithObject.get(str)).get('Call_Type') +
             tsk.CallObject = (String) (TaskIdWithObject.get(str)).get('uuid');
             tsk.Status = 'Completed';
             tsk.Calling_Party__c = 'Knowlarity';

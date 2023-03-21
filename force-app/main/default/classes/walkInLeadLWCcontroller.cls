@@ -14,18 +14,6 @@ public without sharing class walkInLeadLWCcontroller{
                             LIMIT 1];
             }
             System.debug('leadList ======> ' + leadList);
-            // if ( EmailOrPhone.contains('@') ){
-            //     leadList = [Select id, firstName, LastName, Owner_Email__c, Email, Phone
-            //                 from Lead
-            //                 where Email = :EmailOrPhone];
-            // }
-            // else{
-            //     leadList = [Select id, firstName, LastName, Owner_Email__c, Email, Phone
-            //                 from Lead
-            //                 where Phone = :EmailOrPhone];
-            // }
-            // System.debug('leadList ====> ' + leadList);
-            // system.debug('leadList::' + leadList);
             return leadList;
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
@@ -34,56 +22,7 @@ public without sharing class walkInLeadLWCcontroller{
         }
     }
 
-    // @auraenabled
-    // public static String createLead(string Lastname, string email, string phone, string Course, string typeofcour, string userId, string agentid, string comments, string city, string state, string country, string countrycode, string AlternateMobile, String AlternateEmail){
-    //     System.debug('userId ====> ' + userId);
-    //     System.debug('agentid ====> ' + agentid);
-    //     lead leadRec = new lead();
-    //     list<ExcelR_Training_User__c> existingTrainingUser = new list<ExcelR_Training_User__c>();
-    //     String message = '';
-    //     try{
-    //         if (agentid != null){
-    //             existingTrainingUser = [SELECT Email__c, First_Name__c, HashCode__c, Id, Last_Name__c, Name, Password__c, Username__c
-    //                                     FROM ExcelR_Training_User__c
-    //                                     Where id = :agentid];
-    //         }
-    //         system.debug(Lastname + ' : ' + email + ' : ' + phone + ' : ' + Lastname);
-    //         //leadRec.FirstName = firstname;
-    //         leadRec.LastName = Lastname;
-    //         leadRec.Email = email;
-    //         leadRec.Alternate_Email__c = AlternateEmail;
-    //         leadRec.Phone = countrycode + phone;
-    //         leadRec.Alternate_Phone__c = countrycode + AlternateMobile;
-    //         leadRec.OwnerId = userId;
-    //         leadRec.State = state;
-    //         leadRec.Country = country;
-    //         leadRec.city = city;
-    //         leadRec.Type_of_Course__c = typeofcour;
-    //         leadRec.Course__c = Course;
-    //         leadRec.City__c = 'NA';
-    //         leadRec.Lead_Generation_Method__c = 'Walk-in Form';
-    //         leadRec.LeadSource = 'Walkin';
-    //         leadRec.Comments__c = comments;
-    //         if (!existingTrainingUser.isEmpty()){
-    //             leadRec.ExcelR_Training_User__c = existingTrainingUser[0].id;
-    //         }
-    //         leadRec.Company = Lastname;
-    //         system.debug('leadRec===========================' + leadRec);
-    //         insert leadRec;
-    //         System.debug('lead rec Id =====> ' + leadRec.Id);
-    //         if (leadRec.id != null){
-    //             message = 'SUCCESS';
-    //         }
-    //         //return leadRec;
-    //     } catch (Exception e){
-    //         System.debug(' the Error has occured due to =====> ' + e.getMessage());
-    //         System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
-    //         HandleBusinessException.captureError('walkInLeadLWCcontroller', 'createLead', e, null);
-    //         message = 'FAIL';
-    //         //return null;
-    //     }
-    //     return message;
-    // }
+    
     @AuraEnabled
     public static string createLead(Lead Leadrec, String countrycode, string countrycodealternate, string city){
         string message = '';
@@ -97,7 +36,7 @@ public without sharing class walkInLeadLWCcontroller{
                 Leadrec.Phone = countrycode + Leadrec.Phone;
             }
 
-            if (countrycodealternate != null && Leadrec.Alternate_Phone__c != null){
+            if (countrycodealternate != null && Leadrec.Alternate_Phone__c != null && Leadrec.Alternate_Phone__c != ''){
                 Leadrec.Alternate_Phone__c = countrycodealternate + Leadrec.Alternate_Phone__c;
 
             }
@@ -131,19 +70,48 @@ public without sharing class walkInLeadLWCcontroller{
         system.debug('assignto-->' + assignto);
         system.debug('leadId-->' + leadId);
         system.debug('');
+        List<Task> tasklisttobeinserted = new List<Task>();
         Task taskRec = new Task();
+        taskRec.Subject = TaskRecord.Subject;
+        taskRec.OwnerId = assignto;
+        taskRec.Priority = TaskRecord.Priority;
+        taskRec.Status = TaskRecord.Status;
+        taskRec.ActivityDate = TaskRecord.ActivityDate;
+        taskRec.Description = TaskRecord.Description;
+        taskRec.Followup_Date_Time__c = TaskRecord.Followup_Date_Time__c;
+
+        List<Lead> NotconvertedLead = [Select Id from Lead Where Id =:leadId and IsConverted = false];
+        List<Lead> convertedLead = [Select Id , ConvertedAccountId,ConvertedContactId,ConvertedOpportunityId from Lead Where Id =:leadId and IsConverted = true];
+
         try{
             // Lead lRec = [select Id, OwnerId from Lead where id =''];
             // Task taskRec = new Task();
-            taskRec.Subject = TaskRecord.Subject;
-            taskRec.OwnerId = assignto;
-            taskRec.WhoId = leadId;      // lead---Name
-            taskRec.Priority = TaskRecord.Priority;
-            taskRec.Status = TaskRecord.Status;
-            taskRec.ActivityDate = TaskRecord.ActivityDate;
-            taskRec.Description = TaskRecord.Description;
-            taskRec.Followup_Date_Time__c = TaskRecord.Followup_Date_Time__c;
-            insert taskRec;
+            if (NotconvertedLead.size() >0 && !NotconvertedLead.isEmpty()) {
+                taskRec.WhoId = leadId; 
+                tasklisttobeinserted.add(taskRec);
+            }
+            else if (convertedLead.size() >0 && !convertedLead.isEmpty()) {
+                string accountId = convertedLead[0].ConvertedAccountId;
+                String oppID = convertedLead[0].ConvertedOpportunityId;
+                taskRec.whatId = accountId; 
+                tasklisttobeinserted.add(taskRec);
+
+                Task taskRecforOpp = new Task();
+                taskRecforOpp.Subject = TaskRecord.Subject;
+                taskRecforOpp.OwnerId = assignto;
+                taskRecforOpp.Priority = TaskRecord.Priority;
+                taskRecforOpp.Status = TaskRecord.Status;
+                taskRecforOpp.ActivityDate = TaskRecord.ActivityDate;
+                taskRecforOpp.Description = TaskRecord.Description;
+                taskRecforOpp.Followup_Date_Time__c = TaskRecord.Followup_Date_Time__c;
+                taskRecforOpp.whatId = oppID;
+                tasklisttobeinserted.add(taskRecforOpp);
+
+                
+            }
+            if (!tasklisttobeinserted.isEmpty()) {
+                insert tasklisttobeinserted;
+            }
             return 'Success';
 
         } catch (Exception e){

@@ -33,67 +33,6 @@ public without sharing class GenericLeadLWCcontroller{
         }
     }
 
-    // @auraenabled
-    // public static String createLead(string Lastname, string email, string phone, string Course, string agentid, string city, string state, string country, string source, string medium, string VisitorId, string Transcript, string leadGenPath, string comments, string pageurllanding, string countrycode, string AlternateMobile, String AlternateEmail){
-    //     // System.debug('userId ====> ' + userId);
-
-    //     //String firstname,
-    //     System.debug('agentid ====> ' + agentid);
-    //     string message = '';
-    //     lead leadRec = new lead();
-    //     list<ExcelR_Training_User__c> existingTrainingUser = new list<ExcelR_Training_User__c>();
-    //     try{
-
-    //         if (agentid != null){
-    //             existingTrainingUser = [SELECT Email__c, First_Name__c, HashCode__c, Id, Last_Name__c, Name, Password__c, Username__c
-    //                                     FROM ExcelR_Training_User__c
-    //                                     Where id = :agentid];
-    //         }
-
-    //         system.debug(Lastname + ' : ' + email + ' : ' + phone + ' : ' + Lastname);
-    //         //leadRec.FirstName = firstname;
-    //         leadRec.LastName = Lastname;
-    //         leadRec.Email = email;
-    //         leadRec.Alternate_Email__c = AlternateEmail;
-    //         leadRec.Phone = countrycode + phone;
-    //         leadRec.Alternate_Phone__c = countrycode + AlternateMobile;
-    //         leadRec.Enter_UTM_Link__c = pageurllanding;
-    //         leadRec.Course__c = Course;
-    //         leadRec.City = city;
-    //         leadRec.State = state;
-    //         leadRec.Country = country;
-    //         leadRec.LeadSource = source;
-    //         leadRec.UTM_Medium__c = medium;
-    //         //leadRec.LGE__c=LGE;
-    //         leadRec.Visitor_ID__c = VisitorId;
-    //         leadRec.Transcript__c = Transcript;
-    //         leadRec.Lead_Gen_Path__c = leadGenPath;
-    //         leadRec.Lead_Generation_Method__c = 'Generic Form';
-    //         leadRec.Comments__c = comments;
-
-
-    //         //leadRec.Landing_Page_URL__c=LandingPageURL;
-    //         if (!existingTrainingUser.isEmpty()){
-    //             leadRec.ExcelR_Training_User__c = existingTrainingUser[0].id;
-    //         }
-    //         leadRec.Company = Lastname;
-    //         system.debug('leadRec===========================' + leadRec);
-    //         insert leadRec;
-    //         System.debug('lead rec Id =====> ' + leadRec.Id);
-
-    //         if (leadRec.id != null){
-    //             message = 'SUCCESS';
-    //         }
-    //         //return message;
-    //     } catch (Exception e){
-    //         System.debug(' the Error has occured due to =====> ' + e.getMessage());
-    //         System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
-    //         HandleBusinessException.captureError('GenericLeadLWCcontroller', 'createLead', e, null);
-    //         message = 'FAIL';
-    //         //return null;
-    //     }
-    //     return message;
-    // }
 
     @AuraEnabled
     public static string createLead(Lead Leadrec, String countrycode, string countrycodealternate,string mediumValue,string city){
@@ -103,14 +42,15 @@ public without sharing class GenericLeadLWCcontroller{
             System.debug('countrycode =======> ' + countrycode);
             System.debug('countrycodealternate =======> ' + countrycodealternate);
 
-            if (countrycode != null && Leadrec.Phone!=null){
+            if (countrycode != null && (Leadrec.Phone != null && Leadrec.Phone != '') ){
                 Leadrec.Phone = countrycode + Leadrec.Phone;
             }
 
-            if (countrycodealternate != null && Leadrec.Alternate_Phone__c!=null){
+            if (countrycodealternate != null && Leadrec.Alternate_Phone__c != null && Leadrec.Alternate_Phone__c != ''){
                 Leadrec.Alternate_Phone__c = countrycodealternate + Leadrec.Alternate_Phone__c;
 
             }
+
             if(mediumValue!=null){
                 Leadrec.UTM_Medium__c=mediumValue;
             }
@@ -142,19 +82,48 @@ public without sharing class GenericLeadLWCcontroller{
         system.debug('assignto-->' + assignto);
         system.debug('leadId-->' + leadId);
         system.debug('');
+        List<Task> tasklisttobeinserted = new List<Task>();
         Task taskRec = new Task();
+        taskRec.Subject = TaskRecord.Subject;
+        taskRec.OwnerId = assignto;
+        taskRec.Priority = TaskRecord.Priority;
+        taskRec.Status = TaskRecord.Status;
+        taskRec.ActivityDate = TaskRecord.ActivityDate;
+        taskRec.Description = TaskRecord.Description;
+        taskRec.Followup_Date_Time__c = TaskRecord.Followup_Date_Time__c;
+
+        List<Lead> NotconvertedLead = [Select Id from Lead Where Id =:leadId and IsConverted = false];
+        List<Lead> convertedLead = [Select Id , ConvertedAccountId,ConvertedContactId,ConvertedOpportunityId from Lead Where Id =:leadId and IsConverted = true];
+
         try{
             // Lead lRec = [select Id, OwnerId from Lead where id =''];
             // Task taskRec = new Task();
-            taskRec.Subject = TaskRecord.Subject;
-            taskRec.OwnerId = assignto;
-            taskRec.WhoId = leadId;      // lead---Name
-            taskRec.Priority = TaskRecord.Priority;
-            taskRec.Status = TaskRecord.Status;
-            taskRec.ActivityDate = TaskRecord.ActivityDate;
-            taskRec.Description = TaskRecord.Description;
-            taskRec.Followup_Date_Time__c = TaskRecord.Followup_Date_Time__c;
-            insert taskRec;
+            if (NotconvertedLead.size() >0 && !NotconvertedLead.isEmpty()) {
+                taskRec.WhoId = leadId; 
+                tasklisttobeinserted.add(taskRec);
+            }
+            else if (convertedLead.size() >0 && !convertedLead.isEmpty()) {
+                string accountId = convertedLead[0].ConvertedAccountId;
+                String oppID = convertedLead[0].ConvertedOpportunityId;
+                taskRec.whatId = accountId; 
+                tasklisttobeinserted.add(taskRec);
+
+                Task taskRecforOpp = new Task();
+                taskRecforOpp.Subject = TaskRecord.Subject;
+                taskRecforOpp.OwnerId = assignto;
+                taskRecforOpp.Priority = TaskRecord.Priority;
+                taskRecforOpp.Status = TaskRecord.Status;
+                taskRecforOpp.ActivityDate = TaskRecord.ActivityDate;
+                taskRecforOpp.Description = TaskRecord.Description;
+                taskRecforOpp.Followup_Date_Time__c = TaskRecord.Followup_Date_Time__c;
+                taskRecforOpp.whatId = oppID;
+                tasklisttobeinserted.add(taskRecforOpp);
+
+                
+            }
+            if (!tasklisttobeinserted.isEmpty()) {
+                insert tasklisttobeinserted;
+            }
             return 'Success';
 
         } catch (Exception e){
@@ -423,6 +392,59 @@ public without sharing class GenericLeadLWCcontroller{
             HandleBusinessException.captureError('GenericLeadLWCcontroller', 'checkExistingHashKeyMatching', e, null);
             return null;
         }
+    }
+
+    @AuraEnabled
+    public static ResponseWrapper LogoutAgent(String AgrecId, String AgentHashCode){
+        ResponseWrapper reswrap = new ResponseWrapper();
+        try{
+            System.debug('AgrecId ===> ' + AgrecId);
+            System.debug('AgentHashCode ===> ' + AgentHashCode);
+
+            
+            String LoginPageBaseurl = System.Label.LoginPageBaseurl;
+            string message = '';
+            
+
+            if (AgrecId != null && AgentHashCode != null){
+                List<ExcelR_Training_User__c> ExcelRTrainUser = [SELECT Departments__c, Email__c, First_Name__c, HashCode__c, Id, Last_Name__c, Name, Password__c, Username__c
+                                                                 FROM ExcelR_Training_User__c
+                                                                 WHERE id = :AgrecId AND HashCode__c = :AgentHashCode
+                                                                 LIMIT 1];
+                if (!ExcelRTrainUser.isEmpty() && ExcelRTrainUser.size() > 0){
+                    ExcelRTrainUser[0].HashCode__c = '';
+                    update ExcelRTrainUser[0];
+                    message = LoginPageBaseurl;
+                    reswrap.Message = LoginPageBaseurl;
+                    reswrap.HashcodeName = 'userHashCodeCookie';
+                    // Cookie userHashCodeCookie = ApexPages.currentPage().getCookies().get('userHashCodeCookie');
+                    // System.debug('userHashCodeCookie ===> ' + userHashCodeCookie);
+
+                    //Cookie ExistinguserHashCodeCookie = ApexPages.currentPage().getCookies().get('userHashCodeCookie');
+                    /*if (ExistinguserHashCodeCookie != null) {
+                        
+                        String ExistingHashcode = String.valueOf(ExistinguserHashCodeCookie.getValue());
+                        Cookie userHashCodeCookie = new Cookie('userHashCodeCookie', ExistingHashcode, null, 0, true);
+                        ApexPages.currentPage().setCookies(new Cookie[]{ userHashCodeCookie });
+                    }*/
+                }
+
+            }
+            return reswrap;
+
+        } catch (Exception e){
+            //throw new AuraHandledException(e.getMessage());
+            System.debug('The error has coccured due to =====> ' + e.getMessage());
+            System.debug('The error has coccured due to =====> ' + e.getLineNumber());
+            reswrap.Message = 'Error';
+            reswrap.HashcodeName = 'userHashCodeCookie';
+            return reswrap;
+        }
+    }
+    
+    public class ResponseWrapper {
+        @AuraEnabled public String HashcodeName;
+        @AuraEnabled public String Message;
     }
 
 }

@@ -74,13 +74,33 @@ public without sharing class Utility{
     public static ApprovalWrapper getParentUserMap() {
         Map<Id,Id> userRoleToParentRoleMap = new Map<Id,Id>();
         
+        map<String, List<user>> RolebasedUserMap = new map<String, List<user>>();
+        List<User> userlistforMap = [Select id, UserRoleId from User];
+        system.debug('userlistforMap -- ' + userlistforMap);
+        
+        for (user  u : userlistforMap) {
+            if(u.UserRoleId != null){
+                if (RolebasedUserMap.containsKey(u.UserRoleId)) {
+                    list<user> existinguserlist = RolebasedUserMap.get(u.UserRoleId);
+                    existinguserlist.add(u);
+                    RolebasedUserMap.put(u.UserRoleId,existinguserlist);
+                    
+                }else {
+                    List<user> NewuserList = new List<user>();
+                    NewuserList.add(u);
+                    RolebasedUserMap.put(u.UserRoleId,NewuserList);
+                }
+            }
+        }
+        system.debug('RolebasedUserMap -- ' + RolebasedUserMap);
+        
         allRolesMap = allRolesMap == null ? new Map<Id, UserRole>([SELECT Id, ParentRoleId, Name FROM UserRole]) : allRolesMap;
         for(UserRole ur : allRolesMap.values()) {
             if(!ur.Name.containsIgnoreCase('CEO') && !ur.Name.containsIgnoreCase('CEO')) {
-                userRoleToParentRoleMap.put(ur.Id, getParentIdRecursive(allRolesMap, ur));
+                userRoleToParentRoleMap.put(ur.Id, getParentIdRecursive(allRolesMap, ur, RolebasedUserMap));
             }
         }
-        
+        system.debug('userRoleToParentRoleMap -- ' + userRoleToParentRoleMap);
         Map<Id,Id> roleIdToParentIdMap = new Map<Id,Id>();
         if(!userRoleToParentRoleMap.isEmpty()) {
             List<User> userList = [SELECT Id, UserRoleId FROM User WHERE UserRoleId IN :userRoleToParentRoleMap.values()];
@@ -89,6 +109,7 @@ public without sharing class Utility{
                     roleIdToParentIdMap.put(usr.UserRoleId, usr.Id);
             }
         }
+        system.debug('roleIdToParentIdMap -- ' + roleIdToParentIdMap);
         return new ApprovalWrapper(userRoleToParentRoleMap, roleIdToParentIdMap);
     }
     
@@ -117,31 +138,26 @@ public without sharing class Utility{
         }
     }
     
-    public static Id getParentIdRecursive(Map<Id,UserRole> userRoleMap, UserRole currentRole) {
+    public static Id getParentIdRecursive(Map<Id,UserRole> userRoleMap, UserRole currentRole, map<String, List<user>> RolebasedUserMap) {
         
-        list<user> userlist = new list<user>();
-        if(currentRole.ParentRoleId != null ) { //&& userRoleMap.get(currentRole.ParentRoleId).Name != null
-            //System.debug('parentRoleId =====> ' + userRoleMap.get(currentRole.ParentRoleId).Id);
-            //System.debug('parentRole Name =====> ' + userRoleMap.get(currentRole.ParentRoleId).Name);
-            //userlist = [Select id from User where UserRoleId =: currentRole.ParentRoleId];
-            
-            //return userRoleMap.get(currentRole.ParentRoleId).Id;
+        list<user> userList = new list<user>();
+        if(currentRole.ParentRoleId != null && userRoleMap.get(currentRole.ParentRoleId).Name != null ) { //
+            System.debug('parentRoleId =====> ' + userRoleMap.get(currentRole.ParentRoleId).Id);
+            System.debug('parentRole Name =====> ' + userRoleMap.get(currentRole.ParentRoleId).Name);
+            userList = RolebasedUserMap.get(currentRole.ParentRoleId);
         }
-        if (currentRole.ParentRoleId != null  /*&& userlist.size() >0 && !userlist.isEmpty()*/) {
-            
+        System.debug('userList =====> ' + userList);
+        
+        if (currentRole.ParentRoleId != null  && userlist != null && !userlist.isEmpty()) {
+            System.debug('userRoleMap.get(currentRole.ParentRoleId).Id =====> ' + userRoleMap.get(currentRole.ParentRoleId).Id);
             return userRoleMap.get(currentRole.ParentRoleId).Id;
         }
-        else if(currentRole.ParentRoleId != null /*&& userlist.isEmpty() */){
-            return getParentIdRecursive(userRoleMap, userRoleMap.get(currentRole.ParentRoleId));
+        else if(currentRole.ParentRoleId != null && (userlist == null || userlist.isEmpty())) {
+            return getParentIdRecursive(userRoleMap, userRoleMap.get(currentRole.ParentRoleId), RolebasedUserMap);
         }
         else {
             return null;
         }
-        /*else if(currentRole.ParentRoleId != null){
-return getParentIdRecursive(userRoleMap, userRoleMap.get(currentRole.ParentRoleId));
-}else {
-return null; //TOP Role - CEO.
-}*/
     }
     
     public class ApprovalWrapper{
@@ -244,11 +260,11 @@ return null; //TOP Role - CEO.
                                                       From Application__c
                                                       Where Lead__c = :convertedLeadRec.Id];
                     /* List<PricebookEntry> priceBookEntryList = [Select Id, Product2Id
-From PricebookEntry
-where Product2Id = :convertedLeadRec.Product__c]; 
-for (PricebookEntry pbe : priceBookEntryList){
-priceBookIdByProductId.put(pbe.Product2Id, pbe.Id);
-} */
+                        From PricebookEntry
+                        where Product2Id = :convertedLeadRec.Product__c]; 
+                        for (PricebookEntry pbe : priceBookEntryList){
+                        priceBookIdByProductId.put(pbe.Product2Id, pbe.Id);
+                        } */
                     
                     Opportunity oppRec = new Opportunity();
                     oppRec.Id = covertedAccRec.Opportunities[0].Id;
@@ -321,17 +337,20 @@ priceBookIdByProductId.put(pbe.Product2Id, pbe.Id);
         }
     }
     
-    public static string createApplicationInstance(string leadId, string courseName, string requestString){
+    public static Application__c createApplicationInstance(string leadId, string courseName, string requestString){
         string applicationId = '';
+        Application__c appRec = new Application__c();
         try{
-            Application__c appRec = new Application__c();
+            
             appRec.Applied_Date_Time__c = system.now();
             appRec.Course__c = courseName;
             if (leadId.startsWith('00Q'))
                 appRec.Lead__c = leadid;
             if (leadId.startsWith('001'))
                 appRec.Account__c = leadid;
-            applicationId = API_CreateAccount.insertApplication(appRec, requestString);
+            
+            
+            //applicationId = API_CreateAccount.insertApplication(appRec, requestString);
             
         } catch (Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());
@@ -339,7 +358,7 @@ priceBookIdByProductId.put(pbe.Product2Id, pbe.Id);
             HandleBusinessException.captureError('Utility', 'createApplicationInstance', e, null);
             
         }
-        return applicationId;
+        return appRec;
     }
     
     
@@ -357,7 +376,7 @@ priceBookIdByProductId.put(pbe.Product2Id, pbe.Id);
         } catch (Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());
             System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
-            HandleBusinessException.captureError('Utility', 'createApplicationInstance', e, null);
+            HandleBusinessException.captureError('Utility', 'returnApplicationInstance', e, null);
             return null;
         }
     }
@@ -545,5 +564,58 @@ priceBookIdByProductId.put(pbe.Product2Id, pbe.Id);
         customerRec.Relevant_Experience__c		=	leadRec.Relevant_Experience__c;
         insert customerRec;
         return customerRec;
+    }
+
+    public static void SendPaymentLinkToISM(String RecId, String PaymentUrl, map<String,Object> NotesMap){
+
+        string ISMEmail, ISMName,LeadName ;
+        try {
+            if ((String.valueOf(NotesMap.get('policy_name')) != null || RecId != null )) {
+                Invoice__c iv = ccAvenueLwcController.getInvoice(recId);
+    
+                if (iv.Opportunity__c!=null) {
+                    ISMEmail = iv.Opportunity__r.Account.owner.Email;
+                    ISMName = iv.Opportunity__r.Account.owner.Name;
+                    LeadName = iv.Opportunity__r.Account.Name;
+                }
+                else if(iv.LeadInvoice__c!=null){
+                    ISMEmail = iv.LeadInvoice__r.owner.Email;
+                    ISMName = iv.LeadInvoice__r.owner.Name;
+                    LeadName = iv.LeadInvoice__r.Name;
+                }
+
+                EmailTemplate eTemplate = [Select id,HtmlValue from EmailTemplate where name = 'Razorpay Payment Link'];
+
+                String Emailbody = eTemplate.HtmlValue;
+                if (Emailbody != Null) {
+                    if ((Emailbody).contains('{!Ism}')) {
+                        Emailbody   = Emailbody.replace('{!Ism}', ISMName);                 
+                    }
+                    if ((Emailbody).contains('{!LeadName}')) {
+                        Emailbody   = Emailbody.replace('{!LeadName}', LeadName);   
+                        
+                    }
+                    if ((Emailbody).contains('{!PaymentUrl}')) {
+                        Emailbody   = Emailbody.replace('{!PaymentUrl}', PaymentUrl);   
+                        
+                    }
+                }
+                System.debug('Emailbody ====> ' + Emailbody);
+    
+                Messaging.SingleEmailMessage EmailMessage = new Messaging.SingleEmailMessage();
+                EmailMessage.setBccAddresses(new String[]{ISMEmail});
+                EmailMessage.subject = 'RazorPay Payment Link';
+                EmailMessage.plainTextBody = Emailbody;
+                EmailMessage.setTemplateId(eTemplate.Id);
+                Messaging.sendEmail(new Messaging.SingleEmailMessage[]{EmailMessage});
+    
+            }
+            
+        } catch (Exception e) {
+            
+        }
+        
+
+
     }
 }

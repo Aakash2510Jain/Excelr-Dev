@@ -84,4 +84,33 @@ public with sharing class Opportunitytriggerhandler{
         }
     }
 
+    public void beforeupdate(map<id, Opportunity> oldOppMap, map<id, Opportunity> newOppMap){
+
+        try {
+            for (Opportunity Opp : newOppMap.values()) {
+                if (opp.StageName != oldOppMap.get(opp.Id).StageName && opp.StageName == 'On Hold') {
+                    dateTime currentDateTime = system.now();
+                    dateTime postOneMonth = system.now().addMonths(1);
+                    dateTime postThreeMonth = system.now().addMonths(3);
+                    if(opp.Next_follow_up_date_time__c < postOneMonth || Opp.Next_follow_up_date_time__c > postThreeMonth){
+                        Opp.Next_follow_up_date_time__c.addError('Follow up date should be > 1 month & < 3 month to park it in On Hold Stage');
+                    }
+                }
+                if(opp.StageName != oldOppMap.get(Opp.Id).StageName && (Opp.StageName ==  'Deferred') ){
+                    dateTime currentDateTime = system.now();
+                    dateTime postThreeMonth = system.now().addMonths(3);
+                    if(opp.Next_follow_up_date_time__c < postThreeMonth){
+                        opp.Next_follow_up_date_time__c.addError('Follow up date should be > 3 month to park it in Deferred Stage');
+                    }
+                }
+                
+            }
+            
+        } catch (Exception e) {
+            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+            HandleBusinessException.captureError('Opportunitytriggerhandler', 'beforeupdate', e, null);
+            
+        }
+    }
+
 }

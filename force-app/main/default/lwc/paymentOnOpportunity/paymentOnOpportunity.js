@@ -460,12 +460,19 @@ export default class PaymentOnOpportunity extends LightningElement {
     }
 
     HandleNext() {
-        this.ShowPaymentCard = true;
-        this.ShowPartialLoanOption = false;
-        this.PartialLoanButton = false;
-        this.ShowLoanOption = false;
-        this.PaymentSectionButton = true;
-        this.ShowOriginalAmount = false;
+        if (this.Loanvalue == 'Partial Loan' && this.PartialLoanUpfrontpaymentvalue != null && this.PartialLoanUpfrontpaymentvalue != '' && this.PartialLoanUpfrontpaymentvalue != undefined) {
+            this.ShowPaymentCard = true;
+            this.ShowPartialLoanOption = false;
+            this.PartialLoanButton = false;
+            this.ShowLoanOption = false;
+            this.PaymentSectionButton = true;
+            this.ShowOriginalAmount = false;
+
+        }
+        else{
+            alert('Please Fill Upfront Payment Amount');
+        }
+
     }
 
     HandlePrevious(event) {
@@ -541,7 +548,7 @@ export default class PaymentOnOpportunity extends LightningElement {
 
             }
             else if (this.Paymentvalue == 'Partial Payment') {
-                if (this.selectedDate != null && this.selectedDate != '' && this.selectedDate != undefined) {
+                if (this.selectedDate != null && this.selectedDate != '' && this.selectedDate != undefined && this.PartialLoanUpfrontpaymentvalue != null && this.PartialLoanUpfrontpaymentvalue != '' && this.PartialLoanUpfrontpaymentvalue != undefined) {
                     UpdateOPPforPartialPayment({ recordId: this.recordId, paymentType: 'razorpay', Amount: this.PartialUpfrontAmount, PendingAmount: this.PartialAmount, PaymentOptiontype: 'Partial Payment', nextPaymentDueDate: this.selectedDate })
                         .then(result => {
 
@@ -566,7 +573,7 @@ export default class PaymentOnOpportunity extends LightningElement {
 
                 }
                 else {
-                    this.showToast('Alert', 'Please Fill Next due Date', 'alert');
+                    this.showToast('Alert', 'Next due Date And upfront Amount is manadatory!!!!!', 'alert');
                     this.LoadSpinner = false;
                     this.ShowPaymentCard = true;
 
@@ -631,28 +638,28 @@ export default class PaymentOnOpportunity extends LightningElement {
 
                 if (this.selectedDate != null && this.selectedDate != '' && this.selectedDate != undefined) {
                     UpdateOPPforPartialPayment({ recordId: this.recordId, paymentType: 'CC Avenue', Amount: this.PartialUpfrontAmount, PendingAmount: this.PartialAmount, PaymentOptiontype: 'Partial Payment', nextPaymentDueDate: this.selectedDate })
-                    //UpdateOPPforPartialPayment({recordId:this.recordId,paymentType:'CC Avenue'})
-                    .then(result => {
+                        //UpdateOPPforPartialPayment({recordId:this.recordId,paymentType:'CC Avenue'})
+                        .then(result => {
 
-                        if (result == 'Success') {
-                            this.showToast('Success', 'Invoice created successfully!', 'success');
-                            this.dispatchEvent(new CloseActionScreenEvent());
-                            updateRecord({ fields: { Id: this.recordId } });
-                        }
-                        else {
+                            if (result == 'Success') {
+                                this.showToast('Success', 'Invoice created successfully!', 'success');
+                                this.dispatchEvent(new CloseActionScreenEvent());
+                                updateRecord({ fields: { Id: this.recordId } });
+                            }
+                            else {
 
-                            this.showToast('Failed', result, 'error');
-                        }
+                                this.showToast('Failed', result, 'error');
+                            }
 
-                    })
-                    .catch(error => {
+                        })
+                        .catch(error => {
 
-                        this.showToast('Failed', error, 'error');
-                        console.log('error=' + error);
-                    })
-                    
+                            this.showToast('Failed', error, 'error');
+                            console.log('error=' + error);
+                        })
+
                 }
-                else{
+                else {
                     this.showToast('Alert', 'Please Fill Next due Date', 'alert');
                     this.LoadSpinner = false;
                     this.ShowPaymentCard = true;

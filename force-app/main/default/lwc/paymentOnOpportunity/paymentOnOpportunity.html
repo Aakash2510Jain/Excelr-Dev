@@ -152,7 +152,7 @@
             </p>
             <lightning-input type="Number" placeholder="Enter Your Upfront payment" label="" name="Upfrontpayment"
               value={PartialLoanUpfrontpaymentvalue} onchange={HandlePartialLoanInputUpfront}
-              style="margin-right:10px ;"></lightning-input>
+              style="margin-right:10px ;" required="true"></lightning-input>
           </div>
           <div class="slds-col slds-size_6-of-12">
             <p style="font-weight:bold">
@@ -176,10 +176,10 @@
       </template>
 
       <template if:true={PaymentSectionButton}>
-        <lightning-button type="Sumbit" variant="Brand" label="Previous" name="PaymentSection"
+        <lightning-button type="Sumbit" variant="Brand" label="Previous" name="PaymentSection" class="slds-m-around_xx-small"
           onclick={HandlePrevious}></lightning-button>
           <template if:true={showpaymentButton}>
-            <lightning-button type="Sumbit" variant="Brand" label="Save" name="PaymentSection"
+            <lightning-button type="Sumbit" variant="Brand" label="Save" name="PaymentSection" class="slds-m-around_xx-small"
           onclick={HandlePaymentType}></lightning-button>
 
           </template>

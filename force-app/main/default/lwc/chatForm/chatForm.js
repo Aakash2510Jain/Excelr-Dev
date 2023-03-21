@@ -8,6 +8,7 @@ import createTask from '@salesforce/apex/ChatFormLWCcontroller.createTaskForVoic
 import createLead from '@salesforce/apex/ChatFormLWCcontroller.createLead';
 import createApplication from '@salesforce/apex/ChatFormLWCcontroller.CreateApplication';
 import fetchCountryAndCountryCode from '@salesforce/apex/GenericLeadLWCcontroller.fetchCountryAndCountryCode';
+import LogoutAgent from '@salesforce/apex/voiceFormLWCcontroller.LogoutAgent';
 import QueryPastLeads from '@salesforce/apex/ChatFormLWCcontroller.QueryPastLeads';
 import LightningAlert from 'lightning/alert';
 //import LightningConfirm from "lightning/confirm";
@@ -79,6 +80,7 @@ export default class chatForm extends LightningElement {
     @api agentrecid;
     @api DepartmentListstring;
     @api hashcode;
+    @api agentNameLWC;
     @track DepartmentList = [];
     @track mapData = [];
     @track showFromOrEmpty = false;
@@ -198,22 +200,22 @@ export default class chatForm extends LightningElement {
         debugger;
         if (data) {
 
-            if (data.Courses.length > 0) {
+            if (data.AllformsMapwrapper.Chat.course_names__c.length > 0) {
 
                 let tempcoursearr = [];
-                for (let i = 0; i < data.Courses.length; i++) {
-                    tempcoursearr.push({ label: data.Courses[i], value: data.Courses[i] });
+                for (let i = 0; i < data.AllformsMapwrapper.Chat.course_names__c.length; i++) {
+                    tempcoursearr.push({ label: data.AllformsMapwrapper.Chat.course_names__c[i], value: data.AllformsMapwrapper.Chat.course_names__c[i] });
                 }
                 this.courssweList = tempcoursearr;
                 this.courssweList.sort((a, b) => (a.label > b.label) ? 1 : -1);
 
             }
 
-            if (data.Sources.length > 0) {
+            if (data.AllformsMapwrapper.Chat.source__c.length > 0) {
 
                 let tempSourcearr = [];
-                for (let i = 0; i < data.Sources.length; i++) {
-                    tempSourcearr.push({ label: data.Sources[i], value: data.Sources[i] });
+                for (let i = 0; i < data.AllformsMapwrapper.Chat.source__c.length; i++) {
+                    tempSourcearr.push({ label: data.AllformsMapwrapper.Chat.source__c[i], value: data.AllformsMapwrapper.Chat.source__c[i] });
                 }
                 this.LeadSourcePicklist = tempSourcearr;
                 this.LeadSourcePicklist.sort((a, b) => (a.label > b.label) ? 1 : -1);
@@ -221,11 +223,11 @@ export default class chatForm extends LightningElement {
 
             }
 
-            if (data.LeadGenPath.length > 0) {
+            if (data.AllformsMapwrapper.Chat.lead_gen_path__c.length > 0) {
 
                 let tempLeadGenPatharr = [];
-                for (let i = 0; i < data.LeadGenPath.length; i++) {
-                    tempLeadGenPatharr.push({ label: data.LeadGenPath[i], value: data.LeadGenPath[i] });
+                for (let i = 0; i < data.AllformsMapwrapper.Chat.lead_gen_path__c.length; i++) {
+                    tempLeadGenPatharr.push({ label: data.AllformsMapwrapper.Chat.lead_gen_path__c[i], value: data.AllformsMapwrapper.Chat.lead_gen_path__c[i] });
                 }
                 this.LeadGenPathPicklistvalue = tempLeadGenPatharr;
                 this.LeadGenPathPicklistvalue.sort((a, b) => (a.label > b.label) ? 1 : -1);
@@ -233,11 +235,11 @@ export default class chatForm extends LightningElement {
 
             }
 
-            if (data.Medium.length > 0) {
+            if (data.AllformsMapwrapper.Chat.medium__c.length > 0) {
 
                 let tempMediumarr = [];
-                for (let i = 0; i < data.Medium.length; i++) {
-                    tempMediumarr.push({ label: data.Medium[i], value: data.Medium[i] });
+                for (let i = 0; i < data.AllformsMapwrapper.Chat.medium__c.length; i++) {
+                    tempMediumarr.push({ label: data.AllformsMapwrapper.Chat.medium__c[i], value: data.AllformsMapwrapper.Chat.medium__c[i] });
                 }
                 this.LeadMediumPicklist = tempMediumarr;
                 this.LeadMediumPicklist.sort((a, b) => (a.label > b.label) ? 1 : -1);
@@ -245,11 +247,11 @@ export default class chatForm extends LightningElement {
 
             }
 
-            if (data.TaskStatus.length > 0) {
+            if (data.pickValByFieldWrapper.TaskStatus.length > 0) {
 
                 let tempTaskStatusarr = [];
-                for (let i = 0; i < data.TaskStatus.length; i++) {
-                    tempTaskStatusarr.push({ label: data.TaskStatus[i], value: data.TaskStatus[i] });
+                for (let i = 0; i < data.pickValByFieldWrapper.TaskStatus.length; i++) {
+                    tempTaskStatusarr.push({ label: data.pickValByFieldWrapper.TaskStatus[i], value: data.pickValByFieldWrapper.TaskStatus[i] });
                 }
 
                 this.StatusList = tempTaskStatusarr;
@@ -258,10 +260,10 @@ export default class chatForm extends LightningElement {
 
             }
 
-            if (data.TaskPriority.length > 0) {
+            if (data.pickValByFieldWrapper.TaskPriority.length > 0) {
                 let tempTaskPriorityarr = [];
-                for (let i = 0; i < data.TaskPriority.length; i++) {
-                    tempTaskPriorityarr.push({ label: data.TaskPriority[i], value: data.TaskPriority[i] });
+                for (let i = 0; i < data.pickValByFieldWrapper.TaskPriority.length; i++) {
+                    tempTaskPriorityarr.push({ label: data.pickValByFieldWrapper.TaskPriority[i], value: data.pickValByFieldWrapper.TaskPriority[i] });
                 }
 
                 this.priorityList = tempTaskPriorityarr;
@@ -747,14 +749,14 @@ export default class chatForm extends LightningElement {
             (this.LeadTobeCreated.Visitor_ID__c != undefined && this.LeadTobeCreated.Visitor_ID__c != null && this.LeadTobeCreated.Visitor_ID__c != '') && (this.LeadTobeCreated.Transcript__c != undefined && this.LeadTobeCreated.Transcript__c != null && this.LeadTobeCreated.Transcript__c != '') && (this.LeadTobeCreated.Enter_UTM_Link__c != undefined && this.LeadTobeCreated.Enter_UTM_Link__c != null && this.LeadTobeCreated.Enter_UTM_Link__c != '')) {
 
             //this.HandleLeadCreatedisable = true;
-            if (this.LeadTobeCreated.Email != null) {
+            if (this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '' && this.LeadTobeCreated.Email != undefined) {
                 var returnvalue = this.handleIncorrectEmail(this.LeadTobeCreated.Email)
             }
-            if (this.LeadTobeCreated.Phone != null ) {
+            if (this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '' && this.LeadTobeCreated.Phone != undefined) {
                 var phoneReturnvalue = this.handleCorrectPhone(this.LeadTobeCreated.Phone);
             }
 
-            if (this.LeadTobeCreated.Email != null && (this.LeadTobeCreated.Phone == null || this.LeadTobeCreated.Phone == '' || this.LeadTobeCreated.Phone == undefined  )) {
+            if (this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Email != '' && this.LeadTobeCreated.Email != undefined  && (this.LeadTobeCreated.Phone == null || this.LeadTobeCreated.Phone == '' || this.LeadTobeCreated.Phone == undefined  )) {
                 if ( returnvalue == true) {
                     this.createLeadFromJS();
                     
@@ -766,7 +768,7 @@ export default class chatForm extends LightningElement {
                 }
                 
             }
-            else if ( this.LeadTobeCreated.Phone != null && (this.LeadTobeCreated.Email == null || this.LeadTobeCreated.Email == '' || this.LeadTobeCreated.Email == undefined  )) {
+            else if ( this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '' && this.LeadTobeCreated.Phone != undefined && (this.LeadTobeCreated.Email == null || this.LeadTobeCreated.Email == '' || this.LeadTobeCreated.Email == undefined )) {
                 if (phoneReturnvalue == true) {
                     this.createLeadFromJS();
                 }
@@ -776,7 +778,7 @@ export default class chatForm extends LightningElement {
                 }
                 
             }
-            else if (this.LeadTobeCreated.Email != null && this.LeadTobeCreated.Phone != null) {
+            else if ((this.LeadTobeCreated.Email != null  && this.LeadTobeCreated.Email != '' && this.LeadTobeCreated.Email != undefined) && (this.LeadTobeCreated.Phone != null && this.LeadTobeCreated.Phone != '' && this.LeadTobeCreated.Phone != undefined)) {
                 if (returnvalue == true && phoneReturnvalue == true) {
                     this.HandleLeadCreatedisable = true;
                     this.createLeadFromJS();
@@ -977,23 +979,64 @@ export default class chatForm extends LightningElement {
         debugger;
         var selectedVal = event.detail.value;
         if (selectedVal == 'Walk-In') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
             window.open(urlString, "_self");
 
         }
         if (selectedVal == 'Voice') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
             window.open(urlString, "_self");
 
         }
         if (selectedVal == 'Generic') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
             window.open(urlString, "_self");
         }
         if (selectedVal == 'Chat') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode;
+            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
             window.location.replace(urlString, "_self");
         }
+    }
+
+    handleOnselectprofile(event){
+        debugger;
+        var agId = this.agentrecid;
+        var Hashes = this.hashcode;
+        var selectedVal = event.detail.value;
+        if (selectedVal == 'My Past Leads') {
+            this.ShowPastLeadPage();
+            
+        }
+        if (selectedVal == 'Logout') {
+            this.LogoutAgentfromForm();
+        }
+
+    }
+
+    LogoutAgentfromForm() {
+        debugger;
+        var agId = this.agentrecid;
+        var Hashes = this.hashcode;
+        LogoutAgent({ AgrecId: this.agentrecid, AgentHashCode: this.hashcode })
+            .then(data => {
+                debugger;
+                if (data) {
+                    if (data.Message != null && data.Message != undefined  ) {
+                        var apexcookies = 'apex_' + data.HashcodeName;
+                        var urlString = data.Message;
+                        window.location.replace(urlString, "_self");
+                        
+                    }
+                    
+                }
+
+            })
+            .catch(error => {
+                this.handleAlert('Some error in logout');
+            })
+
+
+
     }
 
 }

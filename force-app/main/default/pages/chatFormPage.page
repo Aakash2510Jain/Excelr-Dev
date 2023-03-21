@@ -7,12 +7,14 @@
     var Departments = "{!$CurrentPage.parameters.departments}";
     var agentrecordId = "{!$CurrentPage.parameters.id}";
     var urlhashcode = "{!$CurrentPage.parameters.hascode}";
+    var agname = "{!$CurrentPage.parameters.AgentName}";
     
     $Lightning.use("c:chatFormAPP", function () {
         $Lightning.createComponent("c:chatForm",
                                    {'agentrecid' : agentrecordId,
                                    'DepartmentListstring' : Departments,
-                                    'hashcode' : urlhashcode},
+                                    'hashcode' : urlhashcode,
+                                    'agentNameLWC' : agname},
                                    "lightningapp",
                                    function (cmp) {
                                        console.log("Customer Detail is loaded in Vf page");

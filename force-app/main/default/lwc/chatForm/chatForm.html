@@ -21,14 +21,14 @@
 
                     </a>
                 </div>
-                <div class="slds-p-around_medium" style=" display: inline-block;">
+                <!-- <div class="slds-p-around_medium" style=" display: inline-block;">
                     <a href="javascript:void(0)" onclick={ShowPastLeadPage}>
                         <h1>
                             My Past Leads
                         </h1>
 
                     </a>
-                </div>
+                </div> -->
                 <div class="slds-p-around_medium" style=" display: inline-block;">
                     <lightning-button-menu alternative-text="Show menu" variant="border-filled"
                         onselect={handleOnselect} label="Select Form">
@@ -42,6 +42,16 @@
                     </lightning-button-menu>
 
                 </div>
+                <div class="slds-p-around_medium" style=" display: inline-block;">
+                    <lightning-button-menu icon-name="action:user" icon-size="medium" menu-alignment="auto"
+                        class="slds-icon_container slds-avatar_circle slds-p-bottom_xx-small"
+                        onselect={handleOnselectprofile}>
+                        <lightning-menu-item value={agentNameLWC} label={agentNameLWC}></lightning-menu-item>
+                        <lightning-menu-item value="My Past Leads" label="My Past Leads"></lightning-menu-item>
+                        <lightning-menu-item value="Logout" label="Logout"></lightning-menu-item>
+
+                    </lightning-button-menu>
+                </div>
 
             </div>
 
@@ -52,7 +62,33 @@
 
         <template if:true={showSearchDetails}>
             <lightning-card>
-                <div class="slds-align_absolute-center">
+                <lightning-layout>
+                    <lightning-layout-item size="1" padding="around-small" >
+                    </lightning-layout-item>
+                    <lightning-layout-item size="4" padding="around-small">
+                        <lightning-input label="Email Or Phone" onchange={emailHandler}
+                            style="margin-top:8px;"></lightning-input>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="6" padding="around-small" >
+                        <div style="padding-top: 32px;">
+                            <lightning-button title="Search" label="Search" onclick={serachLeadBTN}></lightning-button>
+                            <lightning-button title="New" label="New" onclick={newhLeadBTN} disabled={newBTNdisAble}
+                                variant="brand" style="margin-left:8px;"></lightning-button>
+                            <lightning-button title="Notify ISM" label="Email ISM" onclick={notifyismBTN}
+                                variant="brand" style="margin-left:8px;" disabled={ismBTNdisAble}></lightning-button>
+                            <lightning-button title="Create Application" label="Create Application"
+                                onclick={showpplicationForm} variant="brand" style="margin-left:8px;"
+                                disabled={appbtndisAble}></lightning-button>
+                            <lightning-button title="New Task " label="New Task" onclick={newTaskBTN}
+                                disabled={taskBTNdisAble} variant="brand" style="margin-left:8px;"></lightning-button>
+
+                        </div>
+
+                    </lightning-layout-item>
+                    <lightning-layout-item size="1" padding="around-small">
+                    </lightning-layout-item>
+                </lightning-layout>
+                <!-- <div class="slds-align_absolute-center">
                     <div class="slds-size_2-of-6">
                         <lightning-input label="Email Or Phone" onchange={emailHandler}
                             style="margin-top:8px;"></lightning-input>
@@ -69,7 +105,7 @@
                         <lightning-button title="New Task " label="New Task" onclick={newTaskBTN}
                             disabled={taskBTNdisAble} variant="brand" style="margin-left:8px;"></lightning-button>
                     </div>
-                </div>
+                </div> -->
                 <div>
                     <template if:true={showFromOrEmpty}>
                         <lightning-tabset>
@@ -257,14 +293,15 @@
                             <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
 
                                 <template if:true={showLoading}>
-                                    <lightning-spinner alternative-text="Loading" size="medium" class="spinnerClass"></lightning-spinner>
+                                    <lightning-spinner alternative-text="Loading" size="medium"
+                                        class="spinnerClass"></lightning-spinner>
                                 </template>
-                                
+
 
                                 <lightning-input name="LN" label="Name" required="true"
                                     onchange={LeadCreationHandler}></lightning-input>
 
-                                <lightning-input name="Em" label="Email" 
+                                <lightning-input name="Em" label="Email"
                                     onchange={LeadCreationHandler}></lightning-input>
 
                                 <lightning-input name="AltEm" label="Alternate Email"
@@ -289,17 +326,22 @@
                                 <div class="slds-card">
                                     <div class="slds-form-element">
                                         <div class="slds-form-element__control">
-                                            <lightning-input label="Select City" type="search" onchange={search} value={selectedresultValue} disabled={disableInput} required="true"></lightning-input>
-                                            <div if:true={booleanValue} class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid"
+                                            <lightning-input label="Select City" type="search" onchange={search}
+                                                value={selectedresultValue} disabled={disableInput}
+                                                required="true"></lightning-input>
+                                            <div if:true={booleanValue}
+                                                class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid"
                                                 role="listbox">
                                                 <ul class="slds-listbox slds-listbox_vertical" role="presentation">
                                                     <template for:each={searchResults} for:item="searchResult">
-                                                        <li key={searchResult.value} data-value={searchResult.value} role="presentation"
-                                                            onclick={selectSearchResult} class="slds-listbox__item">
+                                                        <li key={searchResult.value} data-value={searchResult.value}
+                                                            role="presentation" onclick={selectSearchResult}
+                                                            class="slds-listbox__item">
                                                             <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small "
                                                                 role="option">
                                                                 <span class="slds-media__body">
-                                                                    <span class="slds-truncate" title={searchResult.label}>
+                                                                    <span class="slds-truncate"
+                                                                        title={searchResult.label}>
                                                                         {searchResult.label}
                                                                     </span>
                                                                 </span>
@@ -316,11 +358,11 @@
                                 <div class="slds-grid slds-wrap">
                                     <div class="slds-col slds-size_1-of-12">
                                         <span>
-                                            <lightning-combobox name="CountryISDcode"  
+                                            <lightning-combobox name="CountryISDcode"
                                                 placeholder="Select Your CountryCode" options={countryCodeList}
                                                 onchange={LeadCreationHandler} value={DefaultCountryCode}>
                                             </lightning-combobox>
-                                            
+
                                         </span>
                                     </div>
                                     <div class="slds-col slds-size_11-of-12">
@@ -336,11 +378,11 @@
                                 <div class="slds-grid slds-wrap">
                                     <div class="slds-col slds-size_1-of-12">
                                         <span>
-                                            <lightning-combobox name="CountryISDcodeAlt"  
+                                            <lightning-combobox name="CountryISDcodeAlt"
                                                 placeholder="Select Your CountryCode" options={countryCodeList}
                                                 onchange={LeadCreationHandler} value={DefaultCountryCode}>
                                             </lightning-combobox>
-                                           
+
                                         </span>
                                     </div>
                                     <div class="slds-col slds-size_11-of-12">
@@ -361,12 +403,12 @@
                                     placeholder="Select Lead Gen Path" options={LeadGenPathPicklistvalue}
                                     onchange={LeadCreationHandler} required="true">
                                 </lightning-combobox>
-                              
+
                                 <lightning-combobox name="Source" label="Source" value={SourceValue}
                                     placeholder="Select Your Source" options={LeadSourcePicklist}
                                     onchange={LeadCreationHandler} required="true">
                                 </lightning-combobox>
-                                
+
                                 <lightning-combobox name="Medium" label="Medium" value={SelectedMedium}
                                     placeholder="Select Your Medium" options={LeadMediumPicklist}
                                     onchange={LeadCreationHandler} required="true">
@@ -374,7 +416,7 @@
 
                                 <lightning-input name="VID" type="text" label="Visitor ID"
                                     onchange={LeadCreationHandler} required="true"></lightning-input>
-                                
+
                                 <label class="slds-form-element__label" for="textarea-id-01"><abbr class="slds-required"
                                         title="required">*</abbr>TranScript</label>
                                 <textarea label="TranScript" value={TranscriptValue} onchange={LeadCreationHandler}
@@ -382,13 +424,13 @@
 
                                 <lightning-input type="text" label="Page URL" onchange={LeadCreationHandler}
                                     name="PageUrl" required="true"></lightning-input>
-                                
+
 
                                 <lightning-textarea label="Comments" name="Comments" value={commentsValue}
                                     onchange={LeadCreationHandler}>
                                 </lightning-textarea>
 
-                                
+
                             </div>
                             <!-- Modal/Popup Box LWC footer starts here -->
                             <footer class="slds-modal__footer">
@@ -600,10 +642,11 @@
                         <lightning-input type="date" name="Duedate" label="Due date" value={DuedateValue}
                             onchange={TaskCreationHandler}></lightning-input>
 
-                        <lightning-input type="datetime" name="Followupdatetime" label="Followup Date/time " value={followupValue}
-                            onchange={TaskCreationHandler}></lightning-input>
+                        <lightning-input type="datetime" name="Followupdatetime" label="Followup Date/time "
+                            value={followupValue} onchange={TaskCreationHandler}></lightning-input>
 
-                        <lightning-textarea label="Comments" name="Comments" value={comValue} onchange={TaskCreationHandler}>
+                        <lightning-textarea label="Comments" name="Comments" value={comValue}
+                            onchange={TaskCreationHandler}>
                         </lightning-textarea>
 
 

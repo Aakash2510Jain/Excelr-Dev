@@ -42,16 +42,18 @@ public class ccAvenueLwcController {
     @AuraEnabled
     public static String initateCCAvenuePayment(String recId){
         try{
-        String name,email;
+        String name,email, ISMEmail;
 
         Invoice__c iv = getInvoice(recId);
 
  
         if(iv.Opportunity__c!=null){
             email = iv.Opportunity__r.Account.Email__c;
+            ISMEmail = iv.Opportunity__r.Account.owner.Email;
             name = iv.Opportunity__r.Account.Name;
         }else if(iv.LeadInvoice__c!=null){
             email = iv.LeadInvoice__r.Email;
+            ISMEmail = iv.LeadInvoice__r.owner.Email;
             name = iv.LeadInvoice__r.Name;
         }else{
             return 'Invoice is not tagged with opportunity neither lead';
@@ -61,7 +63,7 @@ public class ccAvenueLwcController {
         Map<String,String> reqMap = getRequestMap(iv);
         String paymentURL = DN_CCAvenue_CTRL.createPaymentURLFromInvoice(iv,reqMap);
 
-        return prepareTemplateAndSendEmail(templateMap,paymentURL,email,name);
+        return prepareTemplateAndSendEmail(templateMap,paymentURL,email,name,ISMEmail );
 
     } catch(exception e){
             
@@ -76,7 +78,7 @@ public class ccAvenueLwcController {
         try{
 
         return [Select Id,Name,Amount__c,Opportunity__c,Opportunity__r.Account.Name,Opportunity__r.Account.Email__c,Opportunity__r.Account.Phone,Opportunity__r.Account.BillingAddress,Opportunity__r.Account.Billingcity,Opportunity__r.Account.BillingStreet,Opportunity__r.Account.BillingState,Opportunity__r.Account.BillingCountry,Opportunity__r.Account.BillingPostalCode,
-                                   Opportunity__r.Account.Shippingcity,Opportunity__r.Account.ShippingStreet,Opportunity__r.Account.ShippingAddress,Opportunity__r.Account.ShippingCountry,Opportunity__r.Account.ShippingPostalCode,Opportunity__r.Account.ShippingState,
+                                   Opportunity__r.Account.Shippingcity,Opportunity__r.Account.ShippingStreet,Opportunity__r.Account.ShippingAddress,Opportunity__r.Account.ShippingCountry,Opportunity__r.Account.ShippingPostalCode,Opportunity__r.Account.ShippingState, Opportunity__r.Account.owner.Email, LeadInvoice__r.owner.Email, Opportunity__r.Account.owner.Name,LeadInvoice__r.owner.Name,
                                    LeadInvoice__c,LeadInvoice__r.Name,LeadInvoice__r.Phone,LeadInvoice__r.Email,LeadInvoice__r.Street,LeadInvoice__r.city,LeadInvoice__r.Country,LeadInvoice__r.State,LeadInvoice__r.PostalCode,LeadInvoice__r.Address From Invoice__c Where Id=:recId];
     }catch(exception e){
             
@@ -131,7 +133,7 @@ public class ccAvenueLwcController {
      catch(exception e){
             
         System.debug('The following exception has occurred: ' + e.getMessage());
-        HandleBusinessException.captureError('ccAvenueLwcController','getInvoice', e, null);
+        HandleBusinessException.captureError('ccAvenueLwcController','getRequestMap', e, null);
        
         return null;
    }
@@ -155,7 +157,7 @@ public class ccAvenueLwcController {
    }
 }
 
-    public static String prepareTemplateAndSendEmail(Map<String,String> templateMap, String paymentUrl,String email, String name){
+    public static String prepareTemplateAndSendEmail(Map<String,String> templateMap, String paymentUrl,String email, String name, string ISMEmail){
         try{
             String emailBody = templateMap.get('body');
             String templateId = templateMap.get('id');
@@ -163,7 +165,7 @@ public class ccAvenueLwcController {
             emailBody = emailBody.replace('{!PaymentURL}', paymentUrl);
             emailBody = emailBody.replace(' {!Opportunity.Account}', name);
 
-            sendPaymentLink(email,templateId,emailBody);
+            sendPaymentLink(email,templateId,emailBody, ISMEmail);
             return 'Success';
         }catch(Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());
@@ -174,10 +176,11 @@ public class ccAvenueLwcController {
     }
 
    
-    Public Static void sendPaymentLink( String email,String templateId,String body){
+    Public Static void sendPaymentLink( String email,String templateId,String body, string ISMEmail){
         try{
         Messaging.SingleEmailMessage EmailMessage = new Messaging.SingleEmailMessage();
         EmailMessage.toAddresses = new String[] {email};
+        EmailMessage.setBccAddresses(new String[]{ISMEmail});
         EmailMessage.subject = 'CcAvenue Payment Initiated';
         EmailMessage.plainTextBody = body;
         EmailMessage.setTemplateId(templateId);

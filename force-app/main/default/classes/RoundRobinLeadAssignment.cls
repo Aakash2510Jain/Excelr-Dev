@@ -69,6 +69,7 @@ public without sharing class  RoundRobinLeadAssignment{
                                     ld.status = 'Open';
                                     ld.Assignment_Group__c = qName;
                                     ld.Is_Lead_Assigned_to_User__c = true;
+                                    ld.Next_follow_up_date_time__c = system.now().addHours(2);
                                     updateLeadList.add(ld); 
                                     System.debug('updateLeadList ====> ' + updateLeadList);
                                     isAssigned = true;

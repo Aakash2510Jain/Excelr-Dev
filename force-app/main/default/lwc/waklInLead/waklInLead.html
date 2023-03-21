@@ -42,7 +42,7 @@
                     </lightning-button-menu>
 
                 </div>
-                <div class="slds-p-around_medium" style=" display: inline-block;" >
+                <div class="slds-p-around_medium" style=" display: inline-block;">
                     <!--nav role="navigation">
                         <ul>
                             <li><a href="#" aria-haspopup="true">Two</a>
@@ -67,7 +67,8 @@
                             </li>
                         </ul>
                     </nav -->
-                    <lightning-button-menu icon-name="action:user" icon-size="large" menu-alignment="auto" class="slds-avatar slds-avatar_circle" 
+                    <lightning-button-menu icon-name="action:user" icon-size="medium" menu-alignment="auto"
+                        class="slds-icon_container slds-avatar_circle slds-p-bottom_xx-small"
                         onselect={handleOnselectprofile}>
                         <!--template for:each={mapData} for:item="currentItem" for:index="index">
                             <lightning-menu-item label={currentItem.label} value={currentItem.value}
@@ -75,11 +76,11 @@
                             </lightning-menu-item>
 
                         </template -->
-                    <lightning-menu-item value={agentNameLWC} label={agentNameLWC}></lightning-menu-item>
-                    <lightning-menu-item value="My Past Leads" label="My Past Leads"></lightning-menu-item>
-                    <lightning-menu-item value="Logout" label="Logout"></lightning-menu-item>
+                        <lightning-menu-item value={agentNameLWC} label={agentNameLWC}></lightning-menu-item>
+                        <lightning-menu-item value="My Past Leads" label="My Past Leads"></lightning-menu-item>
+                        <lightning-menu-item value="Logout" label="Logout"></lightning-menu-item>
 
-                    </lightning-button-menu >
+                    </lightning-button-menu>
                 </div>
 
             </div>
@@ -100,7 +101,7 @@
 
 
                     <lightning-layout-item size="6" padding="around-small">
-                        <div style="padding-top: 22px;">
+                        <div style="padding-top: 25px;">
                             <lightning-button title="Search" label="Search" onclick={serachLeadBTN}></lightning-button>
                             <lightning-button title="New" label="New" onclick={newhLeadBTN} disabled={newBTNdisAble}
                                 variant="brand" style="margin-left:8px;"></lightning-button>
