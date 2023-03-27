@@ -238,6 +238,7 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
 
     @track addOnValues=[];
     @track data=[];
+    @track showmessagge;
     HandleClick(){
         debugger;
         this.currentStep="2"
@@ -252,6 +253,12 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
                      console.log('If Part data====',this.data);
                      console.log('If Part this.Firstdata====',this.Firstdata);
                      this.FirstTable=true;
+                     if(this.data.length == 0){
+                        this.showmessagge=true;
+                    }else if(this.data.length > 0){
+                        this.showmessagge=false;
+                    }
+                     
                     //  this.data.forEach(element => { 
                     //          console.log('element==',element);
                     //          if(element.Add_Ons__r > 0){
@@ -286,6 +293,11 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
                      console.log('In Else data====',this.data);
                      console.log('In Else this.Firstdata====',this.Firstdata);
                      this.FirstTable=true;
+                     if(this.data.length == 0){
+                        this.showmessagge=true;
+                    }else if(this.data.length > 0){
+                        this.showmessagge=false;
+                    }
                     //  this.data.forEach(element => { 
                     //          console.log('element==',element);
                     //          if(element.Add_Ons__r > 0){
@@ -319,6 +331,11 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
                      console.log('If Part data====',this.data);
                      console.log('If Part this.Firstdata====',this.Firstdata);
                      this.FirstTable=true;
+                     if(this.data.length == 0){
+                        this.showmessagge=true;
+                    }else if(this.data.length > 0){
+                        this.showmessagge=false;
+                    }
                     //  this.data.forEach(element => { 
                     //          console.log('element==',element);
                     //             element.Add_Ons__r.forEach(element=>{
@@ -350,6 +367,8 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
         // this.template
         //     .querySelector('div.stepTwo')
         //     .class.remove('slds-hide');
+
+        
 
     }
 
@@ -718,7 +737,7 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
             disableButton=false;
 
         HandleClickSave(){
-            //this.LoadingSpinner=true;
+            this.LoadingSpinner=true;
             debugger;
             this.disableButton=true;
             for(let i=0;i<this.AllSelectedProductsXRelatedAddOns.length;i++){
@@ -751,6 +770,7 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
                 console.log('result',result);
                 if(result=='SUCCESS'){
                        console.log('result---',result);
+                       this.LoadingSpinner=false;
                        //location.href='https://excelr2--qa.sandbox.lightning.force.com/lightning/r/Opportunity'+this.recordId + '/view';
                        //'https://excelr2--qa.sandbox.lightning.force.com/lightning/r/Opportunity/006N000000KDlI8IAL/view'
                          var windowlocation = JSON.stringify(document.URL);

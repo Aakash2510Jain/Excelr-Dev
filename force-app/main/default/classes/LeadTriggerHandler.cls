@@ -14,16 +14,26 @@ public without sharing class LeadTriggerHandler{
             List<String> phoneList = new List<String>();
             List<String> alternatePhoneList = new List<String>();
             List<Lead> duplicateExistingLeadList = new List<Lead>();
+            List<Opportunity> OpportunityExistingList = new List<opportunity>();
             List<Lead> duplicateConvertedLeadList = new List<Lead>();
             
             Map<string, Lead> existingLeadByEmail = new Map<string, Lead>();
             Map<string, Lead> existingLeadByAlternateEmail = new Map<string, Lead>();
             Map<string, Lead> existingLeadByPhone = new Map<string, Lead>();
             Map<string, Lead> existingLeadByAlternatePhone = new Map<string, Lead>();
+
             Map<string, Lead> convertedLeadByEmail = new Map<string, Lead>();
             Map<string, Lead> convertedLeadByAlternateEmail = new Map<string, Lead>();
             Map<string, Lead> convertedLeadByPhone = new Map<string, Lead>();
             Map<string, Lead> convertedLeadByAlternatePhone = new Map<string, Lead>();
+
+            // =======================================Opportunity Maps =========================================
+            Map<string, Opportunity> ExistingOppByEmail = new Map<string, Opportunity>();
+            Map<string, Opportunity> ExistingOppByAlternateEmail = new Map<string, Opportunity>();
+            Map<string, Opportunity> ExistingOppByPhone = new Map<string, Opportunity>();
+            Map<string, Opportunity> ExistingOppByAlternatePhone = new Map<string, Opportunity>();
+
+
             
             List<opportunity> opportunityListToInsert = new List<Opportunity>();
             List<Lead> leadListToInsert = new List<Lead>();
@@ -112,38 +122,68 @@ public without sharing class LeadTriggerHandler{
             }
             string queryStringForNonConvertedLead = 'select Id, Email, status, course__c, CID__c,Customers__c,OwnerId,Alternate_Phone__c,Phone,Alternate_Email__c From Lead';
             String queryStringForConvertedLead = 'select Id, Email, status, course__c,CID__c,ConvertedAccountId, Customers__c,LID__c,OwnerId,Alternate_Phone__c,Phone,Alternate_Email__c From Lead ';
+            String queryStringforOpportunityLead = 'SELECT CreatedDate,OwnerId,Alternate_Email__c,Alternate_Phone__c,Course__c,Email__c,Id,Lead_Gen_Path__c,Loan_Amount__c,Name,Phone__c,StageName FROM Opportunity';
+
+            // OpportunityList = [SELECT Alternate_Email__c,Alternate_Phone__c,Course__c,Email__c,Id,Lead_Gen_Path__c,Loan_Amount__c,Name,Phone__c 
+            //                                 FROM Opportunity
+            //                                 Where (Phone__c =:Leadrec.Phone OR Alternate_Phone__c =:Leadrec.Alternate_Phone__c OR Email__c =:Leadrec.Email OR Alternate_Email__c =:Leadrec.Alternate_Email__c ) 
+            //                                 AND StageName =: Constants.OPP_STAGENAME_CLOSE_LOST ORDER BY CreatedDate DESC LIMIT 1];
+            // System.debug('OpportunityList =====> '+ OpportunityList);  
+
             
             // dynamic query part :              
             String whereClauses  = '( ';
+            String whereClausesForOpp = '( ';
             
             if (!emailList.isEmpty()) {
                 System.debug(' string.isBlank(whereClauses) ====> ' +string.isBlank(whereClauses));
-                whereClauses = whereClauses + '( Email IN : emailList ) ';
+                whereClauses = whereClauses + '( Email IN : emailList  OR Alternate_Email__c IN: emailList) ';
+
+                whereClausesForOpp = whereClausesForOpp + '( Email__c IN : emailList ) ';
             }
             if (!alternateEmailList.isEmpty()) {
                 System.debug(' string.isBlank(whereClauses) ====> ' +string.isBlank(whereClauses));
                 if(!string.isBlank(whereClauses) && whereClauses.length() > 2)
-                    whereClauses = whereClauses + 'OR  (Alternate_Email__c IN : alternateEmailList) ';
+                    whereClauses = whereClauses + 'OR  (Alternate_Email__c IN : alternateEmailList OR Email IN: alternateEmailList ) ';
                 else
-                    whereClauses = whereClauses + ' (Alternate_Email__c IN : alternateEmailList) ';
+                    whereClauses = whereClauses + ' (Alternate_Email__c IN : alternateEmailList OR Email IN: alternateEmailList) ';
                 //whereClauses.add(' AND Alternate_Email__c IN : alternateEmailSet');
+
+                if (!string.isBlank(whereClausesForOpp) && whereClausesForOpp.length() > 2) {
+                    whereClausesForOpp = whereClausesForOpp + 'OR ( Alternate_Email__c IN : alternateEmailList OR Email IN: alternateEmailList ) ';
+                }else {
+                    whereClausesForOpp = whereClausesForOpp + ' ( Alternate_Email__c IN : alternateEmailList OR Email IN: alternateEmailList) ';
+                }
             }
             if (!phoneList.isEmpty()) {
                 System.debug(' string.isBlank(whereClauses) ====> ' +string.isBlank(whereClauses));
                 if(!string.isBlank(whereClauses) && whereClauses.length() > 2)
-                    whereClauses = whereClauses + 'OR  (Phone Like : phoneList) ';
+                    whereClauses = whereClauses + 'OR  (Phone LIKE : phoneList  OR Phone LIKE : alternatePhoneList) ';
                 else                       
-                    whereClauses = whereClauses + ' (Phone Like : phoneList) ';
+                    whereClauses = whereClauses + ' (Phone LIKE : phoneList OR Phone LIKE : alternatePhoneList) ';
                 
                 //whereClauses.add('AND (Phone IN : phoneSet');
+
+                if (!string.isBlank(whereClausesForOpp) && whereClausesForOpp.length() > 2) {
+                    whereClausesForOpp = whereClausesForOpp + ' OR ( Phone__c LIKE : phoneList OR Phone__c LIKE : alternatePhoneList) ';
+                }else {
+                    whereClausesForOpp = whereClausesForOpp + '( Phone__c  LIKE : phoneList OR Phone__c LIKE : alternatePhoneList) ';
+                }
             }
             if (!alternatePhoneList.isEmpty()) {
                 System.debug(' string.isBlank(whereClauses) ====> ' +string.isBlank(whereClauses));
                 if(!string.isBlank(whereClauses) && whereClauses.length() > 2)
-                    whereClauses = whereClauses + 'OR  (Alternate_Phone__c Like : alternatePhoneList) ';
+                    whereClauses = whereClauses + 'OR  (Alternate_Phone__c LIKE : alternatePhoneList OR Alternate_Phone__c LIKE: phoneList ) ';
                 else
-                    whereClauses = whereClauses + ' (Alternate_Phone__c Like : alternatePhoneList) ';
+                    whereClauses = whereClauses + ' (Alternate_Phone__c LIKE : alternatePhoneList OR Alternate_Phone__c LIKE: phoneList) ';
                 //whereClauses.add('Alternate_Phone__c IN : alternatePhoneSet');
+
+                if (!string.isBlank(whereClausesForOpp) && whereClausesForOpp.length() > 2) {
+                    whereClausesForOpp = whereClausesForOpp + ' OR ( Alternate_Phone__c LIKE : alternatePhoneList OR Alternate_Phone__c LIKE: phoneList) ';
+                    
+                }else {
+                    whereClausesForOpp = whereClausesForOpp + ' ( Alternate_Phone__c LIKE : alternatePhoneList OR Alternate_Phone__c LIKE: phoneList) ';
+                }
             }
             
             system.debug('whereClauses'+whereClauses);   
@@ -154,9 +194,17 @@ public without sharing class LeadTriggerHandler{
                 duplicateExistingLeadList = Database.query(queryStringForNonConvertedLead);
                 duplicateConvertedLeadList = Database.query(queryStringForConvertedLead);
             }
+            system.debug('whereClausesForOpp   ====> ' +whereClausesForOpp);
+            system.debug('whereClausesForOpp  length ====> ' +whereClausesForOpp.length());  
+            if (whereClausesForOpp.length() >2 ) {
+                queryStringforOpportunityLead = queryStringforOpportunityLead + ' Where ' + whereClausesForOpp + ' ) ORDER BY CreatedDate DESC LIMIT 1';
+                System.debug('queryStringforOpportunityLead ===> ' + queryStringforOpportunityLead);
+                OpportunityExistingList = Database.query(queryStringforOpportunityLead);
+            }
             
             System.debug('queryStringForNonConvertedLead ====> ' + queryStringForNonConvertedLead);
             System.debug('queryStringForConvertedLead =====> ' + queryStringForConvertedLead);
+            System.debug('OpportunityExistingList ====> ' + OpportunityExistingList);
             
             if(!duplicateExistingLeadList.isEmpty()){
                 for(Lead leadrec : duplicateExistingLeadList){
@@ -205,6 +253,33 @@ public without sharing class LeadTriggerHandler{
                         }
                     }
                 }
+            }
+
+            if (!OpportunityExistingList.isEmpty()) {
+                for (Opportunity opp : OpportunityExistingList) {
+                    if(!string.isEmpty(opp.Email__c)){
+                        if(!ExistingOppByEmail.ContainsKey(opp.Email__c)){
+                            ExistingOppByEmail.put(opp.Email__c,opp);
+                        }
+                    }
+                    if(!string.isEmpty(opp.Alternate_Email__c)){
+                        if(!ExistingOppByAlternateEmail.ContainsKey(opp.Alternate_Email__c)){
+                            ExistingOppByAlternateEmail.put(opp.Alternate_Email__c,opp);
+                        }
+                    }
+                    if(!string.isEmpty(opp.Phone__c)){
+                        if(!ExistingOppByPhone.ContainsKey(opp.Phone__c)){
+                            ExistingOppByPhone.put(opp.Phone__c,opp);
+                        }
+                    }
+                    if(!string.isEmpty(opp.Alternate_Phone__c)){
+                        if(!ExistingOppByAlternatePhone.ContainsKey(opp.Alternate_Phone__c)){
+                            ExistingOppByAlternatePhone.put(opp.Alternate_Phone__c,opp);
+                        }
+                    }
+                    
+                }
+                
             }
             
             System.debug('existingLeadByEmail ====> ' + existingLeadByEmail);
@@ -372,7 +447,84 @@ public without sharing class LeadTriggerHandler{
                         //applicationListToInsert.add(Utility.returnApplicationInstance(accountId, course));
                     }
                 }
-                if (leadRec.LeadSource == 'Reference' || leadRec.Lead_Gen_Path__c == 'Reference' || leadRec.To_Be_Deleted__c == true){
+
+                System.debug('leadRec.Email ====> ' + leadRec.Email);
+                System.debug('leadRec.Alternate_Email__c ====> ' + leadRec.Alternate_Email__c);
+                System.debug('leadRec.Phone ====> ' + leadRec.Phone);
+                System.debug('leadRec.Alternate_Phone__c ====> ' + leadRec.Alternate_Phone__c);
+
+                DateTime Currentdate = System.now();
+                Datetime onemonthdatetime = System.now().addMonths(1);
+                if (!OpportunityExistingList.isEmpty()) {
+                    if (ExistingOppByEmail.containsKey(leadRec.Email)) {
+                        if (ExistingOppByEmail.get(leadRec.Email).Stagename != Constants.OPP_STAGENAME_CLOSE_LOST) {
+                            leadRec.To_Be_Deleted__c = true;  
+                        }
+                        else if(ExistingOppByEmail.get(leadRec.Email).Stagename == Constants.OPP_STAGENAME_CLOSE_LOST){
+                            if (ExistingOppByEmail.get(leadRec.Email).createdDate < onemonthdatetime ) {
+                                leadRec.ownerId = ExistingOppByEmail.get(leadRec.Email).ownerId;
+                                leadRec.Is_Lead_Assigned_to_User__c = true;
+                                leadRec.Next_follow_up_date_time__c = system.now().addHours(2);
+                                
+                            }
+                            else if (ExistingOppByEmail.get(leadRec.Email).createdDate > onemonthdatetime) {
+                                leadRec.ownerId = constants.queueId;
+                            }
+                        }
+                    }
+                    if (ExistingOppByAlternateEmail.containsKey(leadRec.Alternate_Email__c)) {
+                        if (ExistingOppByAlternateEmail.get(leadRec.Alternate_Email__c).Stagename != Constants.OPP_STAGENAME_CLOSE_LOST) {
+                            leadRec.To_Be_Deleted__c = true;  
+                        }
+                        else if(ExistingOppByAlternateEmail.get(leadRec.Alternate_Email__c).Stagename == Constants.OPP_STAGENAME_CLOSE_LOST){
+                            if (ExistingOppByAlternateEmail.get(leadRec.Alternate_Email__c).createdDate < onemonthdatetime ) {
+                                leadRec.ownerId = ExistingOppByAlternateEmail.get(leadRec.Alternate_Email__c).ownerId;
+                                leadRec.Is_Lead_Assigned_to_User__c = true;
+                                leadRec.Next_follow_up_date_time__c = system.now().addHours(2);
+                                
+                            }
+                            else if (ExistingOppByAlternateEmail.get(leadRec.Alternate_Email__c).createdDate > onemonthdatetime) {
+                                leadRec.ownerId = constants.queueId;
+                            }
+                        }
+                    }
+                    if (ExistingOppByPhone.containsKey(leadRec.Phone)) {
+                        if (ExistingOppByPhone.get(leadRec.Phone).Stagename != Constants.OPP_STAGENAME_CLOSE_LOST) {
+                            leadRec.To_Be_Deleted__c = true;  
+                        }
+                        else if(ExistingOppByPhone.get(leadRec.Phone).Stagename == Constants.OPP_STAGENAME_CLOSE_LOST){
+                            if (ExistingOppByPhone.get(leadRec.Phone).createdDate < onemonthdatetime ) {
+                                leadRec.ownerId = ExistingOppByPhone.get('+' + leadRec.Phone).ownerId;
+                                leadRec.Is_Lead_Assigned_to_User__c = true;
+                                leadRec.Next_follow_up_date_time__c = system.now().addHours(2);
+                                
+                            }
+                            if (ExistingOppByPhone.get(leadRec.Phone).createdDate > onemonthdatetime) {
+                                leadRec.ownerId = constants.queueId;
+                            }
+                        }
+                    }
+                    if (ExistingOppByAlternatePhone.containsKey(leadRec.Alternate_Phone__c)) {
+                        if (ExistingOppByAlternatePhone.get(leadRec.Alternate_Phone__c).Stagename != Constants.OPP_STAGENAME_CLOSE_LOST) {
+                            leadRec.To_Be_Deleted__c = true;  
+                        }
+                        else if(ExistingOppByAlternatePhone.get( leadRec.Alternate_Phone__c).Stagename == Constants.OPP_STAGENAME_CLOSE_LOST){
+                            if (ExistingOppByAlternatePhone.get(leadRec.Alternate_Phone__c).createdDate < onemonthdatetime ) {
+                                leadRec.ownerId = ExistingOppByAlternatePhone.get( leadRec.Alternate_Phone__c).ownerId;
+                                leadRec.Is_Lead_Assigned_to_User__c = true;
+                                leadRec.Next_follow_up_date_time__c = system.now().addHours(2);
+                            }
+                            if (ExistingOppByAlternatePhone.get(leadRec.Alternate_Phone__c).createdDate > onemonthdatetime) {
+                                leadRec.ownerId = constants.queueId;
+                            }
+                        }
+                    }
+
+                    
+                }
+                if (leadRec.LeadSource == 'Reference' || leadRec.Lead_Gen_Path__c == 'Reference' ){
+                    leadRec.Is_Lead_Assigned_to_User__c = true;
+                    leadRec.Next_follow_up_date_time__c = system.now().addHours(2);
                     //asign lead to creator
                 }else if ( (leadRec.Lead_Generation_Method__c == 'Voice Form' || leadRec.Lead_Generation_Method__c == 'Chat Form' || (leadRec.Lead_Generation_Method__c == 'Generic Form' && leadRec.Is_User_Assigned__c == 'Not-Assigned' ) || (leadRec.Lead_Generation_Method__c == 'Walk-in Form' && leadRec.Is_User_Assigned__c == 'Not-Assigned' ) )){
                     system.debug('Owner is Queue');
@@ -380,6 +532,10 @@ public without sharing class LeadTriggerHandler{
                     leadRec.OwnerId = constants.queueId;
                 }else if ((leadRec.Lead_Generation_Method__c == 'Generic Form' && leadRec.Is_User_Assigned__c == 'Assigned' ) || (leadRec.Lead_Generation_Method__c == 'Walk-in Form' && leadRec.Is_User_Assigned__c == 'Assigned' )) {
                     leadRec.Is_Lead_Assigned_to_User__c = true;
+                    leadRec.Next_follow_up_date_time__c = system.now().addHours(2);
+                }
+                else if (leadRec.To_Be_Deleted__c == true) {
+                    
                 }
                 else{
                     leadRec.Is_Lead_Assigned_to_User__c = false;
@@ -552,8 +708,8 @@ public without sharing class LeadTriggerHandler{
                  if(ld.status != oldLeadMap.get(ld.Id).status && (ld.Status == 'Request a Call Back') ){
                     dateTime currentDateTime = system.now();
                     dateTime postThreeDay = system.now().addDays(3);
-                    if(ld.Next_follow_up_date_time__c == null || ld.Next_follow_up_date_time__c < postThreeDay){
-                        ld.Next_follow_up_date_time__c.addError('Follow up date should be > 3 days to park it in Request a Call Back Stage');
+                    if(ld.Next_follow_up_date_time__c == null || ld.Next_follow_up_date_time__c > postThreeDay){
+                        ld.Next_follow_up_date_time__c.addError('Follow up date should be less than 3 days to park it in Request a Call Back Stage');
                     }
                 }
                 if(ld.Alternate_Email__c != oldLeadMap.get(ld.Id).Alternate_Email__c && ld.Alternate_Email__c != null){
@@ -576,7 +732,40 @@ public without sharing class LeadTriggerHandler{
                             ld.Alternate_Phone__c.addError('Other Leads exists with Same Phone No.');
                         }
                     }
-                }                
+                }  
+                if(ld.Next_follow_up_date_time__c != oldLeadMap.get(ld.Id).Next_follow_up_date_time__c && ld.Next_follow_up_date_time__c != null && ld.status == 'In Conversation'){
+                    dateTime currentDateTime = system.now();
+                    dateTime postThirtyDays = system.now().addDays(30);
+                    if(ld.Next_follow_up_date_time__c > postThirtyDays){
+                        ld.Next_follow_up_date_time__c.addError('Next Followup Date cannot be more than 30 days!!');
+                    }
+                }
+                if(ld.Next_follow_up_date_time__c != oldLeadMap.get(ld.Id).Next_follow_up_date_time__c && ld.Next_follow_up_date_time__c != null && ld.status == 'On Hold'){
+                    dateTime currentDateTime = system.now();
+                    dateTime postOneMonth = system.now().addMonths(1);
+                    dateTime postThreeMonth = system.now().addMonths(3);
+                    if(ld.Next_follow_up_date_time__c < postOneMonth || ld.Next_follow_up_date_time__c > postThreeMonth){
+                        ld.Next_follow_up_date_time__c.addError('Next Followup Date should be greater than 1 month & less than 3 months!');
+                    }
+                }
+                if(ld.Next_follow_up_date_time__c != oldLeadMap.get(ld.Id).Next_follow_up_date_time__c && ld.Next_follow_up_date_time__c != null && ld.status == 'ATC'){
+                    dateTime currentDateTime = system.now();
+                    dateTime postFiveDays = system.now().addDays(5);
+                    if(ld.Next_follow_up_date_time__c > postFiveDays){
+                        ld.Next_follow_up_date_time__c.addError('Next Followup Date cannot be more than 5 days!!');
+                    }
+                }
+                if(ld.Next_follow_up_date_time__c != oldLeadMap.get(ld.Id).Next_follow_up_date_time__c && ld.Next_follow_up_date_time__c != null){
+                    dateTime currentDateTime = system.now();
+                    dateTime postOneMonth = system.now().addMonths(1);
+                    dateTime postThreeMonth = system.now().addMonths(3);
+                    if(ld.Next_follow_up_date_time__c > postOneMonth && ld.Next_follow_up_date_time__c < postThreeMonth){
+                        ld.status = Constants.OPP_STAGENAME_ON_HOLD;
+                    }
+                    if(ld.Next_follow_up_date_time__c > postThreeMonth){
+                        ld.status = Constants.OPP_STAGENAME_DEFERRED;
+                    }
+                }
             }
             
             

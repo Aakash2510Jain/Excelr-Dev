@@ -105,8 +105,12 @@ public without sharing class Utility{
         if(!userRoleToParentRoleMap.isEmpty()) {
             List<User> userList = [SELECT Id, UserRoleId FROM User WHERE UserRoleId IN :userRoleToParentRoleMap.values()];
             for(User usr: userList) {
-                if(!roleIdToParentIdMap.containsKey(usr.UserRoleId))
-                    roleIdToParentIdMap.put(usr.UserRoleId, usr.Id);
+                if(!roleIdToParentIdMap.containsKey(usr.UserRoleId)){
+                    if (usr.UserRoleId != null) {
+                        roleIdToParentIdMap.put(usr.UserRoleId, usr.Id);                        
+                    }
+                }
+                    
             }
         }
         system.debug('roleIdToParentIdMap -- ' + roleIdToParentIdMap);
@@ -566,12 +570,12 @@ public without sharing class Utility{
         return customerRec;
     }
 
-    public static void SendPaymentLinkToISM(String RecId, String PaymentUrl, map<String,Object> NotesMap){
+    public static void SendPaymentLinkToISM(String RecId, String PaymentUrl){
 
         string ISMEmail, ISMName,LeadName ;
         try {
-            if ((String.valueOf(NotesMap.get('policy_name')) != null || RecId != null )) {
-                Invoice__c iv = ccAvenueLwcController.getInvoice(recId);
+            if ( RecId != null ) {
+                Invoice__c iv = ccAvenueLwcController.getInvoice(RecId);
     
                 if (iv.Opportunity__c!=null) {
                     ISMEmail = iv.Opportunity__r.Account.owner.Email;
@@ -605,17 +609,79 @@ public without sharing class Utility{
                 Messaging.SingleEmailMessage EmailMessage = new Messaging.SingleEmailMessage();
                 EmailMessage.setBccAddresses(new String[]{ISMEmail});
                 EmailMessage.subject = 'RazorPay Payment Link';
-                EmailMessage.plainTextBody = Emailbody;
+                EmailMessage.HtmlBody = Emailbody;
                 EmailMessage.setTemplateId(eTemplate.Id);
                 Messaging.sendEmail(new Messaging.SingleEmailMessage[]{EmailMessage});
     
             }
             
         } catch (Exception e) {
+            System.debug('The error has occured due to ====> ' + e.getMessage());
+            System.debug('The error has occured at ====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('Utility','SendPaymentLinkToISM', e, null);
+            
             
         }
-        
+    }
 
+    public static void SendSuccessOrFailureEmailToISM(String RecId, string PaymentStatus){
+
+        string ISMEmail, ISMName,LeadName, EmailSubject ;
+
+        EmailTemplate eTemplate = new EmailTemplate();
+        try {
+            if (RecId != null ) {
+                Invoice__c iv = ccAvenueLwcController.getInvoice(recId);
+    
+                if (iv.Opportunity__c!=null) {
+                    ISMEmail = iv.Opportunity__r.Account.owner.Email;
+                    ISMName = iv.Opportunity__r.Account.owner.Name;
+                    LeadName = iv.Opportunity__r.Account.Name;
+                }
+                else if(iv.LeadInvoice__c!=null){
+                    ISMEmail = iv.LeadInvoice__r.owner.Email;
+                    ISMName = iv.LeadInvoice__r.owner.Name;
+                    LeadName = iv.LeadInvoice__r.Name;
+                }
+
+                if (PaymentStatus == Constants.PAYMENT_STATUS_SUCCESS) {
+                    eTemplate = [Select id,HtmlValue, body from EmailTemplate where name = 'Payment Success To ISM'];  
+                    EmailSubject = Constants.PAYMENT_STATUS_PAYMENT_DONE;                
+                }
+                if (PaymentStatus == Constants.PAYMENT_STATUS_FAILURE) {
+                    eTemplate = [Select id,HtmlValue, body from EmailTemplate where name = 'Payment Failure To ISM']; 
+                    EmailSubject = Constants.PAYMENT_STATUS_PAYMENT_FAILED; 
+                }
+                
+
+                String Emailbody = eTemplate.HtmlValue;
+                if (Emailbody != Null) {
+                    if ((Emailbody).contains('{!Ism}')) {
+                        Emailbody   = Emailbody.replace('{!Ism}', ISMName);                 
+                    }
+                    if ((Emailbody).contains('{!Leadname}')) {
+                        Emailbody   = Emailbody.replace('{!Leadname}', LeadName);   
+                        
+                    }
+                }
+                System.debug('Emailbody ====> ' + Emailbody);
+    
+                Messaging.SingleEmailMessage EmailMessage = new Messaging.SingleEmailMessage();
+                EmailMessage.setBccAddresses(new String[]{ISMEmail});
+                EmailMessage.subject = EmailSubject;
+                EmailMessage.HtmlBody = Emailbody;
+                EmailMessage.setTemplateId(eTemplate.Id);
+                Messaging.sendEmail(new Messaging.SingleEmailMessage[]{EmailMessage});
+    
+            }
+            
+        } catch (Exception e) {
+            System.debug('The error has occured due to ====> ' + e.getMessage());
+            System.debug('The error has occured at ====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('Utility','SendSuccessOrFailureEmailToISM', e, null);
+            
+        }
 
     }
+
 }

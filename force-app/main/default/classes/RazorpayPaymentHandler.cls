@@ -78,7 +78,9 @@ public with sharing class RazorpayPaymentHandler {
     
     
     
-    public static String initateRazorpayPament(String recId){
+    public static String initateRazorpayPament(String recId, long expirydateString){
+
+        System.debug(' expirydateString ===> ' + expirydateString);
         try{
             Invoice__c iv = [Select Id,Name,Amount__c,Opportunity__c,Opportunity__r.Email__c,Opportunity__r.Phone__c,Opportunity__r.Account.Name,Opportunity__r.Account.Email__c,Opportunity__r.Account.Phone,LeadInvoice__c,LeadInvoice__r.Name,LeadInvoice__r.Phone,LeadInvoice__r.Email From Invoice__c Where Id=:recId];
             
@@ -115,7 +117,7 @@ public with sharing class RazorpayPaymentHandler {
             if(amount==null) return 'Amount is empty';
             
             
-            razorpayPaymentHandler(triggeredRecordId,name,contact,email,amount,objName);
+            razorpayPaymentHandler(triggeredRecordId,name,contact,email,amount,objName, recId, expirydateString);
             
             return 'Success';
         } catch (Exception e){
@@ -127,13 +129,16 @@ public with sharing class RazorpayPaymentHandler {
     
     
     @future(callout=true)
-    public static void razorpayPaymentHandler(String recId, String name,String contact, String email, Decimal amount,String objName){
+    public static void razorpayPaymentHandler(String recId, String name,String contact, String email, Decimal amount,String objName, string invrecID, Long expirydateString){
+        System.debug(' expirydateString ===> ' + expirydateString);
         try {
             
-            RazorpayRequestJSON razorpayRequestJSON = new RazorpayRequestJSON();
+            razorpayRequestJSON razorpayRequestJSON = new RazorpayRequestJSON();
             
             razorpayRequestJSON.amount = amount;
             razorpayRequestJSON.first_min_partial_amount = amount;
+            razorpayRequestJSON.expire_by = expirydateString;  //"expire_by": 1691097057,  "expired_at": 0,
+           
             razorpayRequestJSON.setCustomer(name,contact,email);
             razorpayRequestJSON.setNotes(recId,objName);
             
@@ -151,16 +156,17 @@ public with sharing class RazorpayPaymentHandler {
             req.setBody(body);
             
             HTTPResponse res = http.send(req);
+            System.debug('res ===> ' + res);
             Map<String,Object> jsonBody = (Map<String,Object>) Json.deserializeUntyped(res.getBody());
             
-            System.debug('RESPPPP'+jsonBody);
+            System.debug('RESPPPP ====> '+jsonBody);
             //
             string PaymentUrl = String.valueof(jsonBody.get('short_url'));
             System.debug('PaymentUrl ======> '+ PaymentUrl);
-            map<String,Object> NotesMap = (Map<String,Object>)jsonBody.get('Notes');
+            //map<String,Object> NotesMap = (Map<String,Object>)jsonBody.get('Notes');
 
-            if (PaymentUrl != null) {
-                Utility.SendPaymentLinkToISM( RecId, PaymentUrl, NotesMap);
+            if (PaymentUrl != null && invrecID != null ) {
+                Utility.SendPaymentLinkToISM( invrecID, PaymentUrl);
                 
             }
             

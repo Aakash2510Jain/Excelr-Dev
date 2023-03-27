@@ -30,7 +30,7 @@
                     <template if:true={notMatch}>
                         <h1 style="color: red;">Account Number Does Not Match</h1>
                     </template>
-                    <lightning-input label="Confirm Banl Account Number"  onchange={ConAccountHandler} style="margin-top:8px;" value={ConfirmbankAccountNumer} type="number" name="confirmBank" oncontextmenu={handleContext} onpaste={handlePaste}></lightning-input>
+                    <lightning-input label="Confirm Bank Account Number"  onchange={ConAccountHandler} style="margin-top:8px;" value={ConfirmbankAccountNumer} type="number" name="confirmBank" oncontextmenu={handleContext} onpaste={handlePaste}></lightning-input>
                     <lightning-input label="Bank Name"  onchange={bankNameHandler} style="margin-top:8px;" value={bankName}></lightning-input>
                     <lightning-input label="IFSC CODE"  onchange={ifseHandler} style="margin-top:8px;" value={ifseCode}></lightning-input>
                     <lightning-input label="Email"  onchange={emailHandler} style="margin-top:8px;" value={Email}></lightning-input>
@@ -39,10 +39,19 @@
                 </div>   
             </div>
             <br/>
-            
-            <!-- div class="slds-size_2-of-6 slds-align_absolute-center" slot="footer"> 
-                <lightning-button title="Save" label="Submit" onclick={savebankDetailBTN}   variant="brand" style="margin-top:8px ;"></lightning-button>
-            </div --> 
+            <template:if if:true={ShowChequeResume}>
+                <div class="slds-align_absolute-center">
+                    <lightning-input type="file" 
+                accept=".xlsx, .xls, .csv, .png, .doc, .docx, .pdf"
+                label="Upload the Cancelled Cheque" onchange={openfileUpload}></lightning-input>
+
+                <template if:true={fileData}>
+                    <p  style="padding-left:5px;" >{fileData.filename}</p>
+                </template>
+
+                </div>
+                
+        </template:if>
         </lightning-card>
     </div>
     <lightning-modal-footer class="my-modal-footer">

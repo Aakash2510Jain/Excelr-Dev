@@ -88,22 +88,38 @@ public with sharing class Opportunitytriggerhandler{
 
         try {
             for (Opportunity Opp : newOppMap.values()) {
-                if (opp.StageName != oldOppMap.get(opp.Id).StageName && opp.StageName == 'On Hold') {
+                if (opp.StageName != oldOppMap.get(opp.Id).StageName && opp.StageName == Constants.OPP_STAGENAME_ON_HOLD) {
                     dateTime currentDateTime = system.now();
                     dateTime postOneMonth = system.now().addMonths(1);
                     dateTime postThreeMonth = system.now().addMonths(3);
                     if(opp.Next_follow_up_date_time__c < postOneMonth || Opp.Next_follow_up_date_time__c > postThreeMonth){
-                        Opp.Next_follow_up_date_time__c.addError('Follow up date should be > 1 month & < 3 month to park it in On Hold Stage');
+                        Opp.Next_follow_up_date_time__c.addError('Follow up date should be greater tham=n 1 month & less than 3 month to park it in On Hold Stage');
                     }
                 }
-                if(opp.StageName != oldOppMap.get(Opp.Id).StageName && (Opp.StageName ==  'Deferred') ){
+                if(opp.StageName != oldOppMap.get(Opp.Id).StageName && (Opp.StageName ==  Constants.OPP_STAGENAME_DEFERRED) ){
                     dateTime currentDateTime = system.now();
                     dateTime postThreeMonth = system.now().addMonths(3);
                     if(opp.Next_follow_up_date_time__c < postThreeMonth){
-                        opp.Next_follow_up_date_time__c.addError('Follow up date should be > 3 month to park it in Deferred Stage');
+                        opp.Next_follow_up_date_time__c.addError('Follow up date should be greater than 3 month to park it in Deferred Stage');
                     }
                 }
-                
+                if(opp.Alternate_Email__c != oldOppMap.get(Opp.Id).Alternate_Email__c && opp.Alternate_Email__c != null){
+                    List<Opportunity> OpportunityList = [Select Id From Opportunity where Email__c =:opp.Alternate_Email__c or Alternate_Email__c =:opp.Alternate_Email__c limit 1];
+                    if(!OpportunityList.isEMpty()){
+                        opp.Alternate_Email__c.addError('Duplicate Email Found.');
+                    }
+                }
+                if(opp.Next_follow_up_date_time__c != oldOppMap.get(Opp.Id).Next_follow_up_date_time__c && opp.Next_follow_up_date_time__c != null){
+                    dateTime currentDateTime = system.now();
+                    dateTime postOneMonth = system.now().addMonths(1);
+                    dateTime postThreeMonth = system.now().addMonths(3);
+                    if(opp.Next_follow_up_date_time__c > postOneMonth && Opp.Next_follow_up_date_time__c < postThreeMonth){
+                        opp.StageName = Constants.OPP_STAGENAME_ON_HOLD;
+                    }
+                    if(opp.Next_follow_up_date_time__c > postThreeMonth){
+                        opp.StageName = Constants.OPP_STAGENAME_DEFERRED;
+                    }
+                }
             }
             
         } catch (Exception e) {

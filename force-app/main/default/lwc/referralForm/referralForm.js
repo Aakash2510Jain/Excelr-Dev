@@ -466,13 +466,14 @@ export default class ReferralForm extends LightningElement {
                     this.handleSpinner();
 
                 }
-                else if (data == 'lead is already existing with Other person') {
+                else if (data == 'Lead is already existing with Other person') {
                     this.handleAlert(data);
                     this.HandleLeadCreatedisable = false;
                     this.handleSpinner();
 
                 }
                 else if (data == 'FAIL') {
+                    this.handleAlert('Please Provide Correct Data!!!!');
                     this.handleSpinner();
                     this.HandleLeadCreatedisable = false;
                 }
@@ -506,7 +507,8 @@ export default class ReferralForm extends LightningElement {
     }
 
     handleCorrectPhone(PhoneToverify) {
-        var regExpPhoneformat = /^[0-9]{1,10}$/g;
+        //var regExpPhoneformat = /^[0-9]{1,10}$/g;
+        var regExpPhoneformat = /^\d{10}$/;
         if (PhoneToverify.match(regExpPhoneformat)) {
             return true;
         }

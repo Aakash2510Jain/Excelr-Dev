@@ -177,9 +177,11 @@ export default class WaklInLead extends LightningElement {
             this.dataForApp = data;
             console.log(this.dataForApp);
             this.columns = applicationcolumns;
+            this.isLoadedApplication = false;
 
             if (Array.isArray(this.dataForApp.data)) {
                 if (this.dataForApp.data.length > 0) {
+
                     //this.appbtndisAble = false;
 
                 }
@@ -194,6 +196,7 @@ export default class WaklInLead extends LightningElement {
         // }
         if (error) {
             this.ifdataNotFound = true;
+            this.isLoadedApplication = false;
 
         }
 
@@ -409,6 +412,7 @@ export default class WaklInLead extends LightningElement {
     search(event){
         debugger;
         let value=event.target.value;
+        this.selectedresultValue = event.target.value;
 
         let TempValue;
         if(value){
@@ -698,7 +702,8 @@ export default class WaklInLead extends LightningElement {
     
 
     handleCorrectPhone(PhoneToverify){
-        var regExpPhoneformat = /^[0-9]{1,10}$/g;
+        //var regExpPhoneformat = /^[0-9]{1,10}$/g;
+        var regExpPhoneformat = /^\d{10}$/;
         if (PhoneToverify.match(regExpPhoneformat)) {
             return true;
         }
@@ -766,6 +771,7 @@ export default class WaklInLead extends LightningElement {
     @track HandleLeadCreatedisable = false;
 
     createNewLead() {
+        debugger;
 
         
         this.LeadTobeCreated.ExcelR_Training_User__c = this.agentrecid;
@@ -1009,10 +1015,13 @@ export default class WaklInLead extends LightningElement {
     @track isLoadedApplication = false;
 
     createapplicationForm() {
-        this.HandleCreateDisable = true;
-        debugger;
-        this.isLoadedApplication = true;
-        createApplication({ Course: this.courseforApp, LeadId: this.recordId })
+       
+
+        if (this.courseforApp != null && this.courseforApp != '' && this.courseforApp != undefined ){
+            this.HandleCreateDisable = true;
+            debugger;
+            this.isLoadedApplication = true;
+            createApplication({ Course: this.courseforApp, LeadId: this.recordId })
             .then(data => {
                 debugger;
 
@@ -1021,6 +1030,7 @@ export default class WaklInLead extends LightningElement {
                 this.handleConfirm('Application Created Successfully');
                 this.isLoadedApplication = false;
                 this.appbtndisAble = true;
+                this.courseforApp = '';
                 refreshApex(this.dataForApp);
 
 
@@ -1033,8 +1043,13 @@ export default class WaklInLead extends LightningElement {
                 this.handleAlert('Error updating or reloading records');
             })
 
-
-
+        }
+        else{
+            alert('Course is Empty. Please Provide Course');
+            this.HandleCreateDisable = false;
+            this.isLoadedApplication = false;
+            //this.handleClick();
+        }
     }
 
 

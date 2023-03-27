@@ -7,6 +7,7 @@ global without sharing class RazorpayWebhookHandler{
             RestResponse res = RestContext.response;
             
             String body = req.requestBody.toString();
+            System.debug('body =====> ' + body);
             
             Map<String, Object> m = (Map<String, Object>)JSON.deserializeUntyped(body);
             Map<String, Object> m2 = (Map<String, Object>)m.get('payload');
@@ -29,7 +30,8 @@ global without sharing class RazorpayWebhookHandler{
                     
                     Utility.ApprovalWrapper approvalParentIdWrapper = Utility.getParentUserMap();
                     
-                    Invoice__c invoiceRec = [Select Id, Status__c,LeadInvoice__c,LeadInvoice__r.Owner.UserRoleId,Lead_ManagerId__c,Opportunity__c,Opportunity__r.Owner.UserRoleId
+                    Invoice__c invoiceRec = [Select Id, Status__c,LeadInvoice__c,LeadInvoice__r.Owner.UserRoleId,Lead_ManagerId__c,Opportunity__c,Opportunity__r.Owner.UserRoleId,
+                                            LeadInvoice__r.Owner.Name, LeadInvoice__r.Owner.Email, Opportunity__r.Owner.Email, Opportunity__r.Owner.Name
                                              From Invoice__c
                                              Where Opportunity__c = :recId
                                              ORDER BY CreatedDate DESC
@@ -47,11 +49,27 @@ global without sharing class RazorpayWebhookHandler{
                                 System.debug('Error returned: ' + err.getStatusCode() +' - ' + err.getMessage());
                             }
                         }
+                        System.debug('m.containsKey(created_at) =====> ' +  m.containsKey('created_at'));
+                        // if (m.containsKey('created_at')) {
+                        //     string strunixtime = String.valueof(m.get('created_at'));
+                        //     Long longUnixTimeStamp = Long.valueOf( strunixtime );
+                        //     System.debug ( 'DateTime.newInstance( longUnixTimeStamp ) ====> ' +longUnixTimeStamp );
+                        //     invoiceRec.Payment_Realized_Date_Time__c = DateTime.newInstance( longUnixTimeStamp );
+                        // }
+                        invoiceRec.Payment_Realized_Date_Time__c = System.now();
+                        System.debug('invoiceRec =====> ' + invoiceRec);
                         update invoiceRec;
+
+                        if (invoiceRec.id != null) {
+                            Utility.SendSuccessOrFailureEmailToISM(invoiceRec.id, Constants.PAYMENT_STATUS_SUCCESS);
+                        }
                     }else if (m4.get('captured') == false){
                         invoiceRec.Status__c = 'Not realized';
+                        Utility.SendSuccessOrFailureEmailToISM(invoiceRec.id, Constants.PAYMENT_STATUS_FAILURE);
                     }
                 }
+                
+                
             }
             return 'Success';
         } catch (Exception e){

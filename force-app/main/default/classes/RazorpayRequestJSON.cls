@@ -10,11 +10,13 @@ public with sharing class RazorpayRequestJSON {
     Boolean accept_partial = true;
     Boolean reminder_enable = true;
     
-    Long expire_by = 1691097057;
+    public Long expire_by = 1691097057;
+    //public Long expired_at;
     
     public Customer customer;
     public Notify notify = new Notify();
     public Notes notes;
+      //"expire_by": 1691097057,  "expired_at": 0,
 
     public class Customer{
         public String name;

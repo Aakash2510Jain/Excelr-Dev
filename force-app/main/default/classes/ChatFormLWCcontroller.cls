@@ -26,6 +26,8 @@ public without sharing class ChatFormLWCcontroller{
     @AuraEnabled
     public static string createLead(Lead Leadrec, String countrycode, string countrycodealternate,string mediumValue,string city){
         string message = '';
+        List<Opportunity> OpportunityList = new List<Opportunity>();
+        List<Account> accList = new List<Account>();
         try{
             System.debug('LeadTobeCreated =======> ' + Leadrec);
             System.debug('countrycode =======> ' + countrycode);
@@ -44,7 +46,7 @@ public without sharing class ChatFormLWCcontroller{
             }
             if(city!=null){
                 Leadrec.City__c=city;
-            }
+            }                            
             Leadrec.Lead_Generation_Method__c = 'Chat Form';
             leadRec.Company = Leadrec.Lastname;
             

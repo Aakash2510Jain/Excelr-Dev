@@ -2,15 +2,15 @@ import { LightningElement, api, wire, track } from 'lwc';
 import ShowOppAmount from '@salesforce/apex/PaymentOnOpportunityApexController.ShowOppAmount';
 import { CloseActionScreenEvent } from 'lightning/actions';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import ShowAmount from '@salesforce/apex/PaymentOnOpportunityApexController.ShowAmount';
+//import ShowAmount from '@salesforce/apex/PaymentOnOpportunityApexController.ShowAmount';
 import ShowNbfcPartners from '@salesforce/apex/PaymentOnOpportunityApexController.ShowNbfcPartners';
 //import CreateOppLineItem from '@salesforce/apex/PaymentOnOpportunityApexController.CreateOppLineItem';
 import OppUpdateOnFullLoan from '@salesforce/apex/PaymentOnOpportunityApexController.OppUpdateOnFullLoan';
 import OppUpdateOnPartialLoan from '@salesforce/apex/PaymentOnOpportunityApexController.OppUpdateOnPartialLoan';
 
-import { getObjectInfo } from 'lightning/uiObjectInfoApi';
+//import { getObjectInfo } from 'lightning/uiObjectInfoApi';
 //import { getPicklistValues } from 'lightning/uiObjectInfoApi';
-import OPP_OBJECT from '@salesforce/schema/Opportunity';
+//import OPP_OBJECT from '@salesforce/schema/Opportunity';
 //import PAYMENT_FIELD from '@salesforce/schema/Opportunity.Payment_Mode__c';
 import ShowPriceIncludingGST from '@salesforce/apex/PaymentOnOpportunityApexController.ShowPriceIncludingGST';
 //import CreateInvoice from '@salesforce/apex/PaymentOnOpportunityApexController.CreateInvoice';
@@ -44,12 +44,22 @@ export default class PaymentOnOpportunity extends LightningElement {
     @track ShowOriginalAmount = true;
     @track maximumvalue;
     @track selectedDate;
+    showuploadFile = false;
+    disableUploadfile = true;
+    showuploadFilepartialLoan = false;
+    minDate = new Date().toISOString().slice(0, 10);
 
     HandleNextDueDate(event) {
         debugger;
         this.selectedDate = event.detail.value;
     }
-    minDate = new Date().toISOString().slice(0, 10);
+
+    selectedExpiryDate
+    handleLinkExpiry(event){
+        debugger;
+        this.selectedExpiryDate = event.detail.value;
+    }
+    
 
     //Getting Amount From Opportunity
     @wire(ShowOppAmount, { recordId: '$recordId' })
@@ -71,9 +81,9 @@ export default class PaymentOnOpportunity extends LightningElement {
     }
 
     //Here Getting The Payment Types
-    Picklistvalue = [];
-    @wire(getObjectInfo, { objectApiName: OPP_OBJECT })
-    objectInfo
+    // Picklistvalue = [];
+    // @wire(getObjectInfo, { objectApiName: OPP_OBJECT })
+    // objectInfo
 
     // @wire(getPicklistValues, { recordTypeId:'$objectInfo.data.defaultRecordTypeId', fieldApiName:PAYMENT_FIELD})
     //  wiredPicklistValues({data,error}){
@@ -300,6 +310,8 @@ export default class PaymentOnOpportunity extends LightningElement {
             })
 
         if ((this.FullLoanTenureValue != undefined && this.FullLoanNBFCPartnervalue != undefined)) {
+            this.showToast('Please Upload File for Loan','Upload file', 'info' );
+            this.disableUploadfile = false;
             this.DisableSave = false;
         }
 
@@ -353,6 +365,9 @@ export default class PaymentOnOpportunity extends LightningElement {
 
                 this.priceIncludingGst = result;
                 console.log('priceIncludingGst=', this.priceIncludingGst);
+                this.showToast('Please Upload File for Loan','Upload file', 'info' );
+                this.disableUploadfile = false;
+
             })
             .catch(error => {
                 console.log('error', error);
@@ -365,7 +380,7 @@ export default class PaymentOnOpportunity extends LightningElement {
         let value = event.detail.value;
         this.PartialLoanUpfrontpaymentvalue = value;
 
-        this.loanAmount = this.priceIncludingGst - this.PartialLoanUpfrontpaymentvalue;
+        this.loanAmount = this.originalPrice - this.PartialLoanUpfrontpaymentvalue;
 
         if ((this.PartialLoanTenureValue != undefined && this.PartialLoanNBFCPartnervalue != undefined && this.PartialLoanUpfrontpaymentvalue != undefined)) {
             this.DisableNext = false;
@@ -441,11 +456,13 @@ export default class PaymentOnOpportunity extends LightningElement {
     }
 
     HandleRadioButton(event) {
+        debugger;
         this.Loanvalue = event.detail.value;
 
         if (this.Loanvalue == '100% Loan') {
             this.ShowFullLoanOption = true;
             this.FullLoanButton = true;
+            this.showuploadFile = true;
             this.ShowPartialLoanOption = false;
             this.PartialLoanButton = false;
             this.ShowOriginalAmount = false;
@@ -453,6 +470,7 @@ export default class PaymentOnOpportunity extends LightningElement {
         else if (this.Loanvalue == 'Partial Loan') {
             this.ShowPartialLoanOption = true;
             this.PartialLoanButton = true;
+            this.showuploadFilepartialLoan = true;
             this.ShowFullLoanOption = false;
             this.FullLoanButton = false;
             this.ShowOriginalAmount = false;
@@ -526,7 +544,7 @@ export default class PaymentOnOpportunity extends LightningElement {
 
             if (this.Paymentvalue == '100% Payment') {
 
-                UpdateOPPforFullPayment({ recordId: this.recordId, paymentType: 'razorpay', Amount: this.originalPrice, PaymentOptiontype: 'Full Payment' })
+                UpdateOPPforFullPayment({ recordId: this.recordId, paymentType: 'razorpay', Amount: this.originalPrice, PaymentOptiontype: 'Full Payment' , LinkexpiryDate : this.selectedExpiryDate })
                     .then(result => {
 
                         if (result == 'Success') {
@@ -548,8 +566,8 @@ export default class PaymentOnOpportunity extends LightningElement {
 
             }
             else if (this.Paymentvalue == 'Partial Payment') {
-                if (this.selectedDate != null && this.selectedDate != '' && this.selectedDate != undefined && this.PartialLoanUpfrontpaymentvalue != null && this.PartialLoanUpfrontpaymentvalue != '' && this.PartialLoanUpfrontpaymentvalue != undefined) {
-                    UpdateOPPforPartialPayment({ recordId: this.recordId, paymentType: 'razorpay', Amount: this.PartialUpfrontAmount, PendingAmount: this.PartialAmount, PaymentOptiontype: 'Partial Payment', nextPaymentDueDate: this.selectedDate })
+                if (this.selectedDate != null && this.selectedDate != '' && this.selectedDate != undefined && this.PartialUpfrontAmount != null && this.PartialUpfrontAmount != '' && this.PartialUpfrontAmount != undefined) {
+                    UpdateOPPforPartialPayment({ recordId: this.recordId, paymentType: 'razorpay', Amount: this.PartialUpfrontAmount, PendingAmount: this.PartialAmount, PaymentOptiontype: 'Partial Payment', nextPaymentDueDate: this.selectedDate , LinkexpiryDate : this.selectedExpiryDate })
                         .then(result => {
 
                             if (result == 'Success') {
@@ -613,7 +631,7 @@ export default class PaymentOnOpportunity extends LightningElement {
             debugger;
             if (this.Paymentvalue == '100% Payment') {
 
-                UpdateOPPforFullPayment({ recordId: this.recordId, paymentType: 'CC Avenue' })
+                UpdateOPPforFullPayment({ recordId: this.recordId, paymentType: 'CC Avenue', LinkexpiryDate : this.selectedExpiryDate })
                     .then(result => {
 
                         if (result == 'Success') {
@@ -637,7 +655,7 @@ export default class PaymentOnOpportunity extends LightningElement {
             else if (this.Paymentvalue == 'Partial Payment') {
 
                 if (this.selectedDate != null && this.selectedDate != '' && this.selectedDate != undefined) {
-                    UpdateOPPforPartialPayment({ recordId: this.recordId, paymentType: 'CC Avenue', Amount: this.PartialUpfrontAmount, PendingAmount: this.PartialAmount, PaymentOptiontype: 'Partial Payment', nextPaymentDueDate: this.selectedDate })
+                    UpdateOPPforPartialPayment({ recordId: this.recordId, paymentType: 'CC Avenue', Amount: this.PartialUpfrontAmount, PendingAmount: this.PartialAmount, PaymentOptiontype: 'Partial Payment', nextPaymentDueDate: this.selectedDate, LinkexpiryDate : this.selectedExpiryDate})
                         //UpdateOPPforPartialPayment({recordId:this.recordId,paymentType:'CC Avenue'})
                         .then(result => {
 
@@ -700,7 +718,7 @@ export default class PaymentOnOpportunity extends LightningElement {
 
     HandleSave() {
         debugger;
-        OppUpdateOnFullLoan({ recordId: this.recordId, FullTenureValue: this.FullLoanTenureValue, FullNBFCValue: this.FullLoanNBFCPartnervalue, Quantity: this.QuantityValue, ProductName: this.ProductValue, Amount: this.priceIncludingGst, LoanType: this.Loanvalue })
+        OppUpdateOnFullLoan({ recordId: this.recordId, FullTenureValue: this.FullLoanTenureValue, FullNBFCValue: this.FullLoanNBFCPartnervalue, Quantity: this.QuantityValue, ProductName: this.ProductValue, Amount: this.priceIncludingGst, LoanType: this.Loanvalue, actualcost : this.originalPrice})
             .then(result => {
 
                 if (result == 'success') {
@@ -731,6 +749,29 @@ export default class PaymentOnOpportunity extends LightningElement {
             variant: variant,
         });
         this.dispatchEvent(evt);
+    }
+
+
+    get acceptedFormats() {
+        return ['.pdf', '.png','.jpg', '.jpeg'];
+    }
+
+    // connectedCallback() {
+    //     Promise.all([
+    //         loadStyle(this, fileSelectorStyle)
+    //     ]);
+    // }
+
+    handleUploadFinished(event) {
+        debugger;
+        const uploadfilesDetails = event.detail.files;
+        const uploadedFiles = event.detail.files.length;
+        // const evt = new ShowToastEvent({
+        //     title: 'SUCCESS',
+        //     message: uploadedFiles + ' File(s) uploaded  successfully',
+        //     variant: 'success',
+        // });
+        // this.dispatchEvent(evt);
     }
 
 }

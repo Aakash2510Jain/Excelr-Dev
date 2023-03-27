@@ -1,4 +1,4 @@
-trigger TriggerOnOpportunity on Opportunity (before insert, after update) {
+trigger TriggerOnOpportunity on Opportunity (before insert, after update, before update) {
 
     SObject_Trigger_Control__mdt triggerConfig = SObject_Trigger_Control__mdt.getInstance('Opportunity');
     system.debug('triggerConfig:: ' + triggerConfig);

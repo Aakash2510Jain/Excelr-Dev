@@ -1,10 +1,12 @@
-import { LightningElement, track } from 'lwc';
+import { LightningElement, track, api } from 'lwc';
 import EXCELR_LOGO from '@salesforce/resourceUrl/ExcelRLogo';
 import LightningAlert from 'lightning/alert';
 import LightningConfirm from "lightning/confirm";
 import createBankDetails from '@salesforce/apex/bankDetaklsLwcContrroler.createBankDetails';
+import uploadFile from '@salesforce/apex/bankDetaklsLwcContrroler.uploadFile'
 export default class BankDetails extends LightningElement {
 
+    @api Invrecid;
     imageurl = EXCELR_LOGO;
     @track bankAccountNumer;
     @track ConfirmbankAccountNumer;
@@ -16,6 +18,10 @@ export default class BankDetails extends LightningElement {
     @track Name;
     @track notMatch = false;
     @track AcNumberTypr = "number";
+
+    // ================================== For Uploading File from site ============================================
+    ShowChequeResume= true;
+    fileName;
     // @track feildList=[{AcNum:this.ConfirmbankAccountNumer,Bname:this.bankName,ifseCode:this.ifseCode,CandidateEmail:this.Email,Phone:this.Phone}];
 
     AccountHandler(Event) {
@@ -62,6 +68,10 @@ export default class BankDetails extends LightningElement {
         var returnvalue = this.handleIncorrectEmail(this.Email)
         debugger;
         if (returnvalue == true){
+            if (this.filedata != undefined) {
+                
+            }
+            this.handleClick();
             createBankDetails({ AcNum: this.ConfirmbankAccountNumer, Bname: this.bankName, ifseCode: this.ifseCode, CandidateEmail: this.Email, Phone: this.Phone })
             .then(result => {
                 debugger;
@@ -72,7 +82,10 @@ export default class BankDetails extends LightningElement {
                 this.Email = '';
                 this.Phone = '';
                 this.bankAccountNumer = '';
+                var CroyezWebsiteUrl = 'https://elearning.excelr.com//';
+                window.open(CroyezWebsiteUrl, "_self");
                 console.log(`hii there im getting success from save bd`);
+
             })
             .catch(error => {
                 this.handleAlert();
@@ -124,4 +137,31 @@ export default class BankDetails extends LightningElement {
         });
       }
 
+    fileData
+    openfileUpload(event) {
+        debugger;
+        const file = event.target.files[0]
+        var reader = new FileReader()
+        reader.onload = () => {
+            var base64 = reader.result.split(',')[1]
+            this.fileData = {
+                'filename': file.name,
+                'base64': base64,
+                'recordId': this.Invrecid
+            }
+            console.log(this.fileData)
+        }
+        reader.readAsDataURL(file)
+    }
+    
+    handleClick(){
+        debugger;
+        const {base64, filename, recordId} = this.fileData
+        uploadFile({ base64, filename, recordId }).then(result=>{
+            this.fileData = null
+            let title = `${filename} uploaded successfully!!`
+
+            //this.toast(title)
+        })
+    }
 }

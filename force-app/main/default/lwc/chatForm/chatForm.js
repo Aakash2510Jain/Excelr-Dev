@@ -168,6 +168,7 @@ export default class chatForm extends LightningElement {
             this.dataForApp = data;
             console.log(this.dataForApp);
             this.columns = applicationcolumns;
+            this.isLoadedApplication = false;
 
             if (Array.isArray(this.dataForApp.data)) {
                 if (this.dataForApp.data.length > 0) {
@@ -181,6 +182,7 @@ export default class chatForm extends LightningElement {
         }
         if (error) {
             this.ifdataNotFound = true;
+            this.isLoadedApplication = false;
 
         }
 
@@ -818,6 +820,7 @@ export default class chatForm extends LightningElement {
             }
             else if (data == 'FAIL') {
                 this.handleSpinner();
+                this.handleAlert('Error in Creating record. Please provide correct and complete Data!');
                 // this.handleAlert('Duplicate Lead Cannot be Created. Please Provide different Email and Phone');
                 this.HandleLeadCreatedisable = false;
             }
@@ -927,10 +930,11 @@ export default class chatForm extends LightningElement {
     @track isLoadedApplication = false;
 
     createapplicationForm() {
-        this.HandleCreateDisable = true;
-        debugger;
-        this.isLoadedApplication = true;
-        if (this.courseforApp != null) {
+        
+        if (this.courseforApp != null && this.courseforApp != '' && this.courseforApp != undefined ) {
+            this.HandleCreateDisable = true;
+            debugger;
+            this.isLoadedApplication = true;
             // this.handleClick();
             createApplication({ Course: this.courseforApp, LeadId: this.recordId })
                 .then(data => {
@@ -941,6 +945,7 @@ export default class chatForm extends LightningElement {
                     this.handleConfirm('Application Created Successfully');
                     this.isLoadedApplication = false;
                     this.appbtndisAble = true;
+                    this.courseforApp = '';
 
                     refreshApex(this.dataForApp);
 
@@ -956,7 +961,8 @@ export default class chatForm extends LightningElement {
         else {
             alert('Course is Empty. Please Provide Course');
             this.HandleCreateDisable = false;
-            this.handleClick();
+            this.isLoadedApplication = false;
+            //this.handleClick();
         }
     }
 

@@ -121,19 +121,20 @@ List<Approval.ProcessResult> result = Approval.process( InvoiceToapprovalRequest
         
         set<String> ReferrarEmailList = new Set<string>();
         map<String, String> ReferrarNameWithEmail = new Map<String,String>();
+        map<id,Invoice__c> ApprovedReferrarMap = new map<id,Invoice__c>();
         
         try{
             if ( !InvoiceNewMap.isEmpty() ){
                 for ( Invoice__c invRec : InvoiceNewMap.values() ){
                     if ( invRec.Approval_Status__c != null && invRec.Approval_Status__c != InvoiceOldMap.get(invRec.id).Approval_Status__c && invRec.Approval_Status__c == 'Approved' && invRec.Referrer_Email__c != null && invRec.Referral_Name__c != null){
-                        ReferrarEmailList.add(invRec.Referrer_Email__c);
-                        ReferrarNameWithEmail.put(invRec.Referrer_Email__c, invRec.Referral_Name__c);
+                        //ReferrarNameWithEmail.put(invRec.Referrer_Email__c, invRec.Referral_Name__c);
+                        ApprovedReferrarMap.put(invRec.Id, invRec);
                     }
                 }
                 
-                if (!ReferrarNameWithEmail.isEmpty()) {
+                if (!ApprovedReferrarMap.isEmpty()) {
                     //https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/CaptureBankDetails
-                    EmailIUtility.SendReferralFormToReferrar(ReferrarNameWithEmail);
+                    EmailIUtility.SendReferralFormToReferrar(ApprovedReferrarMap);
                 }
                 
             }

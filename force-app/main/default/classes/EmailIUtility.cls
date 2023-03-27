@@ -63,7 +63,7 @@ public without sharing class EmailIUtility{
         }
     }
 
-    public static void SendReferralFormToReferrar(Map<String, String> ReferrarNameWithEmail){
+    public static void SendReferralFormToReferrar(map<id,Invoice__c> ReferrarNameWithEmail){
 
         System.debug('ReferrarNameWithEmail ====> ' + ReferrarNameWithEmail);
         try{
@@ -74,10 +74,10 @@ public without sharing class EmailIUtility{
 
                 List<Messaging.SingleEmailMessage> mails = new List<Messaging.SingleEmailMessage>();
                 //List<String> allrecipients = new List<String>();
-                for (string Email : ReferrarNameWithEmail.keySet()){
+                for (Invoice__c Inv : ReferrarNameWithEmail.values()){
                     Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
                     List<String> recipients = new List<String>();
-                    recipients.add(Email);
+                    recipients.add(Inv.Referrer_Email__c);
                     System.debug('recipients ====> ' + recipients);
                     mail.setToAddresses(recipients);
                     mail.setReplyTo('Excelr@info.com');
@@ -85,10 +85,13 @@ public without sharing class EmailIUtility{
                     String subject = BankDetailsEmailTemp.Subject;
                     String htmlBody = BankDetailsEmailTemp.HtmlValue;
                     System.debug('htmlBody ====> ' + htmlBody);
-                    System.debug('referrar Name ===>' + ReferrarNameWithEmail.get(Email));
+                    System.debug('referrar Name ===>' + ReferrarNameWithEmail.get(Inv.id).Referral_Name__c);
 
                     if (htmlBody.contains('{!Invoice__c.Referral_Name__c}')){
-                        htmlBody = htmlBody.replace('{!Invoice__c.Referral_Name__c}', ReferrarNameWithEmail.get(Email));
+                        htmlBody = htmlBody.replace('{!Invoice__c.Referral_Name__c}', ReferrarNameWithEmail.get(Inv.id).Referral_Name__c);
+                    }
+                    if (htmlBody.contains('{!referrarinvoiceId}')){
+                        htmlBody = htmlBody.replace('{!referrarinvoiceId}', ReferrarNameWithEmail.get(Inv.Id).Id);
                     }
                     mail.setSubject(subject);
                     mail.setHtmlBody(htmlBody);

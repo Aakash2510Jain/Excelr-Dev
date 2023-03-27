@@ -40,7 +40,8 @@ public class ccAvenueLwcController {
     // call this method from paymentProcessLWC
 
     @AuraEnabled
-    public static String initateCCAvenuePayment(String recId){
+    public static String initateCCAvenuePayment(String recId, long strUnixTimeStamp){
+        System.debug(' strUnixTimeStamp ===> ' + strUnixTimeStamp);
         try{
         String name,email, ISMEmail;
 
@@ -76,10 +77,12 @@ public class ccAvenueLwcController {
 
     public static Invoice__c getInvoice(String recId){
         try{
+            Invoice__c invoiceREC = [Select Id,Name,Amount__c,Opportunity__c,Opportunity__r.Account.Name,Opportunity__r.Account.Email__c,Opportunity__r.Account.Phone,Opportunity__r.Account.BillingAddress,Opportunity__r.Account.Billingcity,Opportunity__r.Account.BillingStreet,Opportunity__r.Account.BillingState,Opportunity__r.Account.BillingCountry,Opportunity__r.Account.BillingPostalCode,
+                                    Opportunity__r.Account.Shippingcity,Opportunity__r.Account.ShippingStreet,Opportunity__r.Account.ShippingAddress,Opportunity__r.Account.ShippingCountry,Opportunity__r.Account.ShippingPostalCode,Opportunity__r.Account.ShippingState, Opportunity__r.Account.owner.Email, LeadInvoice__r.owner.Email, Opportunity__r.Account.owner.Name,LeadInvoice__r.owner.Name,
+                                     LeadInvoice__c,LeadInvoice__r.Name,LeadInvoice__r.Phone,LeadInvoice__r.Email,LeadInvoice__r.Street,LeadInvoice__r.city,LeadInvoice__r.Country,LeadInvoice__r.State,LeadInvoice__r.PostalCode,LeadInvoice__r.Address From Invoice__c Where Id=:recId];
 
-        return [Select Id,Name,Amount__c,Opportunity__c,Opportunity__r.Account.Name,Opportunity__r.Account.Email__c,Opportunity__r.Account.Phone,Opportunity__r.Account.BillingAddress,Opportunity__r.Account.Billingcity,Opportunity__r.Account.BillingStreet,Opportunity__r.Account.BillingState,Opportunity__r.Account.BillingCountry,Opportunity__r.Account.BillingPostalCode,
-                                   Opportunity__r.Account.Shippingcity,Opportunity__r.Account.ShippingStreet,Opportunity__r.Account.ShippingAddress,Opportunity__r.Account.ShippingCountry,Opportunity__r.Account.ShippingPostalCode,Opportunity__r.Account.ShippingState, Opportunity__r.Account.owner.Email, LeadInvoice__r.owner.Email, Opportunity__r.Account.owner.Name,LeadInvoice__r.owner.Name,
-                                   LeadInvoice__c,LeadInvoice__r.Name,LeadInvoice__r.Phone,LeadInvoice__r.Email,LeadInvoice__r.Street,LeadInvoice__r.city,LeadInvoice__r.Country,LeadInvoice__r.State,LeadInvoice__r.PostalCode,LeadInvoice__r.Address From Invoice__c Where Id=:recId];
+            System.debug('invoiceREC ====> ' + invoiceREC);
+        return invoiceREC;
     }catch(exception e){
             
         System.debug('The following exception has occurred: ' + e.getMessage());

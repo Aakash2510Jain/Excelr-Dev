@@ -1,7 +1,7 @@
 <apex:page controller="CCAvenueCatchResponse">
     
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
-    <script src="angular-cdn-src.min.js"></script>
+    <script src="angular-cdn-src.min.js"></script>RefundProcessHelper
     
     <script>
         

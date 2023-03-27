@@ -4,10 +4,11 @@
     <div id="lightningapp" />
     <script>
     debugger;
+    var invoiceId =  "{!$CurrentPage.parameters.referrarinvoiceId}";
     
     $Lightning.use("c:bankDetailsAppForSite", function () {
         $Lightning.createComponent("c:bankDetails",
-                                   { },
+                                   {'Invrecid' : invoiceId },
                                    "lightningapp",
                                    function (cmp) {
                                        console.log("Refund Form is loaded in Vf page");
