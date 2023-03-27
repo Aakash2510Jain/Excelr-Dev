@@ -78,7 +78,7 @@ public without sharing class walkInLeadLWCcontroller{
         taskRec.Status = TaskRecord.Status;
         taskRec.ActivityDate = TaskRecord.ActivityDate;
         taskRec.Description = TaskRecord.Description;
-        taskRec.Followup_Date_Time__c = TaskRecord.Followup_Date_Time__c;
+        taskRec.Followup_Date_Time__c = TaskRecord.Followup_Date_Time__c.addminutes(-330);
 
         List<Lead> NotconvertedLead = [Select Id from Lead Where Id =:leadId and IsConverted = false];
         List<Lead> convertedLead = [Select Id , ConvertedAccountId,ConvertedContactId,ConvertedOpportunityId from Lead Where Id =:leadId and IsConverted = true];

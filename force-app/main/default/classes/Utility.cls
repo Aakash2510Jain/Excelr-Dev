@@ -384,6 +384,39 @@ public without sharing class Utility{
             return null;
         }
     }
+
+    public static ApplicationtaskWrapper returnApplicationorTask (Opportunity OppRec, string courseName){
+        ApplicationtaskWrapper AcctaskWrap = new ApplicationtaskWrapper();
+        System.debug('OppRec ====> ' + OppRec);
+        System.debug('courseName ====> ' + courseName);
+
+        try {
+            if (OppRec.Course__c == courseName ) {
+                task tasktoCreate = new task();
+                tasktoCreate.Subject = 'Candidate has applied again for the Same Course';
+                tasktoCreate.WhatId = OppRec.Id;
+                tasktoCreate.ActivityDate = system.today();
+                tasktoCreate.OwnerId = OppRec.OwnerId ;
+                tasktoCreate.Status = 'New';
+                AcctaskWrap.TaskRec = tasktoCreate;
+                AcctaskWrap.app = null;
+                
+            }
+            if (OppRec.Course__c != courseName ){
+                Application__c appRec = Utility.returnApplicationInstance(OppRec.accountId, courseName);
+                AcctaskWrap.TaskRec = null;
+                AcctaskWrap.app = appRec;
+            }
+
+            
+        } catch (Exception e) {
+            System.debug(' The error has occured due to ====> ' + e.getMessage());
+            System.debug(' The error has occured atline number ====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('Utility', 'returnApplicationorTask', e, null);
+            
+        }
+        return AcctaskWrap;
+    }
     
     Public static void API_ErrorORSuccess(List<String> ErrorFields, String ErrorMsg, Integer ErrorStatus, string ErrOrSuccId, STring ClassName, String MethodName, string JSONString){
         try{
@@ -682,6 +715,12 @@ public without sharing class Utility{
             
         }
 
+    }
+
+
+    public class ApplicationtaskWrapper {
+        public Application__c app {get; set;}
+        public Task TaskRec {get; set;}
     }
 
 }

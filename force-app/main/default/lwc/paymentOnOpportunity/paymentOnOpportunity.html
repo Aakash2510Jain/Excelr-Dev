@@ -96,12 +96,26 @@
     <template if:true={ShowFullLoanOption}>
       <div>
         <template if:true={Amount}>
-          <p>Original Price:&nbsp;<b>{originalPrice}</b></p>
+          <p>Original Price:&nbsp;<b>{originalPrice}</b></p>          
           <br />
           <p>Price Including GST:&nbsp;<b>{priceIncludingGst}</b></p>
+          <br />
+          <p>Loan Amount After Down Payment :&nbsp;<b>{LoanAmount}</b></p>
         </template>
         <br />
         <div class="slds-grid slds-wrap" style="margin-bottom:100px;">
+          <div class="slds-col slds-size_6-of-12">
+            <p style="font-weight:bold">
+              Down Payment
+            </p>
+            <lightning-input type="number" placeholder="Enter DownPayment Amount"  name="Tenure" value={DownPayfullLoan} onchange={HandleDownPayPFullLoan} ></lightning-input>
+          </div>
+          <br />
+
+          <div class="slds-col slds-size_6-of-12">
+            
+          </div>
+          <br />
           <div class="slds-col slds-size_6-of-12">
             <p style="font-weight:bold">
               Select Your NBFC Partner

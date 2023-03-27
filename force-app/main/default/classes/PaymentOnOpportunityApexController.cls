@@ -240,13 +240,14 @@ public class PaymentOnOpportunityApexController{
     }
 
     @AuraEnabled
-    Public Static string OppUpdateOnFullLoan(string recordId, integer FullTenureValue, String FullNBFCValue, Integer Quantity, String ProductName, Decimal Amount, String LoanType, integer actualcost){
+    Public Static string OppUpdateOnFullLoan(string recordId, integer FullTenureValue, String FullNBFCValue, Integer Quantity, String ProductName, Decimal Amount, String LoanType, integer actualcost, Decimal DownPayment){
         System.debug('actualcost ===> ' + actualcost);
         try{
             system.debug('recordId=' + recordId + 'FullTenureValue=' + FullTenureValue);
             system.debug('FullNBFCValue=' + FullNBFCValue + 'Amount=' + Amount);
             system.debug('Quantity=' + Quantity + 'Product__c=' + ProductName);
             system.debug('LoanType--->' + LoanType);
+            List<Invoice__c> InvoiceList = new List<Invoice__c>();
 
             Opportunity OppRec = new Opportunity();
             OppRec.Id = recordId;
@@ -264,10 +265,31 @@ public class PaymentOnOpportunityApexController{
             OppRec.NBFCPartner__c = FullNBFCValue;
             Update OppRec;
 
+            if (DownPayment != null) {
+                Invoice__c inv = new Invoice__c();
+                inv.Opportunity__c = recordId;
+                inv.Status__c = 'Initiated';
+                inv.Type__c = 'Loan';
+                inv.Due_Amount__c = 0;
+                inv.Mode_Terms_of_Payment__c = 'Full Loan';
+                inv.Initiated_Date__c = System.Today();
+                inv.Invoice_Due_Date__c = System.Today() + 2;
+                InvoiceList.add(inv);
+            }
+
             Invoice__c invRec = new Invoice__c();
             invRec.Opportunity__c = recordId;
             invRec.Status__c = 'Initiated';
+            // if (DownPayment != null && DownPayment != '') {
+            //     invRec.Amount__c = actualcost;
+            // }
+            // else {
+            //     invRec.Amount__c = actualcost - DownPayment;
+            // }
+            
             invRec.Amount__c = actualcost;
+            invRec.Down_Payment__c = DownPayment;
+            invRec.Actual_Loan_Amount__c = actualcost - DownPayment;
             invRec.Type__c = 'Loan';
             invRec.Due_Amount__c = 0;
             invRec.Mode_Terms_of_Payment__c = 'Full Loan';

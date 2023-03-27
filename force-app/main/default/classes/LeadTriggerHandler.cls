@@ -453,12 +453,21 @@ public without sharing class LeadTriggerHandler{
                 System.debug('leadRec.Phone ====> ' + leadRec.Phone);
                 System.debug('leadRec.Alternate_Phone__c ====> ' + leadRec.Alternate_Phone__c);
 
+                Utility.ApplicationtaskWrapper  ApptaskWrap = new Utility.ApplicationtaskWrapper();
                 DateTime Currentdate = System.now();
                 Datetime onemonthdatetime = System.now().addMonths(1);
                 if (!OpportunityExistingList.isEmpty()) {
                     if (ExistingOppByEmail.containsKey(leadRec.Email)) {
                         if (ExistingOppByEmail.get(leadRec.Email).Stagename != Constants.OPP_STAGENAME_CLOSE_LOST) {
-                            leadRec.To_Be_Deleted__c = true;  
+                            leadRec.To_Be_Deleted__c = true; 
+                            ApptaskWrap = Utility.returnApplicationorTask(ExistingOppByEmail.get(leadRec.Email), leadRec.Course__c);
+                            if (ApptaskWrap.app != null) {
+                                applicationListToInsert.add(ApptaskWrap.app);
+                            }
+                            if (ApptaskWrap.TaskRec != null) {
+                                taskListToInsert.add(ApptaskWrap.TaskRec);
+                            }
+
                         }
                         else if(ExistingOppByEmail.get(leadRec.Email).Stagename == Constants.OPP_STAGENAME_CLOSE_LOST){
                             if (ExistingOppByEmail.get(leadRec.Email).createdDate < onemonthdatetime ) {
@@ -475,6 +484,13 @@ public without sharing class LeadTriggerHandler{
                     if (ExistingOppByAlternateEmail.containsKey(leadRec.Alternate_Email__c)) {
                         if (ExistingOppByAlternateEmail.get(leadRec.Alternate_Email__c).Stagename != Constants.OPP_STAGENAME_CLOSE_LOST) {
                             leadRec.To_Be_Deleted__c = true;  
+                            ApptaskWrap = Utility.returnApplicationorTask(ExistingOppByAlternateEmail.get(leadRec.Alternate_Email__c), leadRec.Course__c);
+                            if (ApptaskWrap.app != null) {
+                                applicationListToInsert.add(ApptaskWrap.app);
+                            }
+                            if (ApptaskWrap.TaskRec != null) {
+                                taskListToInsert.add(ApptaskWrap.TaskRec);
+                            }
                         }
                         else if(ExistingOppByAlternateEmail.get(leadRec.Alternate_Email__c).Stagename == Constants.OPP_STAGENAME_CLOSE_LOST){
                             if (ExistingOppByAlternateEmail.get(leadRec.Alternate_Email__c).createdDate < onemonthdatetime ) {
@@ -491,6 +507,13 @@ public without sharing class LeadTriggerHandler{
                     if (ExistingOppByPhone.containsKey(leadRec.Phone)) {
                         if (ExistingOppByPhone.get(leadRec.Phone).Stagename != Constants.OPP_STAGENAME_CLOSE_LOST) {
                             leadRec.To_Be_Deleted__c = true;  
+                            ApptaskWrap = Utility.returnApplicationorTask(ExistingOppByPhone.get(leadRec.Phone), leadRec.Course__c);
+                            if (ApptaskWrap.app != null) {
+                                applicationListToInsert.add(ApptaskWrap.app);
+                            }
+                            if (ApptaskWrap.TaskRec != null) {
+                                taskListToInsert.add(ApptaskWrap.TaskRec);
+                            }
                         }
                         else if(ExistingOppByPhone.get(leadRec.Phone).Stagename == Constants.OPP_STAGENAME_CLOSE_LOST){
                             if (ExistingOppByPhone.get(leadRec.Phone).createdDate < onemonthdatetime ) {
@@ -507,6 +530,13 @@ public without sharing class LeadTriggerHandler{
                     if (ExistingOppByAlternatePhone.containsKey(leadRec.Alternate_Phone__c)) {
                         if (ExistingOppByAlternatePhone.get(leadRec.Alternate_Phone__c).Stagename != Constants.OPP_STAGENAME_CLOSE_LOST) {
                             leadRec.To_Be_Deleted__c = true;  
+                            ApptaskWrap = Utility.returnApplicationorTask(ExistingOppByAlternatePhone.get(leadRec.Alternate_Phone__c), leadRec.Course__c);
+                            if (ApptaskWrap.app != null) {
+                                applicationListToInsert.add(ApptaskWrap.app);
+                            }
+                            if (ApptaskWrap.TaskRec != null) {
+                                taskListToInsert.add(ApptaskWrap.TaskRec);
+                            }
                         }
                         else if(ExistingOppByAlternatePhone.get( leadRec.Alternate_Phone__c).Stagename == Constants.OPP_STAGENAME_CLOSE_LOST){
                             if (ExistingOppByAlternatePhone.get(leadRec.Alternate_Phone__c).createdDate < onemonthdatetime ) {
@@ -852,4 +882,9 @@ public without sharing class LeadTriggerHandler{
         }
     }
     
+
+    public class ApplicationtaskWrapper {
+        public Application__c app {get; set;}
+        public Task TaskRec {get; set;}
+    }
 }

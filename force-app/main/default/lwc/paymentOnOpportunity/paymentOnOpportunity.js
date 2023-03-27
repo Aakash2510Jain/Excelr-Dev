@@ -303,6 +303,7 @@ export default class PaymentOnOpportunity extends LightningElement {
         ShowPriceIncludingGST({ NbfcValue: this.FullLoanNBFCPartnervalue, tenure: this.FullLoanTenureValue, originalAmount: this.originalPrice })
             .then(result => {
                 this.priceIncludingGst = result;
+                this.LoanAmount = this.priceIncludingGst - this.DownPayfullLoan;
                 console.log('priceIncludingGst=', this.priceIncludingGst);
             })
             .catch(error => {
@@ -475,6 +476,13 @@ export default class PaymentOnOpportunity extends LightningElement {
             this.FullLoanButton = false;
             this.ShowOriginalAmount = false;
         }
+    }
+
+    DownPayfullLoan
+    LoanAmount
+    HandleDownPayPFullLoan(Event){
+        debugger;
+        this.DownPayfullLoan = Event.detail.value;
     }
 
     HandleNext() {
@@ -718,7 +726,7 @@ export default class PaymentOnOpportunity extends LightningElement {
 
     HandleSave() {
         debugger;
-        OppUpdateOnFullLoan({ recordId: this.recordId, FullTenureValue: this.FullLoanTenureValue, FullNBFCValue: this.FullLoanNBFCPartnervalue, Quantity: this.QuantityValue, ProductName: this.ProductValue, Amount: this.priceIncludingGst, LoanType: this.Loanvalue, actualcost : this.originalPrice})
+        OppUpdateOnFullLoan({ recordId: this.recordId, FullTenureValue: this.FullLoanTenureValue, FullNBFCValue: this.FullLoanNBFCPartnervalue, Quantity: this.QuantityValue, ProductName: this.ProductValue, Amount: this.priceIncludingGst, LoanType: this.Loanvalue, actualcost : this.originalPrice, DownPayment : this.DownPayfullLoan})
             .then(result => {
 
                 if (result == 'success') {
