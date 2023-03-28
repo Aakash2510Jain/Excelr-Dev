@@ -17,6 +17,11 @@ public class Constants{
     public static final string PAYMENT_STATUS_PAYMENT_DONE = 'Payment Successful';
     public static final string PAYMENT_STATUS_PAYMENT_FAILED = 'Payment Failed';
 
+    // ============================================= Sobject Name ============================
+    public static final string SOBJECT_ACCOUNT = 'Account';
+    public static final string SOBJECT_LEAD = 'Lead';
+    public static final string SOBJECT_OPPORTUNITY = 'Opportunity';
+
 
     // ============================================== Opportunity Stage Constanst ============================================
 

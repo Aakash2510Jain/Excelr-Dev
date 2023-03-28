@@ -21,7 +21,7 @@ global without sharing class CallyzerWebhook{
                                     FROM AsyncApexJob
                                     WHERE Id = :jobID];
 
-            return 'SUCCESS';
+            return '200';
         } catch (Exception e){
             system.debug('error due to ' + e.getMessage());
             system.debug('at line number ' + e.getLineNumber());

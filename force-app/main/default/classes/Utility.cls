@@ -397,6 +397,8 @@ public without sharing class Utility{
                 tasktoCreate.WhatId = OppRec.Id;
                 tasktoCreate.ActivityDate = system.today();
                 tasktoCreate.OwnerId = OppRec.OwnerId ;
+                tasktoCreate.IsReminderSet = true;
+                tasktoCreate.ReminderDateTime = system.now();
                 tasktoCreate.Status = 'New';
                 AcctaskWrap.TaskRec = tasktoCreate;
                 AcctaskWrap.app = null;
@@ -494,6 +496,8 @@ public without sharing class Utility{
         taskRec.WhoId = leadRec.Id;
         taskRec.ActivityDate = system.today().addDays(1);
         taskRec.OwnerId = leadRec.OwnerId;
+        taskRec.IsReminderSet = true;
+        taskRec.ReminderDateTime = system.now().addDays(1);
         insert taskRec;
         return taskRec.Id;
     }
@@ -503,6 +507,8 @@ public without sharing class Utility{
         taskRec.ActivityDate = system.today().addDays(1);
         taskRec.WhoId = leadRec.Id;
         taskRec.OwnerId = leadRec.OwnerId;
+        taskRec.IsReminderSet = true;
+        taskRec.ReminderDateTime = system.now().addDays(1);
         return taskRec;
     }
     public static String createApplicationViaLeadCreationAPI(Lead leadRec){

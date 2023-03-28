@@ -150,9 +150,9 @@ public without sharing class LeadTriggerHandler{
                 //whereClauses.add(' AND Alternate_Email__c IN : alternateEmailSet');
 
                 if (!string.isBlank(whereClausesForOpp) && whereClausesForOpp.length() > 2) {
-                    whereClausesForOpp = whereClausesForOpp + 'OR ( Alternate_Email__c IN : alternateEmailList OR Email IN: alternateEmailList ) ';
+                    whereClausesForOpp = whereClausesForOpp + 'OR ( Alternate_Email__c IN : alternateEmailList OR Email__c IN: alternateEmailList ) ';
                 }else {
-                    whereClausesForOpp = whereClausesForOpp + ' ( Alternate_Email__c IN : alternateEmailList OR Email IN: alternateEmailList) ';
+                    whereClausesForOpp = whereClausesForOpp + ' ( Alternate_Email__c IN : alternateEmailList OR Email__c IN: alternateEmailList) ';
                 }
             }
             if (!phoneList.isEmpty()) {

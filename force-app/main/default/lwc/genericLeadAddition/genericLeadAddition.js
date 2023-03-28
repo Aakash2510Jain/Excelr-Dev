@@ -5,7 +5,7 @@ import getLead from '@salesforce/apex/GenericLeadLWCcontroller.getLead';
 import getApplication from '@salesforce/apex/GenericLeadLWCcontroller.getApplication';
 import EmailIsm from '@salesforce/apex/GenericLeadLWCcontroller.EmailIsm';
 
-import createTask from '@salesforce/apex/GenericLeadLWCcontroller.createTaskForVoice';
+import createTask from '@salesforce/apex/GenericLeadLWCcontroller.createTask';
 
 import createLead from '@salesforce/apex/GenericLeadLWCcontroller.createLead';
 import createApplication from '@salesforce/apex/GenericLeadLWCcontroller.CreateApplication';
@@ -137,27 +137,43 @@ export default class WaklInLead extends LightningElement {
 
                 this.showFromOrEmpty = true;
                 this.data = data;
-                if (this.data.length > 0) {
-                    // this.newBTNdisAble = true;
-                    this.taskBTNdisAble = false;
-                    this.handleClick();
-                    this.recordId = this.data[0].Id;
-                    this.ownerEmail = data[0].Owner_Email__c;
-                    this.CaptureOwnerId = data[0].OwnerId;
-                    this.captureownerName = data[0].Owner.Name;
-                    //this.handleClick();
-                    console.log(data);
-                    console.log(this.data);
-                    console.log(this.data[0].Id)
-                    this.ismBTNdisAble = false;
-                    this.ifdataNotFound = false;
-                    this.appbtndisAble = false;
+                if (this.data != null && this.data != undefined) {
+                    //this.newBTNdisAble = true;
+                    
+                    if (this.data.OppRec != undefined) {
+                        if (this.data.OppRec.length >0 ) {
+                            this.taskBTNdisAble = false;
+                            this.recordId = this.data.OppRec[0].Id; 
+                            this.objectApiName = 'Opportunity'; 
+                            this.ownerEmail = data.OppRec[0].Owner_Email__c;
+                            this.CaptureOwnerId = data.OppRec[0].OwnerId;
+                            this.captureownerName = data.OppRec[0].Owner.Name;
+                            this.handleClick();
+                            this.ismBTNdisAble = false;
+                            this.ifdataNotFound = false;
+                            this.appbtndisAble = false;
+                        }
+                    }else if (this.data.Leadrec != undefined) {
+                        if (this.data.Leadrec.length >0 ) {
+                            this.taskBTNdisAble = false;
+                            this.recordId = this.data.Leadrec[0].Id; 
+                            this.objectApiName = 'Lead'; 
+                            this.ownerEmail = data.Leadrec[0].Owner_Email__c;
+                            this.CaptureOwnerId = data.Leadrec[0].OwnerId;
+                            this.captureownerName = data.Leadrec[0].Owner.Name;
+                            this.handleClick();
+                            this.ismBTNdisAble = false;
+                            this.ifdataNotFound = false;
+                            this.appbtndisAble = false;
+                        }
+                    }
+                    
                 }
-                if (this.data.length == 0) {
+                if ((this.data.OppRec == null || this.data.OppRec == undefined) && ( this.data.Leadrec == null || this.data.Leadrec == undefined) ) {
                     this.handleClick();
                     this.ifdataNotFound = true;
                     this.taskBTNdisAble = true;
-                    //  this.newBTNdisAble = false;
+                    // this.newBTNdisAble = false;
                     this.ismBTNdisAble = true;
                     this.data = false;
                     this.appbtndisAble = true;
@@ -532,7 +548,7 @@ export default class WaklInLead extends LightningElement {
     createTaskRec() {
         debugger;
         if ((this.CaptureOwnerId != null && this.CaptureOwnerId != undefined && this.CaptureOwnerId != '') && (this.recordId != null && this.recordId != undefined && this.recordId != '')){
-            createTask({assignto: this.CaptureOwnerId,leadId: this.recordId,TaskRecord:this.taskTobeCreated})
+            createTask({assignto: this.CaptureOwnerId,RecordId: this.recordId,TaskRecord:this.taskTobeCreated})
                   //subject: this.subjectvalue, assignto: this.CaptureOwnerId, priority: this.priorityValue, status: this.statusValue, duedate: this.DuedateValue, comments: this.comValue, followupDate: this.followupValue, leadId: this.recordId 
                 .then((result) => {
                     console.log('result', result);

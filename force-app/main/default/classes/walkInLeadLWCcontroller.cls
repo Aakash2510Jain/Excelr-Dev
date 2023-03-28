@@ -1,25 +1,58 @@
 public without sharing class walkInLeadLWCcontroller{
     @auraenabled(cacheable = true)
-    public static list<lead> getLead(String EmailOrPhone){
+    public static LeadOppWrapper getLead(String EmailOrPhone){
+        LeadOppWrapper LdoppWrap = new LeadOppWrapper();
         try{
             list<lead> leadList = new list<lead>();
+            List<Opportunity> OppoRtunityRec = new List<Opportunity>();
             String Phonestring = '%' + EmailOrPhone;
 
-            System.debug('EmailOrPhone ====> ' + EmailOrPhone);
             if (EmailOrPhone != null){
                 leadList = [Select id, firstName, LastName, Owner_Email__c, OwnerId, Owner.LastName, Owner.FirstName, Owner.Name, Email, Phone
                             from Lead
-                            where Email = :EmailOrPhone OR Phone LIKE:Phonestring OR Alternate_Email__c = :EmailOrPhone Or Alternate_Phone__c = :EmailOrPhone
+                            where (Email = :EmailOrPhone OR Phone LIKE:Phonestring OR Alternate_Email__c = :EmailOrPhone Or Alternate_Phone__c = :EmailOrPhone) AND isconverted = false
                             Order By CreatedDate Asc
                             LIMIT 1];
+                if (!leadList.isEmpty() && leadList.size() > 0){
+                    LdoppWrap.Leadrec = leadList;
+                    LdoppWrap.OppRec = null;
+                    //return LdoppWrap;
+                }
+
             }
+            if (leadList.isEmpty() || leadList.size() == 0){
+                string stageClosedLost = constants.OPP_STAGENAME_CLOSE_LOST;
+                OppoRtunityRec = [Select id, Name, Owner_Email__c, OwnerId, Owner.LastName, Owner.FirstName, Owner.Name, Email__c, Phone__c
+                                  from Opportunity
+                                  Where ((Email__c = :EmailOrPhone OR Phone__c LIKE:Phonestring OR Alternate_Email__c = :EmailOrPhone Or Alternate_Phone__c = :EmailOrPhone) AND StageName !=: stageClosedLost)
+                                  Order By CreatedDate Asc
+                                  LIMIT 1];
+                if (!OppoRtunityRec.isEmpty() && OppoRtunityRec.size() > 0){
+                    LdoppWrap.Leadrec = null;
+                    LdoppWrap.OppRec = OppoRtunityRec;
+                    
+                }
+
+            }
+
+            System.debug('LdoppWrap ====> ' + LdoppWrap);
             System.debug('leadList ======> ' + leadList);
-            return leadList;
+            return LdoppWrap;
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
             HandleBusinessException.captureError('walkInLeadLWCcontroller', 'getLead', e, null);
             return null;
         }
+    }
+
+
+    public class LeadOppWrapper{
+        @AuraEnabled
+        public List<Lead> Leadrec{ get; set; }
+
+        @AuraEnabled
+        public List<Opportunity> OppRec{ get; set; }
+
     }
 
     
@@ -66,11 +99,13 @@ public without sharing class walkInLeadLWCcontroller{
     }
 
     @AuraEnabled
-    public static String createTaskForVoice(Task TaskRecord, string assignto, string leadId){
+    public static String createTask(Task TaskRecord, string assignto, Id RecordId){
         system.debug('assignto-->' + assignto);
-        system.debug('leadId-->' + leadId);
-        system.debug('');
+        system.debug('RecordId-->' + RecordId);
+
         List<Task> tasklisttobeinserted = new List<Task>();
+        List<Lead> NotconvertedLead = new List<Lead>();
+        List<Opportunity> OpportunityList = new List<Opportunity>();
         Task taskRec = new Task();
         taskRec.Subject = TaskRecord.Subject;
         taskRec.OwnerId = assignto;
@@ -78,15 +113,51 @@ public without sharing class walkInLeadLWCcontroller{
         taskRec.Status = TaskRecord.Status;
         taskRec.ActivityDate = TaskRecord.ActivityDate;
         taskRec.Description = TaskRecord.Description;
+        taskRec.IsReminderSet = true;
+        taskRec.ReminderDateTime = system.now().addMinutes(1);
         taskRec.Followup_Date_Time__c = TaskRecord.Followup_Date_Time__c.addminutes(-330);
 
-        List<Lead> NotconvertedLead = [Select Id from Lead Where Id =:leadId and IsConverted = false];
-        List<Lead> convertedLead = [Select Id , ConvertedAccountId,ConvertedContactId,ConvertedOpportunityId from Lead Where Id =:leadId and IsConverted = true];
+        //List<Lead> NotconvertedLead = [Select Id from Lead Where Id =:leadId and IsConverted = false];
+        //List<Lead> convertedLead = [Select Id , ConvertedAccountId,ConvertedContactId,ConvertedOpportunityId from Lead Where Id =:leadId and IsConverted = true];
+        system.debug('RecordId-->'+RecordId);
+        System.debug('object name>> ' + RecordId.getsobjecttype());
+        if (String.valueOf(RecordId.getsobjecttype()) == Constants.SOBJECT_LEAD){
+            NotconvertedLead = [Select Id
+                                from Lead
+                                Where Id = :RecordId and IsConverted = false];
+            if (NotconvertedLead.size() > 0 && !NotconvertedLead.isEmpty()){
+                taskRec.WhoId = NotconvertedLead[0].Id;
+                tasklisttobeinserted.add(taskRec);
+            }
 
+        }
+        if (String.valueOf(RecordId.getsobjecttype()) == Constants.SOBJECT_OPPORTUNITY){
+            OpportunityList = [Select id, name, StageName, ownerId, accountId
+                               From Opportunity
+                               where Id = :RecordId];
+            if (OpportunityList.size() > 0 && !OpportunityList.isEmpty()){
+                taskRec.whatId = OpportunityList[0].accountId;
+                tasklisttobeinserted.add(taskRec);
+
+                Task taskRecforOpp = new Task();
+                taskRecforOpp.Subject = TaskRecord.Subject;
+                taskRecforOpp.OwnerId = assignto;
+                taskRecforOpp.Priority = TaskRecord.Priority;
+                taskRecforOpp.Status = TaskRecord.Status;
+                taskRecforOpp.ActivityDate = TaskRecord.ActivityDate;
+                taskRecforOpp.Description = TaskRecord.Description;
+                taskRec.Followup_Date_Time__c = TaskRecord.Followup_Date_Time__c.addminutes(-330);
+                taskRecforOpp.whatId = OpportunityList[0].id;
+                taskRecforOpp.IsReminderSet = true;
+                taskRecforOpp.ReminderDateTime = system.now().addMinutes(1);
+                tasklisttobeinserted.add(taskRecforOpp);
+
+            }
+        }
         try{
             // Lead lRec = [select Id, OwnerId from Lead where id =''];
             // Task taskRec = new Task();
-            if (NotconvertedLead.size() >0 && !NotconvertedLead.isEmpty()) {
+            /*if (NotconvertedLead.size() >0 && !NotconvertedLead.isEmpty()) {
                 taskRec.WhoId = leadId; 
                 tasklisttobeinserted.add(taskRec);
             }
@@ -104,20 +175,23 @@ public without sharing class walkInLeadLWCcontroller{
                 taskRecforOpp.ActivityDate = TaskRecord.ActivityDate;
                 taskRecforOpp.Description = TaskRecord.Description;
                 taskRecforOpp.Followup_Date_Time__c = TaskRecord.Followup_Date_Time__c;
+                taskRecforOpp.IsReminderSet = true;
+                taskRecforOpp.ReminderDateTime = system.now().addMinutes(1);
                 taskRecforOpp.whatId = oppID;
                 tasklisttobeinserted.add(taskRecforOpp);
 
                 
-            }
+            }*/
             if (!tasklisttobeinserted.isEmpty()) {
                 insert tasklisttobeinserted;
+                NotifyUser.processNotifications(tasklisttobeinserted);
             }
             return 'Success';
 
         } catch (Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());
             System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
-            HandleBusinessException.captureError('ChatFormLWCcontroller', 'createTaskForVoice', e, null);
+            HandleBusinessException.captureError('ChatFormLWCcontroller', 'createTask', e, null);
             return 'error';
         }
     }

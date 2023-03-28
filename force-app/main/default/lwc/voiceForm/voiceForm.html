@@ -168,27 +168,60 @@
                                                     </lightning-layout-item>
 
                                                     <lightning-layout-item padding="around-small" size="6">
-                                                        <div class="slds-border_bottom">
-                                                            <lightning-output-field field-name="Status"
-                                                                style="font-weight: bold;"> </lightning-output-field>
-                                                        </div>
+                                                        <template if:true={data.Leadrec}>
+                                                            <div class="slds-border_bottom">
+                                                                <lightning-output-field field-name="Status"
+                                                                    style="font-weight: bold;"> </lightning-output-field>
+                                                            </div>
+
+                                                        </template>
+                                                        <template if:true={data.OppRec}>
+                                                            <div class="slds-border_bottom">
+                                                                <lightning-output-field field-name="StageName"
+                                                                    style="font-weight: bold;"> </lightning-output-field>
+                                                            </div>
+
+                                                        </template>
+                                                        
 
                                                     </lightning-layout-item>
 
 
                                                     <lightning-layout-item padding="around-small" size="6">
-                                                        <div class="slds-border_bottom">
-                                                            <lightning-output-field field-name="Phone"
-                                                                style="font-weight: bold;"> </lightning-output-field>
-                                                        </div>
+                                                        <template if:true={data.Leadrec}>
+                                                            <div class="slds-border_bottom">
+                                                                <lightning-output-field field-name="Phone"
+                                                                    style="font-weight: bold;"> </lightning-output-field>
+                                                            </div>
+
+                                                        </template>
+                                                        <template if:true={data.OppRec}>
+                                                            <div class="slds-border_bottom">
+                                                                <lightning-output-field field-name="Phone__c"
+                                                                    style="font-weight: bold;"> </lightning-output-field>
+                                                            </div>
+
+                                                        </template>
 
                                                     </lightning-layout-item>
 
                                                     <lightning-layout-item padding="around-small" size="6">
-                                                        <div class="slds-border_bottom">
-                                                            <lightning-output-field field-name="Email"
-                                                                style="font-weight: bold;"> </lightning-output-field>
-                                                        </div>
+                                                        <template if:true={data.Leadrec}>
+                                                            <div class="slds-border_bottom">
+                                                                <lightning-output-field field-name="Email"
+                                                                    style="font-weight: bold;"> </lightning-output-field>
+                                                            </div>
+
+                                                        </template>
+                                                        <template if:true={data.OppRec}>
+                                                            <div class="slds-border_bottom">
+                                                                <lightning-output-field field-name="Email__c"
+                                                                    style="font-weight: bold;"> </lightning-output-field>
+                                                            </div>
+                                                            
+
+                                                        </template>
+                                                        
 
                                                     </lightning-layout-item>
                                                     <lightning-layout-item padding="around-small" size="6">
@@ -224,8 +257,8 @@
                                             </div>
                                         </div>
                                     </lightning-record-view-form>
-
                                 </template>
+
                                 <template if:true={ifdataNotFound}>
                                     <lightning-card>
                                         <div style=" border-radius: 10px; width:1100px; height:50px; font-size: 25px; margin-top: 25px;"
