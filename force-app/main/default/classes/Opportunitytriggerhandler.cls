@@ -140,10 +140,10 @@ public with sharing class Opportunitytriggerhandler{
                     }
                 }
                 if(opp.Email__c != oldOppMap.get(Opp.Id).Email__c && opp.Email__c != null){
-                    List<Opportunity> OpportunityList = [Select Id From Opportunity where Email__c =:opp.Alternate_Email__c or Alternate_Email__c =:opp.Alternate_Email__c limit 1];
+                    List<Opportunity> OpportunityList = [Select Id From Opportunity where Email__c =:opp.Email__c or Alternate_Email__c =:opp.Email__c limit 1];
                     List<Lead> leadList = [Select Id From Lead where Email =: opp.Email__c or Alternate_Email__c =:opp.Email__c limit 1];
                     if(!OpportunityList.isEmpty()){
-                        opp.Email__c.addError('Duplicate Email Found.');
+                        opp.Email__c.addError('Duplicate Email Found on Opportunity.');
                     }
                     if(!leadList.isEmpty()){
                         opp.Email__c.addError('Duplicate Email Found on Lead.');

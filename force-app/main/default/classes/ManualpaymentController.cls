@@ -8,6 +8,17 @@ public class ManualpaymentController {
         System.debug('Inoice Record ::'+oppRec);
         return oppRec;
     }
+
+    @AuraEnabled
+    public static List<String> getAllPaymentType(){ 
+        List<String> getpayment = new List<String>();
+        List<Down_Payment_Type__c> paymentList = [Select Id,Name,isActive__c,IsManual__c From Down_Payment_Type__c Where IsManual__c = true and isActive__c = true];
+        for(Down_Payment_Type__c dpay : paymentList ){
+            getpayment.add(dpay.name);
+        }
+        System.debug('getpayment:::::'+getpayment);
+        return getpayment;
+    }
     
     @AuraEnabled
     public Static List<String> getPickListValuesMethod(String ObjectApi_name, String Field_Name){

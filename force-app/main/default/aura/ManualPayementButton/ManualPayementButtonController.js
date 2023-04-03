@@ -4,9 +4,10 @@
         var today = new Date();
         component.set("v.todayDate", today.toISOString().slice(0,10));
         helper.getCurrentInoiceRecord(component, event);
+        helper.getPaymentTypeRecord(component, event);
     },
     onChangeHandler : function(component, event, helper) {
-        debugger
+        debugger;
         var enterAmount = component.find('actualamount').get('v.value');
         var desc = component.find('desc').get('v.value');
         var dueAmount = component.get("v.oppAmount") - enterAmount;
@@ -109,4 +110,8 @@
         $A.get("e.force:closeQuickAction").fire();
         
     },
+    onChangeHandlerpickList : function (component, event, helper) {
+        debugger;
+        var selectedValue = component.find('paymenttype').get('v.value');
+    }
 })

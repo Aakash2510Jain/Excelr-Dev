@@ -13,7 +13,7 @@
                 component.set("v.NBFCList", response.getReturnValue().NBFCPartnerList);
                 component.set("v.downPaymentTypes", response.getReturnValue().downPaymentTypeList);
                 component.set('v.todaysDate', new Date().toISOString().split('T')[0]);
-                
+                component.set('v.selectedDate', new Date().toISOString().split('T')[0]);
                 var NBFCNames = [];
                 for(var i =0;i<response.getReturnValue().NBFCPartnerList.length;i++){
                     if(!NBFCNames.includes(response.getReturnValue().NBFCPartnerList[i].NBFC_Name__c)){
@@ -118,25 +118,55 @@
     handleSave : function(component, event, helper) {
         debugger;
         //create invoice
+        var opportunityAmountJS = component.get("v.opportunityRecord").Amount;
+        opportunityAmountJS = opportunityAmountJS.toString();
+        var downPaymentJS = component.get("v.upfrontAmount");
+        downPaymentJS = downPaymentJS.toString();
+        var loanAmountJS = component.get("v.loanAmount");
+        loanAmountJS = loanAmountJS.toString();
+        var loanPartnerJS = component.get("v.selectedNBFC");
+        var loanTenureJS = component.get("v.selectedTenure");
+        var downPaymentTypeJS = component.get("v.selectedDownPaymentMode");
+        var expiryDateJS = component.get("v.selectedDate");
+        expiryDateJS = expiryDateJS.toString();
+        var opportunityIdFromPage = component.get("v.recordId");
         var action = component.get("c.handleLoanPayment");
+        
         action.setParams({
-            opportunityAmount : component.get("v.opportunityRecord").Amount,
-            downPayment : component.get("v.upfrontAmount"),
-            loanAmount : component.get("v.loanAmount"),
-            loanPartner : component.get("v.selectedNBFC") ,
-            loanTenure : component.get("v.selectedTenure"),
-            downPaymentType : component.get("v.selectedDownPaymentMode"),
-            expiryDate : component.get("v.selectedDate")
+            opportunityId : opportunityIdFromPage,
+            loanPartner : loanPartnerJS,
+            loanTenure : loanTenureJS,
+            downPaymentType : downPaymentTypeJS,
+            downPayment : downPaymentJS,
+            loanAmount : loanAmountJS,
+            opportunityAmount : opportunityAmountJS,
+            expiryDate : expiryDateJS
         });
         action.setCallback(this, function(response){
             var state = response.getState();
             if(state == 'SUCCESS'){
+                var invoiceId = response.getReturnValue();
+                component.set("v.invoiceId", invoiceId);
+                helper.uploadLoanAttachmentHelper(component, event);
+                if(component.get("v.upfrontAmount") != undefined && component.get("v.upfrontAmount") > 0){
+                    helper.uploadDownPaymentAttachmentHelper(component, event);
+                }
+                 var toastEvent = $A.get("e.force:showToast");
+                toastEvent.setParams({
+                    title : 'success',
+                    message:'Success',
+                    duration:' 3000',
+                    key: 'info_alt',
+                    type: 'success',
+                    mode: 'pester'
+                });
+                toastEvent.fire();
             }else{
                 var toastEvent = $A.get("e.force:showToast");
                 toastEvent.setParams({
                     title : 'Error',
                     message:'Some error Occured',
-                    duration:' 5000',
+                    duration:' 3000',
                     key: 'info_alt',
                     type: 'error',
                     mode: 'pester'

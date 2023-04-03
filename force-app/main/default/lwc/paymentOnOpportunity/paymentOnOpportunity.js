@@ -152,7 +152,8 @@ export default class PaymentOnOpportunity extends LightningElement {
     // }
 
     //Getting Payment Option After Loan Not Needed
-    @track ShowPaymentOption = false;
+    @track ShowPaymentOption = true;
+    @track PaymentSectionButton = true;
     get PaymentOptionType() {
         return [
             { label: '100% Payment', value: '100% Payment' },
@@ -171,14 +172,15 @@ export default class PaymentOnOpportunity extends LightningElement {
             this.ShowPaymentCard = true;
             this.ShowOriginalAmount = true;
             this.ShowPartialPaymentOption = false;
-            this.showpaymentButton = false;
+            this.showpaymentButton = true;
+            this.paymentType = null;
         }
         else if (this.Paymentvalue == 'Partial Payment') {
             this.ShowPartialPaymentOption = true;
             this.ShowPaymentCard = true;
-            this.ShowOriginalAmount = false;
-
-
+            this.ShowOriginalAmount = true;
+            this.showpaymentButton = true;
+            this.paymentType = null;
         }
     }
 
@@ -716,11 +718,11 @@ export default class PaymentOnOpportunity extends LightningElement {
         }
 
     }
-    @track showpaymentButton = false;
+    @track showpaymentButton = true;
     Showsavebutton(event) {
         debugger;
         this.PaymentType = event.detail.value;
-        this.showpaymentButton = true;
+        this.showpaymentButton = false;
     }
 
 

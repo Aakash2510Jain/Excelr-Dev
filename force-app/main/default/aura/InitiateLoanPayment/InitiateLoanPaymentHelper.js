@@ -21,24 +21,23 @@
         objFileReader.readAsDataURL(file);
     }, 
     
-    LoanAttachmentUploadProcess: function(component, file, fileContents) {
+    LoanAttachmentUploadProcess: function(component, file, fileContents ){
         debugger;
         var startPosition = 0;
         var endPosition = Math.min(fileContents.length, startPosition + this.CHUNK_SIZE);
-        this.LoanAttachmentUploadInChunk(component, file, fileContents, startPosition, endPosition, '');
+        this.LoanAttachmentUploadInChunk(component, file, fileContents, startPosition, endPosition);
     },
     
-    LoanAttachmentUploadInChunk: function(component, file, fileContents, startPosition, endPosition, attachId) {
+    LoanAttachmentUploadInChunk: function(component, file, fileContents, startPosition, endPosition) {
         debugger;
         var getchunk = fileContents.substring(startPosition, endPosition);
        
-        /*var action= component.get("c.SaveFile");
+        var action= component.get("c.saveAttachmentUnderInvoice");
         action.setParams({
-            "parentId" : component.get("v.fileParentId"),
-            "fileName" : file.name,
-            "base64Data" : encodeURIComponent(getchunk),
-            "contentType" : file.type,
-            "fileId" : attachId
+            "invoiceId" : component.get("v.invoiceId"),
+            "FileName" : file.name,
+            "Base64Data" : encodeURIComponent(getchunk),
+            "ContentType" : file.type
         });
         action.setCallback(this, function(response){
             var State = response.getState();
@@ -61,7 +60,6 @@
             }
         });
         $A.enqueueAction(action);
-        */
     },
     uploadDownPaymentAttachmentHelper : function(component, event) {
         debugger;	
@@ -87,21 +85,19 @@
         debugger;
         var startPosition = 0;
         var endPosition = Math.min(fileContents.length, startPosition + this.CHUNK_SIZE);
-        this.uploadDownPaymentAttachmentUploadInChunk(component, file, fileContents, startPosition, endPosition, '');
+        this.uploadDownPaymentAttachmentUploadInChunk(component, file, fileContents, startPosition, endPosition);
     },
     
-    uploadDownPaymentAttachmentUploadInChunk: function(component, file, fileContents, startPosition, endPosition, attachId) {
+    uploadDownPaymentAttachmentUploadInChunk: function(component, file, fileContents, startPosition, endPosition) {
         debugger;
         var getchunk = fileContents.substring(startPosition, endPosition);
-        var action= component.get("c.SaveFile");
+        var action= component.get("c.saveAttachmentUnderInvoice");
         
-        /*
          action.setParams({
-            "parentId" : component.get("v.fileParentId"),
-            "fileName" : file.name,
-            "base64Data" : encodeURIComponent(getchunk),
-            "contentType" : file.type,
-            "fileId" : attachId
+            "invoiceId" : component.get("v.invoiceId"),
+            "FileName" : file.name,
+            "Base64Data" : encodeURIComponent(getchunk),
+            "ContentType" : file.type
         });
         action.setCallback(this, function(response){
             var State = response.getState();
@@ -124,7 +120,6 @@
             }
         });
         $A.enqueueAction(action);
-        */
     },
     
 })

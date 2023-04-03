@@ -79,5 +79,19 @@
         });
         $A.enqueueAction(action);
     },
+
+    getPaymentTypeRecord :function(component,event){
+        debugger;
+        var action = component.get("c.getAllPaymentType");
+
+        action.setCallback(this, function(response){
+            var pay = response.getState();
+            if(pay === "SUCCESS"){
+                var data = response.getReturnValue();
+                component.set("v.paymentTypeList",data);
+            }
+        });
+        $A.enqueueAction(action);
+    },
     
 })

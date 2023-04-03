@@ -218,27 +218,27 @@
 
     <div slot="footer">
 
-      <template if:true={ShowFormButton}>
+      <!-- <template if:true={ShowFormButton}>
         <lightning-button type="Sumbit" variant="Brand" label="Loan Needed" name="LoanNeeded" onclick={HandleLoanNeed}
           disabled={HandleButtonDisable}></lightning-button>
         <lightning-button type="Sumbit" variant="Brand" label="Loan Not Needed" name="LoanNotNeed"
           onclick={HandleLoanNotNeed} disabled={HandleButtonDisable} style="padding-left:5px;"></lightning-button>
-      </template>
+      </template> -->
 
       <template if:true={PaymentSectionButton}>
-        <lightning-button type="Sumbit" variant="Brand" label="Previous" name="PaymentSection" class="slds-m-around_xx-small"
-          onclick={HandlePrevious}></lightning-button>
-          <template if:true={showpaymentButton}>
-            <lightning-button type="Sumbit" variant="Brand" label="Save" name="PaymentSection" class="slds-m-around_xx-small"
+        <!-- <lightning-button type="Sumbit" variant="Brand" label="Previous" name="PaymentSection" class="slds-m-around_xx-small"
+          onclick={HandlePrevious}></lightning-button> -->
+          <!-- <template if:true={showpaymentButton}> -->
+            <lightning-button type="Sumbit" variant="Brand" label="Save" name="PaymentSection" class="slds-m-around_xx-small" disabled={showpaymentButton}
           onclick={HandlePaymentType}></lightning-button>
 
-          </template>
+          <!-- </template> -->
           
       </template>
 
       <template if:true={FullLoanButton}>
-        <lightning-button type="Sumbit" variant="Brand" label="Previous" name="FullSection"
-          onclick={HandlePrevious}></lightning-button>
+        <!-- <lightning-button type="Sumbit" variant="Brand" label="Previous" name="FullSection"
+          onclick={HandlePrevious}></lightning-button> -->
         <lightning-button type="Sumbit" variant="Brand" label="Save" onclick={HandleSave} disabled={DisableSave}
           style="padding-left:5px;"></lightning-button>
       </template>
