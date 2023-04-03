@@ -184,7 +184,7 @@ public without sharing class walkInLeadLWCcontroller{
             }*/
             if (!tasklisttobeinserted.isEmpty()) {
                 insert tasklisttobeinserted;
-                NotifyUser.processNotifications(tasklisttobeinserted);
+                //NotifyUser.processNotifications(tasklisttobeinserted);
             }
             return 'Success';
 

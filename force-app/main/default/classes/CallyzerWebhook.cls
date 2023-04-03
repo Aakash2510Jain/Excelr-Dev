@@ -1,7 +1,7 @@
 @RESTResource(urlMapping = '/callyzerWebhook/*')
 global without sharing class CallyzerWebhook{
 
-    //public string requestbody;
+    public static string requestbody;
     @HttpPost
     global static String WebhookListener(){
 
@@ -10,7 +10,7 @@ global without sharing class CallyzerWebhook{
             RestResponse res = RestContext.response;
             String body = req.requestBody.toString();
             system.debug('body-->' + body);
-            //requestbody = body;
+            requestbody = body;
             //WebhookForFuture.uploadcalllogs(body);
 
             //WebhookForFuture QueueablaWebhookJob = new WebhookForFuture (body);
@@ -21,11 +21,11 @@ global without sharing class CallyzerWebhook{
                                     FROM AsyncApexJob
                                     WHERE Id = :jobID];
 
-            return '200';
+            return 'SUCCESS';
         } catch (Exception e){
             system.debug('error due to ' + e.getMessage());
             system.debug('at line number ' + e.getLineNumber());
-            //HandleBusinessException.captureError('CallyzerWebhook','WebhookListener', e, requestbody );
+            HandleBusinessException.captureError('CallyzerWebhook','WebhookListener', e, requestbody );
             return 'Error - ' + e.getMessage();
 
         }

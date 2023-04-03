@@ -1,0 +1,252 @@
+<apex:page applyHtmlTag="false" applyBodyTag="false" showHeader="false" sidebar="false" renderAs="advanced_pdf">
+    <html>
+        
+        <div  style="width:100%">
+            <div Style="width:50%; Float:left; font-size:40px;   font-family: Arial, Helvetica, sans-serif;">
+                <b>RECEIPT</b>
+                
+            </div>
+            <div Style="width:50%; Float:right">
+                <img src="{!$Resource.ExcelRLogo}" width="180px" height="50px" align="right"/>
+            </div>
+        </div> 
+        
+        <div  style="width:100%; margin-top: 110px;">
+            
+            <table border="1.5px solid black;" style="width: 100%;  font: 20px Arial;     border-collapse: collapse;">
+                <tr >
+                    <td style=" padding-left: 15px; border:1.5px solid black; padding-top:10px;padding-bottom:10px; ">Student’s Name: <b>Umesh Chandra</b></td>
+                    <td style=" padding-left: 15px; border:1.5px solid black; padding-top:10px;padding-bottom:10px;">Invoice No:  <b>B\1120</b></td>
+                </tr>
+                <tr>
+                    <td style=" padding-left: 15px; border:1.5px solid black; padding-top:10px;padding-bottom:10px;">Phone:  <b>7904255705</b></td>
+                    <td style=" padding-left: 15px; border:1.5px solid black; padding-top:10px;padding-bottom:10px;">Receipt No:  <b>00005673</b></td>
+                </tr>
+                <tr>
+                    <td style=" padding-left: 15px; border:1.5px solid black; padding-top:10px;padding-bottom:10px;">Email:  <b>umesh@excelr.com</b></td>
+                    <td style=" padding-left: 15px; border:1.5px solid black; padding-top:10px;padding-bottom:10px;">Date:  <b>15/03/2023</b></td>
+                </tr>
+            </table>
+        </div>
+        
+        <div style="width:100%; margin-top: 50px;">
+            <table border="2px solid black;" style="width: 100%;  font: 20px Arial; text-align:center; border-collapse: collapse;">
+                <tr>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; width:10%;">S.No.</td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; ">Particular</td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;  width:10%; ">QTY</td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; ">Amount</td>
+                </tr>
+                <tr>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; width:10%;">1 <br/><br/><br/><br/><br/><br/><br/></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; ">Data Science<br/><br/><br/><br/><br/><br/><br/></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;  width:10%; ">1 <br/><br/><br/><br/><br/><br/><br/></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; ">20,000<br/><br/><br/><br/><br/><br/><br/></td>
+                </tr> 
+                <tr>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; width:10%;"></td>
+                    <td style=" padding-left: 260px; border:2px solid black; padding-top:10px;padding-bottom:10px; "><b>Amount Paid</b></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;  width:10%; "> </td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; "><b>20,000</b></td>
+                </tr>
+            </table>
+        </div> 
+        
+        <div  style="width:100%; margin-top: 50px; font: 20px Arial;">
+            <div style="width:30%; float:left;">
+                Amount in words:
+            </div> 
+            <div style="width:70%; float:right;">
+                <hr/>
+            </div> 
+        </div>
+        
+        <div  style="width:100%; margin-top: 50px; font: 20px Arial;">
+            <table border="1px solid black;" style="width: 70%; float:right; font: 20px Arial; text-align:center; border-collapse: collapse;">
+                <tr>
+                    <td style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px;margin-left:5px; ">Previously Received</td>
+                    <td style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; width:40%; ">Nil</td>
+                </tr>
+                <tr>
+                    <th style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; ">Total Amount Received</th>
+                    <th style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; width:40%; ">20,000</th>
+                </tr> 
+                <tr>
+                    <th style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; ">Due Amount</th>
+                    <th style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; width:40%;">39,999</th>
+                </tr> 
+            </table>
+        </div>
+        
+        <div  style="width:100%; margin-top: 35%;  text-align:center;  ">
+            This is a computer generated receipt no signature needed
+        </div>
+        
+        
+        
+         <div  style="width:100%; margin-top:25px;">
+            <div Style="width:50%; Float:left; font-size:50px;  font-style: normal;">
+                Receipt
+                
+            </div>
+            <div Style="width:50%; Float:right">
+                <img src="{!$Resource.ExcelRLogo}" width="180px" height="50px" align="right"/>
+            </div>
+        </div> 
+        
+        <div  style="width:100%; margin-top: 110px;">
+            
+            <table border="1.5px solid black;" style="width: 100%;  font: 20px Arial;     border-collapse: collapse;">
+                <tr >
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; ">Student’s Name: <b>Umesh Chandra</b></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;">Invoice No:  <b>B\1120</b></td>
+                </tr>
+                <tr>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;">Phone:  <b>7904255705</b></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;">Receipt No:  <b>00005673</b></td>
+                </tr>
+                <tr>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;">Email:  <b>umesh@excelr.com</b></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;">Date:  <b>15/03/2023</b></td>
+                </tr>
+            </table>
+        </div>
+        
+        <div style="width:100%; margin-top: 50px;">
+            <table border="2px solid black;" style="width: 100%;  font: 20px Arial; text-align:center; border-collapse: collapse;">
+                <tr>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; width:10%;">S.No.</td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; ">Particular</td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;  width:10%; ">QTY</td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; ">Amount</td>
+                </tr>
+                <tr>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; width:10%;">1 <br/><br/><br/><br/><br/><br/><br/></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; ">Data Science<br/><br/><br/><br/><br/><br/><br/></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;  width:10%; ">1 <br/><br/><br/><br/><br/><br/><br/></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; ">20,000<br/><br/><br/><br/><br/><br/><br/></td>
+                </tr> 
+                <tr>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; width:10%;"></td>
+                    <td style=" padding-left: 260px; border:2px solid black; padding-top:10px;padding-bottom:10px; "><b>Amount Paid</b></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;  width:10%; "> </td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; "><b>20,000</b></td>
+                </tr>
+            </table>
+        </div> 
+        
+        <div  style="width:100%; margin-top: 50px; font: 20px Arial;">
+            <div style="width:30%; float:left;">
+                Amount in words:
+            </div> 
+            <div style="width:70%; float:right;">
+                <hr/>
+            </div> 
+        </div>
+        
+        <div  style="width:100%; margin-top: 50px; font: 20px Arial;">
+            <table border="1px solid black;" style="width: 70%; float:right; font: 20px Arial; text-align:center; border-collapse: collapse;">
+                <tr>
+                    <td style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px;margin-left:5px; ">Previously Received</td>
+                    <td style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; width:40%; ">20,000</td>
+                </tr>
+                <tr>
+                    <th style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; ">Total Amount Received</th>
+                    <th style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; width:40%; ">40,000</th>
+                </tr> 
+                <tr>
+                    <th style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; ">Due Amount</th>
+                    <th style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; width:40%;">19,999</th>
+                </tr> 
+            </table>
+        </div>
+        
+        <div  style="width:100%; margin-top: 35%;  text-align:center;  ">
+            This is a computer generated receipt no signature needed
+        </div>
+        
+        
+        
+         <div  style="width:100%; margin-top:30px;">
+            <div Style="width:50%; Float:left; font-size:50px;  font-style: normal;">
+                Receipt
+                
+            </div>
+            <div Style="width:50%; Float:right">
+                <img src="{!$Resource.ExcelRLogo}" width="180px" height="50px" align="right"/>
+            </div>
+        </div> 
+        
+        <div  style="width:100%; margin-top: 110px;">
+            
+            <table border="1.5px solid black;" style="width: 100%;  font: 20px Arial;     border-collapse: collapse;">
+                <tr >
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; ">Student’s Name: <b>Umesh Chandra</b></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;">Invoice No:  <b>B\1120</b></td>
+                </tr>
+                <tr>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;">Phone:  <b>7904255705</b></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;">Receipt No:  <b>00005673</b></td>
+                </tr>
+                <tr>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;">Email:  <b>umesh@excelr.com</b></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;">Date:  <b>15/03/2023</b></td>
+                </tr>
+            </table>
+        </div>
+        
+        <div style="width:100%; margin-top: 50px;">
+            <table border="2px solid black;" style="width: 100%;  font: 20px Arial; text-align:center; border-collapse: collapse;">
+                <tr>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; width:10%;">S.No.</td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; ">Particular</td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;  width:10%; ">QTY</td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; ">Amount</td>
+                </tr>
+                <tr>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; width:10%;">1 <br/><br/><br/><br/><br/><br/><br/></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; ">Data Science<br/><br/><br/><br/><br/><br/><br/></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;  width:10%; ">1 <br/><br/><br/><br/><br/><br/><br/></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; ">20,000<br/><br/><br/><br/><br/><br/><br/></td>
+                </tr> 
+                <tr>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; width:10%;"></td>
+                    <td style=" padding-left: 260px; border:2px solid black; padding-top:10px;padding-bottom:10px; "><b>Amount Paid</b></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;  width:10%; "> </td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; "><b>20,000</b></td>
+                </tr>
+            </table>
+        </div> 
+        
+        <div  style="width:100%; margin-top: 50px; font: 20px Arial;">
+            <div style="width:30%; float:left;">
+                Amount in words:
+            </div> 
+            <div style="width:70%; float:right;">
+                <hr/>
+            </div> 
+        </div>
+        
+        <div  style="width:100%; margin-top: 50px; font: 20px Arial;">
+            <table border="1px solid black;" style="width: 70%; float:right; font: 20px Arial; text-align:center; border-collapse: collapse;">
+                <tr>
+                    <td style=" padding-left: 25px; border:1px solid black; padding-top:10px;padding-bottom:10px;  ">Previously Received</td>
+                    <td style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; width:40%; ">40,000</td>
+                </tr>
+                <tr>
+                    <th style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; ">Total Amount Received</th>
+                    <th style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; width:40%; ">59,999</th>
+                </tr> 
+                <tr>
+                    <th style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; ">Due Amount</th>
+                    <th style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; width:40%;">Nil</th>
+                </tr> 
+            </table>
+        </div>
+        
+        <div  style="width:100%; margin-top: 35%;  text-align:center;  ">
+            This is a computer generated receipt no signature needed
+        </div>
+        
+    </html>
+</apex:page>

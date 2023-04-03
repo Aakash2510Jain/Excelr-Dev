@@ -7,7 +7,7 @@ trigger TriggerOnOpportunity on Opportunity (before insert, after update, before
 
         Opportunitytriggerhandler handlerInstance = Opportunitytriggerhandler.getInstance();
         if (trigger.isAfter && trigger.isUpdate) {
-            handlerInstance.createtaskForIsm(trigger.oldMap, trigger.newMap);
+            handlerInstance.afterUpdate(trigger.oldMap, trigger.newMap);
         }
         if (trigger.isBefore && trigger.isUpdate) {
             handlerInstance.beforeupdate(trigger.oldMap, trigger.newMap);            

@@ -187,7 +187,7 @@ public without sharing class ChatFormLWCcontroller{
 }*/
             if (!tasklisttobeinserted.isEmpty()) {
                 insert tasklisttobeinserted;
-                NotifyUser.processNotifications(tasklisttobeinserted);
+                //NotifyUser.processNotifications(tasklisttobeinserted);
             }
             return 'Success';
 

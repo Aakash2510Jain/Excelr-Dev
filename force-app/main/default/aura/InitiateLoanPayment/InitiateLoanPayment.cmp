@@ -1,0 +1,79 @@
+<aura:component implements="force:appHostable,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" controller="InitiateLoanPaymentController" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="opportunityRecord" type="opportunity"/>
+    <aura:attribute name="NBFCList" type="NBFC__c[]"/>
+    <aura:attribute name="NBFCNames" type="List"/>
+    <aura:attribute name="downPaymentTypes" type="List"/>
+    <aura:attribute name="loanTenureList" type="List"/>
+    <aura:attribute name="upfrontAmount" type="Integer"/>
+    <aura:attribute name="loanAmount" type="Integer"/>
+    <aura:attribute name="selectedNBFC" type="string"/>
+    <aura:attribute name="selectedTenure" type="string"/>
+    <aura:attribute name="selectedDownPaymentMode" type="string"/>
+    <aura:attribute name="loanAttachmentName" type="String" default="No File Selected..." />
+    <aura:attribute name="downPaymentAttachmentName" type="String" default="No File Selected..." />
+    <aura:attribute name="selectedDate" type="Date"/>
+    <aura:attribute name="todaysDate" type="Date"/>
+    <aura:attribute name="maxDate" type="Date"/>
+    <aura:attribute name="validDate" type="Boolean" default="true"/>
+    <aura:attribute name="downPaymentIsNotZero" type="Boolean" default="false"/>
+    <aura:attribute name="captureExpiryDate" type="Boolean" default="false"/>
+    
+    <div style="padding:2%">
+        <p class="slds-align_absolute-center slds-text-heading_large" ><b>Loan Window</b></p>
+        <br/><br/>
+        <p><b>Price Including GST :&nbsp;{!v.opportunityRecord.Amount}</b> </p>
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col">
+                <span>
+                    <lightning:input type="number" name="input8" required="false" value="{!v.upfrontAmount}" label="Down Payment" onblur="{!c.handleUpfrontAmount}"/>
+                    <lightning:select onchange="{!c.handleNBFCPartnerChanged}" name="NBFCPartner" label="NBFC Partner" required="true">
+                        <option value="">--None--</option>
+                        <aura:iteration items="{!v.NBFCNames}" var="NBFC" indexVar="key">
+                            <option text="{!NBFC}" value="{!NBFC}" />
+                        </aura:iteration>
+                    </lightning:select>
+                    <lightning:input aura:id="loanAttachment" onchange="{!c.handleLoanAttachment}" type="file" accept="image/png, .png, ,jpg, image/jpeg, image/jpg , application/pdf" label="Loan Attachment" multiple="false" required="false" />
+                    <div class="slds-text-body_small slds-text-color_success"> {!v.loanAttachmentName} </div>
+                    
+                    <aura:if  isTrue="{!v.downPaymentIsNotZero}" >
+                        <lightning:select onchange="{!c.handleDownPaymentChanged}" name="downPaymentType" label="Down Payment Type" required="true">
+                            <option value="">--None--</option>
+                            <aura:iteration items="{!v.downPaymentTypes}" var="downPayment" indexVar="key">
+                                <option text="{!downPayment.Name}" value="{!downPayment.Name}" />
+                            </aura:iteration>
+                        </lightning:select>
+                    </aura:if>
+                    <aura:if  isTrue="{!v.captureExpiryDate}">
+                        <lightning:input type="date" label="Link Expiry Date" value="{!v.selectedDate}" min="{!v.todaysDate}" required="true"/>
+                    </aura:if>
+                </span>
+            </div>
+            <div class="slds-col">
+                <span>
+                    <lightning:input type="number" name="input8" required="false"  label="Loan Amount" value="{!v.loanAmount}" disabled="true"/>
+                    <lightning:select onchange="{!c.handleTenureChanged}" name="tenure" label="Tenure" required="true">
+                        <option value="">--None--</option>
+                        <aura:iteration items="{!v.loanTenureList}" var="tenure" indexVar="key">
+                            <option text="{!tenure}" value="{!tenure}" />
+                        </aura:iteration>
+                    </lightning:select>
+                    <aura:if  isTrue="{!v.downPaymentIsNotZero}" >
+                        
+                        <lightning:input aura:id="downPaymentAttachment" onchange="{!c.handleDownPaymentAttachment}" type="file" accept="image/png, .png, ,jpg, image/jpeg, image/jpg , application/pdf" label="Down Payment Attachment" multiple="false" required="true" />
+                        <div class="slds-text-body_small slds-text-color_success"> 
+                            {!v.downPaymentAttachmentName} 
+                        </div>
+                    </aura:if>
+                </span>
+            </div>
+        </div>
+    </div>  
+        <div class="modal-footer slds-modal__footer slds-size_1-of-1" style="width: 110%;  padding: 10px; margin-left: -29px; ">
+            <div class="forceChangeRecordTypeFooter">
+                <ui:button class="slds-button slds-float_left  slds-button_neutral" label="Cancel"
+                           press="{! c.handleCancel}" />
+                <ui:button class="slds-button slds-button--brand" label="Save" press="{!c.handleSave}" />
+            </div>
+        </div>
+</aura:component>

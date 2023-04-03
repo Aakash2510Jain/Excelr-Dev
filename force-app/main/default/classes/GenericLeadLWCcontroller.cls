@@ -183,7 +183,7 @@ public without sharing class GenericLeadLWCcontroller{
             }*/
             if (!tasklisttobeinserted.isEmpty()) {
                 insert tasklisttobeinserted;
-                NotifyUser.processNotifications(tasklisttobeinserted);
+                //NotifyUser.processNotifications(tasklisttobeinserted);
             }
             return 'Success';
 

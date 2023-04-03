@@ -20,20 +20,30 @@
         <h2 style=" text-align: center;font-size: 25px;font-family: math;">Manual Payment</h2>
         <br />
         
-        <lightning:input label="Amount" disabled="true" value="{!v.oppAmount}" /><br />
-        <lightning:input type="number" aura:id="actualamount" required="true"  label="Actual Amount" onchange="{!c.onChangeHandler}"
-                          />
-        <lightning:input type="number" disabled="true" aura:id="dueamount" label="Due Amount"
-                         value="{!v.dueAmountRemaning}" />
+        <lightning:input label="Price Including GST : From Pricebook" disabled="true" value="{!v.oppAmount}" /><br />
+        
+        
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_1-of-2">
+                <lightning:input type="number" aura:id="actualamount" required="true"  label="Upfront Amount" onchange="{!c.onChangeHandler}"/>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+                <lightning:input type="number" disabled="true" aura:id="dueamount" label="Due Amount" value="{!v.dueAmountRemaning}" />
+            </div>
+        </div>
+             
         <aura:if isTrue="{!v.partialPayment}">
             <lightning:input type="date" label="Select next followup date for pending payment" required ="true" value="{!v.selectedDate}" min="{!v.todayDate}"  />
         </aura:if>
         <lightning:textarea aura:id="desc" type="text" maxlength="300" label="Description"
                             placeholder="Enter description" onchange="{!c.onChangeHandler}" />
         <lightning:input aura:id="fileuplod" onchange="{!c.handleFilesChange}" type="file"
-                         accept="image/png, .png, ,jpg, image/jpeg, image/jpg , application/pdf" label="Upload File" multiple="false"
+                         accept="image/png, .png, ,jpg, image/jpeg, image/jpg , application/pdf" label="Upload Attachment" multiple="false"
                          required="true" />
         <div class="slds-text-body_small slds-text-color_success"> {!v.fileName} </div>
+        
+        <lightning:input type="number" aura:id="actualamount"  label="Payment Type" onchange="{!c.onChangeHandler}"/>
+        
     </div>
     <br />
     <div class="modal-footer slds-modal__footer slds-size_1-of-1" style="width: 110%;

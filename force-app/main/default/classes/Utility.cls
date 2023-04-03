@@ -385,6 +385,23 @@ public without sharing class Utility{
         }
     }
 
+    public static Application__c returnApplicationInstanceForAccandOpp(Opportunity OppRec, string courseName){
+        string applicationId = '';
+        try{
+            Application__c appRec = new Application__c();
+            appRec.Applied_Date_Time__c = system.now();
+            appRec.Course__c = courseName;
+            appRec.Account__c = OppRec.AccountId;
+            appRec.Opportunity__c = OppRec.Id;
+            return appRec;
+        } catch (Exception e){
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('Utility', 'returnApplicationInstance', e, null);
+            return null;
+        }
+    }
+
     public static ApplicationtaskWrapper returnApplicationorTask (Opportunity OppRec, string courseName){
         ApplicationtaskWrapper AcctaskWrap = new ApplicationtaskWrapper();
         System.debug('OppRec ====> ' + OppRec);
@@ -393,7 +410,7 @@ public without sharing class Utility{
         try {
             if (OppRec.Course__c == courseName ) {
                 task tasktoCreate = new task();
-                tasktoCreate.Subject = 'Candidate has applied again for the Same Course';
+                tasktoCreate.Subject = Constants.TASKSUBJECTCANDIDATEAPPLIEDAGAIN;
                 tasktoCreate.WhatId = OppRec.Id;
                 tasktoCreate.ActivityDate = system.today();
                 tasktoCreate.OwnerId = OppRec.OwnerId ;
@@ -405,7 +422,7 @@ public without sharing class Utility{
                 
             }
             if (OppRec.Course__c != courseName ){
-                Application__c appRec = Utility.returnApplicationInstance(OppRec.accountId, courseName);
+                Application__c appRec = Utility.returnApplicationInstanceForAccandOpp(OppRec, courseName);
                 AcctaskWrap.TaskRec = null;
                 AcctaskWrap.app = appRec;
             }
@@ -415,6 +432,8 @@ public without sharing class Utility{
             System.debug(' The error has occured due to ====> ' + e.getMessage());
             System.debug(' The error has occured atline number ====> ' + e.getLineNumber());
             HandleBusinessException.captureError('Utility', 'returnApplicationorTask', e, null);
+            AcctaskWrap.TaskRec = null;
+            AcctaskWrap.app = null;
             
         }
         return AcctaskWrap;

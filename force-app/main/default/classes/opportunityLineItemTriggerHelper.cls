@@ -87,21 +87,30 @@ public class opportunityLineItemTriggerHelper{
         set<Id> OppIds = new Set<Id>();
         List<Approval.ProcessWorkitemRequest> requests = new List<Approval.ProcessWorkitemRequest>();
         try{
+            List<Opportunity> OppList = new List<Opportunity>();
+            List<Opportunity> UpdatedOppList = new List<Opportunity>();
 
             if (!OldOLIMap.isEmpty()){
 
                 for (OpportunityLineItem Oli : OldOLIMap.values()){
                     if (Approval.isLocked(Oli.OpportunityId)){
-                        if(Oli.Discount > 20 && Oli.Discount <= 30){
+                        if(Oli.Discount > 20){
                             OppIds.add(Oli.OpportunityId);
                         }
-                        
                     }
-
                 }
             }
+
             System.debug('OppIds =====> ' + OppIds);
             if (!OppIds.isEmpty()){
+                OppList = [Select Id from Opportunity where Id In:OppIds];
+                for (Opportunity OppRec : OppList) {
+                    Opportunity updatedOppRec = new Opportunity();
+                    updatedOppRec.id = OppRec.Id;
+                    updatedOppRec.Approval_Status__c = '';
+                    UpdatedOppList.add(updatedOppRec);
+                    
+                }
                 Map<ID, Opportunity> oppmap = New Map<ID, Opportunity>([Select Id
                                                                         from Opportunity
                                                                         where Id In:OppIds]);
@@ -129,7 +138,9 @@ public class opportunityLineItemTriggerHelper{
             if (!requests.isEmpty() && requests.size() >0) {
                 Approval.ProcessResult[] processResults = null;
                 processResults = Approval.process(requests, true);
-                
+            }
+            if (!UpdatedOppList.isEmpty()) {
+                update UpdatedOppList;
             }
 
 

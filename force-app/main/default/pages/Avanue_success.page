@@ -22,8 +22,8 @@
             }
 
             function getParameters(param){
-                var url = new URL($scope.respUrl);
-                return url.searchParams.get(param);
+            var url = new URL($scope.respUrl);
+            return url.searchParams.get(param);
             }
         })
     </script>
