@@ -19,8 +19,10 @@
     <aura:attribute name="todaysDate" type="Date" />
     <aura:attribute name="maxDate" type="Date" />
     <aura:attribute name="validDate" type="Boolean" default="true" />
+    <aura:attribute name="disableSaveButton" type="Boolean" default="false" />
     <aura:attribute name="downPaymentIsNotZero" type="Boolean" default="false" />
     <aura:attribute name="captureExpiryDate" type="Boolean" default="false" />
+    <aura:attribute name="captureDownPaymentAttachment" type="Boolean" default="false" />
 
     <div style="padding:2%">
         <p class="slds-align_absolute-center slds-text-heading_large"><b>Loan Window</b></p>
@@ -40,7 +42,7 @@
                     </lightning:select>
                     <lightning:input aura:id="loanAttachment" onchange="{!c.handleLoanAttachment}" type="file"
                         accept="image/png, .png, ,jpg, image/jpeg, image/jpg , application/pdf" label="Loan Attachment"
-                        multiple="false" required="false" />
+                        multiple="false" required="true" />
                     <div class="slds-text-body_small slds-text-color_success"> {!v.loanAttachmentName} </div>
 
                     <aura:if isTrue="{!v.downPaymentIsNotZero}">
@@ -68,7 +70,7 @@
                             <option text="{!tenure}" value="{!tenure}" />
                         </aura:iteration>
                     </lightning:select>
-                    <aura:if isTrue="{!v.downPaymentIsNotZero}">
+                    <aura:if isTrue="{!v.captureDownPaymentAttachment}">
 
                         <lightning:input aura:id="downPaymentAttachment" onchange="{!c.handleDownPaymentAttachment}"
                             type="file" accept="image/png, .png, ,jpg, image/jpeg, image/jpg , application/pdf"
@@ -86,7 +88,7 @@
         <div class="forceChangeRecordTypeFooter">
             <ui:button class="slds-button slds-float_left  slds-button_neutral" label="Cancel"
                 press="{! c.handleCancel}" />
-            <ui:button class="slds-button slds-button--brand" label="Save" press="{!c.handleSave}" />
+            <ui:button class="slds-button slds-button--brand" label="Save" press="{!c.handleSave}" disabled="{!v.disableSaveButton}" />
         </div>
     </div>
 </aura:component>

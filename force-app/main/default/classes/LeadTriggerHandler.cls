@@ -122,9 +122,9 @@ public without sharing class LeadTriggerHandler{
                 }
                 ld.Enquired_Type_of_Course__c = !String.isBlank(ld.Type_of_Course__c) ? ld.Type_of_Course__c : 'Single';
             }
-            string queryStringForNonConvertedLead = 'select CreatedDate, Id, Email, status, course__c, CID__c,Customers__c,OwnerId,Alternate_Phone__c,Phone,Alternate_Email__c From Lead';
-            String queryStringForConvertedLead = 'select CreatedDate, Id, Email, status, course__c,CID__c,ConvertedAccountId, Customers__c,LID__c,OwnerId,Alternate_Phone__c,Phone,Alternate_Email__c From Lead ';
-            String queryStringforOpportunityLead = 'SELECT  AccountId,LID__c, Customers__c, CreatedDate,OwnerId,Alternate_Email__c,Alternate_Phone__c,Course__c,Email__c,Id,Lead_Gen_Path__c,Loan_Amount__c,Name,Phone__c,StageName FROM Opportunity';
+            string queryStringForNonConvertedLead = 'select DeadDateTime__c,CreatedDate, Id, Email, status, course__c, CID__c,Customers__c,OwnerId,Alternate_Phone__c,Phone,Alternate_Email__c From Lead';
+            String queryStringForConvertedLead = 'select DeadDateTime__c,CreatedDate, Id, Email, status, course__c,CID__c,ConvertedAccountId, Customers__c,LID__c,OwnerId,Alternate_Phone__c,Phone,Alternate_Email__c From Lead ';
+            String queryStringforOpportunityLead = 'SELECT  ClosedLostDateTime__c, AccountId,LID__c, Customers__c, CreatedDate,OwnerId,Alternate_Email__c,Alternate_Phone__c,Course__c,Email__c,Id,Lead_Gen_Path__c,Loan_Amount__c,Name,Phone__c,StageName FROM Opportunity';
 
             String whereClauses = '( ';
             String whereClausesForOpp = '( ';
@@ -380,7 +380,7 @@ public without sharing class LeadTriggerHandler{
                             }
                         }
                     }
-                    if (ExistingOppByAlternateEmail.containsKey(leadRec.Alternate_Email__c)){
+                    else if (ExistingOppByAlternateEmail.containsKey(leadRec.Alternate_Email__c)){
                         if (ExistingOppByAlternateEmail.get(leadRec.Alternate_Email__c).Stagename != Constants.OPP_STAGENAME_CLOSE_LOST){
                             leadRec.To_Be_Deleted__c = true;
                             opp = ExistingOppByAlternateEmail.get(leadRec.Alternate_Email__c);
@@ -409,7 +409,7 @@ public without sharing class LeadTriggerHandler{
                             }
                         }
                     }
-                    if (ExistingOppByPhone.containsKey(leadRec.Phone)){
+                    else if (ExistingOppByPhone.containsKey(leadRec.Phone)){
                         if (ExistingOppByPhone.get(leadRec.Phone).Stagename != Constants.OPP_STAGENAME_CLOSE_LOST){
                             leadRec.To_Be_Deleted__c = true;
                             opp = ExistingOppByPhone.get(leadRec.Phone);
@@ -440,7 +440,7 @@ public without sharing class LeadTriggerHandler{
 
                         }
                     }
-                    if (ExistingOppByAlternatePhone.containsKey(leadRec.Alternate_Phone__c)){
+                    else if (ExistingOppByAlternatePhone.containsKey(leadRec.Alternate_Phone__c)){
                         if (ExistingOppByAlternatePhone.get(leadRec.Alternate_Phone__c).Stagename != Constants.OPP_STAGENAME_CLOSE_LOST){
                             leadRec.To_Be_Deleted__c = true;
                             opp = ExistingOppByAlternatePhone.get(leadRec.Alternate_Phone__c);
@@ -683,7 +683,8 @@ public without sharing class LeadTriggerHandler{
             set<String> leadIds = new set<String>();
 
             for (Lead ld : leadList){
-                Application__c LeadApp = Utility.createApplicationInstance(ld.Id, ld.Course__c, null);
+                //Application__c LeadApp = Utility.createApplicationInstance(ld.Id, ld.Course__c, null);
+                Application__c LeadApp = Utility.createApplicationInstanceForLead(ld, null);
                 applicationtobeinserted.add(LeadApp);
                 if (ld.To_Be_Deleted__c){
                     leadIds.add(ld.Id);

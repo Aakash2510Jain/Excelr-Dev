@@ -34,7 +34,8 @@ public class InitiateLoanPaymentController {
             invRec.Loan_Partner__c = loanPartner;
             invRec.Loan_Tenure__c = decimal.valueOf(loanTenure);
             invRec.Down_Payment_Type__c = downPaymentType;
-            invRec.Down_Payment_Expiry_Date__c = Date.valueOf(expiryDate);
+            if(!string.isBlank(downPaymentType))
+                invRec.Down_Payment_Expiry_Date__c = Date.valueOf(expiryDate);
             invRec.Type__c = 'Loan';
             invRec.Initiated_Date__c = System.Today();
             insert invRec;

@@ -84,8 +84,10 @@
         component.set("v.selectedDownPaymentMode", downPaymentSelected);
         if(downPaymentSelected == "RazorPay" || downPaymentSelected == "CC Avenue"){
             component.set("v.captureExpiryDate", true);
+            component.set("v.captureDownPaymentAttachment", false);
         }else{
             component.set("v.captureExpiryDate", false);
+            component.set("v.captureDownPaymentAttachment", true);
         }
     },
     handleLoanAttachment : function(component, event, helper) {
@@ -117,6 +119,7 @@
     
     handleSave : function(component, event, helper) {
         debugger;
+        component.set("v.disableSaveButton",true);
         //create invoice
         var opportunityAmountJS = component.get("v.opportunityRecord").Amount;
         opportunityAmountJS = opportunityAmountJS.toString();

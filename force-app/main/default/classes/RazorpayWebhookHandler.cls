@@ -31,12 +31,19 @@ global without sharing class RazorpayWebhookHandler{
                     Utility.ApprovalWrapper approvalParentIdWrapper = Utility.getParentUserMap();
                     
                     Invoice__c invoiceRec = [Select Id, Status__c,LeadInvoice__c,LeadInvoice__r.Owner.UserRoleId,Lead_ManagerId__c,Opportunity__c,Opportunity__r.Owner.UserRoleId,
-                                            LeadInvoice__r.Owner.Name, LeadInvoice__r.Owner.Email, Opportunity__r.Owner.Email, Opportunity__r.Owner.Name
+                                            LeadInvoice__r.Owner.Name, LeadInvoice__r.Owner.Email, Opportunity__r.Owner.Email, Opportunity__r.Owner.Name,
+                                            (SELECT Amount__c,CreatedDate,Id,Invoice__c,Name FROM Receipts__r)
                                              From Invoice__c
                                              Where Opportunity__c = :recId
                                              ORDER BY CreatedDate DESC
                                              limit 1];
                     if (m4.get('captured') == true){
+                        Receipt__c receipt = new Receipt__c();
+                        receipt.id = invoiceRec.Receipts__r[0].Id;
+                        receipt.Invoice__c = invoiceRec.id; // 
+                        receipt.amount__c = Integer.valueOf(String.ValueOf(m4.get('amount')));
+                        update receipt;
+
                         invoiceRec.TranactionId__c = String.ValueOf(m4.get('id'));
                         system.debug('recId--->'+recId);
                         Invoice_Approval__e invApproval = new Invoice_Approval__e();

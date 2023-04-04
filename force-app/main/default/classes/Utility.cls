@@ -364,6 +364,28 @@ public without sharing class Utility{
         }
         return appRec;
     }
+
+
+    public static Application__c createApplicationInstanceForLead(Lead LeadRec, string requestString){
+        
+        Application__c appRec = new Application__c();
+        try{
+            
+            appRec.Applied_Date_Time__c = system.now();
+            appRec.Course__c = LeadRec.Course__c;
+            appRec.Lead__c = LeadRec.Id;
+            appRec.ownerId = LeadRec.ownerId;
+            
+        } catch (Exception e){
+            System.debug(' the Error has occured due to =====> ' + e.getMessage());
+            System.debug(' the Error has occured at  =====> ' + e.getLineNumber());
+            HandleBusinessException.captureError('Utility', 'createApplicationInstanceForLead', e, null);
+            
+        }
+        return appRec;
+    }
+
+
     
     
     public static Application__c returnApplicationInstance(string recordId, string courseName){
@@ -393,6 +415,7 @@ public without sharing class Utility{
             appRec.Course__c = courseName;
             appRec.Account__c = OppRec.AccountId;
             appRec.Opportunity__c = OppRec.Id;
+            appRec.OwnerId = OppRec.OwnerId;
             return appRec;
         } catch (Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());

@@ -49,11 +49,11 @@ public without Sharing class  NotifyUser {
             try {
                 string usersToNotify = '';
                 if(applicationRec.Opportunity__c != null){
-                    notification.send(new Set<String> {applicationRec.Opportunity__r.OwnerId});
+                    notification.send(new Set<String> {applicationRec.OwnerId}); //Opportunity__r
                 }else if(applicationRec.Account__c != null){
-                    notification.send(new Set<String> {applicationRec.Account__r.OwnerId});
+                    notification.send(new Set<String> {applicationRec.OwnerId}); //Account__r
                 }else if(applicationRec.Lead__c != null){
-                    notification.send(new Set<String> {applicationRec.Lead__r.OwnerId});
+                    notification.send(new Set<String> {applicationRec.OwnerId}); //Lead__r
                 }
             }
             catch (Exception e) {

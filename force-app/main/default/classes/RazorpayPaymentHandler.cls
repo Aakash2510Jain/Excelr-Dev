@@ -160,10 +160,8 @@ public with sharing class RazorpayPaymentHandler {
             Map<String,Object> jsonBody = (Map<String,Object>) Json.deserializeUntyped(res.getBody());
             
             System.debug('RESPPPP ====> '+jsonBody);
-            //
             string PaymentUrl = String.valueof(jsonBody.get('short_url'));
             System.debug('PaymentUrl ======> '+ PaymentUrl);
-            //map<String,Object> NotesMap = (Map<String,Object>)jsonBody.get('Notes');
 
             if (PaymentUrl != null && invrecID != null ) {
                 Utility.SendPaymentLinkToISM( invrecID, PaymentUrl);

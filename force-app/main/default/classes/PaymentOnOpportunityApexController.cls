@@ -125,15 +125,9 @@ public class PaymentOnOpportunityApexController{
         try{
             Opportunity OppRec = new Opportunity();
             OppRec.Id = recordId;
-            OppRec.Seek_Loan__c = null;
             OppRec.Payment_Mode__c = paymentType;
             OppRec.Payment_Type__c = PaymentOptiontype;
-            OppRec.Loan_Tenure__c = null;
-            OppRec.Loan_Amount__c = null;
-            OppRec.NBFCPartner__c = null;
-            OppRec.Loan_Type__c = null;
             OppRec.Upfront_Amount__c = Amount;
-            OppRec.Due_Amount__c = null;
             update OppRec;
 
 
@@ -145,14 +139,21 @@ public class PaymentOnOpportunityApexController{
             invRec.Mode_Terms_of_Payment__c = 'Online';
             invRec.Initiated_Date__c = System.Today();
             invRec.Invoice_Due_Date__c = System.Today() + 2;
-
             insert invRec;
+            
+            if (invRec.id != null) {
+                Receipt__c receipt = new Receipt__c();
+                receipt.Invoice__c = invRec.id; // 
+                receipt.amount__c = Amount;
+                insert receipt;
+                
+            }
 
             if (paymentType == 'razorpay'){
 
                 return RazorpayPaymentHandler.initateRazorpayPament(invRec.id, longUnixTimeStamp);
 
-            } else{
+            } else if(paymentType == 'CC Avenue'){
 
                 ccAvenueLwcController.initateCCAvenuePayment(invRec.id, longUnixTimeStamp);
             }
@@ -375,74 +376,4 @@ public class PaymentOnOpportunityApexController{
         }
     }
 
-    /*@AuraEnabled
-     Public Static String CreateInvoice(String recordId, Decimal FinalAmount, integer PartialTenureValue, String partialNBFCValue, Integer PartialUpfrontValue, Integer Quantity, String ProductName, Decimal Amount, String paymentType){
-
-     System.debug('FinalAmount ===> ' + FinalAmount);
-     System.debug('PartialTenureValue ===> ' + PartialTenureValue);
-     System.debug('partialNBFCValue ===> ' + partialNBFCValue);
-     System.debug('PartialUpfrontValue ===> ' + PartialUpfrontValue);
-     System.debug('Quantity ===> ' + Quantity);
-     System.debug('ProductName ===> ' + ProductName);
-     System.debug('Amount ===> ' + Amount);
-     System.debug('paymentType ===> ' + paymentType);
-
-     system.debug('Create Invoice');
-     if (PartialTenureValue == null && partialNBFCValue == null && PartialUpfrontValue == null && Quantity != null && ProductName != null && Amount == null && paymentType != null){
-
-
-     Invoice__c invRec = new Invoice__c();
-     invRec.Opportunity__c = recordId;
-     invRec.Status__c = 'Initiated';
-     invRec.Amount__c = FinalAmount;
-     invRec.Initiated_Date__c = System.Today();
-     invRec.Invoice_Due_Date__c = System.Today() + 2;
-
-     insert invRec;
-     } else if (PartialTenureValue != null && partialNBFCValue != null && PartialUpfrontValue != null && Quantity != null && ProductName != null && Amount != null && paymentType != null){
-
-     product2 PrdRec = [Select Id, Name, (Select Id, Name, UnitPrice
-     From PricebookEntries)
-     From Product2
-     where id = :ProductName];
-
-
-     Opportunity OppRec=new Opportunity();
-     OppRec.Id = recordId;
-     OppRec.Loan_Tenure__c = PartialTenureValue;
-     OppRec.NBFCPartner__c = partialNBFCValue;
-     OppRec.Upfront_Amount__c = PartialUpfrontValue;
-     OppRec.Loan_Amount__c = Amount;
-     OppRec.TotalOpportunityQuantity = Quantity;
-     OppRec.Payment_Initiated_Date_Time__c = System.now();
-     OppRec.Payment_Mode__c = paymentType;
-     //OppRec.Product__c = PrdRec.Id;
-     string OppCourse = PrdRec.name.substringBefore('-');
-     OppCourse = OppCourse.trim();
-     OppRec.Course__c = OppCourse;
-     Update OppRec;
-
-     List<Invoice__c> invoiceList = new List<Invoice__c>();
-     Invoice__c invRec = new Invoice__c();
-     invRec.Opportunity__c = recordId;
-     invRec.Status__c = 'Initiated';
-     invRec.Amount__c = PartialUpfrontValue;
-     invRec.Initiated_Date__c = System.Today();
-     invRec.Invoice_Due_Date__c = System.Today() + 2;
-
-     invoiceList.add(invRec);
-
-     Invoice__c invRecLoan = new Invoice__c();
-     invRecLoan.Opportunity__c = recordId;
-     invRecLoan.Status__c = 'Initiated';
-     invRecLoan.Amount__c = Amount - PartialUpfrontValue;
-     invRecLoan.Initiated_Date__c = System.Today();
-     invRecLoan.Invoice_Due_Date__c = System.Today() + 2;
-     invoiceList.add(invRecLoan);
-
-     insert invoiceList;
-     }
-
-     return 'Success';
-     }*/
 }

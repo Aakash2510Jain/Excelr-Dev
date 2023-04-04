@@ -27,22 +27,10 @@ public class opportunityLineItemTriggerHelper{
                             approverId = OLIRec.Opportunities_Owner_s_Manager_Id__c;
                         } else{
                             approverId = approvalParentIdWrapper.smToManagerMap.containsKey(userRoleId) && approvalParentIdWrapper.managerRoleToUserIdMap.containsKey(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) ? approvalParentIdWrapper.managerRoleToUserIdMap.get(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
-                            //approvalRequest.setNextApproverIds(new List<Id> {system.label.Admin_User_Id});
                         }
                         System.debug('approverId ====> ' + approverId);
 
                         approvalRequest.setNextApproverIds(new Id[]{ approverId });
-
-                        //approvalRequestList.add(approvalRequest);
-
-                        // ============================= approval to syed mohsin ==============================
-                        // Approval.ProcessSubmitRequest SyedapprovalRequest = new Approval.ProcessSubmitRequest();
-                        // SyedapprovalRequest.setComments('Submitting for Syed Mohsin Approval');
-                        // SyedapprovalRequest.setObjectId(OLIRec.OpportunityId);
-                        // SyedapprovalRequest.setProcessDefinitionNameOrId('Discount_exceeded_threshold_value');
-                        // SyedapprovalRequest.setNextApproverIds(new Id[] {syedUserId });
-
-                        // approvalRequestList.add(SyedapprovalRequest);
 
 
                         cdToapprovalRequestMap.put(OLIRec.Id, approvalRequest);
@@ -70,10 +58,6 @@ public class opportunityLineItemTriggerHelper{
                 }
             }
             System.debug('cdToapprovalRequestMap ===> ' + cdToapprovalRequestMap);
-            // if(!cdToapprovalRequestMap.isEmpty()){
-            //     List<Approval.ProcessResult> result = Approval.process(cdToapprovalRequestMap.values());
-
-            // }
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
             HandleBusinessException.captureError('opportunityLineItemTriggerHelper', 'fireApprovalAfterInsert', e, null);
