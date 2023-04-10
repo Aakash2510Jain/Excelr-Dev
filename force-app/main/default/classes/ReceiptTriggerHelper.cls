@@ -18,7 +18,7 @@ public class ReceiptTriggerHelper {
         }
         if(!receiptIds.isEmpty()){
             Invoice_Receipt_PDF_Controller.attachReceiptUnderRecord(receiptIds);
-            updateReceiptsList = [Select Id, Invoice__c,Invoice__r.Realized_Amount__c,Invoice__r.Due_Amount__c,Invoice__r.Amount__c,Amount__c From Receipt__c where Id in: receiptIds];
+            /*updateReceiptsList = [Select Id, Invoice__c,Invoice__r.Realized_Amount__c,Invoice__r.Due_Amount__c,Invoice__r.Amount__c,Amount__c From Receipt__c where Id in: receiptIds];
             if(!updateReceiptsList.isEmpty()){
                 for(Receipt__c receiptRec : updateReceiptsList){
                     Invoice__c invoiceToUpdate = new Invoice__c();
@@ -30,7 +30,7 @@ public class ReceiptTriggerHelper {
                 if(!invoiceRecordsToUpdate.isEmpty()){
                     update invoiceRecordsToUpdate;
                 }
-            }
+            }*/
         }
     }
 }

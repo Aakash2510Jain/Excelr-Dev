@@ -8,7 +8,7 @@ public without sharing class Invoice_Receipt_PDF_Controller {
     public string invoiceNo {get; set;} 
     public String amount {get; set;} 
     public String previouslyPaidAmount {get; set;}
-    public string totalPaidAmount {get; set;}
+    public String totalPaidAmount {get; set;}
     public String dueAmount {get; set;}
     public string  amountinwords {get; set;}
     public Date  receiptCreationDate {get; set;}
@@ -34,14 +34,14 @@ public without sharing class Invoice_Receipt_PDF_Controller {
             else
                 previouslyPaidAmount = string.valueOf(receiptRecord.Invoice__r.Realized_Amount__c);
             totalPaidAmount = receiptRecord.Invoice__r.Realized_Amount__c != null ? String.ValueOf(receiptRecord.Invoice__r.Realized_Amount__c + receiptRecord.Amount__c) : string.valueOf(receiptRecord.Amount__c);
-            dueAmount = String.valueOf(receiptRecord.Invoice__r.Due_Amount__c);	
+            dueAmount = string.valueOf(receiptRecord.Invoice__r.Opportunity__r.Amount - integer.valueOf(totalPaidAmount));	
         } catch(Exception e){
             System.debug('Error--'+e.getMessage() +' Line No ::'+e.getLineNumber());
         } 
     }
     
     @future(callout = true)
-    public static Void attachReceiptUnderRecord(set<Id> receiptIds){
+    public static void attachReceiptUnderRecord(set<Id> receiptIds){
         Map<Id, Blob> attachmentByReceiptid = new Map<Id, Blob>();
         List<Attachment> attachmentListToInsert = new List<Attachment>();
         
@@ -72,7 +72,9 @@ public without sharing class Invoice_Receipt_PDF_Controller {
             EmailTemplate et = [Select id, Name, DeveloperName, Subject, Body, HtmlValue from EmailTemplate where name = 'Razorpay Success Receipt'];
             List<Attachment> attachmentUnderReceipts = [SELECT Name, Body, ContentType,createdDate,ParentId FROM Attachment WHERE ParentId in :receiptsIds];
             List<Messaging.SingleEmailMessage> mails = new List<Messaging.SingleEmailMessage>();
-
+            List<Receipt__c> updateReceiptsList = new List<Receipt__c>();
+            List<Invoice__c> invoiceRecordsToUpdate = new List<Invoice__c>();
+            
             receiptList = [Select Id,Email__c, Invoice__r.Opportunity__r.Name,Invoice__r.Opportunity__r.Email__c,Amount__c From Receipt__c where Id in : receiptsIds];
             if(!attachmentUnderReceipts.isEmpty()){
                 for(Attachment attachmentRec : attachmentUnderReceipts){
@@ -119,6 +121,20 @@ public without sharing class Invoice_Receipt_PDF_Controller {
                 }
                 if(!mails.isEmpty()){
                     Messaging.sendEmail(mails);
+                }
+                updateReceiptsList = [Select Id, Invoice__c,Invoice__r.Realized_Amount__c,Invoice__r.Due_Amount__c,Invoice__r.Amount__c,Amount__c From Receipt__c where Id in: receiptsIds];
+                if(!updateReceiptsList.isEmpty()){
+                    for(Receipt__c receiptRec : updateReceiptsList){
+                        system.debug('receiptRec.Invoice__r.Realized_Amount__c--->'+receiptRec.Invoice__r.Realized_Amount__c);
+                        Invoice__c invoiceToUpdate = new Invoice__c();
+                        invoiceToUpdate.Id = receiptRec.Invoice__c;
+                        invoiceToUpdate.Realized_Amount__c = receiptRec.Invoice__r.Realized_Amount__c != null? receiptRec.Invoice__r.Realized_Amount__c + receiptRec.Amount__c : receiptRec.Amount__c;
+                        invoiceToUpdate.Due_Amount__c = receiptRec.Invoice__r.Amount__c - invoiceToUpdate.Realized_Amount__c ;
+                        invoiceRecordsToUpdate.add(invoiceToUpdate);
+                    }
+                    if(!invoiceRecordsToUpdate.isEmpty()){
+                        update invoiceRecordsToUpdate;
+                    }
                 }
             }
         } catch (Exception e){
