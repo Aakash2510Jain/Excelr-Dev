@@ -431,7 +431,9 @@ public without sharing class ChatFormLWCcontroller{
                         if (urlvalue.contains('apex')){
                             urlvalue = urlvalue.replace('apex', 'Loginpage');
                         }
-                        FinalPageToRedirect = 'https://' + headerdata + urlvalue + '&IsReloading=true';
+                        System.debug('System.Label.siteUrlForm ====> ' + System.Label.siteUrlForm);
+
+                        FinalPageToRedirect = System.Label.siteUrlForm + urlvalue + '&IsReloading=true';
                         // FinalPageToRedirect = LoginHashcode+ '?id='+ExistingHashcode +'&IsReloading=true';
                         System.debug('FinalPageToRedirect ====> ' + FinalPageToRedirect);
 

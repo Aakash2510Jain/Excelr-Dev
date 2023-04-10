@@ -38,6 +38,7 @@
      	helper.saveScoreExecution(component, event);   
      },
     selectFieldName : function(component, event, helper){
+        debugger;
     	var idx = event.target.name;
         var a= component.get("v.Exereclst");
         var fieldName = a[idx].fieldValue;

@@ -1,4 +1,4 @@
-public class ScorecardController {
+public without sharing class ScorecardController {
     @AuraEnabled
     public static Map<String,String> getAllSObjects(){
         try{

@@ -1,5 +1,11 @@
-public class UserTriggerHandler {
+public without sharing class UserTriggerHandler {
+    static UserTriggerHandler handlerInstance;
     
+    public static UserTriggerHandler getInstance(){
+        if (handlerInstance == null)
+            handlerInstance = new UserTriggerHandler();
+        return handlerInstance;
+    }
     
     Public Static Void UserAfterUpdate(Map<Id,User> NewMap,Map<Id,User>OldMap ){
         

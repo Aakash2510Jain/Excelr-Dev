@@ -1,4 +1,4 @@
-public with sharing class RazorpayPaymentHandler {
+public without sharing class RazorpayPaymentHandler {
     
     public static String sendPaymentLink(String recordId){ //invoice id will come here
         
@@ -82,15 +82,31 @@ public with sharing class RazorpayPaymentHandler {
 
         System.debug(' expirydateString ===> ' + expirydateString);
         try{
-            Invoice__c iv = [Select Id,Name,Amount__c,Opportunity__c,Opportunity__r.Email__c,Opportunity__r.Phone__c,Opportunity__r.Account.Name,Opportunity__r.Account.Email__c,Opportunity__r.Account.Phone,LeadInvoice__c,LeadInvoice__r.Name,LeadInvoice__r.Phone,LeadInvoice__r.Email From Invoice__c Where Id=:recId];
+            Invoice__c iv = [Select Id,Name,Amount__c,Payment_Type__c,Opportunity__c,Opportunity__r.Email__c,Opportunity__r.Phone__c,Opportunity__r.Account.Name,Opportunity__r.Account.Email__c,Opportunity__r.Account.Phone,LeadInvoice__c,LeadInvoice__r.Name,LeadInvoice__r.Phone,LeadInvoice__r.Email,
+                            (SELECT Amount__c,Id,Invoice__c,Name,Receipt_Status__c FROM Receipts__r order by createdDate DESC)
+                            From Invoice__c Where Id=:recId];
             
             String email;
             String contact;
             String name;
             String ISMEmail;
             Decimal amount = 0.0;
-            if(iv.Amount__c != null)
-                amount = iv.Amount__c * 100;
+            system.debug('iv.Payment_Type__c---->'+iv.Payment_Type__c);
+                if (iv.Payment_Type__c == Constants.INVOICE_PAYMENT_TYPE_FULLPAYMENT) {
+                    if(iv.Amount__c != null){
+                        amount = iv.Amount__c;   
+                    }
+                }
+                if (iv.Payment_Type__c == Constants.INVOICE_PAYMENT_TYPE_PARTIALPAYMENT) {
+                    if (!iv.Receipts__r.isempty() && iv.Receipts__r.size() >0) {
+                        for(Receipt__c receipt : iv.Receipts__r){
+                            if (receipt.Receipt_Status__c == Constants.RECEIPT_STATUS_LINKSENT) {
+                                amount = receipt.Amount__c ; 
+                            }
+                        }                       
+                    }
+                }
+                
             
             String objName = '';
             String triggeredRecordId;
@@ -134,7 +150,7 @@ public with sharing class RazorpayPaymentHandler {
         try {
             
             razorpayRequestJSON razorpayRequestJSON = new RazorpayRequestJSON();
-            
+            amount = amount*100;
             razorpayRequestJSON.amount = amount;
             razorpayRequestJSON.first_min_partial_amount = amount;
             razorpayRequestJSON.expire_by = expirydateString;  //"expire_by": 1691097057,  "expired_at": 0,
@@ -167,8 +183,6 @@ public with sharing class RazorpayPaymentHandler {
                 Utility.SendPaymentLinkToISM( invrecID, PaymentUrl);
                 
             }
-            
-            // return 'Success';     
         }
         catch (Exception e) {
             System.debug(' the Error has occured due to =====> ' + e.getMessage());

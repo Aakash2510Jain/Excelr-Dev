@@ -22,7 +22,7 @@
 "Enter_UTM_Link__c": "Link"
 }
 */
-global class API_CreateAccount{
+global without sharing class API_CreateAccount{
     @HttpPost
     global static void doPost(){
         

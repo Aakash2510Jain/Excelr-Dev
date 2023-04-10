@@ -81,6 +81,12 @@ public without sharing class LeadTriggerHandler{
                 if (string.isEmpty(ld.Type_of_Course__c) || string.isBlank(ld.Type_of_Course__c)){
                     ld.Type_of_Course__c = 'Single';
                 }
+                if(ld.Email != null){
+                    ld.Email_To_be_Mapped__c = ld.Email;
+                }
+                if(ld.Phone != null){
+                    ld.Phone_to_be_Mapped__c = ld.Phone;
+                }
                 // quality of Leads
                 system.debug('ld.LeadSource--->' + ld.LeadSource);
                 system.debug('ld.UTM_Medium__c--->' + ld.UTM_Medium__c);
@@ -527,7 +533,7 @@ public without sharing class LeadTriggerHandler{
                                 system.debug('Create Application');
                                 leadRec.To_Be_Deleted__c = true;
                                 leadRec.Parent_Lead_Id__c = existingLeadByEmail.get(leadRec.Email).Id;
-                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadEmailwithLead.get(leadRec.Email), existingLeadByEmail.get(leadRec.Email).Id));
+                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadEmailwithLead.get(leadRec.Email), existingLeadByEmail.get(leadRec.Email)));
                             }
                         } else if (existingLeadByAlternateEmail.ContainsKey(leadRec.Alternate_Email__c)){
 
@@ -558,7 +564,7 @@ public without sharing class LeadTriggerHandler{
                                 system.debug('Create Application');
                                 leadRec.To_Be_Deleted__c = true;
                                 leadRec.Parent_Lead_Id__c = existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Id;
-                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadAlternateEmailwithLead.get(leadRec.Alternate_Email__c), existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Id));
+                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadAlternateEmailwithLead.get(leadRec.Alternate_Email__c), existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c)));
                             }
                         } else if (existingLeadByPhone.ContainsKey(leadRec.Phone)){
                             if ((existingLeadByPhone.get(leadRec.Phone).Status == 'Dead' || existingLeadByPhone.get(leadRec.Phone).Status == 'Junk')){
@@ -589,7 +595,7 @@ public without sharing class LeadTriggerHandler{
                                 system.debug('Create Application');
                                 leadRec.To_Be_Deleted__c = true;
                                 leadRec.Parent_Lead_Id__c = existingLeadByPhone.get(leadRec.Phone).Id;
-                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadPhonewithLead.get(leadRec.Phone), existingLeadByPhone.get(leadRec.Phone).Id));
+                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadPhonewithLead.get(leadRec.Phone), existingLeadByPhone.get(leadRec.Phone)));
                             }
                         } else if (existingLeadByAlternatePhone.ContainsKey(leadRec.Alternate_Phone__c)){
                             if ((existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Status == 'Dead' || existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Status == 'Junk')){
@@ -619,7 +625,7 @@ public without sharing class LeadTriggerHandler{
                                 system.debug('Create Application');
                                 leadRec.To_Be_Deleted__c = true;
                                 leadRec.Parent_Lead_Id__c = existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Id;
-                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadAlternatePhonewithLead.get(leadRec.Alternate_Phone__c), existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Id));
+                                applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadAlternatePhonewithLead.get(leadRec.Alternate_Phone__c), existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c)));
                             }
                         } 
                     } else{
@@ -691,7 +697,7 @@ public without sharing class LeadTriggerHandler{
                 }
             }
             if (!applicationtobeinserted.isEmpty()){
-                insert applicationtobeinserted;
+                //insert applicationtobeinserted;
             }
             if (!leadIds.isEmpty()){
                 DeleteDuplicateLeads.deleteLeads();
@@ -716,7 +722,13 @@ public without sharing class LeadTriggerHandler{
                 if (ld.Enter_UTM_Link__c != null && ld.Lead_Generation_Method__c != null && (ld.Lead_Generation_Method__c == 'Chat Form' || ld.Lead_Generation_Method__c == 'Generic Form')){
                     Utility.UTMLinkParams(ld);
                 }
-
+                if(ld.Email != null && ld.Email != oldLeadMap.get(ld.Id).Email){
+                    ld.Email_To_be_Mapped__c = ld.Email;
+                }
+                if(ld.Phone != null && ld.Phone != oldLeadMap.get(ld.Id).Phone){
+                    ld.Phone_to_be_Mapped__c = ld.Phone;
+                }
+               
                 if ((ld.LeadSource != oldLeadMap.get(ld.Id).LeadSource || ld.UTM_Medium__c != oldLeadMap.get(ld.Id).UTM_Medium__c) && ld.LeadSource != null && ld.UTM_Medium__c != null){
                     if ((ld.LeadSource == 'Reference' && ld.UTM_Medium__c == 'NA' && ld.Lead_Gen_Path__c == 'NA') || (ld.LeadSource == 'Walkin' && ld.UTM_Medium__c == 'NA' && ld.Lead_Gen_Path__c == 'NA') || (ld.LeadSource == 'LMS References' && ld.UTM_Medium__c == 'NA' && ld.Lead_Gen_Path__c == 'NA') || (ld.LeadSource == 'GoogleAds' && ld.UTM_Medium__c == 'Search') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'GoogleOrganic') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'GoogleLocal') || (ld.LeadSource == 'BingAds' && ld.UTM_Medium__c == 'Search') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'BingOrganic') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'BingLocal') || (ld.LeadSource == 'NA' && ld.UTM_Medium__c == 'Direct')){
                         system.debug('PLM');
@@ -979,47 +991,7 @@ public without sharing class LeadTriggerHandler{
 
     public void afterUpdate(Map<Id, Lead> newLeadMap, Map<Id, Lead> oldLeadMap){
         try{
-            system.debug('After Update');
-            set<String> leadQuality = new set<String>();
-            List<Account> accountListToUpdate = new List<Account>();
-            List<Opportunity> OpportunityListToUpdate = new List<Opportunity>();
-            Set<String> ConvertedLeadIds = new Set<String>();
-            List<Application__c> updatedAppList = new List<Application__c>();
-
-            for (Lead ld : newLeadMap.values()){
-                if (ld.IsConverted){
-                    ConvertedLeadIds.add(ld.Id);
-                    Account account = new Account(Id = ld.ConvertedAccountId);
-                    account.Email__c = ld.Email;
-                    account.Phone = ld.Phone;
-                    accountListToUpdate.add(account) ;
-
-                    Opportunity opportunity = new Opportunity(Id = ld.ConvertedOpportunityId);
-                    opportunity.Email__c = ld.Email;
-                    opportunity.Phone__c = ld.Phone;
-                    OpportunityListToUpdate.add(opportunity) ;
-                }
-            }
-            List<Application__c> ApplistunderLead = [Select id, name,ownerId,lead__c From application__c Where Lead__c IN: ConvertedLeadIds];
-            if (!ApplistunderLead.isEmpty()) {
-                for (application__c app : ApplistunderLead) {
-                    application__c updatedapp = new application__c();
-                    updatedapp.id = app.Id;
-                    updatedapp.Account__c = newLeadMap.get(app.Lead__c).ConvertedAccountId;
-                    updatedAppList.add(updatedapp);
-                    
-                }
-                
-            }
-            if (!updatedAppList.isEmpty()) {
-                update updatedAppList;
-            }
-            if (!accountListToUpdate.isEmpty()){
-                Update accountListToUpdate;
-            }
-            if (!OpportunityListToUpdate.isEmpty()){
-                update OpportunityListToUpdate;
-            }
+            
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
             HandleBusinessException.captureError('LeadTriggerHandler', 'After Lead Update', e, null);

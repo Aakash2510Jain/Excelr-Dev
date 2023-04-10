@@ -1,4 +1,4 @@
-public class NumberToText {
+public without sharing class NumberToText {
     static final Integer DIGITS_PER_SET = 3;
     static final String ZERO = 'zero';
     private static Map<Integer,String> tens = new Map<Integer,String> {

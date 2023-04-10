@@ -1,4 +1,4 @@
-public class ApplicationTriggerHelper {
+public without sharing class ApplicationTriggerHelper {
     static ApplicationTriggerHelper handlerInstance;
     
     public static ApplicationTriggerHelper getInstance(){

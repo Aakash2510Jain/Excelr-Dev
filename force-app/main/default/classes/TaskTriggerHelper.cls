@@ -1,4 +1,4 @@
-public class TaskTriggerHelper {
+public without sharing class TaskTriggerHelper {
     
     static TaskTriggerHelper handlerInstance;
     
@@ -17,7 +17,6 @@ public class TaskTriggerHelper {
             
         }
     }
-    
     public void afterInsert(List<Task> newTaskList){
         try{
             NotifyUser.sendCustomNotificationForTask(newTaskList);

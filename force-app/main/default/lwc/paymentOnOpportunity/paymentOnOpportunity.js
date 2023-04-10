@@ -48,6 +48,7 @@ export default class PaymentOnOpportunity extends LightningElement {
     disableUploadfile = true;
     showuploadFilepartialLoan = false;
     minDate = new Date().toISOString().slice(0, 10);
+    @track disableUpfrontAmount = false;
 
     HandleNextDueDate(event) {
         debugger;
@@ -62,14 +63,36 @@ export default class PaymentOnOpportunity extends LightningElement {
     
 
     //Getting Amount From Opportunity
+    @track oppemail;
+    @track oppPhone;
+    @track oppPendingAmount;
     @wire(ShowOppAmount, { recordId: '$recordId' })
     ShowOppAmount({ data, error }) {
         console.log('Amount recieved---', data);
-        //console.log('ProductName---',this.ProductValue);
         debugger;
         console.log('data=', data);
         if (data) {
             this.originalPrice = data.Amount;
+            if (data.Due_Amount__c == undefined || data.Due_Amount__c == null || data.Due_Amount__c == 0) {
+                this.oppPendingAmount = data.Amount;
+            }
+            
+            else{
+                this.oppPendingAmount = (data.Due_Amount__c);
+                //(this.oppPendingAmount).toFixed(2);
+                if (data.Invoices__r[0].Total_Reciepts__c >= 2) {
+                    this.disableUpfrontAmount = true;
+                    this.PartialUpfrontAmount = data.Due_Amount__c;
+                }
+            }
+            if (data.Email__c !=undefined && data.Email__c != null && data.Email__c != '') {
+                this.oppemail = data.Email__c;
+            }
+            if (data.Phone__c !=undefined && data.Phone__c != null && data.Phone__c != '') {
+                this.oppPhone = data.Phone__c;
+            }
+            
+            
             this.maximumvalue = this.originalPrice;
             this.Amount = data;
             console.log('Amount=', this.Amount);
@@ -80,28 +103,6 @@ export default class PaymentOnOpportunity extends LightningElement {
         }
     }
 
-    //Here Getting The Payment Types
-    // Picklistvalue = [];
-    // @wire(getObjectInfo, { objectApiName: OPP_OBJECT })
-    // objectInfo
-
-    // @wire(getPicklistValues, { recordTypeId:'$objectInfo.data.defaultRecordTypeId', fieldApiName:PAYMENT_FIELD})
-    //  wiredPicklistValues({data,error}){
-    //      debugger;
-    //     if(data){
-    //        console.log('data=',data);
-    //        console.log('dataValues=',data.values);
-    //        let arr=[];
-    //        for(let i=0;i<data.values.length;i++){
-    //           arr.push({label:data.values[i].label,value:data.values[i].value});
-    //        }
-    //        this.Picklistvalue=arr;
-    //        console.log('Picklistvalue=',this.Picklistvalue);
-    //     }
-    //     else {
-    //         console.log('error=',error)
-    //     }
-    //  }
 
     get Paymentoptions() {
         return [{ label: 'RazorPay', value: 'RazorPay' },
@@ -114,42 +115,20 @@ export default class PaymentOnOpportunity extends LightningElement {
         debugger;
         //this.PaymentType=event.detail.value;
 
-        if (this.PaymentType == 'RazorPay') {
-            this.HandleRazorPay();
+        if ((this.oppemail != undefined && this.oppemail != null && this.oppemail != '') && (this.oppemail != undefined && this.oppemail != null && this.oppemail != '') ) {
+            if (this.PaymentType == 'RazorPay') {
+                this.HandleRazorPay();
+            }
+            else if (this.PaymentType == 'CC Avenue') {
+                this.HandleCCAvenuePay();
+            }
         }
-        else if (this.PaymentType == 'CC Avenue') {
-            this.HandleCCAvenuePay();
+        else{
+            this.showToast('Alert', 'Please Fill Email and Phone, before Proceding further', 'error');
         }
-        // else if( this.LoanButtonName=='LoanNotNeed' && (this.PaymentType=='Cash' || this.PaymentType=='POS' || this.PaymentType=='Cheque' )){
-        //     this.HandlePaymentMethods();
-        // }
-        // else if( this.Loanvalue=='Partial Loan' && (this.PaymentType=='Cash' || this.PaymentType=='POS' || this.PaymentType=='Cheque' )){
-        //     this.HandlePaymentMethods();
-        // }
+        
     }
 
-    //  HandlePaymentMethods(){
-    //     debugger;
-    //     this.LoadSpinner=true;
-    //     this.ShowPaymentCard=false;
-    //     CreateInvoice({recordId:this.recordId,FinalAmount:this.Amount,PartialTenureValue:this.PartialLoanTenureValue,partialNBFCValue:this.PartialLoanNBFCPartnervalue,PartialUpfrontValue: this.PartialLoanUpfrontpaymentvalue,Quantity:this.QuantityValue,ProductName:this.ProductValue,Amount:this.priceIncludingGst,paymentType:this.PaymentType})
-    //     .then(result=>{
-    //         if(result=='Success'){
-    //             this.LoadSpinner=false;
-    //             this.showToast('success','Invoice created successfully!','success');
-    //             this.dispatchEvent(new CloseActionScreenEvent());
-    //         }
-    //         else{
-    //             this.showToast('Failed',result,'error');
-    //         }
-
-    //     })
-    //     .catch(error=>{
-    //         this.showToast('Failed',error,'error');
-
-
-    //     })
-    // }
 
     //Getting Payment Option After Loan Not Needed
     @track ShowPaymentOption = true;
@@ -190,26 +169,19 @@ export default class PaymentOnOpportunity extends LightningElement {
     HandlePartialLoanInputUpfrontAmount(event) {
         debugger;
         this.PartialUpfrontAmount = event.target.value;
+        if (this.oppPendingAmount != 0 || this.oppPendingAmount != null) {
+            //this.oppPendingAmount = data.Amount;
+            this.PartialAmount = this.oppPendingAmount - this.PartialUpfrontAmount;
+            
+        }
+        else{
+            //this.oppPendingAmount = data.Amount - data.Due_Amount__c;
+            this.PartialAmount = this.originalPrice - this.PartialUpfrontAmount;
+           
+        }
 
-        this.PartialAmount = this.originalPrice - this.PartialUpfrontAmount;
+        
     }
-
-
-    // @wire(ShowAmount,{ProductName:'$ProductValue'})
-    //  wiredResponse({data,error}){
-    //     console.log('Amount recieved---',data);
-    //     console.log('ProductName---',this.ProductValue);
-    //     debugger;
-    //     console.log('data='+data);
-    //     if(data){
-    //         this.originalPrice = data;
-    //        this.Amount=data;
-    //        console.log('Amount='+this.Amount);
-    //     }
-    //     else{
-    //         console.log('error='+error);
-    //     }
-    //  }
 
     @track fetchedArr = [];
     @track nbfcCSList = [];
@@ -253,9 +225,6 @@ export default class PaymentOnOpportunity extends LightningElement {
         this.Amount = this.originalPrice * this.QuantityValue;
         this.HandleButtonDisable = this.ProductValue == undefined || this.QuantityValue == undefined;
 
-        //    if((this.ProductValue!=undefined && this.QuantityValue!=undefined)){
-        //       this.HandleButtonDisable=false;
-        //    }
     }
 
     @track FullLoanTenureValue;
@@ -550,10 +519,10 @@ export default class PaymentOnOpportunity extends LightningElement {
         debugger;
         this.LoadSpinner = true;
         this.ShowPaymentCard = false;
-        if (this.LoanButtonName == 'LoanNotNeed') {
+        //if (this.LoanButtonName == 'LoanNotNeed') {
 
             if (this.Paymentvalue == '100% Payment') {
-
+                debugger;
                 UpdateOPPforFullPayment({ recordId: this.recordId, paymentType: 'razorpay', Amount: this.originalPrice, PaymentOptiontype: 'Full Payment' , LinkexpiryDate : this.selectedExpiryDate })
                     .then(result => {
 
@@ -608,40 +577,40 @@ export default class PaymentOnOpportunity extends LightningElement {
                 }
 
             }
-        }
+        //}
 
-        if (this.Loanvalue == 'Partial Loan') {
+        // if (this.Loanvalue == 'Partial Loan') {
 
-            if (this.PartialLoanTenureValue != undefined && this.PartialLoanNBFCPartnervalue != undefined && this.PartialLoanUpfrontpaymentvalue != undefined) {
-                debugger;
-                OppUpdateOnPartialLoan({ recordId: this.recordId, PartialTenureValue: this.PartialLoanTenureValue, partialNBFCValue: this.PartialLoanNBFCPartnervalue, PartialUpfrontValue: this.PartialLoanUpfrontpaymentvalue, Quantity: this.QuantityValue, ProductName: this.ProductValue, Amount: this.priceIncludingGst, paymentType: 'razorpay', LoanType: this.Loanvalue })
-                    .then(result => {
+        //     if (this.PartialLoanTenureValue != undefined && this.PartialLoanNBFCPartnervalue != undefined && this.PartialLoanUpfrontpaymentvalue != undefined) {
+        //         debugger;
+        //         OppUpdateOnPartialLoan({ recordId: this.recordId, PartialTenureValue: this.PartialLoanTenureValue, partialNBFCValue: this.PartialLoanNBFCPartnervalue, PartialUpfrontValue: this.PartialLoanUpfrontpaymentvalue, Quantity: this.QuantityValue, ProductName: this.ProductValue, Amount: this.priceIncludingGst, paymentType: 'razorpay', LoanType: this.Loanvalue })
+        //             .then(result => {
 
-                        if (result == 'Success') {
-                            this.showToast('Success', 'Invoice created successfully!', 'success');
-                            this.dispatchEvent(new CloseActionScreenEvent());
-                            updateRecord({ fields: { Id: this.recordId } });
-                        } else {
-                            this.showToast('Failed', result, 'error');
-                        }
-                    })
-                    .catch(error => {
-                        console.log('error=', error);
-                        this.showToast('Failed', error, 'error');
-                        this.LoadSpinner = false;
-                    })
-            }
-        }
+        //                 if (result == 'Success') {
+        //                     this.showToast('Success', 'Invoice created successfully!', 'success');
+        //                     this.dispatchEvent(new CloseActionScreenEvent());
+        //                     updateRecord({ fields: { Id: this.recordId } });
+        //                 } else {
+        //                     this.showToast('Failed', result, 'error');
+        //                 }
+        //             })
+        //             .catch(error => {
+        //                 console.log('error=', error);
+        //                 this.showToast('Failed', error, 'error');
+        //                 this.LoadSpinner = false;
+        //             })
+        //     }
+        // }
     }
 
     HandleCCAvenuePay() {
         this.LoadSpinner = true;
         this.ShowPaymentCard = false;
-        if (this.LoanButtonName == 'LoanNotNeed') {
+        //if (this.LoanButtonName == 'LoanNotNeed') {
             debugger;
             if (this.Paymentvalue == '100% Payment') {
 
-                UpdateOPPforFullPayment({ recordId: this.recordId, paymentType: 'CC Avenue', LinkexpiryDate : this.selectedExpiryDate })
+                UpdateOPPforFullPayment({ recordId: this.recordId,Amount: this.originalPrice, paymentType: 'CC Avenue', LinkexpiryDate : this.selectedExpiryDate })
                     .then(result => {
 
                         if (result == 'Success') {
@@ -693,9 +662,9 @@ export default class PaymentOnOpportunity extends LightningElement {
                     this.ShowPaymentCard = true;
                 }
             }
-        }
+        //}
 
-        if (this.Loanvalue == 'Partial Loan') {
+        /*if (this.Loanvalue == 'Partial Loan') {
 
             if (this.PartialLoanTenureValue != undefined && this.PartialLoanNBFCPartnervalue != undefined && this.PartialLoanUpfrontpaymentvalue != undefined) {
                 debugger;
@@ -715,7 +684,7 @@ export default class PaymentOnOpportunity extends LightningElement {
                         this.showToast('Failed', error, 'error');
                     })
             }
-        }
+        }*/
 
     }
     @track showpaymentButton = true;

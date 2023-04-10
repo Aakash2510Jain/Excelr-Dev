@@ -5,6 +5,11 @@ import getLead from '@salesforce/apex/walkInLeadLWCcontroller.getLead';
 import getApplication from '@salesforce/apex/walkInLeadLWCcontroller.getApplication';
 import EmailIsm from '@salesforce/apex/walkInLeadLWCcontroller.EmailIsm';
 import LogoutAgent from '@salesforce/apex/walkInLeadLWCcontroller.LogoutAgent';
+import ChatPageUrl from '@salesforce/label/c.ChatPageUrl';
+import GenericPageUrl from '@salesforce/label/c.GenericPageUrl';
+import VoicePageUrl from '@salesforce/label/c.VoicePageUrl';
+import WalkinPageUrl from '@salesforce/label/c.WalkinPageUrl';
+
 
 
 //import getPuckistOflead from '@salesforce/apex/walkInLeadLWCcontroller.getPuckistOflead';
@@ -60,6 +65,14 @@ const LeadListcolumns = [{ label: 'Name', fieldName: 'Name' },
 
 
 export default class WaklInLead extends LightningElement {
+
+    // label = {
+    //     ChatPageUrl,
+    //     GenericPageUrl,
+    //     LoginPageBaseurl,
+    //     VoicePageUrl,
+    //     WalkinPageUrl
+    // };
     imageurl = EXCELR_LOGO;
     //feilds from schema
 
@@ -1137,25 +1150,30 @@ export default class WaklInLead extends LightningElement {
         var selectedVal = event.detail.value;
         //var selectedVal = event.currentTarget.dataset.id;
         if (selectedVal == 'Walk-In') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
+            //var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/walkInLeadPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
+            var urlString = WalkinPageUrl + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
             window.open(urlString, "_self");
 
         }
-        if (selectedVal == 'Voice') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
+        if (selectedVal == 'Voice') { //
+            //var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/voiceFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
+            var urlString = VoicePageUrl + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
             window.open(urlString, "_self");
 
         }
         if (selectedVal == 'Generic') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
+            var urlString = GenericPageUrl + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
+            //var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/genericLeadAdditionPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
             window.open(urlString, "_self");
 
         }
         if (selectedVal == 'Chat') {
-            var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
+            var urlString = ChatPageUrl + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
+           // var urlString = 'https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/chatFormPage' + '?id=' + this.agentrecid + '&departments=' + this.DepartmentListstring + '&hascode=' + this.hashcode + '&AgentName=' + this.agentNameLWC;
             window.location.replace(urlString, "_self");
         }
     }
+
 
     handleOnselectprofile(event){
         debugger;

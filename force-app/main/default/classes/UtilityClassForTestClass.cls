@@ -1,4 +1,4 @@
-public class UtilityClassForTestClass {
+public without sharing class UtilityClassForTestClass {
     public Static Account insertAccRec(string name,string phone,string email,string source,string formsource,string utmlink,string cource,string city,string fromname,string UTMcam,
                                        string UTMdev,string UTMad,string UTMterm,string UTMchan,string UTMtyp,string UTMloc,string UTMvar,string UTMexp,string UTMmed,string typecource){
                                            Account newAcc = new Account();

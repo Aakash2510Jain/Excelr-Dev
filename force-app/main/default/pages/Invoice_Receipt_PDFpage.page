@@ -1,4 +1,4 @@
-<apex:page applyHtmlTag="false" applyBodyTag="false" showHeader="false" sidebar="false" renderAs="advanced_pdf">
+<apex:page readOnly="true" controller="Invoice_Receipt_PDF_Controller" applyHtmlTag="false" sidebar="false" showHeader="false" cache="true" renderAs="advanced_pdf" docType="html-5.0" >
     <html>
         
         <div  style="width:100%">
@@ -15,20 +15,24 @@
             
             <table border="1.5px solid black;" style="width: 100%;  font: 20px Arial;     border-collapse: collapse;">
                 <tr >
-                    <td style=" padding-left: 15px; border:1.5px solid black; padding-top:10px;padding-bottom:10px; ">Student’s Name: <b>Umesh Chandra</b></td>
-                    <td style=" padding-left: 15px; border:1.5px solid black; padding-top:10px;padding-bottom:10px;">Invoice No:  <b>B\1120</b></td>
+                    <td style=" padding-left: 15px; border:1.5px solid black; padding-top:10px;padding-bottom:10px; ">Student’s Name: <b>{!studentname}</b></td>
+                    <td style=" padding-left: 15px; border:1.5px solid black; padding-top:10px;padding-bottom:10px;">Invoice No:  <b>{!invoiceNo}</b></td>
                 </tr>
                 <tr>
-                    <td style=" padding-left: 15px; border:1.5px solid black; padding-top:10px;padding-bottom:10px;">Phone:  <b>7904255705</b></td>
-                    <td style=" padding-left: 15px; border:1.5px solid black; padding-top:10px;padding-bottom:10px;">Receipt No:  <b>00005673</b></td>
+                    <td style=" padding-left: 15px; border:1.5px solid black; padding-top:10px;padding-bottom:10px;">Phone:  <b>{!phone}</b></td>
+                    <!-- <apex:repeat value="{!receiptRec}" var="record">
+                    <td style=" padding-left: 15px; border:1.5px solid black; padding-top:10px;padding-bottom:10px;">Receipt No:  <b>
+                        {!record.Name}</b></td>
+                    </apex:repeat> -->
+
+                    <td style=" padding-left: 15px; border:1.5px solid black; padding-top:10px;padding-bottom:10px;">Receipt No:  <b>{!receiptNumber}</b></td>
                 </tr>
                 <tr>
-                    <td style=" padding-left: 15px; border:1.5px solid black; padding-top:10px;padding-bottom:10px;">Email:  <b>umesh@excelr.com</b></td>
-                    <td style=" padding-left: 15px; border:1.5px solid black; padding-top:10px;padding-bottom:10px;">Date:  <b>15/03/2023</b></td>
+                    <td style=" padding-left: 15px; border:1.5px solid black; padding-top:10px;padding-bottom:10px;">Email:  <b>{!email}</b></td>
+                    <td style=" padding-left: 15px; border:1.5px solid black; padding-top:10px;padding-bottom:10px;">Date:  <b><apex:outputText value="{0,date,dd/MM/yyyy(d MMM)}"> <apex:param value="{!receiptCreationDate}" /> </apex:outputText></b></td>
                 </tr>
             </table>
         </div>
-        
         <div style="width:100%; margin-top: 50px;">
             <table border="2px solid black;" style="width: 100%;  font: 20px Arial; text-align:center; border-collapse: collapse;">
                 <tr>
@@ -39,15 +43,15 @@
                 </tr>
                 <tr>
                     <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; width:10%;">1 <br/><br/><br/><br/><br/><br/><br/></td>
-                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; ">Data Science<br/><br/><br/><br/><br/><br/><br/></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; ">{!courseName}<br/><br/><br/><br/><br/><br/><br/></td>
                     <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;  width:10%; ">1 <br/><br/><br/><br/><br/><br/><br/></td>
-                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; ">20,000<br/><br/><br/><br/><br/><br/><br/></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; ">{!amount}<br/><br/><br/><br/><br/><br/><br/></td>
                 </tr> 
                 <tr>
                     <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; width:10%;"></td>
                     <td style=" padding-left: 260px; border:2px solid black; padding-top:10px;padding-bottom:10px; "><b>Amount Paid</b></td>
                     <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;  width:10%; "> </td>
-                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; "><b>20,000</b></td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px; "><b>{!amount}</b></td>
                 </tr>
             </table>
         </div> 
@@ -57,33 +61,33 @@
                 Amount in words:
             </div> 
             <div style="width:70%; float:right;">
-                <hr/>
-            </div> 
+                {!amountinwords}
+            </div> <br/>
         </div>
         
         <div  style="width:100%; margin-top: 50px; font: 20px Arial;">
             <table border="1px solid black;" style="width: 70%; float:right; font: 20px Arial; text-align:center; border-collapse: collapse;">
                 <tr>
                     <td style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px;margin-left:5px; ">Previously Received</td>
-                    <td style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; width:40%; ">Nil</td>
+                    <td style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; width:40%; ">{!previouslyPaidAmount}</td>
                 </tr>
                 <tr>
                     <th style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; ">Total Amount Received</th>
-                    <th style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; width:40%; ">20,000</th>
+                    <th style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; width:40%; ">{!totalPaidAmount}</th>
                 </tr> 
                 <tr>
                     <th style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; ">Due Amount</th>
-                    <th style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; width:40%;">39,999</th>
+                    <th style=" padding-left: 15px; border:1px solid black; padding-top:10px;padding-bottom:10px; width:40%;">{!dueAmount}</th>
                 </tr> 
             </table>
         </div>
         
-        <div  style="width:100%; margin-top: 35%;  text-align:center;  ">
+        <div  style="width:100%; margin-top: 30%;  text-align:center;  ">
             This is a computer generated receipt no signature needed
         </div>
         
         
-        
+<!--         
          <div  style="width:100%; margin-top:25px;">
             <div Style="width:50%; Float:left; font-size:50px;  font-style: normal;">
                 Receipt
@@ -247,6 +251,35 @@
         <div  style="width:100%; margin-top: 35%;  text-align:center;  ">
             This is a computer generated receipt no signature needed
         </div>
-        
+ -->
+
+
+
+  <!--      <div>
+            <table border="1px solid black;" style="width: 70%; float:right; font: 20px Arial; text-align:center; border-collapse: collapse;">
+                <tr>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;">Name</td>
+                    <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;">Amount__c </td>
+                </tr>
+                <tr>
+                    <apex:repeat value="{!receiptRec}" var="record">
+                        <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;">{!record.Name}</td>
+                        <td style=" padding-left: 15px; border:2px solid black; padding-top:10px;padding-bottom:10px;">{!record.Amount__c}</td>
+                    </apex:repeat>
+
+                </tr>
+            </table>
+        </div>-->
+
+        <!-- <div>
+            <apex:repeat value="{!receiptRec}" var="item">
+  <apex:outputPanel rendered="{!items[0].Name != item.Name}">, </apex:outputPanel>
+  <apex:outputPanel>
+     <apex:outputText value="{!item.Name}" />
+  </apex:outputPanel>
+</apex:repeat>
+ 
+        </div>
+         -->
     </html>
 </apex:page>

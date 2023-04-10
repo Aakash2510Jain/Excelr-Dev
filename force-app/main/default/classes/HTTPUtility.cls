@@ -1,4 +1,4 @@
-public class HTTPUtility 
+public without sharing class HTTPUtility 
 {
      public static HttpResponse sendRequest(String endPoint, String token, String body, String methodType){
          try{

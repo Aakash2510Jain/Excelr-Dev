@@ -1,4 +1,4 @@
-public class EmailTriggerHelper {
+public without sharing class EmailTriggerHelper {
       static EmailTriggerHelper handlerInstance;
     
     public static EmailTriggerHelper getInstance(){

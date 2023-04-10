@@ -1,9 +1,13 @@
 <template>
+    <div class="slds-align_absolute-center"> 
+        <template if:true={ShowText}>
+           <span style="color:red;font-size:15px;font-weight:bold;"> Please Add Expected Revenue</span>
+        </template>
+    </div>
     <div class="slds-clearfix">
         <div class="slds-float_right">
             <lightning-button variant="destructive-text" label="Cancel" class="slds-m-left_x-small"
                 onclick={cancelAndReddirect}></lightning-button>
-
         </div>
     </div>
     <br />

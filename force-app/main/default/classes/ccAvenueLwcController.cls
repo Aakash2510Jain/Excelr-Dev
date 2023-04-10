@@ -1,4 +1,4 @@
-public class ccAvenueLwcController {
+public without sharing class ccAvenueLwcController {
     
     
     @AuraEnabled

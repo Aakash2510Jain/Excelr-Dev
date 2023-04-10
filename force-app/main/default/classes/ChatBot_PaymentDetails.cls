@@ -1,4 +1,4 @@
-public class ChatBot_PaymentDetails {
+public without sharing class ChatBot_PaymentDetails {
     @InvocableMethod(label='Payment Enquiry')
     public static List<string> getProductlist(List<string> paymentId){
         try{

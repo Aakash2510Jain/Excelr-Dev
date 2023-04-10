@@ -1,11 +1,12 @@
-public class PaymentOnOpportunityApexController{
+public without sharing class PaymentOnOpportunityApexController{
     public PaymentOnOpportunityApexController(){
     }
 
     @AuraEnabled(Cacheable = true)
     Public Static Opportunity ShowOppAmount(string recordId){
         try{
-            Opportunity OppRec = [Select Id, Amount
+            Opportunity OppRec = [Select Id, Amount, Due_Amount__c,Email__c,Phone__c,
+                                    (SELECT Amount__c,Total_Reciepts__c FROM Invoices__r )
                                   From Opportunity
                                   Where Id = :recordId];
 
@@ -133,27 +134,30 @@ public class PaymentOnOpportunityApexController{
 
             Invoice__c invRec = new Invoice__c();
             invRec.Opportunity__c = recordId;
-            invRec.Status__c = 'Initiated';
+            invRec.Status__c = Constants.INVOICE_STATUS_LINKSENT;
             invRec.Amount__c = Amount;
+            invRec.Initiated_Amount__c = Amount;
+            invRec.Payment_Type__c = Constants.INVOICE_PAYMENT_TYPE_FULLPAYMENT;
             invRec.Type__c = 'Payment';
             invRec.Mode_Terms_of_Payment__c = 'Online';
             invRec.Initiated_Date__c = System.Today();
             invRec.Invoice_Due_Date__c = System.Today() + 2;
             insert invRec;
-            
-            if (invRec.id != null) {
+
+            if (invRec.id != null){
                 Receipt__c receipt = new Receipt__c();
-                receipt.Invoice__c = invRec.id; // 
+                receipt.Invoice__c = invRec.id; //
                 receipt.amount__c = Amount;
+                receipt.Receipt_Status__c = Constants.RECEIPT_STATUS_LINKSENT;
                 insert receipt;
-                
+
             }
 
             if (paymentType == 'razorpay'){
 
                 return RazorpayPaymentHandler.initateRazorpayPament(invRec.id, longUnixTimeStamp);
 
-            } else if(paymentType == 'CC Avenue'){
+            } else if (paymentType == 'CC Avenue'){
 
                 ccAvenueLwcController.initateCCAvenuePayment(invRec.id, longUnixTimeStamp);
             }
@@ -169,16 +173,23 @@ public class PaymentOnOpportunityApexController{
 
     @AuraEnabled
     Public Static string UpdateOPPforPartialPayment(string recordId, Decimal Amount, Decimal PendingAmount, String paymentType, String PaymentOptiontype, Date nextPaymentDueDate, date LinkexpiryDate){
-        
-        System.debug('LinkexpiryDate ====> ' + LinkexpiryDate);
 
+        System.debug('LinkexpiryDate ====> ' + LinkexpiryDate);
+        System.debug('recordId ====> ' + recordId);
+        System.debug('Amount ====> ' + Amount);
+
+        System.debug('PendingAmount ====> ' + PendingAmount);
+        System.debug('paymentType ====> ' + paymentType);
+        System.debug('PaymentOptiontype ====> ' + PaymentOptiontype);
+        System.debug('nextPaymentDueDate ====> ' + nextPaymentDueDate);
 
         datetime datetimevalueCurrentDT = DateTime.newInstance(LinkexpiryDate.year(), LinkexpiryDate.month(), LinkexpiryDate.day());
         String strUnixTimeStamp = String.valueof(datetimevalueCurrentDT.getTime());
         System.debug('String UnixTimeStamp is ' + strUnixTimeStamp);
-        //string strunixtime = '1691097057';
         Long longUnixTimeStamp = Long.valueOf(strUnixTimeStamp);
         System.debug('DateTIme conversion of unixtimestamp ==>' + DateTime.newInstance(longUnixTimeStamp));
+        
+        string invoiceRecId;
         try{
             List<Invoice__c> invoiceListToInsert = new List<Invoice__c>();
 
@@ -192,43 +203,69 @@ public class PaymentOnOpportunityApexController{
             OppRec.Payment_Initiated_Date_Time__c = system.now();
             OppRec.Payment_Initiated__c = true;
             OppRec.Upfront_Amount__c = Amount;
-            oppRec.Due_Amount__c = Amount - PendingAmount;
+            oppRec.Due_Amount__c = PendingAmount;
 
 
             update OppRec;
 
-            Invoice__c invRec = new Invoice__c();
-            invRec.Opportunity__c = recordId;
-            invRec.Status__c = 'Initiated';
-            invRec.Amount__c = Amount;
-            invRec.Type__c = 'Payment';
-            invRec.Mode_Terms_of_Payment__c = 'Online';
-            invRec.Initiated_Date__c = System.Today();
-            invRec.Invoice_Due_Date__c = System.Today() + 2;
-            invoiceListToInsert.add(invRec);
-
-            Invoice__c invRecord = new Invoice__c();
-            invRecord.Opportunity__c = recordId;
-            invRecord.Status__c = 'Pending';
-            invRec.Type__c = 'Payment';
-            invRecord.Mode_Terms_of_Payment__c = 'Online';
-            invRecord.Amount__c = PendingAmount;
-            invRecord.Initiated_Date__c = System.Today();
-
             Time myTime = Time.newInstance(11, 0, 0, 0); // 11:00 AM
 
-            invRecord.Next_Followup_Date_Time__c = DateTime.newInstance(nextPaymentDueDate.year(), nextPaymentDueDate.month(), nextPaymentDueDate.day(), myTime.hour(), myTime.minute(), myTime.second());
-            invRecord.Invoice_Due_Date__c = nextPaymentDueDate + 2;
-            invoiceListToInsert.add(invRecord);
 
-            if (!invoiceListToInsert.isEmpty())
-                insert invoiceListToInsert;
+            if (recordId != null){
+                List<Invoice__c> invoiceRecList = [Select Id, Status__c, LeadInvoice__c, LeadInvoice__r.Owner.UserRoleId, Lead_ManagerId__c, Opportunity__c, Opportunity__r.Owner.UserRoleId, Amount__c, LeadInvoice__r.Owner.Name, LeadInvoice__r.Owner.Email, Opportunity__r.Owner.Email, Opportunity__r.Owner.Name, Payment_Type__c, Realized_Amount__c, Due_Amount__c
+                                               From Invoice__c
+                                               Where Opportunity__c = :recordId
+                                               ORDER BY CreatedDate DESC
+                                               limit 1];
+                if (!invoiceRecList.isEmpty()){
+                    invoiceRecId = invoiceRecList[0].Id;
+
+                    Invoice__c invRec = new Invoice__c();
+                    invRec.Id = invoiceRecList[0].Id;
+                    invRec.Initiated_Amount__c = Amount;
+                    update invRec;
+
+                    if (!invoiceRecList.isEmpty()){
+                        Receipt__c receipt = new Receipt__c();
+                        receipt.Invoice__c = invoiceRecList[0].id;
+                        receipt.amount__c = Amount;
+                        receipt.Receipt_Status__c = Constants.RECEIPT_STATUS_LINKSENT;
+                        insert receipt;
+                    }
+                } else{
+                    Invoice__c invRec = new Invoice__c();
+                    invRec.Opportunity__c = recordId;
+                    invRec.Status__c = 'Initiated';
+                    invRec.Amount__c = Amount + PendingAmount;
+                    invRec.Initiated_Amount__c = Amount;
+                    invRec.Type__c = 'Payment';
+                    invRec.Payment_Type__c = Constants.INVOICE_PAYMENT_TYPE_PARTIALPAYMENT;
+                    invRec.Mode_Terms_of_Payment__c = 'Online';
+                    invRec.Initiated_Date__c = System.Today();
+                    invRec.Invoice_Due_Date__c = System.Today() + 2;
+                    invRec.Next_Followup_Date_Time__c = DateTime.newInstance(nextPaymentDueDate.year(), nextPaymentDueDate.month(), nextPaymentDueDate.day(), myTime.hour(), myTime.minute(), myTime.second());
+                    invRec.Invoice_Due_Date__c = nextPaymentDueDate + 2;
+                    insert invRec;
+                    invoiceRecId = invRec.Id;
+
+                    if (invRec.id != null){
+                        Receipt__c receipt = new Receipt__c();
+                        receipt.Invoice__c = invRec.id;
+                        receipt.amount__c = Amount;
+                        receipt.Receipt_Status__c = Constants.RECEIPT_STATUS_LINKSENT;
+                        insert receipt;
+
+                    }
+                }
+            }
+
+
             if (paymentType == 'razorpay'){
-                system.debug('invRec Id-' + invRec.Id);
-                return RazorpayPaymentHandler.initateRazorpayPament(invRec.id, longUnixTimeStamp );
+                system.debug('invRec Id-' + invoiceRecId);
+                return RazorpayPaymentHandler.initateRazorpayPament(invoiceRecId, longUnixTimeStamp);
 
             } else{
-                ccAvenueLwcController.initateCCAvenuePayment(invRec.id, longUnixTimeStamp);
+                ccAvenueLwcController.initateCCAvenuePayment(invoiceRecId, longUnixTimeStamp);
             }
 
             return 'Success';
@@ -266,7 +303,7 @@ public class PaymentOnOpportunityApexController{
             OppRec.NBFCPartner__c = FullNBFCValue;
             Update OppRec;
 
-            if (DownPayment != null) {
+            if (DownPayment != null){
                 Invoice__c inv = new Invoice__c();
                 inv.Opportunity__c = recordId;
                 inv.Status__c = 'Initiated';
@@ -287,7 +324,7 @@ public class PaymentOnOpportunityApexController{
             // else {
             //     invRec.Amount__c = actualcost - DownPayment;
             // }
-            
+
             invRec.Amount__c = actualcost;
             invRec.Down_Payment__c = DownPayment;
             invRec.Actual_Loan_Amount__c = actualcost - DownPayment;
@@ -319,7 +356,7 @@ public class PaymentOnOpportunityApexController{
         //string strunixtime = '1691097057';
         Long longUnixTimeStamp = Long.valueOf(strUnixTimeStamp);
         System.debug('DateTIme conversion of unixtimestamp ==>' + DateTime.newInstance(longUnixTimeStamp));
-        
+
         try{
             List<Invoice__c> invoiceListToUpdate = new List<Invoice__c>();
 

@@ -1,4 +1,4 @@
-public class TestUtility {
+public without sharing class TestUtility {
     public static User insertUser(){
         User userRec = new User(
             ProfileId = [SELECT Id FROM Profile WHERE Name = 'System Administrator'].Id,

@@ -1,4 +1,4 @@
-public with sharing class Webhookwrapper {
+public without sharing class Webhookwrapper {
     
     public String employeeName {get;set;} 
 	public String employeeNumber {get;set;} 

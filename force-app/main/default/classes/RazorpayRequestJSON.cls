@@ -1,4 +1,4 @@
-public with sharing class RazorpayRequestJSON {
+public without sharing class RazorpayRequestJSON {
     String currencyType = 'INR';
     String description = 'Payment for policy no #23456';
     String callback_url = 'https://cms-assets.tutsplus.com/cdn-cgi/image/width=850/uploads/users/523/posts/32694/final_image/tutorial-preview-large.png';

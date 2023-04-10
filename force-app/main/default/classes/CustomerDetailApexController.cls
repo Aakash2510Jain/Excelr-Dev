@@ -1,4 +1,4 @@
-public class CustomerDetailApexController{
+public without sharing class CustomerDetailApexController{
     @AuraEnabled(Cacheable = True)
     Public static leadOpportunityWrap getAllData(string recordId){
         try{

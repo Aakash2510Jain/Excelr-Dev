@@ -1,4 +1,4 @@
-public class AddProductHelper {
+public without sharing  class AddProductHelper {
     @auraEnabled
     public static productWrap getAllData(){
         try{

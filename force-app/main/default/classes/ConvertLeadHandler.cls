@@ -1,4 +1,4 @@
-public class ConvertLeadHandler {
+public without sharing class ConvertLeadHandler {
     @AuraEnabled
     public static void convertLeadOnLead(String recordId){
         try{

@@ -1,4 +1,4 @@
-public with sharing class Opportunitytriggerhandler{
+public without sharing class Opportunitytriggerhandler{
     static Opportunitytriggerhandler handlerInstance;
 
     public static Opportunitytriggerhandler getInstance(){
@@ -129,9 +129,21 @@ public with sharing class Opportunitytriggerhandler{
                     }
                     
                 }
+                if(opp.Alternate_Email__c != oldOppMap.get(Opp.Id).Alternate_Email__c && opp.Alternate_Email__c == null){
+                    opp.Alternate_Email__c.addError('Alternate Email cannot be Empty.');
+                }
+                 if(opp.Email__c != oldOppMap.get(Opp.Id).Email__c && opp.Email__c == null){
+                    opp.Email__c.addError('Email cannot be Empty.');
+                } 
+                if(opp.Phone__c != oldOppMap.get(Opp.Id).Phone__c && opp.Phone__c == null){
+                    opp.Phone__c.addError('Phone cannot be Empty.');
+                }
+                 if(opp.Alternate_Phone__c != oldOppMap.get(Opp.Id).Alternate_Phone__c && opp.Alternate_Phone__c == null){
+                    opp.Alternate_Phone__c.addError('Alternate Phone cannot be Empty.');
+                }
                 if(opp.Alternate_Email__c != oldOppMap.get(Opp.Id).Alternate_Email__c && opp.Alternate_Email__c != null){
                     List<Opportunity> OpportunityList = [Select Id From Opportunity where Email__c =:opp.Alternate_Email__c or Alternate_Email__c =:opp.Alternate_Email__c limit 1];
-                    List<Lead> leadList = [Select Id From Lead where Email =: opp.Alternate_Email__c or Alternate_Email__c =:opp.Alternate_Email__c limit 1];
+                    List<Lead> leadList = [Select Id From Lead where (Email =: opp.Alternate_Email__c or Alternate_Email__c =:opp.Alternate_Email__c) and isConverted = false limit 1];
                     if(!OpportunityList.isEmpty()){
                         opp.Alternate_Email__c.addError('Duplicate Email Found on Opportunity.');
                     }
@@ -141,7 +153,7 @@ public with sharing class Opportunitytriggerhandler{
                 }
                 if(opp.Email__c != oldOppMap.get(Opp.Id).Email__c && opp.Email__c != null){
                     List<Opportunity> OpportunityList = [Select Id From Opportunity where Email__c =:opp.Email__c or Alternate_Email__c =:opp.Email__c limit 1];
-                    List<Lead> leadList = [Select Id From Lead where Email =: opp.Email__c or Alternate_Email__c =:opp.Email__c limit 1];
+                    List<Lead> leadList = [Select Id From Lead where (Email =: opp.Email__c or Alternate_Email__c =:opp.Email__c) and isConverted = false limit 1];
                     if(!OpportunityList.isEmpty()){
                         opp.Email__c.addError('Duplicate Email Found on Opportunity.');
                     }
@@ -151,7 +163,7 @@ public with sharing class Opportunitytriggerhandler{
                 }
                 if(opp.Phone__c != oldOppMap.get(Opp.Id).Phone__c && opp.Phone__c != null){
                     List<Opportunity> OpportunityList = [Select Id From Opportunity where Phone__c =:opp.Phone__c or Alternate_Phone__c =:opp.Phone__c limit 1];
-                    List<Lead> leadList = [Select Id From Lead where Phone =:opp.Phone__c or Alternate_Phone__c =:opp.Phone__c limit 1];
+                    List<Lead> leadList = [Select Id From Lead where (Phone =:opp.Phone__c or Alternate_Phone__c =:opp.Phone__c) and isConverted = false limit 1];
                     if(!OpportunityList.isEmpty()){
                         opp.Phone__c.addError('Duplicate Phone Found on Opportunity.');
                     }
@@ -160,8 +172,8 @@ public with sharing class Opportunitytriggerhandler{
                     }
                 }
                 if(opp.Alternate_Phone__c != oldOppMap.get(Opp.Id).Alternate_Phone__c && opp.Alternate_Phone__c != null){
-                    List<Opportunity> OpportunityList = [Select Id From Opportunity where Phone__c =:opp.Alternate_Phone__c or Alternate_Phone__c =:opp.Alternate_Phone__c limit 1];
-                    List<Lead> leadList = [Select Id From Lead where Phone =:opp.Alternate_Phone__c or Alternate_Phone__c =:opp.Alternate_Phone__c limit 1];
+                    List<Opportunity> OpportunityList = [Select Id From Opportunity where (Phone__c =:opp.Alternate_Phone__c or Alternate_Phone__c =:opp.Alternate_Phone__c)  limit 1];
+                    List<Lead> leadList = [Select Id From Lead where (Phone =:opp.Alternate_Phone__c or Alternate_Phone__c =:opp.Alternate_Phone__c) and isConverted = false limit 1];
                     if(!OpportunityList.isEmpty()){
                         opp.Alternate_Phone__c.addError('Duplicate Phone Found on Opportunity.');
                     }
@@ -232,7 +244,7 @@ public with sharing class Opportunitytriggerhandler{
                         }
                 }
                 if(opp.Expected_Revenue__c == null){
-                    opp.Expected_Revenue__c.addError('Fill Expected Revenue.');
+                  //  opp.Expected_Revenue__c.addError('Fill Expected Revenue.');
                 }
                 if (opp.CloseDate != null && opp.CloseDate != oldOppMap.get(opp.Id).CloseDate ) {
                     dateTime postOneMonth = system.now().addMonths(1);

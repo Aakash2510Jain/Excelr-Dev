@@ -5,23 +5,8 @@ public   class TriggerOnCaseTestClass {
         
         List<Case> caseLIst = new List<Case>();
         
-        Case caseRec = new Case();
-        //caseRec.Approval_Status__c = 'Approved';
-        caseRec.Status = 'On Hold';
-        caseRec.Origin = 'Email';
-        caseLIst.add(caseRec);
-        insert caseLIst;
         
-        
-        Case caseRec1 = new Case();
-        //caseRec1.Approval_Status__c = 'Approved';
-        caseRec1.Status = 'On Hold';
-        caseRec1.Origin = 'Email';
-        insert caseRec1;
-        
-        map<id,Case> mapCase = new map<id,Case>();
-        mapCase.put(caseRec1.id,caseRec1);
-        
+                
         Profile p = [Select Id from Profile where Name = 'System Administrator'];
         User user1 = new User();
         user1.Username = 'usqqqqqqqqqqqqqqqqqqqq1@test.com';
@@ -65,6 +50,26 @@ public   class TriggerOnCaseTestClass {
             user2.Start_Date__c = system.today();
             user2.End_Date__c = system.today();
         insert user2;
+        
+        Case caseRec = new Case();
+        //caseRec.Approval_Status__c = 'Approved';
+        caseRec.Status = 'On Hold';
+        caseRec.Origin = 'Email';
+        caseRec.OwnerId = user2.id;
+        caseLIst.add(caseRec);
+        insert caseLIst;
+        
+        
+        Case caseRec1 = new Case();
+        //caseRec1.Approval_Status__c = 'Approved';
+        caseRec1.Status = 'On Hold';
+        caseRec1.Origin = 'Email';
+        caseRec1.OwnerId = user2.id;
+        insert caseRec1;
+        
+        map<id,Case> mapCase = new map<id,Case>();
+        mapCase.put(caseRec1.id,caseRec1);
+
         
         string userId = user1.Id;
         //Account acclist = [Select id,Name From Account Where Id=: userId];

@@ -1,4 +1,4 @@
-public class CallyzerAPICallout 
+public without sharing class CallyzerAPICallout 
 {
 
     public static void getUserDetails(String phone,String callStartDate,String callEndDate)

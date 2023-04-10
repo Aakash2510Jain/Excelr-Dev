@@ -43,7 +43,7 @@ public without Sharing class  NotifyUser {
         for(Application__c applicationRec : newApplicationList){
             Messaging.CustomNotification notification = new Messaging.CustomNotification();
             notification.setTitle('New Application Created');
-            notification.setBody('A new has been Created. Please review it');
+            notification.setBody('A new Application has been Created. Please review it');
             notification.setNotificationTypeId(notificationType.Id);
             notification.setTargetId(applicationRec.Id);
             try {

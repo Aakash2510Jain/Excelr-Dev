@@ -1,5 +1,5 @@
 @IsTest
-public class ServiceTestClass {
+public  class ServiceTestClass {
     
     @IsTest static void test_API_CreateAccount(){
         
@@ -79,6 +79,7 @@ public class ServiceTestClass {
         Case caseRec  = new Case();
         caseRec.Subject = 'Define Severity on Case Number 00001054';
         caseRec.ContactId = taskRec.WhoId;
+        caseRec.OwnerId = [Select Id from User where isActive= true limit 1 ].Id;
         insert caseRec;
         BatchForOverdueTasks batchInstance =  new BatchForOverdueTasks();
         database.executeBatch(batchInstance);

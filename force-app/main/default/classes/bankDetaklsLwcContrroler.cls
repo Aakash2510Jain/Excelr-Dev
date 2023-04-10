@@ -1,4 +1,4 @@
-public with sharing class bankDetaklsLwcContrroler{
+public without sharing class bankDetaklsLwcContrroler{
     @auraenabled
     public static void createBankDetails(String AcNum, String Bname, String ifseCode, String CandidateEmail, String Phone){
         try{

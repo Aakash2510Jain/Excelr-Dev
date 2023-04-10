@@ -1,4 +1,4 @@
-public class ConvertLeadManuallyHelper {
+public without sharing class ConvertLeadManuallyHelper {
     @auraEnabled
     public static void convertLead(string leadId){
         try{

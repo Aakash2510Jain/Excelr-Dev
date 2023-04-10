@@ -1,4 +1,4 @@
-public with sharing class RazorpayPaymentLWCController {
+public without sharing class RazorpayPaymentLWCController {
     
     @AuraEnabled(cacheable = true)
     public static String sendPaymentLink(String recordId){

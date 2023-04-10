@@ -1,4 +1,4 @@
-public class RefundProcessHelper {
+public without sharing class RefundProcessHelper {
     
     @Auraenabled
     public static string createCase(String oppId){

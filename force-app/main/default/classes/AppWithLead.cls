@@ -1,4 +1,4 @@
-public with sharing class AppWithLead
+public without sharing  class AppWithLead
  {
     public AppWithLead() {
 

@@ -4,7 +4,7 @@
 * 				 As insert in not bulyfy in insertError method.
 *Author : DeaGle~       
 */ 
-public class HandleBusinessException extends Exception {
+public without sharing class HandleBusinessException extends Exception {
     
     public static void captureError(String className, String methodName, Exception ex, string JSONbody){
         //string JSONbody = '';

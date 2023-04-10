@@ -1,4 +1,4 @@
-global class BatchForOverdueTasks implements Database.Batchable<sObject>{
+global without sharing class BatchForOverdueTasks implements Database.Batchable<sObject>{
     global Database.QueryLocator start(Database.BatchableContext BC) {
         Date todayDate = system.today();
         todayDate = todayDate.addDays(-1);

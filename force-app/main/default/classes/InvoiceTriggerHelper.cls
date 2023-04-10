@@ -1,4 +1,4 @@
-public class InvoiceTriggerHelper{
+public without sharing class InvoiceTriggerHelper{
     static InvoiceTriggerHelper handlerInstance;
     
     public static InvoiceTriggerHelper getInstance(){

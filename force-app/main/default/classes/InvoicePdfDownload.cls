@@ -1,4 +1,4 @@
-public class InvoicePdfDownload {
+public without sharing class InvoicePdfDownload {
     @AuraEnabled
     public static void getInvoicePdf(string recordId){
         system.debug('recordId==>' +recordId);

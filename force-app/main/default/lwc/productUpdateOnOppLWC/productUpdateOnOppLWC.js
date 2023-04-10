@@ -1,4 +1,5 @@
 import { LightningElement,track,wire,api} from 'lwc';
+import OpportunityRec from '@salesforce/apex/ProductUpdateOnOppApexController.GetOppDetail';
 import { getObjectInfo } from 'lightning/uiObjectInfoApi';
 import { getPicklistValues } from 'lightning/uiObjectInfoApi';
 import PRODUCT_OBJECT from '@salesforce/schema/Product2';
@@ -30,7 +31,23 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
     @track Typevalue
     @track  FirstScreen=true;
     @track SecondScreen=false;
-
+    @track RevenueValue;
+    @track ShowText=false;
+    
+    @wire(OpportunityRec,{recordId: '$recordId'})
+    wiredOpportunity({data,error}){
+        if(data){
+           console.log('oppData--',data); 
+           this.RevenueValue=data.Expected_Revenue__c;
+           console.log('RevenueValue--',this.RevenueValue);
+           if(this.RevenueValue < 0 || this.RevenueValue==null || this.RevenueValue==undefined){
+               this.ShowText=true;
+           } 
+        }else{
+            console.log('error--',error);
+        }
+    }
+    
     //Here Getting All The Courses
     @track AllCourses=[];
 

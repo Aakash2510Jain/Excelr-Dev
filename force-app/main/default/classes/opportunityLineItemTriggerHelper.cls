@@ -1,4 +1,4 @@
-public class opportunityLineItemTriggerHelper{
+public without sharing class opportunityLineItemTriggerHelper{
     public static void fireApprovalAfterInsert(Map<Id, OpportunityLineItem> newMap){
         try{
             system.debug('newMap -- ' + newMap);

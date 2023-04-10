@@ -1,4 +1,4 @@
-public class ChatBot_CaseStatus {
+public without sharing class ChatBot_CaseStatus {
 @InvocableMethod(label='Get Case Status')
     public static List<string> getCaseStatus(List<String> caseNum){
         try{

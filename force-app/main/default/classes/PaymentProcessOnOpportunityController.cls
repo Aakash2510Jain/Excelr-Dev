@@ -1,4 +1,4 @@
-public class PaymentProcessOnOpportunityController {
+public without sharing class PaymentProcessOnOpportunityController {
     
     @AuraEnabled(Cacheable = True)
     Public Static Map<String, List<Decimal>> ShowNbfcPartners(){
@@ -74,6 +74,14 @@ public class PaymentProcessOnOpportunityController {
     
      @AuraEnabled
     Public Static string CreateOppLineItem(string recordId,Integer Quantity,String ProductName,integer Amount, String paymentType){
+        datetime datetimevalueCurrentDT = DateTime.newInstance(System.now().year(), System.now().month(), System.now().day()+7);
+        String strUnixTimeStamp = String.valueof(datetimevalueCurrentDT.getTime());
+        System.debug('String UnixTimeStamp is ' + strUnixTimeStamp);
+        long unixtimestamp = datetimevalueCurrentDT.getTime();
+        System.debug('unixtimestamp ===> ' + unixtimestamp);
+        //string strunixtime = '1691097057';
+        Long longUnixTimeStamp = Long.valueOf(strUnixTimeStamp);
+        System.debug('DateTIme conversion of unixtimestamp ==>' + DateTime.newInstance(longUnixTimeStamp));
 
         Product2 PrdRec=[Select Id,Name,(Select Id,Name,UnitPrice From PricebookEntries ) From Product2 where id=:ProductName ];
         
@@ -100,11 +108,11 @@ public class PaymentProcessOnOpportunityController {
 
         if(paymentType=='razorpay'){
 
-            return RazorpayPaymentHandler.initateRazorpayPament(invRec.id);
+            return RazorpayPaymentHandler.initateRazorpayPament(invRec.id, longUnixTimeStamp);
 
         }else{
 
-             ccAvenueLwcController.initateCCAvenuePayment(invRec.id);
+             ccAvenueLwcController.initateCCAvenuePayment(invRec.id, longUnixTimeStamp);
         }
        
         return 'Success';
@@ -158,6 +166,14 @@ public class PaymentProcessOnOpportunityController {
     @AuraEnabled
     Public Static String OppUpdateOnPartialLoan(string recordId,integer PartialTenureValue,String partialNBFCValue,Integer PartialUpfrontValue,Integer Quantity,String ProductName,Decimal Amount,String paymentType,String LoanType){
              
+        datetime datetimevalueCurrentDT = DateTime.newInstance(System.now().year(), System.now().month(), System.now().day()+7);
+        String strUnixTimeStamp = String.valueof(datetimevalueCurrentDT.getTime());
+        System.debug('String UnixTimeStamp is ' + strUnixTimeStamp);
+        long unixtimestamp = datetimevalueCurrentDT.getTime();
+        System.debug('unixtimestamp ===> ' + unixtimestamp);
+        //string strunixtime = '1691097057';
+        Long longUnixTimeStamp = Long.valueOf(strUnixTimeStamp);
+        System.debug('DateTIme conversion of unixtimestamp ==>' + DateTime.newInstance(longUnixTimeStamp));
         product2 PrdRec=[Select Id,Name,(Select Id,Name,UnitPrice From PricebookEntries) From Product2 where id=:ProductName ];
         
          OpportunityLineItem oppLineItemRec=new OpportunityLineItem();
@@ -195,11 +211,11 @@ public class PaymentProcessOnOpportunityController {
 
         if(paymentType=='razorpay'){
             
-            return RazorpayPaymentHandler.initateRazorpayPament(invRec.id);
+            return RazorpayPaymentHandler.initateRazorpayPament(invRec.id, longUnixTimeStamp);
 
         }else{
             
-             ccAvenueLwcController.initateCCAvenuePayment(invRec.id);
+             ccAvenueLwcController.initateCCAvenuePayment(invRec.id, longUnixTimeStamp);
 
         }
         

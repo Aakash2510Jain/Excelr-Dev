@@ -1,4 +1,4 @@
-public class DummyClass {
+public without sharing class DummyClass {
     
     public static void firstTestMethod(){
         Integer i=0;

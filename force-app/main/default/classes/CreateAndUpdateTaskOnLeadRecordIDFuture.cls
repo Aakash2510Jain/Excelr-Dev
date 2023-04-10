@@ -1,4 +1,4 @@
-public class CreateAndUpdateTaskOnLeadRecordIDFuture {
+public without sharing class CreateAndUpdateTaskOnLeadRecordIDFuture {
     @future(callout=true)
     public static void CreateandUpdatetask(string jsonstring, string leadId){
         

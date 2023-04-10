@@ -1,4 +1,12 @@
 public with sharing class ProductUpdateOnOppApexController{
+
+    @AuraEnabled(Cacheable=True)
+    Public static Opportunity GetOppDetail(string recordId){
+        Opportunity Opp=[select Id,Expected_Revenue__c From Opportunity Where Id=:recordId];
+
+        return Opp;
+    }
+
     @AuraEnabled(Cacheable = True)
     Public static List<City__c> fetchCities(){
         List<City__c> citylist = [Select Name
@@ -116,7 +124,7 @@ public with sharing class ProductUpdateOnOppApexController{
         system.debug('AddOnList=' + AddOnList);
         List<OpportunityLineItem> oppLitemList = new List<OpportunityLineItem>();
         string message = '';
-
+        string productName = '';
         try{
             for (Product2 prodRec : Prodlist){
 
@@ -141,6 +149,10 @@ public with sharing class ProductUpdateOnOppApexController{
                 system.debug('oppLitemRec.TotalPrice===' + oppLitemRec.TotalPrice);
                 oppLitemRec.Quantity = 1;
                 oppLitemList.add(oppLitemRec);
+                if(!string.isBlank(productName) )
+                    productName = productName +' - '+prodRec.Name;
+                else
+                    productName = prodRec.Name;
             }
 
             for (Add_On__c AddOnRec : AddOnList){
@@ -161,6 +173,7 @@ public with sharing class ProductUpdateOnOppApexController{
                 system.debug('oppLitemRec.TotalPrice===' + oppLineitemRec.TotalPrice);
                 oppLineitemRec.Quantity = 1;
                 oppLitemList.add(oppLineitemRec);
+                productName = productName +' - '+AddOnRec.Name;
             }
             if (!oppLitemList.IsEmpty()){
 
@@ -178,6 +191,10 @@ public with sharing class ProductUpdateOnOppApexController{
                         }
                     }
                 }
+                Opportunity oppRec = new Opportunity();
+                oppRec.Id = oppId;
+                oppRec.Product_Name__c = productName;
+                update oppRec;
                // insert oppLitemList;
             }
             message = 'SUCCESS';

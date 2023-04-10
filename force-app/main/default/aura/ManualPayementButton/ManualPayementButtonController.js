@@ -39,7 +39,7 @@
     
     Save: function (component, event, helper) {
         debugger;
-        component.set("v.disableSave",true);
+        component.set("v.disableSave",true);  //Math.floor(component.find('actualamount').get('v.value'))
         if(component.find('actualamount').get('v.value') <=0 || component.find('actualamount').get('v.value') == null || component.find('actualamount').get('v.value') == "" || component.find('actualamount').get('v.value') == "undefined"){
             alert("Please provide the Amount");
             component.set("v.disableSave",false);

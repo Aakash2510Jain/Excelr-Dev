@@ -1,4 +1,4 @@
-public class CallyzerAPIHandler
+public without sharing class CallyzerAPIHandler
 {
     public Static void processHistory(List<String> clientNums)
     {

@@ -1,4 +1,4 @@
-public class ModifyMaxLeads 
+public without sharing class ModifyMaxLeads 
 {
     @AuraEnabled
     public Static List<User> getUser(){

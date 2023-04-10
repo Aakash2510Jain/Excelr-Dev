@@ -1,4 +1,4 @@
-public class ConvertLeadHelper{
+public without sharing class ConvertLeadHelper{
     @auraEnabled
     public static void convertLead(string recordId){
         if (!String.isBlank(recordId)){

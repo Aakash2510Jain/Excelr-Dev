@@ -1,5 +1,5 @@
 @RestResource(urlMapping = '/create_Referral_Lead')
-global with sharing class API_CreateReferralLead{
+global without sharing class API_CreateReferralLead{
     @HttpPost
     global static void InsertreferralLead(){
         try{

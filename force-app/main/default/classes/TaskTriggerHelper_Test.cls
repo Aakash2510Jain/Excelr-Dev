@@ -24,6 +24,7 @@ public class TaskTriggerHelper_Test {
         user2.End_Date__c = system.today();   
         insert user2;*/
         
+        
         Account acc = new Account();
         acc.Name = 'Test';
         acc.OwnerId = UserInfo.getUserId();

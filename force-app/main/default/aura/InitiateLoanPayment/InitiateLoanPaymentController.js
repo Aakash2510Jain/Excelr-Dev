@@ -8,7 +8,22 @@
         action.setCallback(this, function(response){
             var state = response.getState();
             if(state === 'SUCCESS'){
+                var opportunityRecordValue = response.getReturnValue().opportunityRecord;
                 component.set("v.opportunityRecord", response.getReturnValue().opportunityRecord);
+                if(opportunityRecordValue.Email__c == null || opportunityRecordValue.Phone__c == null){
+                    var toastEvent = $A.get("e.force:showToast");
+                    toastEvent.setParams({
+                        title : 'Info',
+                        message: 'Please Fill Phone and Email.',
+                        duration:' 5000',
+                        key: 'info_alt',
+                        type: 'info',
+                        mode: 'dismissible'
+                    });
+                    toastEvent.fire();
+                    var dismissActionPanel = $A.get("e.force:closeQuickAction");
+                    dismissActionPanel.fire();
+                }
                 component.set("v.loanAmount", response.getReturnValue().opportunityRecord.Amount);
                 component.set("v.NBFCList", response.getReturnValue().NBFCPartnerList);
                 component.set("v.downPaymentTypes", response.getReturnValue().downPaymentTypeList);
@@ -124,15 +139,48 @@
         var opportunityAmountJS = component.get("v.opportunityRecord").Amount;
         opportunityAmountJS = opportunityAmountJS.toString();
         var downPaymentJS = component.get("v.upfrontAmount");
+        
         downPaymentJS = downPaymentJS.toString();
         var loanAmountJS = component.get("v.loanAmount");
         loanAmountJS = loanAmountJS.toString();
         var loanPartnerJS = component.get("v.selectedNBFC");
+        if(loanPartnerJS == null || loanPartnerJS == undefined){
+            alert('Select a NBFC Partner');
+            component.set("v.disableSaveButton",false);
+            return;
+        }
         var loanTenureJS = component.get("v.selectedTenure");
-        var downPaymentTypeJS = component.get("v.selectedDownPaymentMode");
+        if(loanTenureJS == null || loanTenureJS == undefined){
+            alert('Select Loan Tenure');
+            component.set("v.disableSaveButton",false);
+            return;
+        }
+       
         var expiryDateJS = component.get("v.selectedDate");
         expiryDateJS = expiryDateJS.toString();
         var opportunityIdFromPage = component.get("v.recordId");
+        
+        if(component.find("loanAttachment").get("v.files") == null || component.find("loanAttachment").get("v.files") == undefined){
+            alert('Select Loan Attachment');
+            component.set("v.disableSaveButton",false);
+            return;
+        }
+        var downPaymentTypeJS = component.get("v.selectedDownPaymentMode");
+        if(downPaymentJS != null && downPaymentJS != undefined){
+            if(component.get("v.selectedDownPaymentMode") == null || component.get("v.selectedDownPaymentMode") == undefined || component.get("v.selectedDownPaymentMode") == "" ){
+                alert('Select Down Payment Type');
+                component.set("v.disableSaveButton",false);
+                return;
+            }else{
+                if(component.get("v.selectedDownPaymentMode") != 'CC Avenue' && component.get("v.selectedDownPaymentMode") != 'RazorPay'){
+                    if(component.find("downPaymentAttachment").get("v.files") == null || component.find("downPaymentAttachment").get("v.files") == undefined){
+                        alert('Select Down Payment Attachment');
+                        component.set("v.disableSaveButton",false);
+                        return;
+                    }
+                }
+            }
+        }
         var action = component.get("c.handleLoanPayment");
         
         action.setParams({

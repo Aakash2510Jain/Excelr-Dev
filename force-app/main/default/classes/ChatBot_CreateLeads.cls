@@ -1,4 +1,4 @@
-public class ChatBot_CreateLeads {
+public without sharing class ChatBot_CreateLeads {
    /* @InvocableMethod(label='Create Lead')
     public static List<string> getProductlist(List<TranscriptInput> transcripts){
         

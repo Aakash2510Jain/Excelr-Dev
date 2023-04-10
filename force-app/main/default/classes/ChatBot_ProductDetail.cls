@@ -1,4 +1,4 @@
-public class ChatBot_ProductDetail {
+public without sharing class ChatBot_ProductDetail {
  @InvocableMethod(label='Get Product URLDetails')
     public static List<Product2> getProductlist(List<string> prodName){
         try{

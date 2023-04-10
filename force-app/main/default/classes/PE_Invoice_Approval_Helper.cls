@@ -1,4 +1,4 @@
-public class PE_Invoice_Approval_Helper {
+public without sharing class PE_Invoice_Approval_Helper {
     public static void submitForApproval(List<Invoice_Approval__e> invoiceApprovalList){
         Set<Id> opportunityIds = new Set<Id>();
         
@@ -8,8 +8,9 @@ public class PE_Invoice_Approval_Helper {
                     opportunityIds.add(invoiceApprovalRec.Invoice_Id__c);
                 }
             }
+            system.debug('opportunityIds--->'+opportunityIds);
             if(!opportunityIds.isEmpty()){
-                SubmitInvoiceForApproval.submitForApproval(opportunityIds);
+                SubmitInvoiceForApproval.submitForApprovalforReceipt(opportunityIds);
             }
         }
     }

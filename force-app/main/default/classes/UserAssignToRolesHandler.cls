@@ -1,4 +1,4 @@
-public class UserAssignToRolesHandler { 
+public without sharing class UserAssignToRolesHandler { 
     @AuraEnabled
     public static List<User> fetchUser() { 
         try{ 

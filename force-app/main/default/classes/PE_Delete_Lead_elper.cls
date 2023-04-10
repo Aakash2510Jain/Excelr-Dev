@@ -1,4 +1,4 @@
-public class PE_Delete_Lead_elper {
+public without sharing class PE_Delete_Lead_elper {
     
     public static void deleteLeadRecords(List<Delete_Lead__e> DeleteLeadList){
 

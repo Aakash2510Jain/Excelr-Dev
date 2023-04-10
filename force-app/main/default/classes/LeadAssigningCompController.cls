@@ -1,4 +1,4 @@
-public class LeadAssigningCompController {
+public without sharing class LeadAssigningCompController {
     
     @AuraEnabled
     public static Map<String,String> getAllSObjects(){

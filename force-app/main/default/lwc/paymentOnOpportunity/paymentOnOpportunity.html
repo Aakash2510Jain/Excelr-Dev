@@ -18,8 +18,8 @@
     <template if:true={ShowPartialPaymentOption}>
       <div>
         <br />
-        <span style="text-align:center;border: 1px solid black;padding:3px;">Opportunity
-          Amount:&nbsp;<b>{originalPrice}</b></span>
+        <span style="text-align:center;border: 1px solid black;padding:3px;">Opportunity Pending
+          Amount:&nbsp;<b>{oppPendingAmount}</b></span>
         <br />
         <br />
         <div class="slds-grid slds-wrap">
@@ -28,14 +28,14 @@
               Upfront Amount
             </p>
             <lightning-input type="Number" placeholder="Enter Your Upfront payment" label="" name="UpfrontAmount"
-              value={PartialUpfrontAmount} onchange={HandlePartialLoanInputUpfrontAmount}
+              value={PartialUpfrontAmount} onchange={HandlePartialLoanInputUpfrontAmount} disabled={disableUpfrontAmount}
               style="margin-right:10px ;"></lightning-input>
           </div>
           <div class="slds-col slds-size_6-of-12">
             <p style="font-weight:bold">
-              Loan Amount
+              Due Amount
             </p>
-            <lightning-input type="Number" placeholder="Loan Amount" name="LoanAmount" label="" value={PartialAmount}
+            <lightning-input type="Number" placeholder="Due Amount" name="LoanAmount" label="" value={PartialAmount}
               disabled style="font-weight:bold"></lightning-input>
           </div>
         </div>

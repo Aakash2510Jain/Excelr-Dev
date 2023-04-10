@@ -1,4 +1,4 @@
-public class CallyzerEmployeeWrapper 
+public without sharing class CallyzerEmployeeWrapper 
 {
     public List<employeeWrapper> data;
     

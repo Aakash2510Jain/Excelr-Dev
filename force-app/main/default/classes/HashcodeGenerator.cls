@@ -1,4 +1,4 @@
-public with sharing class HashcodeGenerator {
+public without sharing class HashcodeGenerator {
     
     public static String generateRandomString(){
         try{

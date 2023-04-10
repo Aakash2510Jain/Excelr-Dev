@@ -521,6 +521,7 @@ public without sharing class Utility{
         leadRec.UTM_Variety__c = newAccount.UTM_Variety__c;
         leadRec.UTM_Experiment__c = newAccount.UTM_Experiment__c;
         leadRec.UTM_Medium__c = newAccount.UTM_Medium__c;
+        
         leadRec.Type_of_Course__c = newAccount.Type_of_Course__c;
         leadRec.Lead_Gen_Path__c = newAccount.Lead_Gen_Path__c != null ? newAccount.Lead_Gen_Path__c : 'NA';
         leadRec.GCLID__c = newAccount.GCLID__c;
@@ -562,9 +563,10 @@ public without sharing class Utility{
         insert appRec;
         return appRec.Id;
     }
-    public static Application__c returnApplicationInstance(Lead leadRec, String LeadRecId){
+    public static Application__c returnApplicationInstance(Lead leadRec, Lead ExistingLeadRec){
         Application__c appRec = new Application__c();
-        appRec.Lead__c = LeadRecId;
+        appRec.Lead__c = ExistingLeadRec.Id;
+        appRec.ownerId = ExistingLeadRec.ownerId;
         appRec.Applied_Date_Time__c = System.now();
         appRec.Status__c = 'Open';
         appRec.Course__c = leadRec.course__c;

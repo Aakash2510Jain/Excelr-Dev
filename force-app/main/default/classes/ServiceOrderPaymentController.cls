@@ -1,3 +1,3 @@
-public class ServiceOrderPaymentController {
+public without sharing class ServiceOrderPaymentController {
 
 }

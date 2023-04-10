@@ -1,4 +1,4 @@
-public class ChatBot_LMSEnquiry {
+public without sharing class ChatBot_LMSEnquiry {
     @InvocableMethod(label='LMS Enquiry')
     public static List<Account> getProductlist(List<string> custId){
      try{   

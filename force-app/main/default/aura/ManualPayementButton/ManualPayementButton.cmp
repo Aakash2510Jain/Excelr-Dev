@@ -1,9 +1,23 @@
 <aura:component controller="ManualpaymentController"
-                implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader"
-                access="global">
+    implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader"
+    access="global">
 
-    <aura:attribute name="fieldMap" type="Map"/>
-    
+    <aura:html tag="style">
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+        padding: 0rem !important;
+        }
+        .slds-modal__content{
+        overflow-y:hidden !important;
+        height:unset !important;
+        max-height:unset !important;
+        }
+    </aura:html>
+
+    <aura:attribute name="fieldMap" type="Map" />
+
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
     <aura:attribute name="pickValues" type="List" />
@@ -15,58 +29,63 @@
     <aura:attribute name="description" type="String" />
     <aura:attribute name="oppAmount" type="String" />
     <aura:attribute name="dueAmountRemaning" type="String" />
-    <aura:attribute name="partialPayment" type="boolean" default="false"/>
-    <aura:attribute name="selectedDate" type="Date"/>
-    <aura:attribute name="todayDate" type="Date"/>
-    <aura:attribute name="disableSave" type="boolean" default="false"/>
-    <aura:attribute name="paymentTypeList" type="List"/>
-    
-    <div class="slds-modal__content">
-        <h2 style=" text-align: center;font-size: 25px;font-family: math;">Manual Payment</h2>
+    <aura:attribute name="partialPayment" type="boolean" default="false" />
+    <aura:attribute name="selectedDate" type="Date" />
+    <aura:attribute name="todayDate" type="Date" />
+    <aura:attribute name="disableSave" type="boolean" default="false" />
+    <aura:attribute name="paymentTypeList" type="List" />
+
+    <div class="modal-header slds-modal__header slds-size_1-of-1">
+        <h2 class="title slds-text-heading--medium">Manual Payment</h2>
+
+    </div>
+
+    <div class="slds-modal__content slds-p-around--small">
+        <!-- <h2 style=" text-align: center;font-size: 25px;font-family: math;">Manual Payment</h2> -->
         <br />
-        
+
         <lightning:input label="Price Including GST : From Pricebook" disabled="true" value="{!v.oppAmount}" /><br />
-        
-        
+
+
         <div class="slds-grid slds-wrap">
             <div class="slds-col slds-size_1-of-2">
-                <lightning:input type="number" aura:id="actualamount" required="true"  label="Upfront Amount" onchange="{!c.onChangeHandler}"/>
+                <lightning:input type="number" aura:id="actualamount" required="true" label="Upfront Amount"
+                    onchange="{!c.onChangeHandler}" />
             </div>
             <div class="slds-col slds-size_1-of-2">
-                <lightning:input type="number" disabled="true" aura:id="dueamount" label="Due Amount" value="{!v.dueAmountRemaning}" />
+                <lightning:input type="number" disabled="true" aura:id="dueamount" label="Due Amount"
+                    value="{!v.dueAmountRemaning}" />
             </div>
         </div>
-        
+
         <aura:if isTrue="{!v.partialPayment}">
-            <lightning:input type="date" label="Select next followup date for pending payment" required ="true" value="{!v.selectedDate}" min="{!v.todayDate}"  />
+            <lightning:input type="date" label="Select next followup date for pending payment" required="true"
+                value="{!v.selectedDate}" min="{!v.todayDate}" />
         </aura:if>
         <lightning:textarea aura:id="desc" type="text" maxlength="300" label="Description"
-                            placeholder="Enter description" onchange="{!c.onChangeHandler}" />
+            placeholder="Enter description" onchange="{!c.onChangeHandler}" />
         <lightning:input aura:id="fileuplod" onchange="{!c.handleFilesChange}" type="file"
-                         accept="image/png, .png, ,jpg, image/jpeg, image/jpg , application/pdf" label="Upload Attachment" multiple="false"
-                         required="true" />
+            accept="image/png, .png, ,jpg, image/jpeg, image/jpg , application/pdf" label="Upload Attachment"
+            multiple="false" required="true" />
         <div class="slds-text-body_small slds-text-color_success"> {!v.fileName} </div>
-        
-       
-        <lightning:select aura:id="paymenttype"  onchange="{! c.onChangeHandlerpickList }" name="Payment Type" label="Payment Type">
+
+
+        <lightning:select aura:id="paymenttype" onchange="{! c.onChangeHandlerpickList }" name="Payment Type"
+            label="Payment Type">
             <option value="">--None--</option>
-           
-                <aura:iteration items="{!v.paymentTypeList}" var="color">
-                        <option text="{!color}"></option>
-                </aura:iteration>
-          
+
+            <aura:iteration items="{!v.paymentTypeList}" var="color">
+                <option text="{!color}"></option>
+            </aura:iteration>
+
         </lightning:select>
-        
+
     </div>
     <br />
-    <div class="modal-footer slds-modal__footer slds-size_1-of-1" style="width: 110%;
-                                                                         padding: 10px;
-                                                                         margin-left: -29px;
-                                                                         ">
-        <div class="forceChangeRecordTypeFooter">
-            <ui:button class="slds-button slds-float_left  slds-button_neutral" label="Cancel"
-                       press="{! c.cancelFile}" />
-            <ui:button class="slds-button slds-button--brand" label="Save" press="{!c.Save}" disabled="{!v.disableSave}"/>
-        </div>
+    <div class="modal-footer slds-modal__footer slds-size_1-of-1">
+        <!-- <div class="forceChangeRecordTypeFooter"> style="width: 110%;padding: 10px; margin-left: -29px;" -->
+        <ui:button class="slds-button slds-float_left  slds-button_neutral" label="Cancel" press="{! c.cancelFile}" />
+        <ui:button class="slds-button slds-button--brand" label="Save" press="{!c.Save}" disabled="{!v.disableSave}" />
+        <!-- </div> -->
     </div>
 </aura:component>

@@ -9,8 +9,9 @@ trigger TriggerOnLead on Lead (before insert, After Insert, Before Update, After
             handlerInstance.beforeInsert(Trigger.new );
         }
         if (trigger.isInsert && trigger.isAfter){
-            handlerInstance.afterInsert(Trigger.new);
             LeadAssignmentExecutionCriteria.validateEntryCriteria();
+            handlerInstance.afterInsert(Trigger.new);
+            
         }
         
         if (trigger.isUpdate && trigger.isBefore){

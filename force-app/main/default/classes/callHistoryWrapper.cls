@@ -1,4 +1,4 @@
-public class CallHistoryWrapper
+public without sharing class CallHistoryWrapper
 {
     public List<HistoryWrapper> data;
     

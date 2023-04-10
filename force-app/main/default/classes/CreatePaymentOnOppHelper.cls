@@ -1,4 +1,4 @@
-public class CreatePaymentOnOppHelper {
+public without sharing class CreatePaymentOnOppHelper {
     @auraEnabled
     public static void updatePaymentStatus(String oppId){
         try{

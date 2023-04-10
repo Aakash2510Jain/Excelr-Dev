@@ -1,4 +1,4 @@
-public class Constants{
+public without Sharing class Constants{
     public static final string PENDING = 'Pending';
     public static final String UNDER_APPROVAL_PROCESS_ERR_MSG = 'Record is Under Approval';
     public static Id queueId = [select Id
@@ -42,6 +42,7 @@ public class Constants{
     public static final string OPP_STAGENAME_PROSPECT = 'Prospect';
     public static final string OPP_STAGENAME_HOT = 'Hot';
     public static final string OPP_STAGENAME_AWAITING_CONFIRMATION = 'Awaiting Confirmation';
+    public static final string OPP_STAGENAME_CLOSE_WON = '	Closed Won';
     
 
     // ============================================== Opportunity Payment Status ============================================
@@ -55,4 +56,27 @@ public class Constants{
     
     // ================================================= Task Subject ===========================================================
     Public static final string TASKSUBJECTCANDIDATEAPPLIEDAGAIN = 'Candidate has applied again for the Same Course';
+
+
+    // ============================================== Invoice Payment Type Constant ============================================
+
+        public static final string INVOICE_PAYMENT_TYPE_FULLPAYMENT = 'Full Payment';
+        public static final string INVOICE_PAYMENT_TYPE_PARTIALPAYMENT = 'Partial Payment';
+
+    // ============================================== Invoice status Constant ============================================
+    public static final string INVOICE_STATUS_LINKSENT = 'Initiated';
+    public static final string INVOICE_STATUS_PENDING = 'Pending';
+    public static final string INVOICE_STATUS_RECEIVED_PAID = 'Realized'; 
+    public static final string INVOICE_STATUS_FAILED = 'Not Realized';
+    public static final string INVOICE_STATUS_PARTIALLYPENDING = 'Partially Pending';
+
+    // ============================================== Receipt Status Constant ============================================
+
+    public static final string RECEIPT_STATUS_LINKSENT = 'Link Sent';
+    public static final string RECEIPT_STATUS_PENDING = 'Pending';
+    public static final string RECEIPT_STATUS_RECEIVED_PAID = 'Received/Paid'; 
+    public static final string RECEIPT_STATUS_FAILED = 'Failed';
+
+
+
 }

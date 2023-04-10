@@ -1,4 +1,4 @@
-public class CreateLeadChatbot_Controller {
+public without sharing class CreateLeadChatbot_Controller {
     
     public static String coursePickValues  {get;set;}
     public Static Map<String, String> pageMap {get;set;}

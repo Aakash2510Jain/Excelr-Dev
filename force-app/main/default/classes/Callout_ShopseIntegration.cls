@@ -1,4 +1,4 @@
-public with sharing class Callout_ShopseIntegration{
+public without sharing class Callout_ShopseIntegration{
     public static void OrderDetailsTotransfer(String OppOId){
         ShopseWrapper Shopwarp = new ShopseWrapper();
 

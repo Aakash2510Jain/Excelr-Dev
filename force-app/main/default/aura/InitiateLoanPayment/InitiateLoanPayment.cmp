@@ -1,6 +1,21 @@
 <aura:component
     implements="force:appHostable,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader"
     controller="InitiateLoanPaymentController" access="global">
+
+    <aura:html tag="style">
+        .cuf-content {
+            padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+            padding: 0rem !important;
+        }       
+        .slds-modal__content{
+            overflow-y:hidden !important;
+            height:unset !important;
+            max-height:unset !important;
+        }
+    </aura:html>
+
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
     <aura:attribute name="opportunityRecord" type="opportunity" />
     <aura:attribute name="NBFCList" type="NBFC__c[]" />
@@ -24,8 +39,13 @@
     <aura:attribute name="captureExpiryDate" type="Boolean" default="false" />
     <aura:attribute name="captureDownPaymentAttachment" type="Boolean" default="false" />
 
+    <div class="modal-header slds-modal__header slds-size_1-of-1">
+        <h4 class="title slds-text-heading--medium">Loan Window</h4>
+
+    </div>
+
     <div style="padding:2%">
-        <p class="slds-align_absolute-center slds-text-heading_large"><b>Loan Window</b></p>
+        <!-- <p class="slds-align_absolute-center slds-text-heading_large"><b>Loan Window</b></p> -->
         <br /><br />
         <p><b>Price Including GST :&nbsp;{!v.opportunityRecord.Amount}</b> </p>
         <div class="slds-grid slds-gutters">
@@ -83,12 +103,11 @@
             </div>
         </div>
     </div>
-    <div class="modal-footer slds-modal__footer slds-size_1-of-1"
-        style="width: 110%;  padding: 10px; margin-left: -29px; ">
-        <div class="forceChangeRecordTypeFooter">
-            <ui:button class="slds-button slds-float_left  slds-button_neutral" label="Cancel"
-                press="{! c.handleCancel}" />
-            <ui:button class="slds-button slds-button--brand" label="Save" press="{!c.handleSave}" disabled="{!v.disableSaveButton}" />
-        </div>
+    <div class="modal-footer slds-modal__footer slds-size_1-of-1">
+        <!-- <div class="forceChangeRecordTypeFooter modal-footer slds-modal__footer slds-size_1-of-1"> style="width: 110%;  padding: 10px; margin-left: -29px; " -->
+        <ui:button class="slds-button slds-float_left  slds-button_neutral" label="Cancel" press="{! c.handleCancel}" />
+        <ui:button class="slds-button slds-button--brand" label="Save" press="{!c.handleSave}"
+            disabled="{!v.disableSaveButton}" />
+        <!-- </div> -->
     </div>
 </aura:component>

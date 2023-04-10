@@ -1,4 +1,4 @@
-public class CreateAndUpdateTaskOnLeadRecordID{
+public without sharing class CreateAndUpdateTaskOnLeadRecordID{
     
     public static void CreateandUpdatetask(string jsonstring, string leadId){
         

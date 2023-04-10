@@ -1,5 +1,5 @@
 @RestResource(urlMapping='/create_contact')
-global class API_CreateContact {
+global without sharing class API_CreateContact {
   @HttpPost
     global static void doPost(){
         RestRequest req = RestContext.request;

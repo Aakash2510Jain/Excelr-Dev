@@ -1,5 +1,5 @@
 @IsTest(SeeAllData=true)
-public class RetailInvoiceHelper_Test {
+public without sharing class RetailInvoiceHelper_Test {
     
      public class ExampleCalloutMock implements HttpCalloutMock{
         public HttpResponse respond(HTTPRequest req){
@@ -36,7 +36,7 @@ public class RetailInvoiceHelper_Test {
         Account acc = new Account(Name='TestAccount');
         insert acc;
         
-        Opportunity opp = new Opportunity(Name='TestOpportunity', AccountId=acc.Id, CloseDate=Date.Today(), StageName='Suspect', Pricebook2Id=customPB.Id);
+        Opportunity opp = new Opportunity(Name='TestOpportunity', AccountId=acc.Id, CloseDate=Date.Today(), StageName='Suspect', Pricebook2Id=customPB.Id , Expected_Revenue__c = 3000);
         insert opp;
         
         OpportunityLineItem oli = new OpportunityLineItem(OpportunityId = opp.Id, Quantity = 5, PricebookEntryId = customPrice.Id, TotalPrice = 500);

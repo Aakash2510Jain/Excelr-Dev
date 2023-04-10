@@ -1,4 +1,4 @@
-Global class ChatBot_ProductEnquiry {
+Global without sharing class ChatBot_ProductEnquiry {
  @InvocableMethod(label='Product Enquiry')
     Global static List<List<string>> getProductlist(){
         try{

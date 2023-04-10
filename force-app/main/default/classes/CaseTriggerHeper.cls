@@ -1,4 +1,4 @@
-public class CaseTriggerHeper {
+public without sharing class CaseTriggerHeper {
     static CaseTriggerHeper handlerInstance;
     public static CaseTriggerHeper getInstance() {
         if(handlerInstance == null) 

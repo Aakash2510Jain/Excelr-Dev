@@ -1,4 +1,4 @@
-global class BatchToDeleteAssignmentGroupMember implements Database.Batchable<sObject> {
+global without sharing class BatchToDeleteAssignmentGroupMember implements Database.Batchable<sObject> {
     global Database.QueryLocator start(Database.BatchableContext BC) {
         String query = 'SELECT Id FROM Assignment_Group_Member__c WHERE End_Date__c < TODAY';
         return Database.getQueryLocator(query);

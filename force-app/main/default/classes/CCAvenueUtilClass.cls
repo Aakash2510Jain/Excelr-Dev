@@ -1,4 +1,4 @@
-public with sharing class CCAvenueUtilClass {
+public without sharing class CCAvenueUtilClass {
     public static String encryptString(String Plain_Text, String encrypKey){
         try{
         Blob cryptoKey          = Blob.valueOf(encrypKey);       

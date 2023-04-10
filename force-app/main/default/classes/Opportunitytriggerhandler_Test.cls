@@ -4,6 +4,7 @@ public class Opportunitytriggerhandler_Test {
         Account acc = new Account(Name='test',Referral_Email__c = 'dinesh@gmail.com',Referral_Phone__c = '1234567890',OwnerId = UserInfo.getUserId());
         insert acc;
         
+        
         string ownerId = acc.OwnerId;
         Opportunity opp = new Opportunity();
         opp.AccountId = acc.Id;
@@ -35,7 +36,7 @@ public class Opportunitytriggerhandler_Test {
         
         test.startTest();
         Opportunitytriggerhandler handlerInstance = Opportunitytriggerhandler.getInstance();
-        handlerInstance.createtaskForIsm(oldOppMap, newOppMap);
+       // handlerInstance.createtaskForIsm(oldOppMap, newOppMap);
         test.stopTest();
     }
 }

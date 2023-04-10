@@ -1,4 +1,4 @@
-public class LeadAssignmentExecutionCriteria {
+public without sharing class LeadAssignmentExecutionCriteria {
     public Static Boolean runLeadAssignment = true;
     
     public static void validateEntryCriteria(){

@@ -1,4 +1,4 @@
-global class BatchForClosureOfTask implements Database.Batchable<SObject> {
+global without sharing class BatchForClosureOfTask implements Database.Batchable<SObject> {
     global Database.QueryLocator start(Database.BatchableContext bc) {
         DateTime post24Hours = datetime.now().addDays(-1);
         return Database.getQueryLocator([Select Id,Status From Task where Subject =: Constants.taskSubjectViaLeadCreationAPI and Status = 'Open' And CreatedDate <: post24Hours limit 1000]);

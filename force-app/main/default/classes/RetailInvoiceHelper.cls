@@ -1,4 +1,4 @@
-global class RetailInvoiceHelper {
+global without sharing class RetailInvoiceHelper {
     global static CustomInformation__c getcustomData {get;set;} 
     global static Invoice__c getinvoiceData {get;set;}
     global static Opportunity getoppData {get;set;} 

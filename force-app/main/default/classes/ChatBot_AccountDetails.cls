@@ -1,4 +1,4 @@
-public class ChatBot_AccountDetails {
+public without sharing class ChatBot_AccountDetails {
    @InvocableMethod(label='Get Account Info')
     public static List<Account> getAccountInfo(List<String> accountId){
         try{

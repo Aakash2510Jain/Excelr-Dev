@@ -6,7 +6,7 @@ public class InitiateLoanPaymentController {
         List<NBFC__c> NBFCPartnerList = new List<NBFC__c>();
         List<Down_Payment_Type__c> downPaymentTypeList = new List<Down_Payment_Type__c>();
         
-        oppRecordToBeReturned = [Select Id,Name,Amount From Opportunity where Id =:opportunityId];
+        oppRecordToBeReturned = [Select Id,Name,Amount,Email__c,Phone__c From Opportunity where Id =:opportunityId];
         NBFCPartnerList = [Select Interest_Rate__c,NBFC_Name__c,GST_on_Subvention__c,Processing_Fee__c,Tenure__c From NBFC__c order by NBFC_Name__c ASC];
         downPaymentTypeList = [Select Name From Down_Payment_Type__c where isActive__c = true order by name Asc];
         opportunityWrapper opportunityWrapperInstance = new opportunityWrapper(oppRecordToBeReturned,NBFCPartnerList, downPaymentTypeList);
@@ -23,7 +23,15 @@ public class InitiateLoanPaymentController {
             system.debug('loanTenure---->'+loanTenure);
             system.debug('downPaymentType---->'+downPaymentType);
             system.debug('expiryDate---->'+expiryDate);
-            
+            Long longUnixTimeStamp =0;
+            if(!string.isBlank(expiryDate)){
+                
+                datetime datetimevalueCurrentDT = DateTime.newInstance(Date.valueOf(expiryDate).year(), Date.valueOf(expiryDate).month(), Date.valueOf(expiryDate).day());
+                String strUnixTimeStamp = String.valueof(datetimevalueCurrentDT.getTime());
+                long unixtimestamp = datetimevalueCurrentDT.getTime();
+                longUnixTimeStamp = Long.valueOf(strUnixTimeStamp);
+                
+            }
             
             Invoice__c invRec = new Invoice__c();
             invRec.Opportunity__c = opportunityId;
@@ -32,12 +40,15 @@ public class InitiateLoanPaymentController {
             invRec.Down_Payment__c = integer.valueOf(downPayment);
             invRec.Loan_Amount__c = decimal.valueOf(loanAmount);
             invRec.Loan_Partner__c = loanPartner;
+            if(downPaymentType != null && (downPaymentType == 'RazorPay' || downPaymentType == 'CC Avenue' ))
+                invRec.Payment_Type__c = Constants.INVOICE_PAYMENT_TYPE_PARTIALPAYMENT;
             invRec.Loan_Tenure__c = decimal.valueOf(loanTenure);
             invRec.Down_Payment_Type__c = downPaymentType;
             if(!string.isBlank(downPaymentType))
                 invRec.Down_Payment_Expiry_Date__c = Date.valueOf(expiryDate);
             invRec.Type__c = 'Loan';
             invRec.Initiated_Date__c = System.Today();
+            invRec.Due_Amount__c = decimal.valueOf(opportunityAmount);
             insert invRec;
             
             if(integer.valueOf(downPayment) > 0){
@@ -46,11 +57,15 @@ public class InitiateLoanPaymentController {
                 Receipt__c receiptForDownPayment = new Receipt__c();
                 receiptForDownPayment.Amount__c = integer.valueOf(downPayment);
                 receiptForDownPayment.Invoice__c = invRec.Id;
+                receiptForDownPayment.Type__c = 'Online';
+                receiptForDownPayment.Receipt_Status__c = Constants.RECEIPT_STATUS_LINKSENT;
                 receiptListToInsert.add(receiptForDownPayment);
                 
                 Receipt__c receiptForLoanPayment = new Receipt__c();
                 receiptForLoanPayment.Amount__c = integer.valueOf(loanAmount);
                 receiptForLoanPayment.Invoice__c = invRec.Id;
+                receiptForLoanPayment.Type__c = 'Loan';
+                receiptForLoanPayment.Receipt_Status__c = 'Loan Initiated';
                 receiptListToInsert.add(receiptForLoanPayment);
                 if(!receiptListToInsert.isEmpty()){
                     insert receiptListToInsert;
@@ -58,10 +73,18 @@ public class InitiateLoanPaymentController {
             }else{
                 // create one receipt
                 Receipt__c receiptForLoanPayment = new Receipt__c();
+                receiptForLoanPayment.Receipt_Status__c = 'Loan Initiated';
                 receiptForLoanPayment.Amount__c = decimal.valueOf(loanAmount);
                 receiptForLoanPayment.Invoice__c = invRec.Id;
+                receiptForLoanPayment.Type__c = 'Loan';
                 insert receiptForLoanPayment;
             }
+            if (downPaymentType != null && downPaymentType == 'RazorPay'){
+                RazorpayPaymentHandler.initateRazorpayPament(invRec.id, longUnixTimeStamp);
+            } else if (downPaymentType != null && downPaymentType == 'CC Avenue'){
+                ccAvenueLwcController.initateCCAvenuePayment(invRec.id, longUnixTimeStamp);
+            }
+
             return invRec.Id;
         } catch(Exception e){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());

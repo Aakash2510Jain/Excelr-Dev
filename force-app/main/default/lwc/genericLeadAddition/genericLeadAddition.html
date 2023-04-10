@@ -171,18 +171,20 @@
                                                         <template if:true={data.Leadrec}>
                                                             <div class="slds-border_bottom">
                                                                 <lightning-output-field field-name="Status"
-                                                                    style="font-weight: bold;"> </lightning-output-field>
+                                                                    style="font-weight: bold;">
+                                                                </lightning-output-field>
                                                             </div>
 
                                                         </template>
                                                         <template if:true={data.OppRec}>
                                                             <div class="slds-border_bottom">
                                                                 <lightning-output-field field-name="StageName"
-                                                                    style="font-weight: bold;"> </lightning-output-field>
+                                                                    style="font-weight: bold;">
+                                                                </lightning-output-field>
                                                             </div>
 
                                                         </template>
-                                                        
+
 
                                                     </lightning-layout-item>
 
@@ -191,14 +193,16 @@
                                                         <template if:true={data.Leadrec}>
                                                             <div class="slds-border_bottom">
                                                                 <lightning-output-field field-name="Phone"
-                                                                    style="font-weight: bold;"> </lightning-output-field>
+                                                                    style="font-weight: bold;">
+                                                                </lightning-output-field>
                                                             </div>
 
                                                         </template>
                                                         <template if:true={data.OppRec}>
                                                             <div class="slds-border_bottom">
                                                                 <lightning-output-field field-name="Phone__c"
-                                                                    style="font-weight: bold;"> </lightning-output-field>
+                                                                    style="font-weight: bold;">
+                                                                </lightning-output-field>
                                                             </div>
 
                                                         </template>
@@ -209,19 +213,21 @@
                                                         <template if:true={data.Leadrec}>
                                                             <div class="slds-border_bottom">
                                                                 <lightning-output-field field-name="Email"
-                                                                    style="font-weight: bold;"> </lightning-output-field>
+                                                                    style="font-weight: bold;">
+                                                                </lightning-output-field>
                                                             </div>
 
                                                         </template>
                                                         <template if:true={data.OppRec}>
                                                             <div class="slds-border_bottom">
                                                                 <lightning-output-field field-name="Email__c"
-                                                                    style="font-weight: bold;"> </lightning-output-field>
+                                                                    style="font-weight: bold;">
+                                                                </lightning-output-field>
                                                             </div>
-                                                            
+
 
                                                         </template>
-                                                        
+
 
                                                     </lightning-layout-item>
                                                     <lightning-layout-item padding="around-small" size="6">
@@ -440,15 +446,15 @@
 
                                 <!--lightning-input type="text" label="LGE" onchange={HandleLGE}></lightning-input-->
                                 <lightning-input name="VID" type="text" label="Visitor ID"
-                                    onchange={LeadCreationHandler} required="true"></lightning-input>
+                                    onchange={LeadCreationHandler}></lightning-input>
 
                                 <label class="slds-form-element__label" for="textarea-id-01"><abbr class="slds-required"
-                                        title="required">*</abbr>TranScript</label>
+                                        title="required"></abbr>TranScript</label>
                                 <textarea label="TranScript" value={TranscriptValue} onchange={LeadCreationHandler}
                                     name="TransVal" class="slds-textarea"></textarea>
 
                                 <lightning-input type="text" label="Page URL" onchange={LeadCreationHandler}
-                                    name="PageUrl" required="true"></lightning-input>
+                                    name="PageUrl"></lightning-input>
 
 
                                 <lightning-textarea label="Comments" name="Comments" value={commentsValue}

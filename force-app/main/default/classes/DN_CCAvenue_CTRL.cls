@@ -3,7 +3,7 @@
 @CreatedDate : 02/12/2022
 @Author      : Baski
 */
-public class DN_CCAvenue_CTRL {
+public without sharing class DN_CCAvenue_CTRL {
 
     public string ACCESS_CODE   {get; set;}
     public String encRequest    {get; set;}
@@ -52,7 +52,11 @@ public class DN_CCAvenue_CTRL {
 
     public static String createPaymentURLFromInvoice(Invoice__c iv,Map<String,String> reqMap){
         try{
-        
+        System.debug('iv FROM Method ===> '+iv);
+        Receipt__c rep = [SELECT id,Name,Amount__c FROM Receipt__c Where Invoice__c =: iv.id LIMIT 1];
+        System.debug('rep Record Details ==> '+rep);
+
+
         CCAvenue_Details__c ccDetails = CCAvenue_Details__c.getInstance();
             
         String ACCESS_CODE = ccDetails.Non_FCRA_Access_Code__c;
@@ -66,7 +70,8 @@ public class DN_CCAvenue_CTRL {
 
         Long tstamp = System.now().getTime();
 
-        String params = 'tid='+reqMap.get('name')+tstamp+'&merchant_id='+MERCHANT_ID+'&order_id='+iv.Id+'&amount='+iv.Amount__c+'&currency='+'INR'+'&redirect_url='   +AVENUE_SUCCESS_URL+'&cancel_url='+AVENUE_CANCEL_URL+'&language=EN&billing_name='+reqMap.get('name')+'&billing_address='+reqMap.get('billing_address')+'&billing_city='+reqMap.get('billing_city')+'&billing_state='+reqMap.get('billing_street')+'&billing_zip='+reqMap.get('billing_postal_code')+'&billing_country='+reqMap.get('billing_country')+'&billing_tel='+reqMap.get('phone')+'&billing_email='+reqMap.get('email')+'&delivery_name='+reqMap.get('name')+'&delivery_address='+reqMap.get('shipping_address')+'&delivery_city='+reqMap.get('shipping_city')+'&delivery_state='+reqMap.get('shipping_state')+'&delivery_zip='+reqMap.get('shipping_postal_code')+'&delivery_country='+reqMap.get('shipping_country')+'&delivery_tel='+reqMap.get('phone');
+        System.debug('rep.Amount__c ===> '+rep.Amount__c);
+        String params = 'tid='+reqMap.get('name')+tstamp+'&merchant_id='+MERCHANT_ID+'&order_id='+iv.Id+'&amount='+rep.Amount__c+'&currency='+'INR'+'&redirect_url='   +AVENUE_SUCCESS_URL+'&cancel_url='+AVENUE_CANCEL_URL+'&language=EN&billing_name='+reqMap.get('name')+'&billing_address='+reqMap.get('billing_address')+'&billing_city='+reqMap.get('billing_city')+'&billing_state='+reqMap.get('billing_street')+'&billing_zip='+reqMap.get('billing_postal_code')+'&billing_country='+reqMap.get('billing_country')+'&billing_tel='+reqMap.get('phone')+'&billing_email='+reqMap.get('email')+'&delivery_name='+reqMap.get('name')+'&delivery_address='+reqMap.get('shipping_address')+'&delivery_city='+reqMap.get('shipping_city')+'&delivery_state='+reqMap.get('shipping_state')+'&delivery_zip='+reqMap.get('shipping_postal_code')+'&delivery_country='+reqMap.get('shipping_country')+'&delivery_tel='+reqMap.get('phone');
 
         String encRequest = CCAvenueUtilClass.encryptString(params, WORKING_KEY);
 

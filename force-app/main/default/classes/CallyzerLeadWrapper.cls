@@ -1,4 +1,4 @@
-public class CallyzerLeadWrapper 
+public without sharing class CallyzerLeadWrapper 
 {
         public String firstName;
         public String lastName;

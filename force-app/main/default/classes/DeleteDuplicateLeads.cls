@@ -1,4 +1,4 @@
-public class DeleteDuplicateLeads {
+public without sharing class DeleteDuplicateLeads {
     public static void deleteLeads(){
 
         Set<Id> LeadIds = new Set<Id>();

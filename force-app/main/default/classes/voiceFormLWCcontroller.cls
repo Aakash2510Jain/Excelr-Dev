@@ -455,7 +455,8 @@ public without sharing class voiceFormLWCcontroller{
                             if (urlvalue.contains('apex')){
                                 urlvalue = urlvalue.replace('apex', 'Loginpage');
                             }
-                            FinalPageToRedirect = 'https://' + headerdata + urlvalue + '&IsReloading=true' + '&AgentName=' + ExcelRTrainUser[0].First_Name__c + ' ' + ExcelRTrainUser[0].Last_Name__c;
+                            System.debug('System.Label.siteUrlForm ====> ' + System.Label.siteUrlForm);
+                            FinalPageToRedirect = System.Label.siteUrlForm + urlvalue + '&IsReloading=true' + '&AgentName=' + ExcelRTrainUser[0].First_Name__c + ' ' + ExcelRTrainUser[0].Last_Name__c;
                             // FinalPageToRedirect = LoginHashcode+ '?id='+ExistingHashcode +'&IsReloading=true';
                             System.debug('FinalPageToRedirect ====> ' + FinalPageToRedirect);
 
