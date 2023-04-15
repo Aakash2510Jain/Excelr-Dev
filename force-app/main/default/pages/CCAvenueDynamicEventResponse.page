@@ -1,0 +1,16 @@
+<apex:page sidebar="false"
+           showHeader="false"
+           controller="CCAvenueDynamicEventResponse"
+           action="{!CCAvenueresponse}"
+           applyhtmltag="false"
+           standardstylesheets="false" 
+           cache="false">
+    
+    <script>
+    
+    var status = "{!$CurrentPage.parameters.status}";
+    console.log('status----',status); //
+    </script>
+        
+    
+</apex:page>

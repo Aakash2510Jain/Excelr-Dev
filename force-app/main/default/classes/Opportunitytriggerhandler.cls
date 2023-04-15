@@ -1,43 +1,36 @@
 public without sharing class Opportunitytriggerhandler{
     static Opportunitytriggerhandler handlerInstance;
-
+    
     public static Opportunitytriggerhandler getInstance(){
         if ( handlerInstance == null )
             handlerInstance = new Opportunitytriggerhandler();
         return handlerInstance;
     }
-
+    
     public void afterUpdate(map<id, Opportunity> oldOppMap, map<id, Opportunity> newOppMap){
-        System.debug('oldOppMap ----> '+oldOppMap);
-          System.debug('newOppMap ----> '+newOppMap);
         set<id> accountIds = new set<id>();
+        set<id> opportunityIds = new set<id>();
         list<account> accountList = new List<Account>();
         list<account> ReferralAccountList = new List<Account>();
-        Map<Id, Account> ReferralAccountMap = new Map<id, Account>();
         List<task> TaskListTobeCreated = new List<Task>();
-        map<string, Opportunity> AccountIdwithOpportunity = new Map<String, Opportunity>();
-       // map<id, Opportunity> OppWithReferralAccount = new Map<Id, Opportunity>();
-
         List<Invoice__c> invoiceListtobeInserted = new List<Invoice__c>();
+        Map<Id, Account> ReferralAccountMap = new Map<id, Account>();
+        map<string, Opportunity> AccountIdwithOpportunity = new Map<String, Opportunity>();
+        
         try{
-            if ( !newOppMap.isEmpty() ){
+            if (!newOppMap.isEmpty()){
                 for ( Opportunity opp : newOppMap.values() ){
                     System.debug(' opp.StageName  ::'+ opp);
-                   // System.debug(' opp.oldOppMap.get(opp.id).StageName   ::'+ oldOppMap.get(opp.id).StageName );
-                  //  if ( opp.StageName != null && opp.StageName == 'Converted' && opp.StageName != oldOppMap.get(opp.id).StageName ){
-                        accountIds.add(opp.AccountId);
-                        //OppWithReferralAccount.put(opp.id, value)
-                        AccountIdwithOpportunity.put(opp.AccountId, opp);
-                  //  }
+                    accountIds.add(opp.AccountId);
+                    if(opp.StageName != oldOppMap.get(opp.Id).StageName && opp.StageName != null && opp.StageName == 'Closed Won')
+                        opportunityIds.add(opp.Id);
+                    AccountIdwithOpportunity.put(opp.AccountId, opp);
                 }
-
-                if ( !accountIds.isEmpty() ){
-                    accountList = [SELECT AccountSource, Approval_Status__c, Email__c, GCLID__c, Id,  Name, OwnerId, Phone, Referral_Email__c, Referral_Phone__c
-                                   FROM Account
-                                   where Id In:accountIds];
-                    if ( !accountList.isEmpty() ){
+                if (!accountIds.isEmpty() ){
+                    accountList = [SELECT AccountSource, Approval_Status__c, Email__c, GCLID__c, Id,  Name, OwnerId, Phone, Referral_Email__c, Referral_Phone__c FROM Account where Id In:accountIds];
+                    if (!accountList.isEmpty() ){
                         for ( account acc : accountList ){
-                            if ( acc.Referral_Email__c != null && acc.Referral_Phone__c != null && acc.OwnerId != null ){
+                            if (acc.Referral_Email__c != null && acc.Referral_Phone__c != null && acc.OwnerId != null ){
                                 ReferralAccountList.add(acc);
                                 ReferralAccountMap.put(acc.id, acc);
                                 if ( AccountIdwithOpportunity.containsKey(acc.Id) ){
@@ -53,28 +46,29 @@ public without sharing class Opportunitytriggerhandler{
                                 }
                             }
                         }
-
-                    }
-                    if ( !ReferralAccountMap.isEmpty() ){
-                        for ( account AccRec : ReferralAccountMap.values() ){
-                            task tsk = new Task();
-                            tsk.Subject = 'Release Credit Note';
-                            tsk.Status = 'Open';
-                            tsk.Priority = 'Medium';
-                            tsk.WhatId = AccRec.Id;
-                            tsk.OwnerId = AccRec.OwnerId;
-                            TaskListTobeCreated.add(tsk);
+                        if (!invoiceListtobeInserted.isEmpty()) {
+                            insert invoiceListtobeInserted;
                         }
-                    }
-                    if (!invoiceListtobeInserted.isEmpty()) {
-                        insert invoiceListtobeInserted;
-                    }
-                    if ( !TaskListTobeCreated.isEmpty() ){
-                        insert TaskListTobeCreated;
+                        if ( !ReferralAccountMap.isEmpty() ){
+                            for ( account AccRec : ReferralAccountMap.values() ){
+                                task tsk = new Task();
+                                tsk.Subject = 'Release Credit Note';
+                                tsk.Status = 'Open';
+                                tsk.Priority = 'Medium';
+                                tsk.WhatId = AccRec.Id;
+                                tsk.OwnerId = AccRec.OwnerId;
+                                TaskListTobeCreated.add(tsk);
+                            }
+                            if ( !TaskListTobeCreated.isEmpty() ){
+                                insert TaskListTobeCreated;
+                            }
+                        }                        
                     }
                 }
+                if(!opportunityIds.isEmpty()){
+                    EmailIUtility.sendEmailWithReceiptAndInvoice(opportunityIds,'InvoicePlusReceiptTemplate');
+                }
             }
-
         }
         catch ( Exception e ){
             System.debug(' the Error has occured due to =====> ' + e.getMessage());
@@ -83,12 +77,11 @@ public without sharing class Opportunitytriggerhandler{
             System.debug('error stack trace ======> ' + e.getStackTraceString());
         }
     }
-
+    
     public void beforeupdate(map<id, Opportunity> oldOppMap, map<id, Opportunity> newOppMap){
-
+        
         try {
             for (Opportunity Opp : newOppMap.values()) {
-
                 if (opp.StageName != oldOppMap.get(opp.Id).StageName && (opp.StageName == Constants.OPP_STAGENAME_PROSPECT || opp.StageName == Constants.OPP_STAGENAME_HOT || opp.StageName == Constants.OPP_STAGENAME_AWAITING_CONFIRMATION)) {
                     dateTime postOneMonth = system.now().addMonths(1);
                     if(opp.Next_follow_up_date_time__c > postOneMonth ){
@@ -132,13 +125,13 @@ public without sharing class Opportunitytriggerhandler{
                 if(opp.Alternate_Email__c != oldOppMap.get(Opp.Id).Alternate_Email__c && opp.Alternate_Email__c == null){
                     opp.Alternate_Email__c.addError('Alternate Email cannot be Empty.');
                 }
-                 if(opp.Email__c != oldOppMap.get(Opp.Id).Email__c && opp.Email__c == null){
+                if(opp.Email__c != oldOppMap.get(Opp.Id).Email__c && opp.Email__c == null){
                     opp.Email__c.addError('Email cannot be Empty.');
                 } 
                 if(opp.Phone__c != oldOppMap.get(Opp.Id).Phone__c && opp.Phone__c == null){
                     opp.Phone__c.addError('Phone cannot be Empty.');
                 }
-                 if(opp.Alternate_Phone__c != oldOppMap.get(Opp.Id).Alternate_Phone__c && opp.Alternate_Phone__c == null){
+                if(opp.Alternate_Phone__c != oldOppMap.get(Opp.Id).Alternate_Phone__c && opp.Alternate_Phone__c == null){
                     opp.Alternate_Phone__c.addError('Alternate Phone cannot be Empty.');
                 }
                 if(opp.Alternate_Email__c != oldOppMap.get(Opp.Id).Alternate_Email__c && opp.Alternate_Email__c != null){
@@ -177,7 +170,7 @@ public without sharing class Opportunitytriggerhandler{
                     if(!OpportunityList.isEmpty()){
                         opp.Alternate_Phone__c.addError('Duplicate Phone Found on Opportunity.');
                     }
-                     if(!leadList.isEmpty()){
+                    if(!leadList.isEmpty()){
                         opp.Alternate_Phone__c.addError('Duplicate Phone Found on Lead.');
                     }
                 }
@@ -193,58 +186,58 @@ public without sharing class Opportunitytriggerhandler{
                     }
                 }
                 if (opp.StageName != oldOppMap.get(Opp.Id).StageName && opp.StageName != Null && (opp.StageName == Constants.OPP_STAGENAME_PROSPECT || opp.StageName == Constants.OPP_STAGENAME_HOT || opp.StageName == Constants.LEAD_STATUS_OPEN || opp.StageName == Constants.OPP_STAGENAME_AWAITING_CONFIRMATION) 
-                        && (oldOppMap.get(Opp.Id).StageName == Constants.OPP_STAGENAME_ON_HOLD || oldOppMap.get(Opp.Id).StageName == Constants.OPP_STAGENAME_DEFERRED)  ) {
-                            dateTime postOneMonth = system.now().addMonths(1);
-                            if (opp.Next_follow_up_date_time__c == null) {
-                                opp.Next_follow_up_date_time__c.addError('Please Fill Next Follow Up date');
-                            }
-                            if (opp.Next_follow_up_date_time__c != null && opp.Next_follow_up_date_time__c != oldOppMap.get(Opp.Id).Next_follow_up_date_time__c && opp.Next_follow_up_date_time__c > postOneMonth) {
-                                string errormessage = 'Next Follow up date Cannot be greater than 1 month to Park it in ' + opp.StageName + ' Stage';
-                                opp.Next_follow_up_date_time__c.addError(errormessage);
-                            }
-                }
+                    && (oldOppMap.get(Opp.Id).StageName == Constants.OPP_STAGENAME_ON_HOLD || oldOppMap.get(Opp.Id).StageName == Constants.OPP_STAGENAME_DEFERRED)  ) {
+                        dateTime postOneMonth = system.now().addMonths(1);
+                        if (opp.Next_follow_up_date_time__c == null) {
+                            opp.Next_follow_up_date_time__c.addError('Please Fill Next Follow Up date');
+                        }
+                        if (opp.Next_follow_up_date_time__c != null && opp.Next_follow_up_date_time__c != oldOppMap.get(Opp.Id).Next_follow_up_date_time__c && opp.Next_follow_up_date_time__c > postOneMonth) {
+                            string errormessage = 'Next Follow up date Cannot be greater than 1 month to Park it in ' + opp.StageName + ' Stage';
+                            opp.Next_follow_up_date_time__c.addError(errormessage);
+                        }
+                    }
                 if ((opp.StageName != oldOppMap.get(Opp.Id).StageName && opp.StageName != Null && oldOppMap.get(Opp.Id).StageName == Constants.OPP_STAGENAME_CLOSE_LOST )) {
                     dateTime postOneMonth = system.now().addMonths(1);
                     dateTime postthreeMonth = system.now().addMonths(3);
                     dateTime postsixMonth = system.now().addMonths(6);
-                        if (opp.StageName == Constants.OPP_STAGENAME_ON_HOLD  ) { 
-                            if (opp.Next_follow_up_date_time__c == null) {
-                                opp.Next_follow_up_date_time__c.addError('Please Fill Follow up date!!');
-                            }
-                            if (opp.Next_follow_up_date_time__c != null && opp.Next_follow_up_date_time__c != oldOppMap.get(Opp.Id).Next_follow_up_date_time__c ) {
-                                if (opp.Next_follow_up_date_time__c < postOneMonth || opp.Next_follow_up_date_time__c > postthreeMonth) {
-                                    string errormessage = 'Next Follow up date Cannot be less than 1 month and greater than 3 months to Park it in ' + opp.StageName + ' Stage';
-                                    opp.Next_follow_up_date_time__c.addError(errormessage);
-                                }
-                                
-                            }
-                            
+                    if (opp.StageName == Constants.OPP_STAGENAME_ON_HOLD  ) { 
+                        if (opp.Next_follow_up_date_time__c == null) {
+                            opp.Next_follow_up_date_time__c.addError('Please Fill Follow up date!!');
                         }
-                        if ( opp.StageName == Constants.OPP_STAGENAME_DEFERRED ) { 
-                            if (opp.Next_follow_up_date_time__c == null) {
-                                opp.Next_follow_up_date_time__c.addError('Please Fill Follow up date!!');
-                            }
-                            if (opp.Next_follow_up_date_time__c != null && opp.Next_follow_up_date_time__c != oldOppMap.get(Opp.Id).Next_follow_up_date_time__c ) {
-                                if (opp.Next_follow_up_date_time__c < postthreeMonth || opp.Next_follow_up_date_time__c > postsixMonth) {
-                                    string errormessage = 'Next Follow up date Cannot be less than 3 month and greater than 6 months to Park it in ' + opp.StageName + ' Stage';
-                                    opp.Next_follow_up_date_time__c.addError(errormessage);
-                                }
-                                
-                            }
-                            
-                        }
-                        if (opp.StageName == Constants.OPP_STAGENAME_HOT || opp.StageName == Constants.OPP_STAGENAME_PROSPECT || opp.StageName == Constants.OPP_STAGENAME_AWAITING_CONFIRMATION) {
-                            if (opp.Next_follow_up_date_time__c == null) {
-                                opp.Next_follow_up_date_time__c.addError('Please Fill Follow up date!!');
-                            }
-                            if (opp.Next_follow_up_date_time__c != null && opp.Next_follow_up_date_time__c != oldOppMap.get(Opp.Id).Next_follow_up_date_time__c && opp.Next_follow_up_date_time__c > postOneMonth) {
-                                string errormessage = 'Next Follow up date Cannot be greater than 1 month to Park it in ' + opp.StageName + ' Stage';
+                        if (opp.Next_follow_up_date_time__c != null && opp.Next_follow_up_date_time__c != oldOppMap.get(Opp.Id).Next_follow_up_date_time__c ) {
+                            if (opp.Next_follow_up_date_time__c < postOneMonth || opp.Next_follow_up_date_time__c > postthreeMonth) {
+                                string errormessage = 'Next Follow up date Cannot be less than 1 month and greater than 3 months to Park it in ' + opp.StageName + ' Stage';
                                 opp.Next_follow_up_date_time__c.addError(errormessage);
                             }
+                            
                         }
+                        
+                    }
+                    if ( opp.StageName == Constants.OPP_STAGENAME_DEFERRED ) { 
+                        if (opp.Next_follow_up_date_time__c == null) {
+                            opp.Next_follow_up_date_time__c.addError('Please Fill Follow up date!!');
+                        }
+                        if (opp.Next_follow_up_date_time__c != null && opp.Next_follow_up_date_time__c != oldOppMap.get(Opp.Id).Next_follow_up_date_time__c ) {
+                            if (opp.Next_follow_up_date_time__c < postthreeMonth || opp.Next_follow_up_date_time__c > postsixMonth) {
+                                string errormessage = 'Next Follow up date Cannot be less than 3 month and greater than 6 months to Park it in ' + opp.StageName + ' Stage';
+                                opp.Next_follow_up_date_time__c.addError(errormessage);
+                            }
+                            
+                        }
+                        
+                    }
+                    if (opp.StageName == Constants.OPP_STAGENAME_HOT || opp.StageName == Constants.OPP_STAGENAME_PROSPECT || opp.StageName == Constants.OPP_STAGENAME_AWAITING_CONFIRMATION) {
+                        if (opp.Next_follow_up_date_time__c == null) {
+                            opp.Next_follow_up_date_time__c.addError('Please Fill Follow up date!!');
+                        }
+                        if (opp.Next_follow_up_date_time__c != null && opp.Next_follow_up_date_time__c != oldOppMap.get(Opp.Id).Next_follow_up_date_time__c && opp.Next_follow_up_date_time__c > postOneMonth) {
+                            string errormessage = 'Next Follow up date Cannot be greater than 1 month to Park it in ' + opp.StageName + ' Stage';
+                            opp.Next_follow_up_date_time__c.addError(errormessage);
+                        }
+                    }
                 }
                 if(opp.Expected_Revenue__c == null){
-                  //  opp.Expected_Revenue__c.addError('Fill Expected Revenue.');
+                    //  opp.Expected_Revenue__c.addError('Fill Expected Revenue.');
                 }
                 if (opp.CloseDate != null && opp.CloseDate != oldOppMap.get(opp.Id).CloseDate ) {
                     dateTime postOneMonth = system.now().addMonths(1);
@@ -261,5 +254,5 @@ public without sharing class Opportunitytriggerhandler{
             
         }
     }
-
+    
 }

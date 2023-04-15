@@ -42,31 +42,53 @@ public without sharing class Invoice_Receipt_PDF_Controller {
     
     @future(callout = true)
     public static void attachReceiptUnderRecord(set<Id> receiptIds){
+        system.debug('receiptIds--->'+receiptIds);
         Map<Id, Blob> attachmentByReceiptid = new Map<Id, Blob>();
         List<Attachment> attachmentListToInsert = new List<Attachment>();
+        List<Receipt__c> updatedReceiptsList = new List<Receipt__c>();
+        List<Invoice__c> invoiceRecordsToUpdate = new List<Invoice__c>();
         
         if(!receiptIds.isEmpty()){
+            updatedReceiptsList = [Select Id, Invoice__c,Invoice__r.Realized_Amount__c,Invoice__r.Due_Amount__c,Invoice__r.Amount__c,Amount__c From Receipt__c where Id in: receiptIds];
             for(Id receiptId : receiptIds){
                 PageReference pdfPage = Page.Invoice_Receipt_PDFpage;
                 pdfPage.getParameters().put('id', receiptId);
                 Blob pdfBlob = pdfPage.getContent();
                 attachmentByReceiptid.put(receiptId, pdfBlob);
             } 
+            system.debug('attachmentByReceiptid-->'+attachmentByReceiptid);
             if(!attachmentByReceiptid.isEmpty()){
                 for(Id receiptId : attachmentByReceiptid.keySet()){
+                    system.debug('receiptId-->'+receiptId);
                     Attachment attachmentRecord = new Attachment(parentId = receiptId, Name = 'Receipt.pdf', body = attachmentByReceiptid.get(receiptId));
                     attachmentListToInsert.add(attachmentRecord);
                 }
+                system.debug('attachmentListToInsert--->'+attachmentListToInsert);
                 if(!attachmentListToInsert.isEmpty()){
                     insert attachmentListToInsert;
+                    if(!updatedReceiptsList.isEmpty()){
+                        for(Receipt__c receiptRec : updatedReceiptsList){
+                            system.debug('receiptRec.Invoice__r.Realized_Amount__c--->'+receiptRec.Invoice__r.Realized_Amount__c);
+                            Invoice__c invoiceToUpdate = new Invoice__c();
+                            invoiceToUpdate.Id = receiptRec.Invoice__c;
+                            invoiceToUpdate.Realized_Amount__c = receiptRec.Invoice__r.Realized_Amount__c != null? receiptRec.Invoice__r.Realized_Amount__c + receiptRec.Amount__c : receiptRec.Amount__c;
+                            invoiceToUpdate.Due_Amount__c = receiptRec.Invoice__r.Amount__c - invoiceToUpdate.Realized_Amount__c ;
+                            invoiceRecordsToUpdate.add(invoiceToUpdate);
+                        }
+                        system.debug('invoiceRecordsToUpdate--->'+invoiceRecordsToUpdate);
+                        if(!invoiceRecordsToUpdate.isEmpty()){
+                            update invoiceRecordsToUpdate;
+                        }
+                    }
                 }
-                sendReceiptForPayment(attachmentByReceiptid.keySet());
+                //sendReceiptForPayment(attachmentByReceiptid.keySet());
             }
         }
     }
     
-     public static void sendReceiptForPayment(set<id> receiptsIds){
+    public static void sendReceiptForPayment(set<id> receiptsIds){
         try{
+            system.debug('receiptsIds-->'+receiptsIds);
             List<Receipt__c> receiptList = new List<Receipt__c>();
             Map<Id,Attachment> attachmentByReceiptId = new Map<Id, Attachment>();
             EmailTemplate et = [Select id, Name, DeveloperName, Subject, Body, HtmlValue from EmailTemplate where name = 'Razorpay Success Receipt'];
@@ -76,6 +98,7 @@ public without sharing class Invoice_Receipt_PDF_Controller {
             List<Invoice__c> invoiceRecordsToUpdate = new List<Invoice__c>();
             
             receiptList = [Select Id,Email__c, Invoice__r.Opportunity__r.Name,Invoice__r.Opportunity__r.Email__c,Amount__c From Receipt__c where Id in : receiptsIds];
+            system.debug('receiptList--->'+receiptList);
             if(!attachmentUnderReceipts.isEmpty()){
                 for(Attachment attachmentRec : attachmentUnderReceipts){
                     if(attachmentByReceiptId.containsKey(attachmentRec.ParentId)){
@@ -87,7 +110,7 @@ public without sharing class Invoice_Receipt_PDF_Controller {
                     }
                 }
             }
-            
+            system.debug('receiptList--->'+receiptList);
             if (!receiptList.isEmpty()){
                 for(Receipt__c receiptRecord : receiptList){
                     Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
@@ -95,8 +118,9 @@ public without sharing class Invoice_Receipt_PDF_Controller {
                     efa.setFileName(attachmentByReceiptId.get(receiptRecord.Id).Name);
                     efa.setBody(attachmentByReceiptId.get(receiptRecord.Id).Body);
                     efa.setContentType(attachmentByReceiptId.get(receiptRecord.Id).ContentType);
-                    
+                    system.debug('setBody -->'+attachmentByReceiptId.get(receiptRecord.Id).Body);
                     List<String> recipients = new List<String>();
+                    system.debug('receiptRecord.Email__c-->'+receiptRecord.Email__c);
                     if(receiptRecord.Email__c != null){
                         recipients.add(receiptRecord.Email__c);
                         mail.setToAddresses(recipients);
@@ -119,6 +143,7 @@ public without sharing class Invoice_Receipt_PDF_Controller {
                         mails.add(mail);
                     }
                 }
+                system.debug('mails--->'+mails);
                 if(!mails.isEmpty()){
                     Messaging.sendEmail(mails);
                 }
@@ -132,6 +157,7 @@ public without sharing class Invoice_Receipt_PDF_Controller {
                         invoiceToUpdate.Due_Amount__c = receiptRec.Invoice__r.Amount__c - invoiceToUpdate.Realized_Amount__c ;
                         invoiceRecordsToUpdate.add(invoiceToUpdate);
                     }
+                    system.debug('invoiceRecordsToUpdate--->'+invoiceRecordsToUpdate);
                     if(!invoiceRecordsToUpdate.isEmpty()){
                         update invoiceRecordsToUpdate;
                     }

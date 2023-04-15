@@ -166,7 +166,7 @@
             return;
         }
         var downPaymentTypeJS = component.get("v.selectedDownPaymentMode");
-        if(downPaymentJS != null && downPaymentJS != undefined){
+        if(downPaymentJS != null && downPaymentJS != undefined && downPaymentJS != "0"){
             if(component.get("v.selectedDownPaymentMode") == null || component.get("v.selectedDownPaymentMode") == undefined || component.get("v.selectedDownPaymentMode") == "" ){
                 alert('Select Down Payment Type');
                 component.set("v.disableSaveButton",false);

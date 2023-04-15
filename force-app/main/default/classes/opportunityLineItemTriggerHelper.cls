@@ -1,5 +1,11 @@
 public without sharing class opportunityLineItemTriggerHelper{
-    public static void fireApprovalAfterInsert(Map<Id, OpportunityLineItem> newMap){
+    static opportunityLineItemTriggerHelper handlerInstance;
+    public static opportunityLineItemTriggerHelper getInstance(){
+        if (handlerInstance == null)
+            handlerInstance = new opportunityLineItemTriggerHelper();
+        return handlerInstance;
+    }
+    public void fireApprovalAfterInsert(Map<Id, OpportunityLineItem> newMap){
         try{
             system.debug('newMap -- ' + newMap);
             Map<Id, OpportunityLineItem> oppItemMap = new Map<Id, OpportunityLineItem>([SELECT Id, Opportunity.Owner.UserRoleId
@@ -12,7 +18,7 @@ public without sharing class opportunityLineItemTriggerHelper{
                                  from User
                                  where name = 'Syed Moshin'].Id;
             System.debug('syedUserId ===> ' + syedUserId);
-
+            
             for (OpportunityLineItem OLIRec : newMap.values()){
                 if (!Approval.isLocked(OLIRec.OpportunityId)){
                     if (OLIRec.Discount > 20 && OLIRec.Discount <= 30){
@@ -29,13 +35,13 @@ public without sharing class opportunityLineItemTriggerHelper{
                             approverId = approvalParentIdWrapper.smToManagerMap.containsKey(userRoleId) && approvalParentIdWrapper.managerRoleToUserIdMap.containsKey(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) ? approvalParentIdWrapper.managerRoleToUserIdMap.get(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
                         }
                         System.debug('approverId ====> ' + approverId);
-
+                        
                         approvalRequest.setNextApproverIds(new Id[]{ approverId });
-
-
+                        
+                        
                         cdToapprovalRequestMap.put(OLIRec.Id, approvalRequest);
                         System.debug('cdToapprovalRequestMap values ===> ' + cdToapprovalRequestMap.values());
-
+                        
                         if (!cdToapprovalRequestMap.isEmpty())
                             List<Approval.ProcessResult> result = Approval.process(cdToapprovalRequestMap.values());
                     } else if (OLIRec.Discount > 30){
@@ -48,10 +54,10 @@ public without sharing class opportunityLineItemTriggerHelper{
                         approvalRequest.setObjectId(OLIRec.OpportunityId);
                         approvalRequest.setProcessDefinitionNameOrId('Discount_exceeded_threshold_value');
                         approverId = syedUserId;
-
+                        
                         approvalRequest.setNextApproverIds(new List<Id>{ approverId });
                         cdToapprovalRequestMap.put(OLIRec.Id, approvalRequest);
-
+                        
                         if (!cdToapprovalRequestMap.isEmpty())
                             List<Approval.ProcessResult> result = Approval.process(cdToapprovalRequestMap.values());
                     }
@@ -61,11 +67,11 @@ public without sharing class opportunityLineItemTriggerHelper{
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
             HandleBusinessException.captureError('opportunityLineItemTriggerHelper', 'fireApprovalAfterInsert', e, null);
-
+            
         }
     }
-
-    public static void removeApprovalFromProcessing(List<OpportunityLineItem> oldOppLineItem, Map<Id, OpportunityLineItem> OldOLIMap){
+    
+    public void removeApprovalFromProcessing(List<OpportunityLineItem> oldOppLineItem, Map<Id, OpportunityLineItem> OldOLIMap){
         System.debug('oldOppLineItem ====> ' + oldOppLineItem);
         System.debug('OldOLIMap ====> ' + OldOLIMap);
         set<Id> OppIds = new Set<Id>();
@@ -73,9 +79,9 @@ public without sharing class opportunityLineItemTriggerHelper{
         try{
             List<Opportunity> OppList = new List<Opportunity>();
             List<Opportunity> UpdatedOppList = new List<Opportunity>();
-
+            
             if (!OldOLIMap.isEmpty()){
-
+                
                 for (OpportunityLineItem Oli : OldOLIMap.values()){
                     if (Approval.isLocked(Oli.OpportunityId)){
                         if(Oli.Discount > 20){
@@ -84,7 +90,7 @@ public without sharing class opportunityLineItemTriggerHelper{
                     }
                 }
             }
-
+            
             System.debug('OppIds =====> ' + OppIds);
             if (!OppIds.isEmpty()){
                 OppList = [Select Id from Opportunity where Id In:OppIds];
@@ -103,21 +109,21 @@ public without sharing class opportunityLineItemTriggerHelper{
                                                                                from ProcessInstance
                                                                                where TargetObjectId IN:oppmap.keySet()]);
                 System.debug('piMap ===> ' + piMap);    
-                                                                          
+                
                 for (ProcessInstanceWorkItem wi : [Select Id
                                                    from ProcessInstanceWorkItem
                                                    where ProcessInstanceId IN:piMap.keySet()]){
-                    System.debug('wi ====> ' + piMap);
-
-
-                    // if there's a work item, set the action to 'removed' and execute
-                    Approval.ProcessWorkitemRequest req2 = new Approval.ProcessWorkitemRequest();
-                    req2.setAction('Removed');
-                    req2.setWorkitemId(wi.Id);
-                    requests.add(req2);
-
-                }
-
+                                                       System.debug('wi ====> ' + piMap);
+                                                       
+                                                       
+                                                       // if there's a work item, set the action to 'removed' and execute
+                                                       Approval.ProcessWorkitemRequest req2 = new Approval.ProcessWorkitemRequest();
+                                                       req2.setAction('Removed');
+                                                       req2.setWorkitemId(wi.Id);
+                                                       requests.add(req2);
+                                                       
+                                                   }
+                
             }
             if (!requests.isEmpty() && requests.size() >0) {
                 Approval.ProcessResult[] processResults = null;
@@ -126,20 +132,20 @@ public without sharing class opportunityLineItemTriggerHelper{
             if (!UpdatedOppList.isEmpty()) {
                 update UpdatedOppList;
             }
-
-
-            //Get Opps
-
-
-            //Get ProcessInstance Items
-
-
             
-
+            
+            //Get Opps
+            
+            
+            //Get ProcessInstance Items
+            
+            
+            
+            
         } catch (Exception e){
-
-
+            
+            
         }
     }
-
+    
 }

@@ -2,7 +2,7 @@ trigger TriggerOnOpportunity on Opportunity (before insert, after update, before
 
     SObject_Trigger_Control__mdt triggerConfig = SObject_Trigger_Control__mdt.getInstance('Opportunity');
     system.debug('triggerConfig:: ' + triggerConfig);
-
+    system.debug('Inside Opportunity Trigger');
     if (triggerConfig != null && triggerConfig.Trigger_Status__c){
 
         Opportunitytriggerhandler handlerInstance = Opportunitytriggerhandler.getInstance();

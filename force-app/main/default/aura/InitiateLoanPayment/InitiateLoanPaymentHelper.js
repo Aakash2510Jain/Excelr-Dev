@@ -37,7 +37,8 @@
             "invoiceId" : component.get("v.invoiceId"),
             "FileName" : file.name,
             "Base64Data" : encodeURIComponent(getchunk),
-            "ContentType" : file.type
+            "ContentType" : file.type,
+            "isLoanAttachment":"yes"
         });
         action.setCallback(this, function(response){
             var State = response.getState();
@@ -97,7 +98,8 @@
             "invoiceId" : component.get("v.invoiceId"),
             "FileName" : file.name,
             "Base64Data" : encodeURIComponent(getchunk),
-            "ContentType" : file.type
+            "ContentType" : file.type,
+            "isLoanAttachment":"no"
         });
         action.setCallback(this, function(response){
             var State = response.getState();

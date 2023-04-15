@@ -515,12 +515,13 @@ public without sharing class LeadTriggerHandler{
                                 leadtoBeupdated.id = existingLeadByEmail.get(leadRec.Email).Id;
                                 leadtoBeupdated.OwnerId = Constants.UmeshUserId;
                                 LeadListTObeUpdated.add(leadtoBeupdated);
-                                
-                                if (((currentdatetimeMilisec - (existingLeadByEmail.get(leadRec.Email).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) < 30 &&  existingLeadByEmail.get(leadRec.Email).status == 'Dead'){
-                                    leadRec.ownerId = existingLeadByEmail.get(leadRec.Email).ownerId;   
-                                    leadRec.Is_Lead_Assigned_to_User__c = true; 
-                                } else if (((currentdatetimeMilisec - (existingLeadByEmail.get(leadRec.Email).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) > 30 && existingLeadByEmail.get(leadRec.Email).status == 'Dead'){
-                                    leadRec.ownerId = constants.queueId;                                
+                                if(existingLeadByEmail.get(leadRec.Email).DeadDateTime__c != null){
+                                    if (((currentdatetimeMilisec - (existingLeadByEmail.get(leadRec.Email).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) < 30 &&  existingLeadByEmail.get(leadRec.Email).status == 'Dead'){
+                                        leadRec.ownerId = existingLeadByEmail.get(leadRec.Email).ownerId;   
+                                        leadRec.Is_Lead_Assigned_to_User__c = true; 
+                                    } else if (((currentdatetimeMilisec - (existingLeadByEmail.get(leadRec.Email).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) > 30 && existingLeadByEmail.get(leadRec.Email).status == 'Dead'){
+                                        leadRec.ownerId = constants.queueId;                                
+                                    }
                                 }
                             } else if ((existingLeadByEmail.get(leadRec.Email).status != 'Dead' && existingLeadByEmail.get(leadRec.Email).Status != 'Junk') && existingLeadByEmail.get(leadRec.Email).Course__c == leadRec.Course__c){
                                 system.debug('Status is not Dead/Junk and course is same');
@@ -546,12 +547,13 @@ public without sharing class LeadTriggerHandler{
                                 leadtoBeupdated.id = existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Id;
                                 leadtoBeupdated.OwnerId = Constants.UmeshUserId;
                                 LeadListTObeUpdated.add(leadtoBeupdated);
-
-                                if (((currentdatetimeMilisec - (existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) < 30 &&  existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).status == 'Dead'){
-                                    leadRec.ownerId = existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).ownerId;
-                                    leadRec.Is_Lead_Assigned_to_User__c = true;  
-                                } else if (((currentdatetimeMilisec - (existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) > 30 && existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).status == 'Dead'){
-                                    leadRec.ownerId = constants.queueId;                                    
+                                if(existingLeadByEmail.get(leadRec.Alternate_Email__c).DeadDateTime__c != null){
+                                    if (((currentdatetimeMilisec - (existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) < 30 &&  existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).status == 'Dead'){
+                                        leadRec.ownerId = existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).ownerId;
+                                        leadRec.Is_Lead_Assigned_to_User__c = true;  
+                                    } else if (((currentdatetimeMilisec - (existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) > 30 && existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).status == 'Dead'){
+                                        leadRec.ownerId = constants.queueId;                                    
+                                    }
                                 }
                             } else if ((existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).status != 'Dead' && existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Status != 'Junk') && existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Course__c == leadRec.Course__c){
                                 system.debug('Status is not Dead/Junk and course is same');
@@ -577,12 +579,14 @@ public without sharing class LeadTriggerHandler{
                                 leadtoBeupdated.OwnerId = Constants.UmeshUserId;
                                 LeadListTObeUpdated.add(leadtoBeupdated);
 
-                                if (((currentdatetimeMilisec - (existingLeadByPhone.get(leadRec.Phone).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) < 30 &&  existingLeadByPhone.get(leadRec.Phone).status == 'Dead'){
-                                    leadRec.ownerId = existingLeadByPhone.get(leadRec.Phone).ownerId;   
-                                    leadRec.Is_Lead_Assigned_to_User__c = true; 
-                                } else if (((currentdatetimeMilisec - (existingLeadByPhone.get(leadRec.Phone).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) > 30 && existingLeadByPhone.get(leadRec.Phone).status == 'Dead'){
-                                    leadRec.ownerId = constants.queueId;
-                                    
+                                if(existingLeadByEmail.get(leadRec.Phone).DeadDateTime__c != null){
+                                    if (((currentdatetimeMilisec - (existingLeadByPhone.get(leadRec.Phone).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) < 30 &&  existingLeadByPhone.get(leadRec.Phone).status == 'Dead'){
+                                        leadRec.ownerId = existingLeadByPhone.get(leadRec.Phone).ownerId;   
+                                        leadRec.Is_Lead_Assigned_to_User__c = true; 
+                                    } else if (((currentdatetimeMilisec - (existingLeadByPhone.get(leadRec.Phone).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) > 30 && existingLeadByPhone.get(leadRec.Phone).status == 'Dead'){
+                                        leadRec.ownerId = constants.queueId;
+                                        
+                                    }
                                 }
                             } else if ((existingLeadByPhone.get(leadRec.Phone).Status != 'Dead' && existingLeadByPhone.get(leadRec.Phone).Status != 'Junk') && existingLeadByPhone.get(leadRec.Phone).Course__c == leadRec.Course__c){
                                 system.debug('Status is not Dead/Junk and course is same');
@@ -608,11 +612,13 @@ public without sharing class LeadTriggerHandler{
                                 leadtoBeupdated.OwnerId = Constants.UmeshUserId;
                                 LeadListTObeUpdated.add(leadtoBeupdated);
                                 
-                                if (((currentdatetimeMilisec - (existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) < 30 &&  existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).status == 'Dead'){
-                                    leadRec.ownerId = existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).ownerId;    
-                                    leadRec.Is_Lead_Assigned_to_User__c = true;
-                                } else if (((currentdatetimeMilisec - (existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) > 30 && existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).status == 'Dead'){
-                                    leadRec.ownerId = constants.queueId;                              
+                                if(existingLeadByEmail.get(leadRec.Alternate_Phone__c).DeadDateTime__c != null){
+                                    if (((currentdatetimeMilisec - (existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) < 30 &&  existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).status == 'Dead'){
+                                        leadRec.ownerId = existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).ownerId;    
+                                        leadRec.Is_Lead_Assigned_to_User__c = true;
+                                    } else if (((currentdatetimeMilisec - (existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) > 30 && existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).status == 'Dead'){
+                                        leadRec.ownerId = constants.queueId;                              
+                                    }
                                 }
                             } else if ((existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Status != 'Dead' && existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Status != 'Junk') && existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Course__c == leadRec.Course__c){
                                 system.debug('Status is not Dead/Junk and course is same');
@@ -1003,9 +1009,6 @@ public without sharing class LeadTriggerHandler{
             if (ld.Year_of_Graduation__c == null){
                 ld.Year_of_Graduation__c.addError('Year of Graduation can not be Empty');
             }
-            if (ld.Specialization__c == null){
-                ld.Specialization__c.addError('Specialization can not be Empty');
-            }
             if (ld.Branch__c == null){
                 ld.Branch__c.addError('Branch can not be Empty');
             }
@@ -1030,9 +1033,6 @@ public without sharing class LeadTriggerHandler{
             }
             if (ld.Year_of_Graduation__c == null){
                 ld.Year_of_Graduation__c.addError('Year of Graduation can not be Empty');
-            }
-            if (ld.Specialization__c == null){
-                ld.Specialization__c.addError('Specialization can not be Empty');
             }
             if (ld.Branch__c == null){
                 ld.Branch__c.addError('Branch can not be Empty');

@@ -29,9 +29,12 @@ public without sharing class DN_CCAvenue_CTRL {
 
             Long tstamp = System.now().getTime();
 
-                  String params = 'tid='+opp.Name+tstamp+'&merchant_id='+MERCHANT_ID+'&order_id='+opp.Name+'&amount='+opp.Amount+'&currency='+'INR'+'&redirect_url='   +AVENUE_SUCCESS_URL+'&cancel_url='+AVENUE_CANCEL_URL+'&language=EN&billing_name='+opp.Name+'&billing_address='+opp.Account.BillingStreet+'&billing_city='+opp.Account.BillingCity+'&billing_state='+opp.Account.BillingState+'&billing_zip='+opp.Account.BillingPostalCode+'&billing_country='+opp.Account.BillingCountry+'&billing_tel='+opp.Account.Phone+'&billing_email='+opp.Account.Email__c+'&delivery_name='+opp.Name+'&delivery_address='+opp.Account.ShippingStreet+'&delivery_city='+opp.Account.ShippingCity+'&delivery_state='+opp.Account.ShippingState+'&delivery_zip='+opp.Account.ShippingPostalCode+'&delivery_country='+opp.Account.ShippingCountry+'&delivery_tel='+opp.Account.Phone;
+            String params = 'tid='+opp.Name+tstamp+'&merchant_id='+MERCHANT_ID+'&order_id='+oppId+'&amount='+opp.Amount+'&currency='+'INR'+'&redirect_url='   +AVENUE_SUCCESS_URL+'&cancel_url='+AVENUE_CANCEL_URL+'&language=EN&billing_name='+opp.Name+'&billing_address='+opp.Account.BillingStreet+'&billing_city='+opp.Account.BillingCity+'&billing_state='+opp.Account.BillingState+'&billing_zip='+opp.Account.BillingPostalCode+'&billing_country='+opp.Account.BillingCountry+'&billing_tel='+opp.Account.Phone+'&billing_email='+opp.Account.Email__c+'&delivery_name='+opp.Name+'&delivery_address='+opp.Account.ShippingStreet+'&delivery_city='+opp.Account.ShippingCity+'&delivery_state='+opp.Account.ShippingState+'&delivery_zip='+opp.Account.ShippingPostalCode+'&delivery_country='+opp.Account.ShippingCountry+'&delivery_tel='+opp.Account.Phone;
+            System.debug('params ===> ' + params); //opp.Name
 
             String encRequest = CCAvenueUtilClass.encryptString(params, WORKING_KEY);
+            System.debug('encRequest ===> ' + encRequest);
+
 
             String paymentURL = TRANSACTION_URL + '/transaction/transaction.do?command=initiateTransaction&encRequest=' + encRequest + '&access_code=' + ACCESS_CODE;
             System.debug('Payment URL - '+paymentURL);
@@ -72,8 +75,10 @@ public without sharing class DN_CCAvenue_CTRL {
 
         System.debug('rep.Amount__c ===> '+rep.Amount__c);
         String params = 'tid='+reqMap.get('name')+tstamp+'&merchant_id='+MERCHANT_ID+'&order_id='+iv.Id+'&amount='+rep.Amount__c+'&currency='+'INR'+'&redirect_url='   +AVENUE_SUCCESS_URL+'&cancel_url='+AVENUE_CANCEL_URL+'&language=EN&billing_name='+reqMap.get('name')+'&billing_address='+reqMap.get('billing_address')+'&billing_city='+reqMap.get('billing_city')+'&billing_state='+reqMap.get('billing_street')+'&billing_zip='+reqMap.get('billing_postal_code')+'&billing_country='+reqMap.get('billing_country')+'&billing_tel='+reqMap.get('phone')+'&billing_email='+reqMap.get('email')+'&delivery_name='+reqMap.get('name')+'&delivery_address='+reqMap.get('shipping_address')+'&delivery_city='+reqMap.get('shipping_city')+'&delivery_state='+reqMap.get('shipping_state')+'&delivery_zip='+reqMap.get('shipping_postal_code')+'&delivery_country='+reqMap.get('shipping_country')+'&delivery_tel='+reqMap.get('phone');
+        System.debug('params ===> ' + params);
 
         String encRequest = CCAvenueUtilClass.encryptString(params, WORKING_KEY);
+        System.debug('encRequest ===> ' + encRequest);
 
         String paymentURL = TRANSACTION_URL + '/transaction/transaction.do?command=initiateTransaction&encRequest=' + encRequest + '&access_code=' + ACCESS_CODE;
         System.debug('Payment URL - '+paymentURL);

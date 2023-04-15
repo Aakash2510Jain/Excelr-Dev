@@ -57,7 +57,7 @@ public class InitiateLoanPaymentController {
                 Receipt__c receiptForDownPayment = new Receipt__c();
                 receiptForDownPayment.Amount__c = integer.valueOf(downPayment);
                 receiptForDownPayment.Invoice__c = invRec.Id;
-                receiptForDownPayment.Type__c = 'Online';
+                receiptForDownPayment.Type__c = downPaymentType;
                 receiptForDownPayment.Receipt_Status__c = Constants.RECEIPT_STATUS_LINKSENT;
                 receiptListToInsert.add(receiptForDownPayment);
                 
@@ -94,17 +94,21 @@ public class InitiateLoanPaymentController {
         }
     }
     @AuraEnabled
-    public static void saveAttachmentUnderInvoice(String invoiceId,string FileName, String Base64Data, String ContentType){
+    public static void saveAttachmentUnderInvoice(String invoiceId,string FileName, String Base64Data, String ContentType,string isLoanAttachment){
         system.debug('invoiceId--->'+invoiceId);
         system.debug('FileName--->'+FileName);
         system.debug('Base64Data--->'+Base64Data);
         system.debug('ContentType--->'+ContentType);
-        
+        system.debug('isLoanAttachment--->'+isLoanAttachment);
+        String receiptId = [select Id from receipt__c where Invoice__c =: invoiceId and type__c = 'Loan'].Id;
         try{
             base64Data = EncodingUtil.urlDecode(base64Data, 'UTF-8');
             String attachmentOwner = [Select ownerId from Invoice__c where id =: invoiceId].ownerId;
             Attachment attach = new Attachment();
-            attach.parentId = invoiceId;
+            if(isLoanAttachment == 'yes')
+                attach.parentId = receiptId;
+            else
+                attach.parentId = invoiceId;
             attach.Body = EncodingUtil.base64Decode(base64Data);
             attach.Name = fileName;
             attach.ContentType = contentType;

@@ -7,28 +7,71 @@ public without sharing class InvoiceTriggerHelper{
         return handlerInstance;
     }
     
-    public void beforeUpdate(Map<Id, Invoice__c> newMap, Map<Id, Invoice__c> oldMap){
+    public void afterUpdate(Map<Id, Invoice__c> newMap, Map<Id, Invoice__c> oldMap){
         try{
+            system.debug('After Update Invoice');
             set<id> invoiceIds = new set<Id>();
+            set<Id> opportunityIds = new set<Id>();
+            List<opportunity> opportunityToUpdateAsWon = new List<Opportunity>();
+            
             for ( Invoice__c invoiceRec : newMap.values() ){
                 if ( invoiceRec.Status__c != oldMap.get(invoiceRec.Id).Status__c && invoiceRec.Status__c == 'Realized' ){
+                    system.debug('Status of Invoice is updated as Realized');
                     invoiceIds.add(invoiceRec.Id);
                 }
             }
+            /*if(!opportunityIds.isEmpty()){
+                for(Id oppIds : opportunityIds){
+                    opportunity oppRec = new Opportunity();
+                    oppRec.Id = oppIds;
+                    oppRec.StageName = 'Closed Won';
+                    opportunityToUpdateAsWon.add(oppRec);
+                }
+                if(!opportunityToUpdateAsWon.isEmpty()){
+                    update opportunityToUpdateAsWon;
+                }
+            }*/
+            system.debug('invoiceIds--->'+invoiceIds);
             if ( !invoiceIds.isEmpty() ){
+                List<Invoice_Attachment__e> invAttList = new List<Invoice_Attachment__e>();
                 for ( Id invoiceId : invoiceIds ){
-                    RetailInvoiceHelper.attachPdf(invoiceId);
+                    system.debug('invoiceId--->'+invoiceId);
+                    //RetailInvoiceHelper.attachPdf(invoiceId);
+                    Invoice_Attachment__e invAtt = new Invoice_Attachment__e();
+                    invAtt.Invoice__c = invoiceId;
+                    invAttList.add(invAtt);
+                }
+                system.debug('invAttList--->'+invAttList);
+                if(!invAttList.isEmpty()){
+                    Database.SaveResult[] results = EventBus.publish(invAttList);
                 }
             }
-        }
-        catch ( exception ex ){
+        } catch ( exception ex ){
             system.debug('Errror-->' + ex.getMessage());
             system.debug('Errror-->' + ex.getCause());
             system.debug('Errror-->' + ex.getLineNumber());
-           HandleBusinessException.captureError('InvoiceTriggerHelper', 'Tax Invoice', ex, null);
+            HandleBusinessException.captureError('InvoiceTriggerHelper', 'After Update', ex, null);
         }
     }
-    
+    public void beforeUpdate(Map<Id, Invoice__c> newMap, Map<Id, Invoice__c> oldMap){
+        try{
+            system.debug('Before Update Invoice Trigger');
+            for ( Invoice__c invoiceRec : newMap.values() ){
+                system.debug('oldMap.get(invoiceRec.Id).Due_Amount__c---->'+oldMap.get(invoiceRec.Id).Due_Amount__c);
+                system.debug('invoiceRec.Due_Amount__c--->'+invoiceRec.Due_Amount__c);
+                    
+                if ( invoiceRec.Due_Amount__c != oldMap.get(invoiceRec.Id).Due_Amount__c && ( invoiceRec.Due_Amount__c == 0 || invoiceRec.Due_Amount__c < 1)){
+                    system.debug('Updating Invoice Status as realized');
+                    invoiceRec.Status__c = 'Realized';
+                }
+            }
+        }catch ( exception ex ){
+            system.debug('Errror-->' + ex.getMessage());
+            system.debug('Errror-->' + ex.getCause());
+            system.debug('Errror-->' + ex.getLineNumber());
+            HandleBusinessException.captureError('InvoiceTriggerHelper', 'Before Update', ex, null);
+        }
+    }
     public void sendforApproval(list<Invoice__c> invoiceList){
         System.debug('invoiceList =====> ' + invoiceList);
         set<id> invoiceIds = new Set<Id>();
@@ -113,7 +156,7 @@ List<Approval.ProcessResult> result = Approval.process( InvoiceToapprovalRequest
         }
         catch ( Exception e ){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-           HandleBusinessException.captureError('CaseTriggerHeper', 'doApproval', e, null);
+            HandleBusinessException.captureError('CaseTriggerHeper', 'doApproval', e, null);
         }
     }
     
@@ -141,7 +184,7 @@ List<Approval.ProcessResult> result = Approval.process( InvoiceToapprovalRequest
         }
         catch ( Exception e ){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-           HandleBusinessException.captureError('CaseTriggerHeper', 'doApproval', e, null);
+            HandleBusinessException.captureError('CaseTriggerHeper', 'doApproval', e, null);
             
         }
     }
