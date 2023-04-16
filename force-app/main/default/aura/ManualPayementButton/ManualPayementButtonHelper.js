@@ -75,6 +75,7 @@
                 var data = response.getReturnValue();
                 component.set("v.currentRecord", data);
                 component.set("v.oppAmount", data.Amount);
+                component.set("v.dueAmountRemaning", data.Amount);
             }
         });
         $A.enqueueAction(action);

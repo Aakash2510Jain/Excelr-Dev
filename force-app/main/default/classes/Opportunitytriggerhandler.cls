@@ -9,7 +9,7 @@ public without sharing class Opportunitytriggerhandler{
     
     public void afterUpdate(map<id, Opportunity> oldOppMap, map<id, Opportunity> newOppMap){
         set<id> accountIds = new set<id>();
-        set<id> opportunityIds = new set<id>();
+        set<id> invoiceIds = new set<id>();
         list<account> accountList = new List<Account>();
         list<account> ReferralAccountList = new List<Account>();
         List<task> TaskListTobeCreated = new List<Task>();
@@ -23,7 +23,7 @@ public without sharing class Opportunitytriggerhandler{
                     System.debug(' opp.StageName  ::'+ opp);
                     accountIds.add(opp.AccountId);
                     if(opp.StageName != oldOppMap.get(opp.Id).StageName && opp.StageName != null && opp.StageName == 'Closed Won')
-                        opportunityIds.add(opp.Id);
+                        invoiceIds.add(opp.Latest_Invoice_Id__c);
                     AccountIdwithOpportunity.put(opp.AccountId, opp);
                 }
                 if (!accountIds.isEmpty() ){
@@ -65,8 +65,8 @@ public without sharing class Opportunitytriggerhandler{
                         }                        
                     }
                 }
-                if(!opportunityIds.isEmpty()){
-                    EmailIUtility.sendEmailWithReceiptAndInvoice(opportunityIds,'InvoicePlusReceiptTemplate');
+                if(!invoiceIds.isEmpty()){
+                    EmailIUtility.sendEmailWithReceiptAndInvoice(invoiceIds,'InvoicePlusReceiptTemplate');
                 }
             }
         }

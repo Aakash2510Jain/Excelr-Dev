@@ -634,7 +634,7 @@ export default class PaymentOnOpportunity extends LightningElement {
             else if (this.Paymentvalue == 'Partial Payment') {
 
                 if (this.selectedDate != null && this.selectedDate != '' && this.selectedDate != undefined) {
-                    UpdateOPPforPartialPayment({ recordId: this.recordId, paymentType: 'CC Avenue', Amount: this.PartialUpfrontAmount, PendingAmount: this.PartialAmount, PaymentOptiontype: 'Partial Payment', nextPaymentDueDate: this.selectedDate, LinkexpiryDate : this.selectedExpiryDate})
+                    UpdateOPPforPartialPayment({ recordId: this.recordId, Amount: this.PartialUpfrontAmount, PendingAmount: this.PartialAmount, paymentType: 'CC Avenue', PaymentOptiontype: 'Partial Payment', nextPaymentDueDate: this.selectedDate, LinkexpiryDate : this.selectedExpiryDate})
                         //UpdateOPPforPartialPayment({recordId:this.recordId,paymentType:'CC Avenue'})
                         .then(result => {
 

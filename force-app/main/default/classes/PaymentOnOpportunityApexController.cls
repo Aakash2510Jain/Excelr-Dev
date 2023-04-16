@@ -217,7 +217,10 @@ public without sharing class PaymentOnOpportunityApexController{
                                                Where Opportunity__c = :recordId
                                                ORDER BY CreatedDate DESC
                                                limit 1];
+                system.debug('invoiceRecList -- ' + invoiceRecList);
                 if (!invoiceRecList.isEmpty()){
+
+                    system.debug('Invoice Found -- ');
                     invoiceRecId = invoiceRecList[0].Id;
 
                     Invoice__c invRec = new Invoice__c();
@@ -233,6 +236,7 @@ public without sharing class PaymentOnOpportunityApexController{
                         insert receipt;
                     }
                 } else{
+                    system.debug('Invoice Not Found -- ');
                     Invoice__c invRec = new Invoice__c();
                     invRec.Opportunity__c = recordId;
                     invRec.Status__c = 'Initiated';

@@ -60,7 +60,7 @@ public without sharing class InvoiceTriggerHelper{
                 system.debug('oldMap.get(invoiceRec.Id).Due_Amount__c---->'+oldMap.get(invoiceRec.Id).Due_Amount__c);
                 system.debug('invoiceRec.Due_Amount__c--->'+invoiceRec.Due_Amount__c);
                     
-                if ( invoiceRec.Due_Amount__c != oldMap.get(invoiceRec.Id).Due_Amount__c && ( invoiceRec.Due_Amount__c == 0 || invoiceRec.Due_Amount__c < 1)){
+                if ( invoiceRec.Due_Amount__c != oldMap.get(invoiceRec.Id).Due_Amount__c && ( invoiceRec.Due_Amount__c < oldMap.get(invoiceRec.Id).Due_Amount__c) ){
                     system.debug('Updating Invoice Status as realized');
                     invoiceRec.Status__c = 'Realized';
                 }

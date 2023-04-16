@@ -34,7 +34,9 @@
     <aura:attribute name="todayDate" type="Date" />
     <aura:attribute name="disableSave" type="boolean" default="false" />
     <aura:attribute name="paymentTypeList" type="List" />
-
+    <aura:attribute name="upfrontAmount" type="integer" />
+    <aura:attribute name="paymentType" type="String" />
+    
     <div class="modal-header slds-modal__header slds-size_1-of-1">
         <h2 class="title slds-text-heading--medium">Manual Payment</h2>
 
@@ -44,20 +46,19 @@
         <!-- <h2 style=" text-align: center;font-size: 25px;font-family: math;">Manual Payment</h2> -->
         <br />
 
-        <lightning:input label="Price Including GST : From Pricebook" disabled="true" value="{!v.oppAmount}" /><br />
+        <lightning:input label="Price Including GST" disabled="true" value="{!v.oppAmount}" /><br />
 
 
         <div class="slds-grid slds-wrap">
             <div class="slds-col slds-size_1-of-2">
-                <lightning:input type="number" aura:id="actualamount" required="true" label="Upfront Amount"
-                    onchange="{!c.onChangeHandler}" />
+                <lightning:input type="number" aura:id="actualamount" required="false" label="Upfront Amount" onblur="{!c.onChangeHandler}" value="{!v.upfrontAmount}"/>
             </div>
             <div class="slds-col slds-size_1-of-2">
                 <lightning:input type="number" disabled="true" aura:id="dueamount" label="Due Amount"
                     value="{!v.dueAmountRemaning}" />
             </div>
         </div>
-
+        <br/>
         <aura:if isTrue="{!v.partialPayment}">
             <lightning:input type="date" label="Select next followup date for pending payment" required="true"
                 value="{!v.selectedDate}" min="{!v.todayDate}" />
@@ -70,8 +71,7 @@
         <div class="slds-text-body_small slds-text-color_success"> {!v.fileName} </div>
 
 
-        <lightning:select aura:id="paymenttype" onchange="{! c.onChangeHandlerpickList }" name="Payment Type"
-            label="Payment Type">
+        <lightning:select aura:id="paymenttype" onchange="{! c.onChangeHandlerpickList }" name="Payment Type" label="Payment Type" required="true">
             <option value="">--None--</option>
 
             <aura:iteration items="{!v.paymentTypeList}" var="color">

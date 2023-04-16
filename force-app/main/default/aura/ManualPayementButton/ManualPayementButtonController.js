@@ -3,6 +3,7 @@
         debugger;
         var today = new Date();
         component.set("v.todayDate", today.toISOString().slice(0,10));
+        component.set("v.upfrontAmount",0);
         helper.getCurrentInoiceRecord(component, event);
         helper.getPaymentTypeRecord(component, event);
     },
@@ -18,8 +19,10 @@
             component.set("v.dueAmountRemaning", component.get("v.oppAmount"));
             return;
         }
-        if(dueAmount >0 ){
+        if(enterAmount > 0 ){
             component.set("v.partialPayment",true);
+        }else if(enterAmount == "0" || enterAmount == null || enterAmount == undefined){
+            component.set("v.partialPayment",false);
         }
         component.set("v.enteredAmount", enterAmount);
         component.set("v.description", desc);
@@ -40,29 +43,41 @@
     Save: function (component, event, helper) {
         debugger;
         component.set("v.disableSave",true);  //Math.floor(component.find('actualamount').get('v.value'))
-        if(component.find('actualamount').get('v.value') <=0 || component.find('actualamount').get('v.value') == null || component.find('actualamount').get('v.value') == "" || component.find('actualamount').get('v.value') == "undefined"){
+       /* if(component.find('actualamount').get('v.value') <=0 || component.find('actualamount').get('v.value') == null || component.find('actualamount').get('v.value') == "" || component.find('actualamount').get('v.value') == "undefined"){
             alert("Please provide the Amount");
             component.set("v.disableSave",false);
             return;
-        }
-        if(component.find('actualamount').get('v.value') < component.get("v.oppAmount") ){
+        }*/
+        if(component.find('actualamount').get('v.value') > 0 ){
             if(component.get("v.selectedDate") == null || component.get("v.selectedDate") == "undefined"){
                 alert("Please Select a next followup date");
                 component.set("v.disableSave",false);
                 return;
             }
         }
+        
+            
         if(component.find("fileuplod").get("v.files")== null){
             alert("Please Select a File");
             component.set("v.disableSave",false);
             return;
         }
+        var selectedPaymentType = component.get("v.paymentType");
+        if(selectedPaymentType == "" || selectedPaymentType == null || selectedPaymentType == undefined){
+            alert("Please Select payment type");
+            component.set("v.disableSave",false);
+            return;
+        }
         var action = component.get("c.insertInvoiceBasedOppAmount");
+        var opportunityAmount = (component.get("v.oppAmount")).toString();
         action.setParams({
-            "insertingInvAmount": component.get("v.enteredAmount"),
-            "oppId": component.get("v.recordId"),
-            "description" : component.get("v.description"),
-            "nextPaymentDueDate" : component.get("v.selectedDate")
+            "upfrontAmount": component.get("v.upfrontAmount"),
+            "dueAmount": component.get("v.dueAmountRemaning"),
+            "oppId" : component.get("v.recordId"),
+            "nextPaymentDueDate" : component.get("v.selectedDate"),
+            "paymentType" : component.get("v.paymentType"),
+            "description" :component.get("v.description"),
+            "opportunityAmount": opportunityAmount
         });
         action.setCallback(this, function (response) {
             var state = response.getState();
@@ -78,7 +93,7 @@
                 });
                 toastEvent.fire();
                 var data = response.getReturnValue();
-                component.set("v.fileParentId", data.Id);
+                component.set("v.fileParentId", data);
                 let thirdAction = component.get('c.handleSave');
                 $A.enqueueAction(thirdAction);
             }else{
@@ -93,6 +108,7 @@
                 });
                 toastEvent.fire();
             }
+           
         });
         $A.enqueueAction(action);
     },
@@ -113,5 +129,6 @@
     onChangeHandlerpickList : function (component, event, helper) {
         debugger;
         var selectedValue = component.find('paymenttype').get('v.value');
+        component.set("v.paymentType", selectedValue);
     }
 })

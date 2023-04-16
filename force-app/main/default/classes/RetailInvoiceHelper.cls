@@ -111,9 +111,10 @@ global without sharing class RetailInvoiceHelper {
                 pdfBlob = (!Test.isRunningTest() ? pdfPage.getContent() : Blob.valueOf('Fake content'));
                 Attachment attach = new Attachment(parentId = recordId, Name = 'PaymentReceipt.pdf', body = pdfBlob);
                 insert attach;
-                
+                system.debug('recordId---->'+recordId);
                 Opportunity oppToMarkClosedWon = new Opportunity();
                 oppToMarkClosedWon.Id = [Select Opportunity__c From Invoice__c where id =: recordId].Opportunity__c ;
+                oppToMarkClosedWon.Latest_Invoice_Id__c = recordId;
                 oppToMarkClosedWon.Can_Convert__c = true; 
                 oppToMarkClosedWon.StageName = 'Closed Won';
                 dateTime nextFollowupdate = [Select Opportunity__r.Next_follow_up_date_time__c From Invoice__c where id =: recordId].Opportunity__r.Next_follow_up_date_time__c;

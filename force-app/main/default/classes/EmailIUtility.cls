@@ -57,26 +57,28 @@ public without sharing class EmailIUtility{
         }
     }
     
-    public static void sendEmailWithReceiptAndInvoice(Set<Id> opportunityIds, String templateName){
+    public static void sendEmailWithReceiptAndInvoice(Set<Id> invoiceIds, String templateName){
         try{
-            Set<Id> invoiceIds = new Set<Id>();
+            system.debug('invoiceIds--->'+invoiceIds);
+            
             Set<Id> receiptIds = new Set<Id>();
             List<Attachment> attachmentList = new List<Attachment>();
             List<Invoice__c> invoiceListToBeForwarded = new List<Invoice__c>();
             List<Messaging.SingleEmailMessage> mails = new List<Messaging.SingleEmailMessage>();
             Map<string, Attachment> attachmentByParentId = new Map<String, Attachment>();
             
-            invoiceListToBeForwarded = [Select Id,Opportunity__r.Email__c,Opportunity__r.Amount,Opportunity__r.Account.Name,(Select Id from Receipts__r where Receipt_Status__c = 'Received/Paid') From Invoice__c where Opportunity__c in : opportunityIds];
+            invoiceListToBeForwarded = [Select Id,Opportunity__r.Email__c,Opportunity__r.Amount,Opportunity__r.Account.Name,(Select Id from Receipts__r where Receipt_Status__c = 'Received/Paid') From Invoice__c where Id  in : invoiceIds];
             EmailTemplate et = [Select id, Name, DeveloperName, Subject, Body, HtmlValue from EmailTemplate where name = :templateName];
-            
+            system.debug('invoiceListToBeForwarded--->'+invoiceListToBeForwarded);
             if(!invoiceListToBeForwarded.isEmpty()){
                 for(Invoice__c invoiceRec : invoiceListToBeForwarded){
-                    invoiceIds.add(invoiceRec.Id);
                     for(Receipt__c receiptRec : invoiceRec.Receipts__r){
+                        system.debug('receiptRec.Id--->'+receiptRec.Id);
                         receiptIds.add(receiptRec.Id);
                     }
                 }
-                attachmentList = [SELECT Name, Body, ContentType FROM Attachment WHERE ParentId IN :invoiceIds or ParentId IN :receiptIds];
+                attachmentList = [SELECT Name, Body,ParentId, ContentType FROM Attachment WHERE ParentId IN :invoiceIds or ParentId IN :receiptIds];
+                system.debug('attachmentList--->'+attachmentList);
                 if(!attachmentList.isEmpty()){
                     for(Attachment attachmentRec : attachmentList){
                         attachmentByParentId.put(attachmentRec.ParentId, attachmentRec);
@@ -91,11 +93,13 @@ public without sharing class EmailIUtility{
                         attachment1.setContentType(attachmentByParentId.get(invoiceRec.Id).ContentType);
                         attachments.add(attachment1);
                         
-                        Messaging.EmailFileAttachment attachment2 = new Messaging.EmailFileAttachment();
-                        attachment2.setFileName(attachmentByParentId.get(invoiceRec.Receipts__r[0].Id).Name);
-                        attachment2.setBody(attachmentByParentId.get(invoiceRec.Receipts__r[0].Id).Body);
-                        attachment2.setContentType(attachmentByParentId.get(invoiceRec.Receipts__r[0].Id).ContentType);
-                        attachments.add(attachment2);
+                        for(Receipt__c receiptRec : invoiceRec.Receipts__r){
+                            Messaging.EmailFileAttachment attachment2 = new Messaging.EmailFileAttachment();
+                            attachment2.setFileName(attachmentByParentId.get(receiptRec.Id).Name);
+                            attachment2.setBody(attachmentByParentId.get(receiptRec.Id).Body);
+                            attachment2.setContentType(attachmentByParentId.get(receiptRec.Id).ContentType);
+                            attachments.add(attachment2);
+                        }                 
                         
                         mail.setFileAttachments(attachments);
                         List<String> recipients = new List<String>();

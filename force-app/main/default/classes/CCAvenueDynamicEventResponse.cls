@@ -47,6 +47,11 @@ global without sharing class CCAvenueDynamicEventResponse{
             system.debug('enc_response =====> ' + enc_response);
 
             Map<string, string> responsemap = CCAvenueUtilClass.decryptString(enc_response, WORKING_KEY);
+            if(responsemap.get('order_status') == 'Success'){
+                Receipt_Approval__e receiptApprovalRecord = new Receipt_Approval__e();
+                receiptApprovalRecord.Opportunity_Id__c = responsemap.get('order_id');//instead of Invoice we are passing opportunity Id
+                Database.SaveResult results = EventBus.publish(receiptApprovalRecord);
+            }
 
             Utility.API_ErrorORSuccess(null, null, null, null, 'CCAvenueDynamicEventResponse', 'CCAvenueresponse', string.valueOf(responsemap));
 
