@@ -74,8 +74,13 @@
             if(State === "SUCCESS"){
                 var data = response.getReturnValue();
                 component.set("v.currentRecord", data);
-                component.set("v.oppAmount", data.Amount);
-                component.set("v.dueAmountRemaning", data.Amount);
+                if(data.Invoices__r  != null ){
+                    component.set("v.oppAmount",data.Invoices__r[0].Due_Amount__c);
+                    component.set("v.dueAmountRemaning", data.Invoices__r[0].Due_Amount__c);
+                }else{
+                    component.set("v.oppAmount", data.Amount);
+                    component.set("v.dueAmountRemaning", data.Amount);
+                }                
             }
         });
         $A.enqueueAction(action);

@@ -124,12 +124,19 @@ public without sharing class RoundRobinLeadAssignment{
                                     
                                     if (BuildMaps.mapofAGIdWithMapOfMemIdAssignedLead.get(qName) != null ) {
                                         map<String, Integer> MapofMemberIdWithLeadAssigned = BuildMaps.mapofAGIdWithMapOfMemIdAssignedLead.get(qName);
-                                        if (MapofMemberIdWithLeadAssigned.containsKey(qMemberID) && Integer.valueOf(MapofMemberIdWithLeadAssigned.get(qMemberID)) == 0) {
-                                            MapofMemberIdWithLeadAssigned.put(qMemberID, 1);
+                                        if (MapofMemberIdWithLeadAssigned.containsKey(qMemberID) ) {
+                                            if (Integer.valueOf(MapofMemberIdWithLeadAssigned.get(qMemberID)) == 0) {
+                                                MapofMemberIdWithLeadAssigned.put(qMemberID, 1);
+                                            }
+                                            else if(Integer.valueOf(MapofMemberIdWithLeadAssigned.get(qMemberID)) > 0){
+                                                integer leadAssignedCount = Integer.valueOf(MapofMemberIdWithLeadAssigned.get(qMemberID)) + 1;
+                                                 MapofMemberIdWithLeadAssigned.put(qMemberID,leadAssignedCount );
+                                                
+                                            }
+                                            
                                         }
-                                        else if(MapofMemberIdWithLeadAssigned.containsKey(qMemberID) && Integer.valueOf(MapofMemberIdWithLeadAssigned.get(qMemberID)) != 0){
-                                            integer leadAssignedCount = Integer.valueOf(MapofMemberIdWithLeadAssigned.get(qMemberID)) + 1;
-                                            MapofMemberIdWithLeadAssigned.put(qMemberID,leadAssignedCount );
+                                        else if(!MapofMemberIdWithLeadAssigned.containsKey(qMemberID)){
+                                            MapofMemberIdWithLeadAssigned.put(qMemberID,1 );
                                         }
                                         BuildMaps.mapofAGIdWithMapOfMemIdAssignedLead.put(qName, MapofMemberIdWithLeadAssigned);
                                     }
@@ -222,6 +229,7 @@ public without sharing class RoundRobinLeadAssignment{
     }
 
     public static boolean assignmentConditionSatisfied(string qName, string qMemberID, string learnerUid, String courseName){
+        System.debug('courseName ===> ' + courseName);
         try{
             boolean isconditionapproved = false;
 
@@ -237,14 +245,16 @@ public without sharing class RoundRobinLeadAssignment{
 
                         System.debug('BuildMaps.mapofMemidByMaxLeadPerDayFromAG.get(qMemberID) ======> ' + BuildMaps.mapofMemidByMaxLeadPerDayFromAG.get(qMemberID) + 'BuildMaps.mapofMemidByAssignedLead.get(qMemberID) ======> ' + BuildMaps.mapofMemidByAssignedLead.get(qMemberID));
 
-                        map<String, Integer> mapofMemidByAssignedLeadToday = BuildMaps.mapofAGIdWithMapOfMemIdAssignedLead.get(courseName);
+                        System.debug('BuildMaps.mapofAGIdWithMapOfMemIdAssignedLead =======> ' + BuildMaps.mapofAGIdWithMapOfMemIdAssignedLead);
+                        map<String, Integer> mapofMemidByAssignedLeadToday = new map<String, Integer>();
+                        mapofMemidByAssignedLeadToday = BuildMaps.mapofAGIdWithMapOfMemIdAssignedLead.get(courseName);
                         System.debug('mapofMemidByAssignedLeadToday ======> ' + mapofMemidByAssignedLeadToday);
                         if ( mapofMemidByAssignedLeadToday != null) {
 
                             if (BuildMaps.mapofMemidByMaxLeadPerDayFromAG.get(qMemberID) != null && mapofMemidByAssignedLeadToday.get(qMemberID) < BuildMaps.mapofMemidByMaxLeadPerDayFromAG.get(qMemberID)){
 
-                                System.debug('BuildMaps.mapofMemIdByMaxLeadCountByGroupPerDay.get(qMemberID) ======> ' + BuildMaps.mapofMemIdByMaxLeadCountByGroupPerDay.get(qMemberID) + 'BuildMaps.mapofMemidByAssignedLead.get(qMemberID) ======> ' + BuildMaps.mapofMemidByAssignedLead.get(qMemberID));
-                                if (BuildMaps.mapofMemIdByMaxLeadCountByGroupPerDay.get(qMemberID) != null && BuildMaps.mapofMemidByAssignedLead.get(qMemberID) < BuildMaps.mapofMemIdByMaxLeadCountByGroupPerDay.get(qMemberID)){
+                                System.debug('BuildMaps.mapofMemIdByMaxLeadCountByGroupPerDay.get(qMemberID) ======> ' + BuildMaps.mapofMemIdByMaxLeadCountByGroupPerDay.get(qMemberID) + 'mapofMemidByAssignedLeadToday.get(qMemberID) ======> ' + mapofMemidByAssignedLeadToday.get(qMemberID));
+                                if (BuildMaps.mapofMemIdByMaxLeadCountByGroupPerDay.get(qMemberID) != null && mapofMemidByAssignedLeadToday.get(qMemberID) < BuildMaps.mapofMemIdByMaxLeadCountByGroupPerDay.get(qMemberID)){
     
                                     System.debug('BuildMaps.mapofMemidByLeadsAssignedInThisTransaction.get(qMemberID) ====> ' + BuildMaps.mapofMemidByLeadsAssignedInThisTransaction.get(qMemberID));
                                     if (BuildMaps.mapofMemidByLeadsAssignedInThisTransaction.get(qMemberID) == null){
@@ -259,7 +269,28 @@ public without sharing class RoundRobinLeadAssignment{
                                         isconditionapproved = true;
                                     }
                                 }
+                            }    
+                        }
+                        else {
+                            map<String, Integer> NewmapofMemidByAssignedLeadToday = new map<String, Integer>();
+                            NewmapofMemidByAssignedLeadToday.put(qMemberID, 0);
+                            BuildMaps.mapofAGIdWithMapOfMemIdAssignedLead.put(courseName, NewmapofMemidByAssignedLeadToday);
+
+                            if (BuildMaps.mapofMemIdByMaxLeadCountByGroupPerDay.get(qMemberID) != null && NewmapofMemidByAssignedLeadToday.get(qMemberID) < BuildMaps.mapofMemIdByMaxLeadCountByGroupPerDay.get(qMemberID)){
+    
+                                System.debug('BuildMaps.mapofMemidByLeadsAssignedInThisTransaction.get(qMemberID) ====> ' + BuildMaps.mapofMemidByLeadsAssignedInThisTransaction.get(qMemberID));
+                                if (BuildMaps.mapofMemidByLeadsAssignedInThisTransaction.get(qMemberID) == null){
+                                    BuildMaps.mapofMemidByLeadsAssignedInThisTransaction.put(qMemberID, 0);
+                                }
+
+                                System.debug('BuildMaps.mapofMemidByLeadsToAssignInSIngleShot.get(qMemberID) =====> ' + BuildMaps.mapofMemidByLeadsToAssignInSIngleShot.get(qMemberID) + 'BuildMaps.mapofMemidByLeadsAssignedInThisTransaction.get(qMemberID) =====> ' + BuildMaps.mapofMemidByLeadsAssignedInThisTransaction.get(qMemberID));
+
+                                if (BuildMaps.mapofMemidByLeadsToAssignInSIngleShot.get(qMemberID) != null && BuildMaps.mapofMemidByLeadsAssignedInThisTransaction.get(qMemberID) < BuildMaps.mapofMemidByLeadsToAssignInSIngleShot.get(qMemberID)){
+
+                                    isconditionapproved = true;
+                                }
                             }
+
                             
                         }
                         /*if (BuildMaps.mapofMemidByMaxLeadPerDayFromAG.get(qMemberID) != null && BuildMaps.mapofMemidByAssignedLead.get(qMemberID) < BuildMaps.mapofMemidByMaxLeadPerDayFromAG.get(qMemberID)){

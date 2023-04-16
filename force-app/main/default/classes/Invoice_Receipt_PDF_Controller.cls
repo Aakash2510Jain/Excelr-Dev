@@ -86,6 +86,55 @@ public without sharing class Invoice_Receipt_PDF_Controller {
         }
     }
     
+    
+    
+    @future(callout = true)
+    public static void attachSecondReceiptUnderRecord(set<Id> receiptIds){
+        system.debug('receiptIds--->'+receiptIds);
+        Map<Id, Blob> attachmentByReceiptid = new Map<Id, Blob>();
+        List<Attachment> attachmentListToInsert = new List<Attachment>();
+        List<Receipt__c> updatedReceiptsList = new List<Receipt__c>();
+        List<Invoice__c> invoiceRecordsToUpdate = new List<Invoice__c>();
+        
+        if(!receiptIds.isEmpty()){
+            updatedReceiptsList = [Select Id, Invoice__c,Invoice__r.Realized_Amount__c,Invoice__r.Due_Amount__c,Invoice__r.Amount__c,Amount__c From Receipt__c where Id in: receiptIds];
+            for(Id receiptId : receiptIds){
+                PageReference pdfPage = Page.Invoice_Receipt_PDFpage;
+                pdfPage.getParameters().put('id', receiptId);
+                Blob pdfBlob = pdfPage.getContent();
+                attachmentByReceiptid.put(receiptId, pdfBlob);
+            } 
+            system.debug('attachmentByReceiptid-->'+attachmentByReceiptid);
+            if(!attachmentByReceiptid.isEmpty()){
+                for(Id receiptId : attachmentByReceiptid.keySet()){
+                    system.debug('receiptId-->'+receiptId);
+                    Attachment attachmentRecord = new Attachment(parentId = receiptId, Name = 'Receipt.pdf', body = attachmentByReceiptid.get(receiptId));
+                    attachmentListToInsert.add(attachmentRecord);
+                }
+                system.debug('attachmentListToInsert--->'+attachmentListToInsert);
+                if(!attachmentListToInsert.isEmpty()){
+                    insert attachmentListToInsert;
+                    if(!updatedReceiptsList.isEmpty()){
+                        for(Receipt__c receiptRec : updatedReceiptsList){
+                            system.debug('receiptRec.Invoice__r.Realized_Amount__c--->'+receiptRec.Invoice__r.Realized_Amount__c);
+                            Invoice__c invoiceToUpdate = new Invoice__c();
+                            invoiceToUpdate.Id = receiptRec.Invoice__c;
+                            invoiceToUpdate.Realized_Amount__c = receiptRec.Invoice__r.Realized_Amount__c != null? receiptRec.Invoice__r.Realized_Amount__c + receiptRec.Amount__c : receiptRec.Amount__c;
+                            invoiceToUpdate.Due_Amount__c = receiptRec.Invoice__r.Amount__c - invoiceToUpdate.Realized_Amount__c ;
+                            invoiceToUpdate.Do_Not_Send_Invoice__c = true;
+                            invoiceRecordsToUpdate.add(invoiceToUpdate);
+                        }
+                        system.debug('invoiceRecordsToUpdate--->'+invoiceRecordsToUpdate);
+                        if(!invoiceRecordsToUpdate.isEmpty()){
+                            update invoiceRecordsToUpdate;
+                        }
+                    }
+                }
+                sendReceiptForPayment(attachmentByReceiptid.keySet());
+            }
+        }
+    }
+    
     public static void sendReceiptForPayment(set<id> receiptsIds){
         try{
             system.debug('receiptsIds-->'+receiptsIds);
@@ -130,8 +179,8 @@ public without sharing class Invoice_Receipt_PDF_Controller {
                         String htmlBody = et.HtmlValue;
                         htmlBody = htmlBody.replace('{!User.Name}', userinfo.getName());
                         
-                        if (htmlBody.contains('{!Opportunity.Name}')){
-                            htmlBody = htmlBody.replace('{!Opportunity.Name}', receiptRecord.Invoice__r.Opportunity__r.Name);
+                        if (htmlBody.contains('{!Opportunity.Account}')){
+                            htmlBody = htmlBody.replace('{!Opportunity.Account}', receiptRecord.Invoice__r.Opportunity__r.Name);
                         }
                         
                         if (htmlBody.contains('{!Receipt.Amount__c}')){
@@ -147,24 +196,9 @@ public without sharing class Invoice_Receipt_PDF_Controller {
                 if(!mails.isEmpty()){
                     Messaging.sendEmail(mails);
                 }
-                updateReceiptsList = [Select Id, Invoice__c,Invoice__r.Realized_Amount__c,Invoice__r.Due_Amount__c,Invoice__r.Amount__c,Amount__c From Receipt__c where Id in: receiptsIds];
-                if(!updateReceiptsList.isEmpty()){
-                    for(Receipt__c receiptRec : updateReceiptsList){
-                        system.debug('receiptRec.Invoice__r.Realized_Amount__c--->'+receiptRec.Invoice__r.Realized_Amount__c);
-                        Invoice__c invoiceToUpdate = new Invoice__c();
-                        invoiceToUpdate.Id = receiptRec.Invoice__c;
-                        invoiceToUpdate.Realized_Amount__c = receiptRec.Invoice__r.Realized_Amount__c != null? receiptRec.Invoice__r.Realized_Amount__c + receiptRec.Amount__c : receiptRec.Amount__c;
-                        invoiceToUpdate.Due_Amount__c = receiptRec.Invoice__r.Amount__c - invoiceToUpdate.Realized_Amount__c ;
-                        invoiceRecordsToUpdate.add(invoiceToUpdate);
-                    }
-                    system.debug('invoiceRecordsToUpdate--->'+invoiceRecordsToUpdate);
-                    if(!invoiceRecordsToUpdate.isEmpty()){
-                        update invoiceRecordsToUpdate;
-                    }
-                }
             }
         } catch (Exception e){
             System.debug('Error Line==>' + e.getLineNumber() + 'Error Message==>' + e.getMessage());
         }
-     }
+    }
 }

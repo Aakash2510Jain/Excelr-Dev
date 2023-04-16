@@ -67,17 +67,34 @@ public without sharing class EmailIUtility{
             List<Messaging.SingleEmailMessage> mails = new List<Messaging.SingleEmailMessage>();
             Map<string, Attachment> attachmentByParentId = new Map<String, Attachment>();
             
-            invoiceListToBeForwarded = [Select Id,Opportunity__r.Email__c,Opportunity__r.Amount,Opportunity__r.Account.Name,(Select Id from Receipts__r where Receipt_Status__c = 'Received/Paid') From Invoice__c where Id  in : invoiceIds];
+            invoiceListToBeForwarded = [Select Id,Total_Reciepts__c, Opportunity__r.Email__c, Opportunity__r.Amount, Opportunity__r.Payment_Mode__c, Opportunity__r.Payment_Type__c, Opportunity__r.Account.Name, Opportunity__r.Account.Email__c, (Select Id from Receipts__r where Receipt_Status__c = 'Received/Paid') From Invoice__c where Id  in : invoiceIds];
             EmailTemplate et = [Select id, Name, DeveloperName, Subject, Body, HtmlValue from EmailTemplate where name = :templateName];
+
             system.debug('invoiceListToBeForwarded--->'+invoiceListToBeForwarded);
+            Boolean sendOnlyRcpt = false;
+
             if(!invoiceListToBeForwarded.isEmpty()){
                 for(Invoice__c invoiceRec : invoiceListToBeForwarded){
                     for(Receipt__c receiptRec : invoiceRec.Receipts__r){
                         system.debug('receiptRec.Id--->'+receiptRec.Id);
                         receiptIds.add(receiptRec.Id);
                     }
+                    if(invoiceRec.Opportunity__r.Payment_Mode__c == 'CC Avenue' && invoiceRec.Opportunity__r.Payment_Type__c == 'Partial Payment'){
+                        if(invoiceRec.Total_Reciepts__c == 1){
+                            sendOnlyRcpt = false;
+                        }
+                        else if(invoiceRec.Total_Reciepts__c > 1) {
+                            sendOnlyRcpt = true;
+                        }
+                    }
                 }
-                attachmentList = [SELECT Name, Body,ParentId, ContentType FROM Attachment WHERE ParentId IN :invoiceIds or ParentId IN :receiptIds];
+
+                if(sendOnlyRcpt){
+                    attachmentList = [SELECT Name, Body, ContentType,createdDate,ParentId FROM Attachment WHERE ParentId in :receiptIds];
+                }
+                else{
+                    attachmentList = [SELECT Name, Body,ParentId, ContentType FROM Attachment WHERE ParentId IN :invoiceIds or ParentId IN :receiptIds];
+                }
                 system.debug('attachmentList--->'+attachmentList);
                 if(!attachmentList.isEmpty()){
                     for(Attachment attachmentRec : attachmentList){
@@ -103,7 +120,7 @@ public without sharing class EmailIUtility{
                         
                         mail.setFileAttachments(attachments);
                         List<String> recipients = new List<String>();
-                        recipients.add(invoiceRec.Opportunity__r.Email__c);
+                        recipients.add(invoiceRec.Opportunity__r.Account.Email__c);
                         mail.setToAddresses(recipients);
                         mail.setReplyTo('test@email.com');
                         mail.setSenderDisplayName('Excelr');

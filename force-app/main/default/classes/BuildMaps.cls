@@ -127,12 +127,12 @@ public without Sharing class BuildMaps{
                         if (mapofAGIdWithMapOfMemIdAssignedLead.containsKey(ld.AG_Related_to__r.Name)){
 
                             System.debug('ld.AG_Related_to__r.Name ====> ' + ld.AG_Related_to__r.Name);
-                            map<String, integer> ExistingmapMediDbyAssignedlead = mapofAGIdWithMapOfMemIdAssignedLead.get(ld.AG_Related_to__c);
+                            map<String, integer> ExistingmapMediDbyAssignedlead = mapofAGIdWithMapOfMemIdAssignedLead.get(ld.AG_Related_to__r.Name);
                             System.debug('ExistingmapMediDbyAssignedlead ====> ' + ExistingmapMediDbyAssignedlead);
                             map<String, integer> returnmapped = createMapMemidForAssignedLead(ld, ExistingmapMediDbyAssignedlead);
 
                             System.debug('returnmapped ======> ' + returnmapped);
-                            mapofAGIdWithMapOfMemIdAssignedLead.put(ld.AG_Related_to__c, returnmapped);
+                            mapofAGIdWithMapOfMemIdAssignedLead.put(ld.AG_Related_to__r.Name, returnmapped);
                             System.debug('mapofAGIdWithMapOfMemIdAssignedLead ====> ' + mapofAGIdWithMapOfMemIdAssignedLead);
 
                         }
@@ -140,6 +140,8 @@ public without Sharing class BuildMaps{
                             map<String, integer> NewmapofMemidByAssignedLead = new map<String, integer>();
                             mapofAGIdWithMapOfMemIdAssignedLead.put(ld.AG_Related_to__r.Name, createMapMemidForAssignedLead(ld, NewmapofMemidByAssignedLead));
                         }
+
+                        System.debug('mapofAGIdWithMapOfMemIdAssignedLead =====> '+ mapofAGIdWithMapOfMemIdAssignedLead);
 
                     } 
                 }
@@ -184,7 +186,7 @@ public without Sharing class BuildMaps{
 
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-            HandleBusinessException.captureError('BuildMaps', 'validateUserCapacity', e, null);
+           // HandleBusinessException.captureError('BuildMaps', 'validateUserCapacity', e, null);
 
         }
     }
@@ -207,7 +209,7 @@ public without Sharing class BuildMaps{
 
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
-            HandleBusinessException.captureError('BuildMaps', 'createMapMemidForAssignedLead', e, null);
+            //HandleBusinessException.captureError('BuildMaps', 'createMapMemidForAssignedLead', e, null);
 
         }
         System.debug('mapofMemidByAssignedLeadofExistingMap ====> ' + mapofMemidByAssignedLeadofExistingMap);

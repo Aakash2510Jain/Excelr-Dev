@@ -1,7 +1,7 @@
 public without sharing class ManualpaymentController{
     @AuraEnabled
     public Static Opportunity ManualpaymentcreateInvoice(String recordId){
-        Opportunity oppRec = [SELECT Id, Name, Amount, Payment_Type__c, Due_Amount__c FROM Opportunity  WHERE ID = :recordId];
+        Opportunity oppRec = [SELECT Id, Name, Amount, Payment_Type__c, Due_Amount__c,(Select Due_Amount__c From Invoices__r) FROM Opportunity  WHERE ID = :recordId];
         
         System.debug('oppRec Record ::' + oppRec);
         return oppRec;
@@ -89,54 +89,74 @@ public without sharing class ManualpaymentController{
         try{
             string receiptIdToreturn = '';
             
-            Invoice__c invRec = new Invoice__c();
-            invRec.Opportunity__c = oppId;
-            invRec.Status__c = 'Initiated';
-            invRec.Initiated_Date__c = System.Today();
-            invRec.Payment_Type__c = 'Manual Payment';
-            invRec.Type__c = 'Manual';
-            invRec.Amount__c = decimal.valueOf(opportunityAmount);
-            Time myTime = Time.newInstance(10, 0, 0, 0);
-            DateTime followUpDateTime = DateTime.newInstanceGMT(Date.valueOf(nextPaymentDueDate), myTime);
-            invRec.Initiated_Amount__c = integer.valueOf(upfrontAmount);
-            invRec.Next_Followup_Date_Time__c = followUpDateTime;
-            invRec.Due_Amount__c = decimal.valueOf(opportunityAmount);
-            insert invRec;
+            Opportunity opportunityRecord = [Select Id,(Select Id From Invoices__r order By CreatedDate DESC limit 1) From Opportunity where Id=:oppId];
             
-            if(integer.valueOf(upfrontAmount) > 0){
-                // create 2 receipt
-                List<Receipt__c> receiptListToInsert = new List<Receipt__c>();
-                Receipt__c receiptForDownPayment = new Receipt__c();
-                receiptForDownPayment.Amount__c = integer.valueOf(upfrontAmount);
-                receiptForDownPayment.Invoice__c = invRec.Id;
-                receiptForDownPayment.Type__c = paymentType;
-                receiptForDownPayment.Receipt_Status__c = 'Initiated';
-                if(!string.isBlank(description))
-                    receiptForDownPayment.Description__c = description;
-                receiptListToInsert.add(receiptForDownPayment);
+            if(opportunityRecord.Invoices__r.isEmpty()){
+                Invoice__c invRec = new Invoice__c();
+                invRec.Opportunity__c = oppId;
+                invRec.Status__c = 'Initiated';
+                invRec.Initiated_Date__c = System.Today();
+                invRec.Payment_Type__c = 'Manual Payment';
+                invRec.Type__c = 'Manual';
+                invRec.Amount__c = decimal.valueOf(opportunityAmount);
+                Time myTime = Time.newInstance(10, 0, 0, 0);
+                DateTime followUpDateTime = DateTime.newInstanceGMT(Date.valueOf(nextPaymentDueDate), myTime);
+                invRec.Initiated_Amount__c = integer.valueOf(upfrontAmount);
+                invRec.Next_Followup_Date_Time__c = followUpDateTime;
+                invRec.Due_Amount__c = decimal.valueOf(opportunityAmount);
+                insert invRec;
                 
-                Receipt__c receiptForLoanPayment = new Receipt__c();
-                receiptForLoanPayment.Amount__c = decimal.valueOf(dueAmount);
-                receiptForLoanPayment.Invoice__c = invRec.Id;
-                receiptForLoanPayment.Type__c = paymentType;
-                receiptForLoanPayment.Receipt_Status__c = 'Pending';
-                receiptListToInsert.add(receiptForLoanPayment);
-                if(!receiptListToInsert.isEmpty()){
-                    insert receiptListToInsert;
-                }
-                receiptIdToreturn = receiptForDownPayment.Id;
+                if(integer.valueOf(upfrontAmount) > 0){
+                    // create 2 receipt
+                    Receipt__c receiptForDownPayment = new Receipt__c();
+                    receiptForDownPayment.Amount__c = integer.valueOf(upfrontAmount);
+                    receiptForDownPayment.Invoice__c = invRec.Id;
+                    receiptForDownPayment.Type__c = paymentType;
+                    receiptForDownPayment.Receipt_Status__c = 'Initiated';
+                    if(!string.isBlank(description))
+                        receiptForDownPayment.Description__c = description;
+                    insert receiptForDownPayment;
+                    
+                    receiptIdToreturn = receiptForDownPayment.Id;
+                }else{
+                    // create one receipt
+                    Receipt__c receiptForLoanPayment = new Receipt__c();
+                    receiptForLoanPayment.Receipt_Status__c = 'Initiated';
+                    receiptForLoanPayment.Amount__c = decimal.valueOf(dueAmount);
+                    receiptForLoanPayment.Invoice__c = invRec.Id;
+                    receiptForLoanPayment.Type__c = paymentType;
+                    if(!string.isBlank(description))
+                        receiptForLoanPayment.Description__c = description;
+                    insert receiptForLoanPayment;
+                    receiptIdToreturn = receiptForLoanPayment.Id;
+                } 
             }else{
-                // create one receipt
-                Receipt__c receiptForLoanPayment = new Receipt__c();
-                receiptForLoanPayment.Receipt_Status__c = 'Initiated';
-                receiptForLoanPayment.Amount__c = decimal.valueOf(dueAmount);
-                receiptForLoanPayment.Invoice__c = invRec.Id;
-                receiptForLoanPayment.Type__c = paymentType;
-                if(!string.isBlank(description))
-                    receiptForLoanPayment.Description__c = description;
-                insert receiptForLoanPayment;
-                receiptIdToreturn = receiptForLoanPayment.Id;
-            }        
+                if(integer.valueOf(upfrontAmount) > 0){
+                    // create 2 receipt
+                    Receipt__c receiptForDownPayment = new Receipt__c();
+                    receiptForDownPayment.Is_Pending_Receipt__c= true;
+                    receiptForDownPayment.Amount__c = integer.valueOf(upfrontAmount);
+                    receiptForDownPayment.Invoice__c = opportunityRecord.Invoices__r[0].Id;
+                    receiptForDownPayment.Type__c = paymentType;
+                    receiptForDownPayment.Receipt_Status__c = 'Initiated';
+                    if(!string.isBlank(description))
+                        receiptForDownPayment.Description__c = description;
+                    insert receiptForDownPayment;
+                    receiptIdToreturn = receiptForDownPayment.Id;
+                }else{
+                    // create one receipt
+                    Receipt__c receiptForLoanPayment = new Receipt__c();
+                    receiptForLoanPayment.Is_Pending_Receipt__c= true;
+                    receiptForLoanPayment.Receipt_Status__c = 'Initiated';
+                    receiptForLoanPayment.Amount__c = decimal.valueOf(dueAmount);
+                    receiptForLoanPayment.Invoice__c = opportunityRecord.Invoices__r[0].Id;
+                    receiptForLoanPayment.Type__c = paymentType;
+                    if(!string.isBlank(description))
+                        receiptForLoanPayment.Description__c = description;
+                    insert receiptForLoanPayment;
+                    receiptIdToreturn = receiptForLoanPayment.Id;
+                } 
+            }
             return receiptIdToreturn;
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
