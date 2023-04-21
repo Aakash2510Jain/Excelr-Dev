@@ -181,6 +181,13 @@ public without sharing class RazorpayPaymentHandler {
 
             if (PaymentUrl != null && invrecID != null ) {
                 Utility.SendPaymentLinkToISM( invrecID, PaymentUrl);
+                List<Invoice__c> invoicerec = [Select Id, Name,(Select id From Receipts__r order by CreatedDate Desc LIMIT 1) from Invoice__c where Id =:invrecID];
+                if (!invoicerec.isEmpty()) {
+                    if (!invoicerec[0].Receipts__r.isempty()) {
+                         
+                    }
+                    
+                }
                 
             }
         }

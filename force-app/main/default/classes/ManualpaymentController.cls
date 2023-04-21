@@ -100,9 +100,11 @@ public without sharing class ManualpaymentController{
                 invRec.Type__c = 'Manual';
                 invRec.Amount__c = decimal.valueOf(opportunityAmount);
                 Time myTime = Time.newInstance(10, 0, 0, 0);
-                DateTime followUpDateTime = DateTime.newInstanceGMT(Date.valueOf(nextPaymentDueDate), myTime);
+                if(nextPaymentDueDate != null){
+                    DateTime followUpDateTime = DateTime.newInstanceGMT(Date.valueOf(nextPaymentDueDate), myTime);
+                    invRec.Next_Followup_Date_Time__c = followUpDateTime;
+                }
                 invRec.Initiated_Amount__c = integer.valueOf(upfrontAmount);
-                invRec.Next_Followup_Date_Time__c = followUpDateTime;
                 invRec.Due_Amount__c = decimal.valueOf(opportunityAmount);
                 insert invRec;
                 

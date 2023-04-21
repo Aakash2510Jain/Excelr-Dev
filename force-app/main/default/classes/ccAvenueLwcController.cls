@@ -64,6 +64,29 @@ public without sharing class ccAvenueLwcController {
         Map<String,String> reqMap = getRequestMap(iv);
         String paymentURL = DN_CCAvenue_CTRL.createPaymentURLFromInvoice(iv,reqMap);
 
+        List<Receipt__c> RecieptsList = getReciepts(recId);
+        Receipt__c updatedreciept = new Receipt__c();
+        if (!RecieptsList.isEmpty() && RecieptsList.size() >0) {
+            if (RecieptsList.size() == 1) {
+                
+                updatedreciept.id = RecieptsList[0].id;
+                updatedreciept.Payment_Link__c = paymentURL;
+                
+            }
+            else {
+                for (Receipt__c Recieptsrec : RecieptsList) {
+                    if (Recieptsrec.Receipt_Status__c == constants.RECEIPT_STATUS_LINKSENT) {
+                        updatedreciept.id = Recieptsrec.id;
+                        updatedreciept.Payment_Link__c = paymentURL;
+                        break;
+                    }
+                }
+            }
+
+        }
+        update updatedreciept;
+
+
         return prepareTemplateAndSendEmail(templateMap,paymentURL,email,name,ISMEmail );
 
     } catch(exception e){
@@ -73,6 +96,20 @@ public without sharing class ccAvenueLwcController {
        
         return null;
    }
+}
+
+public static LIst<Receipt__c> getReciepts(String InvoiceId){
+    try {
+        List<Receipt__c> RecieptsList =[SELECT Amount__c,Approval_Status__c,Description__c,Email__c,Id,Invoice_Realized_Amount__c,Invoice_Type__c,Invoice__c,Is_Pending_Receipt__c,Name,Payment_Link__c,Payment_Realized_Date_Time__c,Receipt_Status__c,TranactionId__c,Type__c 
+                                    FROM Receipt__c where  Invoice__c =: InvoiceId AND Receipt_Status__c =: constants.RECEIPT_STATUS_LINKSENT ];
+        return RecieptsList;
+    } catch (Exception e) {
+        System.debug('The following exception has occurred: ' + e.getMessage());
+        HandleBusinessException.captureError('ccAvenueLwcController','getReciepts', e, null);
+       
+        return null;
+        
+    }
 }
 
     public static Invoice__c getInvoice(String recId){

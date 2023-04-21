@@ -20,7 +20,8 @@ public without sharing class Opportunitytriggerhandler{
         try{
             if (!newOppMap.isEmpty()){
                 for ( Opportunity opp : newOppMap.values() ){
-                    System.debug(' opp.StageName  ::'+ opp);
+                    System.debug(' opp.StageName  ::'+ opp.StageName);
+                    system.debug('oldOppMap.get(opp.Id).StageName--->'+oldOppMap.get(opp.Id).StageName);
                     accountIds.add(opp.AccountId);
                     if(opp.StageName != oldOppMap.get(opp.Id).StageName && opp.StageName != null && opp.StageName == 'Closed Won')
                         invoiceIds.add(opp.Latest_Invoice_Id__c);
@@ -65,6 +66,7 @@ public without sharing class Opportunitytriggerhandler{
                         }                        
                     }
                 }
+                system.debug('invoiceIds--->'+invoiceIds);
                 if(!invoiceIds.isEmpty()){
                     EmailIUtility.sendEmailWithReceiptAndInvoice(invoiceIds,'InvoicePlusReceiptTemplate');
                 }

@@ -80,4 +80,44 @@ public without sharing class EmailTriggerHelper {
             
         }
     }
+
+    public  void AttacheRelated_SetWhatId(List<EmailMessage> emailList){
+        System.debug('emailList ===> '+emailList);
+     try{
+        List<Lead> leadRecordBasedSetToAddress = new List<Lead>();
+        List<Opportunity> OpportunityRecordBasedSetToAddress = new List<Opportunity>();
+        Set<String> setToAddressSet = new Set<String>();
+        String RelatedIdForLead;
+        String SetWhatIdForOpp;
+        if(emailList.size()> 0){
+            for(EmailMessage email : emailList){
+                setToAddressSet.add(email.toAddress);
+            }
+            System.debug('setToAddressSet ==>'+setToAddressSet);
+            if(setToAddressSet.size() > 0){
+                leadRecordBasedSetToAddress = [SELECT id,Name,Email FROM Lead WHERE Email IN:setToAddressSet];
+                if(leadRecordBasedSetToAddress.size() > 0){
+                    RelatedIdForLead = leadRecordBasedSetToAddress[0].Id;
+                }
+                OpportunityRecordBasedSetToAddress = [SELECT Id,Name,Email__c FROM Opportunity WHERE Email__c IN:setToAddressSet];
+                if(OpportunityRecordBasedSetToAddress.size() > 0){
+                    SetWhatIdForOpp = OpportunityRecordBasedSetToAddress[0].Id;
+                }
+            }
+
+            for(EmailMessage email : emailList){
+                if(!String.isBlank(RelatedIdForLead)){
+                    email.RelatedToId = RelatedIdForLead;
+                } 
+                else if(!String.isBlank(SetWhatIdForOpp)){
+                    email.RelatedToId = SetWhatIdForOpp;
+                }
+            }
+           
+        }
+     }catch(Exception e){
+            System.debug('The Error '+e.getMessage());
+            System.debug('Erron Line '+e.getLineNumber());
+        }
+    }
 }

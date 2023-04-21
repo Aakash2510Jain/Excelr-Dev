@@ -105,7 +105,7 @@
                                         <label class="slds-form-element__label" for="text-input-id-47">
                                             Transcript</label>
                                         <div class="slds-form-element__control">
-                                            <input type="text" id="text-input-id-47" placeholder="Transcript…" ng-model="leadDetails.Transcript__c" class="slds-input" />
+                                            <!--input type="text" id="text-input-id-47" placeholder="Transcript…" ng-model="leadDetails.Transcript__c" class="slds-input" /-->
                                         </div>
                                     </div>
                                 </div>
@@ -151,7 +151,7 @@
         $scope.city = [];
         $scope.ListCity = [];
         $scope.listCityNew = [];
-        $scope.leadDetails = {"FirstName":"","LastName":"","Email":"","Phone":"","City__c":"","Course__c":"","State__c":"","Country__c":"","Visitor_ID__c":"","Transcript__c":"","Landing_Page_URL__c":""};
+        $scope.leadDetails = {"FirstName":"","LastName":"","Email":"","Phone":"","City__c":"","Course__c":"","State__c":"","Country__c":"","Visitor_ID__c":"",","Landing_Page_URL__c":""};
         $scope.coursePickValues = coursePickValues;
         
         

@@ -529,7 +529,7 @@ public without sharing class Utility{
         leadRec.Country__c = newAccount.Country__c;
         leadRec.State__c = newAccount.State__c;
         leadRec.City__c = newAccount.City__c;
-        
+        leadRec.Company = newAccount.Name;
         return leadRec;
     }
     

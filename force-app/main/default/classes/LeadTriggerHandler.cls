@@ -970,7 +970,7 @@ public without sharing class LeadTriggerHandler{
                     }
                     if ((ld.status == Constants.LEAD_STATUS_ATC || ld.status == Constants.LEAD_STATUS_DEAD || ld.status == Constants.LEAD_STATUS_JUNK || ld.status == Constants.LEAD_STATUS_OPEN ||  ld.status == Constants.LEAD_STATUS_PROMOTE)) {
                         string errormessage = 'you cannot park Lead From ' + oldLeadMap.get(ld.Id).status + ' to ' + ld.status;
-                        ld.Next_follow_up_date_time__c.addError(errormessage);
+                        //ld.Next_follow_up_date_time__c.addError(errormessage);
                     }
                     
                 }

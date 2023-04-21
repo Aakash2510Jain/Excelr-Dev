@@ -53,11 +53,11 @@ public without sharing class LeadAssignmentExecutionCriteria {
                                     Specialization__c,State,State__c,Status,Street,Suffix,
                                      SyncedInCallyzer__c,SystemModstamp,Telephonic_Conversation__c,Title,Total_Applications_Submitted__c,
                                      Total_Calls__c,Total_Call_Duration__c,Total_Connected_Call__c,Total_Conversation_Duration__c,Total_Course_Interests__c,
-                                     Total_Emails__c,Transcript__c,Type_of_Course__c,UTM_AdGroup__c,UTM_Campaign__c,UTM_Channel__c,UTM_Device__c,
+                                     Total_Emails__c,Type_of_Course__c,UTM_AdGroup__c,UTM_Campaign__c,UTM_Channel__c,UTM_Device__c,
                                      UTM_Experiment__c,UTM_Location__c,UTM_Medium__c,UTM_Term__c,UTM_Type__c,UTM_Variety__c,Visitor_ID__c,Website,
                                      Whatsapp_Opt_in__c,Why_This_Course__c,Year_of_Experience__c 
                                      FROM Lead 
-                                     where ownerId =: queueId and Is_Lead_Assigned_to_User__c = false limit 10 FOR UPDATE];
+                                     where ownerId =: queueId and Is_Lead_Assigned_to_User__c = false order by CreatedDate DESC limit 3 ];
 
             System.debug('queueLeads ==> ' + queueLeads);
             if(!queueLeads.isEmpty()){

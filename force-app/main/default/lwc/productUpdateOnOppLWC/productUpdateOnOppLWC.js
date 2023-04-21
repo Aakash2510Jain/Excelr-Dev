@@ -747,7 +747,8 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
             @track SelectedProduct=[];
 
             cancelAndReddirect(){
-                var urlString = 'https://excelr2--dev.sandbox.lightning.force.com/lightning/r/Opportunity/'+this.recordId + '/view';
+                var urlString = 'https://excelr2--dev.sandbox.lightning.force.com/lightning/r/Opportunity/'+this.recordId + '/view';//sandbox
+                //var urlString = 'https://excelr2.lightning.force.com/lightning/r/Opportunity/'+this.recordId + '/view';//production
                  //              this.showNotification();
                 this.navigateToList(urlString);
             }

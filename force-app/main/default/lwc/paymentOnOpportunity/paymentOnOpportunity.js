@@ -52,39 +52,69 @@ export default class PaymentOnOpportunity extends LightningElement {
 
     HandleNextDueDate(event) {
         debugger;
-        this.selectedDate = event.detail.value;
+        
+
+        const today = new Date();
+        var todayDate=new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+        var inputdate = event.detail.value;
+        var inputdateinstnace = new Date(event.detail.value);
+        if ( inputdateinstnace < todayDate ) {
+            alert('Follow up date should be greater than today date!!!');
+            this.selectedDate = '';
+        }
+        else{
+            this.selectedDate = event.detail.value;
+        }
     }
 
     selectedExpiryDate
     handleLinkExpiry(event){
         debugger;
-        this.selectedExpiryDate = event.detail.value;
-    }
-    
+        const today = new Date();
+        var todaydate=new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        
+        var inputdate = event.detail.value;
+        var inputdateinstnace = new Date(event.detail.value);
+        if ( inputdateinstnace < todaydate ) {
+            alert('Expiry should be greater than today date!!!');
+            this.selectedExpiryDate = '';
+        }
+        else{
+            this.selectedExpiryDate = event.detail.value;
+        }
+    }    
 
     //Getting Amount From Opportunity
     @track oppemail;
     @track oppPhone;
     @track oppPendingAmount;
+    //Getting Payment Option After Loan Not Needed
+    @track ShowPaymentOption = true;
+    @track PaymentSectionButton = true;
+
     @wire(ShowOppAmount, { recordId: '$recordId' })
     ShowOppAmount({ data, error }) {
         console.log('Amount recieved---', data);
         debugger;
         console.log('data=', data);
         if (data) {
-            this.originalPrice = data.Amount;
-            if (data.Due_Amount__c == undefined || data.Due_Amount__c == null || data.Due_Amount__c == 0) {
-                this.oppPendingAmount = data.Amount;
-            }
-            
-            else{
-                this.oppPendingAmount = (data.Due_Amount__c);
-                //(this.oppPendingAmount).toFixed(2);
+            if (data.Invoices__r != null && data.Invoices__r.length>0 &&data.Invoices__r != undefined ) {
+                this.originalPrice = data.Invoices__r[0].Due_Amount__c;
+                this.oppPendingAmount = data.Invoices__r[0].Due_Amount__c;
                 if (data.Invoices__r[0].Total_Reciepts__c >= 2) {
                     this.disableUpfrontAmount = true;
-                    this.PartialUpfrontAmount = data.Due_Amount__c;
+                    this.PartialUpfrontAmount =data.Invoices__r[0].Due_Amount__c;
+                    this.PartialAmount = data.Invoices__r[0].Due_Amount__c;
                 }
             }
+            else{
+                this.originalPrice = data.Amount;
+                this.oppPendingAmount = data.Amount;
+
+            }
+            
+
             if (data.Email__c !=undefined && data.Email__c != null && data.Email__c != '') {
                 this.oppemail = data.Email__c;
             }
@@ -97,6 +127,19 @@ export default class PaymentOnOpportunity extends LightningElement {
             this.Amount = data;
             console.log('Amount=', this.Amount);
             console.log('Amount=', this.originalPrice);
+            
+            // if (data.Due_Amount__c == undefined || data.Due_Amount__c == null || data.Due_Amount__c == 0) {
+            //     this.oppPendingAmount = data.Amount;
+            // }
+            
+            // else{
+            //     this.oppPendingAmount = (data.Due_Amount__c);
+            //     //(this.oppPendingAmount).toFixed(2);
+            //     if (data.Invoices__r[0].Total_Reciepts__c >= 2) {
+            //         this.disableUpfrontAmount = true;
+            //         this.PartialUpfrontAmount =data.Invoices__r[0].Due_Amount__c;
+            //     }
+            // }
         }
         else {
             console.log('error=' + error);
@@ -115,7 +158,7 @@ export default class PaymentOnOpportunity extends LightningElement {
         debugger;
         //this.PaymentType=event.detail.value;
 
-        if ((this.oppemail != undefined && this.oppemail != null && this.oppemail != '') && (this.oppemail != undefined && this.oppemail != null && this.oppemail != '') ) {
+        if ((this.oppemail != undefined && this.oppemail != null && this.oppemail != '') && (this.oppPhone != undefined && this.oppPhone != null && this.oppPhone != '') ) {
             if (this.PaymentType == 'RazorPay') {
                 this.HandleRazorPay();
             }
@@ -128,11 +171,7 @@ export default class PaymentOnOpportunity extends LightningElement {
         }
         
     }
-
-
-    //Getting Payment Option After Loan Not Needed
-    @track ShowPaymentOption = true;
-    @track PaymentSectionButton = true;
+    
     get PaymentOptionType() {
         return [
             { label: '100% Payment', value: '100% Payment' },
@@ -169,18 +208,23 @@ export default class PaymentOnOpportunity extends LightningElement {
     HandlePartialLoanInputUpfrontAmount(event) {
         debugger;
         this.PartialUpfrontAmount = event.target.value;
-        if (this.oppPendingAmount != 0 || this.oppPendingAmount != null) {
-            //this.oppPendingAmount = data.Amount;
-            this.PartialAmount = this.oppPendingAmount - this.PartialUpfrontAmount;
-            
+        if (this.PartialUpfrontAmount > this.originalPrice) {
+            alert('Upfront amount cannot be greater than amount to be paid!!! ')
+            this.PartialUpfrontAmount= '';
+            this.PartialAmount = '';
         }
         else{
-            //this.oppPendingAmount = data.Amount - data.Due_Amount__c;
-            this.PartialAmount = this.originalPrice - this.PartialUpfrontAmount;
-           
+            if (this.oppPendingAmount != 0 || this.oppPendingAmount != null) {
+                //this.oppPendingAmount = data.Amount;
+                this.PartialAmount = this.oppPendingAmount - this.PartialUpfrontAmount;
+                
+            }
+            else{
+                //this.oppPendingAmount = data.Amount - data.Due_Amount__c;
+                this.PartialAmount = this.originalPrice - this.PartialUpfrontAmount;
+               
+            }
         }
-
-        
     }
 
     @track fetchedArr = [];

@@ -19,7 +19,7 @@ public class PE_ReceiptApprovalTriggerHelper {
             }
             system.debug('opportunityIds--->'+opportunityIds);
             if(!opportunityIds.isEmpty()){
-                SubmitInvoiceForApproval.submitForApprovalforReceipt(opportunityIds);
+                SubmitInvoiceForApproval.submitreceiptForApprovalFromCCavenue(opportunityIds);
             }
         }
     }

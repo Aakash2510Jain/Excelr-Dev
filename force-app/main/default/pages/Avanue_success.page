@@ -1,34 +1,37 @@
 <apex:page controller="CCAvenueCatchResponse">
     
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
-    <script src="angular-cdn-src.min.js"></script>RefundProcessHelper
+    <script src="angular-cdn-src.min.js"></script>
     
     <script>
+    
+    var App = angular.module('myApp', []);
+    App.controller('myctrl', function ($scope,$rootScope) {
+        debugger;
+        $scope.respUrl = document.URL;
         
-        var App = angular.module('myApp', []);
-        App.controller('myctrl', function ($scope,$rootScope) {
-            debugger;
-            $scope.respUrl = document.URL;
-
-            console.log('URL----',$scope.respUrl);
-            $scope.recordId = getParameters('order_id');
-            $scope.status = getParameters('order_status');
-
-            updateRecord();
-            function updateRecord(){
-                CCAvenueCatchResponse.updatePaymentStatus($scope.recordId,'Success',function(res,evt){
-                    console.log('Status Updated');
-                })
-            }
-
-            function getParameters(param){
+        console.log('URL----',$scope.respUrl);
+        $scope.recordId = getParameters('order_id');
+        $scope.status = getParameters('order_status');
+        
+        updateRecord();
+        function updateRecord(){
+            CCAvenueCatchResponse.updatePaymentStatus($scope.recordId,'Success',function(res,evt){
+                console.log('Status Updated');
+            })
+        }
+        
+        function getParameters(param){
             var url = new URL($scope.respUrl);
             return url.searchParams.get(param);
-            }
-        })
+        }
+    })
     </script>
-
+    
     <body ng-app="myApp" ng-controller="myctrl">
-
+        <div style="align:center;margin-left: 44rem;">
+             <apex:image url="https://excelr2--c.vf.force.com/resource/1681918919000/paymentsuccess" width="40%" height="50%"/>
+        </div>
+       
     </body>
 </apex:page>

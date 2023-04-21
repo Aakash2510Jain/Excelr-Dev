@@ -1,4 +1,4 @@
-trigger EmailTrigger on EmailMessage (after insert) {
+trigger EmailTrigger on EmailMessage (after insert,before insert) {
     SObject_Trigger_Control__mdt triggerConfig = SObject_Trigger_Control__mdt.getInstance('EmailTrigger');
     system.debug('triggerConfig:: ' + triggerConfig);
     
@@ -7,6 +7,9 @@ trigger EmailTrigger on EmailMessage (after insert) {
         
         if(trigger.isAfter && trigger.isInsert){
             handlerInstance.attachEmailToLead(trigger.new);
+        }
+        if(trigger.isBefore && trigger.isInsert){
+            handlerInstance.AttacheRelated_SetWhatId(trigger.new);
         }
     }
 }

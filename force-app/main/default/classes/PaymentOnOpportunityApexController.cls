@@ -6,7 +6,7 @@ public without sharing class PaymentOnOpportunityApexController{
     Public Static Opportunity ShowOppAmount(string recordId){
         try{
             Opportunity OppRec = [Select Id, Amount, Due_Amount__c,Email__c,Phone__c,
-                                    (SELECT Amount__c,Total_Reciepts__c FROM Invoices__r )
+                                    (SELECT Amount__c,Total_Reciepts__c, Due_Amount__c FROM Invoices__r )
                                   From Opportunity
                                   Where Id = :recordId];
 
@@ -195,24 +195,21 @@ public without sharing class PaymentOnOpportunityApexController{
 
             Opportunity OppRec = new Opportunity();
             OppRec.Id = recordId;
-            OppRec.Payment_Mode__c = paymentType;
+            //OppRec.Payment_Mode__c = paymentType;
             OppRec.Payment_Type__c = 'Partial Payment';
-            OppRec.Loan_Amount__c = null;
+            //OppRec.Loan_Amount__c = null;
             OppRec.Seek_Loan__c = 'No';
             OppRec.Payment_Status__c = 'Initiated';
             OppRec.Payment_Initiated_Date_Time__c = system.now();
-            OppRec.Payment_Initiated__c = true;
-            OppRec.Upfront_Amount__c = Amount;
-            oppRec.Due_Amount__c = PendingAmount;
+            //OppRec.Payment_Initiated__c = true;
 
 
             update OppRec;
 
             Time myTime = Time.newInstance(11, 0, 0, 0); // 11:00 AM
 
-
             if (recordId != null){
-                List<Invoice__c> invoiceRecList = [Select Id, Status__c, LeadInvoice__c, LeadInvoice__r.Owner.UserRoleId, Lead_ManagerId__c, Opportunity__c, Opportunity__r.Owner.UserRoleId, Amount__c, LeadInvoice__r.Owner.Name, LeadInvoice__r.Owner.Email, Opportunity__r.Owner.Email, Opportunity__r.Owner.Name, Payment_Type__c, Realized_Amount__c, Due_Amount__c
+                List<Invoice__c> invoiceRecList = [Select Id, Do_Not_Send_Invoice__c, Status__c, LeadInvoice__c, LeadInvoice__r.Owner.UserRoleId, Lead_ManagerId__c, Opportunity__c, Opportunity__r.Owner.UserRoleId, Amount__c, LeadInvoice__r.Owner.Name, LeadInvoice__r.Owner.Email, Opportunity__r.Owner.Email, Opportunity__r.Owner.Name, Payment_Type__c, Realized_Amount__c, Due_Amount__c
                                                From Invoice__c
                                                Where Opportunity__c = :recordId
                                                ORDER BY CreatedDate DESC
@@ -226,6 +223,7 @@ public without sharing class PaymentOnOpportunityApexController{
                     Invoice__c invRec = new Invoice__c();
                     invRec.Id = invoiceRecList[0].Id;
                     invRec.Initiated_Amount__c = Amount;
+                    invRec.Do_Not_Send_Invoice__c = true;
                     update invRec;
 
                     if (!invoiceRecList.isEmpty()){
@@ -233,6 +231,7 @@ public without sharing class PaymentOnOpportunityApexController{
                         receipt.Invoice__c = invoiceRecList[0].id;
                         receipt.amount__c = Amount;
                         receipt.Receipt_Status__c = Constants.RECEIPT_STATUS_LINKSENT;
+                        receipt.Is_Pending_Receipt__c = true;
                         insert receipt;
                     }
                 } else{
@@ -249,6 +248,7 @@ public without sharing class PaymentOnOpportunityApexController{
                     invRec.Invoice_Due_Date__c = System.Today() + 2;
                     invRec.Next_Followup_Date_Time__c = DateTime.newInstance(nextPaymentDueDate.year(), nextPaymentDueDate.month(), nextPaymentDueDate.day(), myTime.hour(), myTime.minute(), myTime.second());
                     invRec.Invoice_Due_Date__c = nextPaymentDueDate + 2;
+                    invRec.Due_Amount__c = Amount + PendingAmount;
                     insert invRec;
                     invoiceRecId = invRec.Id;
 
@@ -258,7 +258,6 @@ public without sharing class PaymentOnOpportunityApexController{
                         receipt.amount__c = Amount;
                         receipt.Receipt_Status__c = Constants.RECEIPT_STATUS_LINKSENT;
                         insert receipt;
-
                     }
                 }
             }

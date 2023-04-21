@@ -100,15 +100,19 @@ public class InitiateLoanPaymentController {
         system.debug('Base64Data--->'+Base64Data);
         system.debug('ContentType--->'+ContentType);
         system.debug('isLoanAttachment--->'+isLoanAttachment);
-        String receiptId = [select Id from receipt__c where Invoice__c =: invoiceId and type__c = 'Loan'].Id;
+        String DownPaymentReceiptId = '';
+        
+        String loanReceiptId = [select Id from receipt__c where Invoice__c =: invoiceId and type__c = 'Loan'].Id;
+        if(isLoanAttachment == 'no')
+            DownPaymentReceiptId = [select Id from receipt__c where Invoice__c =: invoiceId and type__c != 'Loan'].Id;
         try{
             base64Data = EncodingUtil.urlDecode(base64Data, 'UTF-8');
             String attachmentOwner = [Select ownerId from Invoice__c where id =: invoiceId].ownerId;
             Attachment attach = new Attachment();
             if(isLoanAttachment == 'yes')
-                attach.parentId = receiptId;
+                attach.parentId = loanReceiptId;
             else
-                attach.parentId = invoiceId;
+                attach.parentId = DownPaymentReceiptId;
             attach.Body = EncodingUtil.base64Decode(base64Data);
             attach.Name = fileName;
             attach.ContentType = contentType;
