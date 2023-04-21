@@ -547,7 +547,7 @@ public without sharing class LeadTriggerHandler{
                                 leadtoBeupdated.id = existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Id;
                                 leadtoBeupdated.OwnerId = Constants.UmeshUserId;
                                 LeadListTObeUpdated.add(leadtoBeupdated);
-                                if(existingLeadByEmail.get(leadRec.Alternate_Email__c).DeadDateTime__c != null){
+                                if(existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).DeadDateTime__c != null){
                                     if (((currentdatetimeMilisec - (existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) < 30 &&  existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).status == 'Dead'){
                                         leadRec.ownerId = existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).ownerId;
                                         leadRec.Is_Lead_Assigned_to_User__c = true;  
@@ -579,7 +579,7 @@ public without sharing class LeadTriggerHandler{
                                 leadtoBeupdated.OwnerId = Constants.UmeshUserId;
                                 LeadListTObeUpdated.add(leadtoBeupdated);
 
-                                if(existingLeadByEmail.get(leadRec.Phone).DeadDateTime__c != null){
+                                if(existingLeadByPhone.get(leadRec.Phone).DeadDateTime__c != null){
                                     if (((currentdatetimeMilisec - (existingLeadByPhone.get(leadRec.Phone).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) < 30 &&  existingLeadByPhone.get(leadRec.Phone).status == 'Dead'){
                                         leadRec.ownerId = existingLeadByPhone.get(leadRec.Phone).ownerId;   
                                         leadRec.Is_Lead_Assigned_to_User__c = true; 
@@ -612,7 +612,7 @@ public without sharing class LeadTriggerHandler{
                                 leadtoBeupdated.OwnerId = Constants.UmeshUserId;
                                 LeadListTObeUpdated.add(leadtoBeupdated);
                                 
-                                if(existingLeadByEmail.get(leadRec.Alternate_Phone__c).DeadDateTime__c != null){
+                                if(existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).DeadDateTime__c != null){
                                     if (((currentdatetimeMilisec - (existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) < 30 &&  existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).status == 'Dead'){
                                         leadRec.ownerId = existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).ownerId;    
                                         leadRec.Is_Lead_Assigned_to_User__c = true;
@@ -970,7 +970,7 @@ public without sharing class LeadTriggerHandler{
                     }
                     if ((ld.status == Constants.LEAD_STATUS_ATC || ld.status == Constants.LEAD_STATUS_DEAD || ld.status == Constants.LEAD_STATUS_JUNK || ld.status == Constants.LEAD_STATUS_OPEN ||  ld.status == Constants.LEAD_STATUS_PROMOTE)) {
                         string errormessage = 'you cannot park Lead From ' + oldLeadMap.get(ld.Id).status + ' to ' + ld.status;
-                        //ld.Next_follow_up_date_time__c.addError(errormessage);
+                       // ld.Next_follow_up_date_time__c.addError(errormessage);
                     }
                     
                 }

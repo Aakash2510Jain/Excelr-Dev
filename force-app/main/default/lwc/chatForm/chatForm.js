@@ -892,8 +892,10 @@ export default class chatForm extends LightningElement {
     }
 
     handleCorrectPhone(PhoneToverify) {
-        //var regExpPhoneformat = /^[0-9]{1,10}$/g;
-        var regExpPhoneformat = /^\d{10}$/;
+        debugger;
+        var regExpPhoneformat = /^[0-9]*$/;
+        //var regExpPhoneformat = /^[0-9]$/g;  //
+        //var regExpPhoneformat = /^\d{10}$/;
         if (PhoneToverify.match(regExpPhoneformat)) {
             return true;
         }
