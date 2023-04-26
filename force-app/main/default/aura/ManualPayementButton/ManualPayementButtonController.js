@@ -19,9 +19,9 @@
             component.set("v.dueAmountRemaning", component.get("v.oppAmount"));
             return;
         }
-        if(enterAmount > 0 ){
+        if(enterAmount > 0 && enterAmount != component.get("v.oppAmount")){
             component.set("v.partialPayment",true);
-        }else if(enterAmount == "0" || enterAmount == null || enterAmount == undefined){
+        }else if(enterAmount == "0" || enterAmount == null || enterAmount == undefined || enterAmount == component.get("v.oppAmount")){
             component.set("v.partialPayment",false);
         }
         component.set("v.enteredAmount", enterAmount);
@@ -48,7 +48,7 @@
             component.set("v.disableSave",false);
             return;
         }*/
-        if(component.find('actualamount').get('v.value') > 0 ){
+        if(component.find('actualamount').get('v.value') > 0 && component.find('actualamount').get('v.value') != component.get("v.oppAmount")){
             if(component.get("v.selectedDate") == null || component.get("v.selectedDate") == "undefined"){
                 alert("Please Select a next followup date");
                 component.set("v.disableSave",false);

@@ -724,8 +724,9 @@ export default class WaklInLead extends LightningElement {
     
 
     handleCorrectPhone(PhoneToverify){
+        var regExpPhoneformat = /^[0-9]*$/;
         //var regExpPhoneformat = /^[0-9]{1,10}$/g;
-        var regExpPhoneformat = /^\d{10}$/;
+        //var regExpPhoneformat = /^\d{10}$/;
         if (PhoneToverify.match(regExpPhoneformat)) {
             return true;
         }

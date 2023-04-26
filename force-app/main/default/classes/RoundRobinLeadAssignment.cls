@@ -367,7 +367,7 @@ public without sharing class RoundRobinLeadAssignment{
             List<Assignment_Group_Member__c> listOfExistingQueueMembers = new List<Assignment_Group_Member__c>();
             listOfExistingQueueMembers = [select id, name, Out_Of_Office__c, Assignment_Group__c, Assignment_Group__r.name, Assignment_Id__c, Leave_End_Date__c, Leave_Start_Date__c, Group_Member__c, Group_Member__r.Id
                                           from Assignment_Group_Member__c
-                                          where Assignment_Group__r.name = :assignmentGroupName];
+                                          where Assignment_Group__r.name = :assignmentGroupName AND Active__c = true];
             Set<Id> existingQueueMembersQueueId = new Set<Id>();
 
             System.debug('listOfExistingQueueMembers ===> ' + listOfExistingQueueMembers);

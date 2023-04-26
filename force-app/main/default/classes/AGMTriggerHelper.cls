@@ -167,4 +167,107 @@ public without sharing class AGMTriggerHelper{
             HandleBusinessException.captureError('AGMTriggerHelper', 'After AGM Delete', e, null);
         }
     }
+
+    public void reassignAssignmentAfterDeactivation(Map<Id, Assignment_Group_Member__c> agmOldmap , Map<Id, Assignment_Group_Member__c> agmNewmap){
+        try{
+            system.debug('agmOldmap::'+agmOldmap);
+            system.debug('agmNewmap::'+agmNewmap);
+            Set<Id> assignmentGroupId = new Set<Id>();
+            List<Assignment_Group_Member__c> agmListToBeUpdated = new List<Assignment_Group_Member__c>();
+            List<Assignment_Group__c> assignmentGroup = new List<Assignment_Group__c>();
+
+            List<Assignment_Group_Member__c> assignmentGroupMemberList = new List<Assignment_Group_Member__c>();
+            Map<String, List<Assignment_Group_Member__c>> deactivatedAGMListwithAGId = new Map<String, List<Assignment_Group_Member__c>>();
+            Map<String, List<Assignment_Group_Member__c>> ActivatedAGMListwithAGId = new Map<String, List<Assignment_Group_Member__c>>();
+            Map<String, List<Assignment_Group_Member__c>> UpdatedAGMListwithAGId = new Map<String, List<Assignment_Group_Member__c>>();
+
+            List<Assignment_Group_Member__c> FinalAGMListUpdated = new List<Assignment_Group_Member__c>();
+            
+            if(!agmNewmap.isEmpty()){
+                for(Assignment_Group_Member__c agmRec : agmNewmap.values() ){
+                    if ((agmRec.Active__c == false || agmRec.Active__c == true) && agmrec.Active__c != agmOldmap.get(agmRec.Id).active__c) {
+                        assignmentGroupId.add(agmRec.Assignment_Group__c);                   
+                    }
+                }
+                if(!assignmentGroupId.isEmpty()){
+                    assignmentGroupMemberList = [SELECT Active__c,Assignment_Group__c,Assignment_Id__c,BreakTime_Started__c,End_Date__c,Group_Member__c,Id,Name,Out_Of_Office__c 
+                                                    FROM Assignment_Group_Member__c Where Assignment_Group__c IN:assignmentGroupId];
+                    if (!assignmentGroupMemberList.isEmpty()) {
+                        for (Assignment_Group_Member__c agmRec : assignmentGroupMemberList) {
+                            if (agmRec.Active__c = true) {
+                                if (ActivatedAGMListwithAGId.containskey(agmRec.Assignment_Group__c)) {
+                                    List<Assignment_Group_Member__c> ExistingAGMlist = ActivatedAGMListwithAGId.get(agmRec.Assignment_Group__c);
+                                    ExistingAGMlist.add(agmRec);
+                                    ActivatedAGMListwithAGId.put(agmRec.Assignment_Group__c, ExistingAGMlist);
+                                }else {
+                                    ActivatedAGMListwithAGId.put(agmRec.Assignment_Group__c, new list<Assignment_Group_Member__c>{agmRec});
+                                }
+                            }
+                            if (agmRec.Active__c = false) {
+                                if (deactivatedAGMListwithAGId.containskey(agmRec.Assignment_Group__c)) {
+                                    List<Assignment_Group_Member__c> ExistingAGMlist = deactivatedAGMListwithAGId.get(agmRec.Assignment_Group__c);
+                                    ExistingAGMlist.add(agmRec);
+                                    deactivatedAGMListwithAGId.put(agmRec.Assignment_Group__c, ExistingAGMlist);
+                                }else {
+                                    deactivatedAGMListwithAGId.put(agmRec.Assignment_Group__c, new list<Assignment_Group_Member__c>{agmRec});
+                                }
+                            }
+                        }
+                    }
+                    if (!ActivatedAGMListwithAGId.isEmpty()) {
+                        for ( String  Str: ActivatedAGMListwithAGId.keyset()) {
+                            integer i =1;
+                            List<Assignment_Group_Member__c> LocalAGMListTobeUpdated = new List<Assignment_Group_Member__c>();
+                            if (!ActivatedAGMListwithAGId.isEmpty()) {
+                                for (Assignment_Group_Member__c activeagmRec : ActivatedAGMListwithAGId.get(str)) {
+                                    Assignment_Group_Member__c agmRecToBeUpdated = new Assignment_Group_Member__c();
+                                    agmRecToBeUpdated.id = activeagmRec.Id;
+                                    agmRecToBeUpdated.Assignment_Id__c = i;
+                                    LocalAGMListTobeUpdated.add(agmRecToBeUpdated);
+                                    i++;
+                                }                                
+                            }
+                            
+                            i = LocalAGMListTobeUpdated.size() + 1;
+                            if (!deactivatedAGMListwithAGId.isEmpty()) {
+                                for (Assignment_Group_Member__c deactiveagmRec : deactivatedAGMListwithAGId.get(str)) {
+                                    Assignment_Group_Member__c agmRecToBeUpdated = new Assignment_Group_Member__c();
+                                    agmRecToBeUpdated.id = deactiveagmRec.Id;
+                                    agmRecToBeUpdated.Assignment_Id__c = i;
+                                    LocalAGMListTobeUpdated.add(agmRecToBeUpdated);
+                                    i++;
+                                } 
+                            }  
+                            FinalAGMListUpdated.addAll(LocalAGMListTobeUpdated);
+                        } 
+                    }
+                    if (!FinalAGMListUpdated.isEmpty()) {
+                        update FinalAGMListUpdated;
+                    }
+
+                    
+                    /*assignmentGroup = [Select Id,(Select Id,Assignment_Id__c,Assignment_Group__c From Assignment_Group_Members__r) From Assignment_Group__c where Id in: assignmentGroupId];
+                    if(!assignmentGroup.isEmpty()){
+                        for(Assignment_Group__c assignmentGroupRec : assignmentGroup){
+                            integer i = 1;
+                            for(Assignment_Group_Member__c agmRec : assignmentGroupRec.Assignment_Group_Members__r){
+                                Assignment_Group_Member__c agmRecToBeUpdated = new Assignment_Group_Member__c();
+                                agmRecToBeUpdated.id = agmRec.Id;
+                                agmRecToBeUpdated.Assignment_Id__c = i;
+                                agmListToBeUpdated.add(agmRecToBeUpdated);
+                                i++;
+                            }
+                        }
+                        if(!agmListToBeUpdated.isEmpty()){
+                            update agmListToBeUpdated;
+                        }
+                    }*/
+                }
+            }
+        }
+        catch(Exception ex){
+            system.debug('Erro>>'+ex.getMessage());
+            system.debug('Error@@@'+ex.getLineNumber());
+        }
+    }
 }

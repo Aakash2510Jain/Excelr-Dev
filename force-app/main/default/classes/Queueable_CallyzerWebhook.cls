@@ -65,11 +65,11 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                         Map<string, Object> logmap = (Map<string, Object>)logObj;
                         System.debug('logmap =====> ' + logmap);
 
-                        LeadCustomerPhoneWithEmployeePhone.put('+' + (String) logmap.get('countryCode') + ((String) logmap.get('number')).right(10), EmployeePhone);
-                        ContactCustomerPhoneWithEmployeePhone.put(((String) logmap.get('number')).right(10), EmployeePhone);
+                        LeadCustomerPhoneWithEmployeePhone.put('+' + (String) logmap.get('countryCode') + ((String) logmap.get('number')), EmployeePhone);
+                        ContactCustomerPhoneWithEmployeePhone.put(((String) logmap.get('number')), EmployeePhone);
 
-                        CustomerPhones.add('+' + (String) logmap.get('countryCode') + ((String) logmap.get('number')).right(10));
-                        CustomerPhonesForContact.add(((String) logmap.get('number')).right(10));
+                        CustomerPhones.add('+' + (String) logmap.get('countryCode') + ((String) logmap.get('number')));
+                        CustomerPhonesForContact.add(((String) logmap.get('number')));
                         TaskIds.add((string) logmap.get('id'));
                         CustomerPhoneWithObject.put((string) logmap.get('number'), logmap);
                         TaskIdWithObject.put((string) logmap.get('id'), logmap);
@@ -100,10 +100,10 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
 
                     if (ExistingLeadwithPhone.size() > 0){
                         for (Lead ld : ExistingLeadwithPhone){
-                            if (ld.Phone != null && CustomerPhoneWithObject.containskey((ld.Phone).right(10))) {
+                            if (ld.Phone != null && CustomerPhoneWithObject.containskey((ld.Phone))) {
                                 PhoneWithLead.put(ld.Phone, ld);
                             }
-                            else if (ld.Alternate_Phone__c != null && CustomerPhoneWithObject.containskey((ld.Alternate_Phone__c).right(10))) {
+                            else if (ld.Alternate_Phone__c != null && CustomerPhoneWithObject.containskey((ld.Alternate_Phone__c))) {
                                 PhoneWithLead.put(ld.Alternate_Phone__c, ld);
                             }
                             leadListToBeUpdatedForTelephonicConversation.add(new Lead(id = ld.Id,Telephonic_Conversation__c = true));
@@ -120,10 +120,10 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                     
                     if (!ExistingOpportunitieswithPhone.isEmpty()) {
                         for (Opportunity opp : ExistingOpportunitieswithPhone) {
-                            if (opp.Phone__c != null && CustomerPhoneWithObject.containskey((opp.Phone__c).right(10))) {
+                            if (opp.Phone__c != null && CustomerPhoneWithObject.containskey((opp.Phone__c))) {
                                 PhoneWithOpportunity.put(opp.Phone__c, opp);
                             }
-                            else if (opp.Alternate_Phone__c != null && CustomerPhoneWithObject.containskey((opp.Alternate_Phone__c).right(10))) {
+                            else if (opp.Alternate_Phone__c != null && CustomerPhoneWithObject.containskey((opp.Alternate_Phone__c))) {
                                 PhoneWithOpportunity.put(opp.Alternate_Phone__c, opp);
                             }
                             
@@ -139,10 +139,10 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                                                               Where (Phone IN:CustomerPhonesForContact OR Alternate_Phone__c IN:CustomerPhonesForContact) ];
                     if (ExistingContactwithPhone.size() > 0){
                         for (Contact con : ExistingContactwithPhone){
-                            if (con.Phone != null && CustomerPhoneWithObject.containskey((con.Phone).right(10))) {
+                            if (con.Phone != null && CustomerPhoneWithObject.containskey((con.Phone))) {
                                 PhoneWithContact.put(con.Phone, con);
                             }
-                            else if (con.Alternate_Phone__c != null && CustomerPhoneWithObject.containskey((con.Alternate_Phone__c).right(10))) {
+                            else if (con.Alternate_Phone__c != null && CustomerPhoneWithObject.containskey((con.Alternate_Phone__c))) {
                                 PhoneWithContact.put(con.Alternate_Phone__c, con);
                             }
                             
@@ -153,7 +153,7 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
 
                 if (CustomerPhones.size() > 0){
                     for (string phoneStr : CustomerPhones){
-                        if (!PhoneWithContact.containsKey(phoneStr.right(10)) && !PhoneWithLead.containsKey(phoneStr)){
+                        if (!PhoneWithContact.containsKey(phoneStr) && !PhoneWithLead.containsKey(phoneStr)){
                             PhoneStringNotExistintheSystem.add(phoneStr);
                         }
                     }
@@ -189,17 +189,17 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                 for (String str : TaskIdWithObject.keyset()){
                     for (lead leadRec : ExistingLeadwithPhone){
                         if (!PhoneWithLead.isEmpty()){
-                            System.debug('(String) (TaskIdWithObject.get(str)).get(number)).right(10) ==== >' + ((String) (TaskIdWithObject.get(str)).get('number')));
-                            if ((leadRec.Phone == ('+' + ((String) (TaskIdWithObject.get(str)).get('countryCode')) + ((String) (TaskIdWithObject.get(str)).get('number')).right(10))) || 
-                            (leadRec.MobilePhone == ('+' + ((String) (TaskIdWithObject.get(str)).get('countryCode')) + ((String) (TaskIdWithObject.get(str)).get('number')).right(10))) || 
-                            (leadRec.Alternate_Phone__c == ('+' + ((String) (TaskIdWithObject.get(str)).get('countryCode')) + ((String) (TaskIdWithObject.get(str)).get('number')).right(10))) ){
-                                //&& !PhoneWithContact.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))
+                            System.debug('(String) (TaskIdWithObject.get(str)).get(number)) ==== >' + ((String) (TaskIdWithObject.get(str)).get('number')));
+                            if ((leadRec.Phone == ('+' + ((String) (TaskIdWithObject.get(str)).get('countryCode')) + ((String) (TaskIdWithObject.get(str)).get('number')))) || 
+                            (leadRec.MobilePhone == ('+' + ((String) (TaskIdWithObject.get(str)).get('countryCode')) + ((String) (TaskIdWithObject.get(str)).get('number')))) || 
+                            (leadRec.Alternate_Phone__c == ('+' + ((String) (TaskIdWithObject.get(str)).get('countryCode')) + ((String) (TaskIdWithObject.get(str)).get('number')))) ){
+                                //&& !PhoneWithContact.containsKey(((String) (TaskIdWithObject.get(str)).get('number')))
                                 System.debug('I am inside to create task for Lead');
                                 if (!TaskCallObjectIdWithLeadTask.isEmpty() && !TaskCallObjectIdWithLeadTask.containsKey(str)){
                                     Task tsk = CreateTaskForLead(TaskIdWithObject, str, leadRec);
 
-                                    if (LeadCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
-                                        string customerphone = ((String) (TaskIdWithObject.get(str)).get('number')).right(10);
+                                    if (LeadCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')))){
+                                        string customerphone = ((String) (TaskIdWithObject.get(str)).get('number'));
                                         String employeenumber = LeadCustomerPhoneWithEmployeePhone.get(customerphone);
                                         if (!PhoneWithCallSalesUser.isEmpty() && PhoneWithCallSalesUser.containsKey(employeenumber)){
                                             tsk.Callyzer_Sales_User__c = PhoneWithCallSalesUser.get(employeenumber).Id;
@@ -211,8 +211,8 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                                     Task tsk = CreateTaskForLead(TaskIdWithObject, str, leadRec);
                                     tsk.Id = TaskCallObjectIdWithLeadTask.get(str).Id;
                                     
-                                    if (LeadCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
-                                        string customerphone = ((String) (TaskIdWithObject.get(str)).get('number')).right(10);
+                                    if (LeadCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')))){
+                                        string customerphone = ((String) (TaskIdWithObject.get(str)).get('number'));
                                         String employeenumber = LeadCustomerPhoneWithEmployeePhone.get(customerphone);
                                         if (!PhoneWithCallSalesUser.isEmpty() && PhoneWithCallSalesUser.containsKey(employeenumber)){
                                             tsk.Callyzer_Sales_User__c = PhoneWithCallSalesUser.get(employeenumber).Id;
@@ -222,8 +222,8 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                                 } else{
                                     Task tsk = CreateTaskForLead(TaskIdWithObject, str, leadRec);
                                     
-                                    if (LeadCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
-                                        string customerphone = '+91' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10);
+                                    if (LeadCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')))){
+                                        string customerphone = '+91' + ((String) (TaskIdWithObject.get(str)).get('number'));
                                         String employeenumber = LeadCustomerPhoneWithEmployeePhone.get(customerphone);
                                         if (!PhoneWithCallSalesUser.isEmpty() && PhoneWithCallSalesUser.containsKey(employeenumber)){
                                             tsk.Callyzer_Sales_User__c = PhoneWithCallSalesUser.get(employeenumber).Id;
@@ -239,16 +239,16 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
 
                     for (Contact con : ExistingContactwithPhone) {
                         if (!PhoneWithContact.isEmpty()){
-                            System.debug('(String) (TaskIdWithObject.get(str)).get(number)).right(10) ==== >' + ((String) (TaskIdWithObject.get(str)).get('number')));
-                            System.debug('phone exist in Lead or not ====> ' + PhoneWithLead.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10)));
-                            if (!PhoneWithLead.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10)) && ( con.Phone == ((String) (TaskIdWithObject.get(str)).get('number')).right(10)  || con.Alternate_Phone__c == ((String) (TaskIdWithObject.get(str)).get('number')).right(10) )){
-                                //!PhoneWithLead.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10)) &&
+                            System.debug('(String) (TaskIdWithObject.get(str)).get(number)) ==== >' + ((String) (TaskIdWithObject.get(str)).get('number')));
+                            System.debug('phone exist in Lead or not ====> ' + PhoneWithLead.containsKey(((String) (TaskIdWithObject.get(str)).get('number'))));
+                            if (!PhoneWithLead.containsKey(((String) (TaskIdWithObject.get(str)).get('number'))) && ( con.Phone == ((String) (TaskIdWithObject.get(str)).get('number'))  || con.Alternate_Phone__c == ((String) (TaskIdWithObject.get(str)).get('number')) )){
+                                //!PhoneWithLead.containsKey(((String) (TaskIdWithObject.get(str)).get('number'))) &&
                                 System.debug('I am inside to create task for Contact');
                                 if (!TaskCallObjectIdWithContactTask.isEmpty() && !TaskCallObjectIdWithContactTask.containsKey(str)){
                                     Task tsk = CreatetaskForContact(TaskIdWithObject, str, PhoneWithContact);
     
-                                    if (ContactCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
-                                        string customerphone = ((String) (TaskIdWithObject.get(str)).get('number')).right(10);
+                                    if (ContactCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')))){
+                                        string customerphone = ((String) (TaskIdWithObject.get(str)).get('number'));
                                         String employeenumber = ContactCustomerPhoneWithEmployeePhone.get(customerphone);
                                         if (!PhoneWithCallSalesUser.isEmpty() && PhoneWithCallSalesUser.containsKey(employeenumber)){
                                             tsk.Callyzer_Sales_User__c = PhoneWithCallSalesUser.get(employeenumber).Id;
@@ -258,8 +258,8 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                                 } else if (!TaskCallObjectIdWithContactTask.isEmpty() && TaskCallObjectIdWithContactTask.containsKey(str)){
                                     Task tsk = CreatetaskForContact(TaskIdWithObject, str, PhoneWithContact);
                                     tsk.Id = TaskCallObjectIdWithContactTask.get(str).Id;
-                                    if (ContactCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
-                                        string customerphone = ((String) (TaskIdWithObject.get(str)).get('number')).right(10);
+                                    if (ContactCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')))){
+                                        string customerphone = ((String) (TaskIdWithObject.get(str)).get('number'));
                                         String employeenumber = ContactCustomerPhoneWithEmployeePhone.get(customerphone);
                                         if (!PhoneWithCallSalesUser.isEmpty() && PhoneWithCallSalesUser.containsKey(employeenumber)){
                                             tsk.Callyzer_Sales_User__c = PhoneWithCallSalesUser.get(employeenumber).Id;
@@ -269,8 +269,8 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
     
                                 } else{
                                     Task tsk = CreatetaskForContact(TaskIdWithObject, str, PhoneWithContact);
-                                    if (ContactCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
-                                        string customerphone = ((String) (TaskIdWithObject.get(str)).get('number')).right(10);
+                                    if (ContactCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')))){
+                                        string customerphone = ((String) (TaskIdWithObject.get(str)).get('number'));
                                         String employeenumber = ContactCustomerPhoneWithEmployeePhone.get(customerphone);
                                         if (!PhoneWithCallSalesUser.isEmpty() && PhoneWithCallSalesUser.containsKey(employeenumber)){
                                             tsk.Callyzer_Sales_User__c = PhoneWithCallSalesUser.get(employeenumber).Id;
@@ -285,15 +285,15 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
 
                     for (Opportunity Opp : ExistingOpportunitieswithPhone) {
                         if (!PhoneWithOpportunity.isEmpty()) {
-                            if ((Opp.Phone__c == ('+' + ((String) (TaskIdWithObject.get(str)).get('countryCode')) + ((String) (TaskIdWithObject.get(str)).get('number')).right(10))) || 
-                            (Opp.Alternate_Phone__c == ('+' + ((String) (TaskIdWithObject.get(str)).get('countryCode')) + ((String) (TaskIdWithObject.get(str)).get('number')).right(10))) ){
-                                //&& !PhoneWithContact.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))
+                            if ((Opp.Phone__c == ('+' + ((String) (TaskIdWithObject.get(str)).get('countryCode')) + ((String) (TaskIdWithObject.get(str)).get('number')))) || 
+                            (Opp.Alternate_Phone__c == ('+' + ((String) (TaskIdWithObject.get(str)).get('countryCode')) + ((String) (TaskIdWithObject.get(str)).get('number')))) ){
+                                //&& !PhoneWithContact.containsKey(((String) (TaskIdWithObject.get(str)).get('number')))
                                 System.debug('I am inside to create task for Lead');
                                 if (!TaskCallObjectIdWithOppTask.isEmpty() && !TaskCallObjectIdWithOppTask.containsKey(str)){
                                     Task tsk = CreateTaskForOpportunity(TaskIdWithObject, str, Opp);
 
-                                    if (LeadCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
-                                        string customerphone = ((String) (TaskIdWithObject.get(str)).get('number')).right(10);
+                                    if (LeadCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')))){
+                                        string customerphone = ((String) (TaskIdWithObject.get(str)).get('number'));
                                         String employeenumber = LeadCustomerPhoneWithEmployeePhone.get(customerphone);
                                         if (!PhoneWithCallSalesUser.isEmpty() && PhoneWithCallSalesUser.containsKey(employeenumber)){
                                             tsk.Callyzer_Sales_User__c = PhoneWithCallSalesUser.get(employeenumber).Id;
@@ -305,8 +305,8 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                                     Task tsk = CreateTaskForOpportunity(TaskIdWithObject, str, Opp);
                                     tsk.Id = TaskCallObjectIdWithOppTask.get(str).Id;
                                     
-                                    if (LeadCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
-                                        string customerphone = ((String) (TaskIdWithObject.get(str)).get('number')).right(10);
+                                    if (LeadCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')))){
+                                        string customerphone = ((String) (TaskIdWithObject.get(str)).get('number'));
                                         String employeenumber = LeadCustomerPhoneWithEmployeePhone.get(customerphone);
                                         if (!PhoneWithCallSalesUser.isEmpty() && PhoneWithCallSalesUser.containsKey(employeenumber)){
                                             tsk.Callyzer_Sales_User__c = PhoneWithCallSalesUser.get(employeenumber).Id;
@@ -316,8 +316,8 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                                 } else{
                                     Task tsk = CreateTaskForOpportunity(TaskIdWithObject, str, Opp);
                                     
-                                    if (LeadCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
-                                        string customerphone = '+91' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10);
+                                    if (LeadCustomerPhoneWithEmployeePhone.containsKey(((String) (TaskIdWithObject.get(str)).get('number')))){
+                                        string customerphone = '+91' + ((String) (TaskIdWithObject.get(str)).get('number'));
                                         String employeenumber = LeadCustomerPhoneWithEmployeePhone.get(customerphone);
                                         if (!PhoneWithCallSalesUser.isEmpty() && PhoneWithCallSalesUser.containsKey(employeenumber)){
                                             tsk.Callyzer_Sales_User__c = PhoneWithCallSalesUser.get(employeenumber).Id;
@@ -334,7 +334,7 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                     }
                     
                     /*if (PhoneStringNotExistintheSystem.size() > 0){
-                     if (!PhoneWithLead.containsKey('+91' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10)) && !PhoneWithContact.containsKey(((String) (TaskIdWithObject.get(str)).get('number')).right(10))){
+                     if (!PhoneWithLead.containsKey('+91' + ((String) (TaskIdWithObject.get(str)).get('number'))) && !PhoneWithContact.containsKey(((String) (TaskIdWithObject.get(str)).get('number')))){
                      if (!TaskCallObjectIdWithTask.isEmpty() && !TaskCallObjectIdWithTask.containsKey(str)){
                      Task tsk = createLeadAndtask(str,TaskIdWithObject);
                      if (CallyzerSalesUser.size() >0) {
@@ -395,8 +395,8 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
             tsk.Subject = (String) (TaskIdWithObject.get(str)).get('callType') + ' Callyzer Call Log';
             tsk.CallObject = (String) (TaskIdWithObject.get(str)).get('id');
             //This is the default...
-            tsk.OwnerId = PhoneWithLead.OwnerId;//PhoneWithLead.get('+'+(String) (TaskIdWithObject.get(str)).get('countryCode')+ ((String) (TaskIdWithObject.get(str)).get('number')).right(10)).OwnerId;
-            tsk.whoid = PhoneWithLead.Id;//PhoneWithLead.get('+'+(String) (TaskIdWithObject.get(str)).get('countryCode')+ ((String) (TaskIdWithObject.get(str)).get('number')).right(10)).Id;
+            tsk.OwnerId = PhoneWithLead.OwnerId;//PhoneWithLead.get('+'+(String) (TaskIdWithObject.get(str)).get('countryCode')+ ((String) (TaskIdWithObject.get(str)).get('number'))).OwnerId;
+            tsk.whoid = PhoneWithLead.Id;//PhoneWithLead.get('+'+(String) (TaskIdWithObject.get(str)).get('countryCode')+ ((String) (TaskIdWithObject.get(str)).get('number'))).Id;
             tsk.Status = 'Completed';
             tsk.Calling_Party__c = 'Callyzer';
             tsk.Call_Type__c = (String) (TaskIdWithObject.get(str)).get('callType');
@@ -421,9 +421,9 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
             tsk.Subject = (String) (TaskIdWithObject.get(str)).get('callType') + ' Callyzer Call Log';
             tsk.CallObject = (String) (TaskIdWithObject.get(str)).get('id');
             //This is the default...
-            System.debug('((String) (TaskIdWithObject.get(str)).get(number)).right(10)' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10));
-            tsk.OwnerId = PhoneWithContact.get(((String) (TaskIdWithObject.get(str)).get('number')).right(10)).OwnerId;
-            tsk.WhoId = PhoneWithContact.get(((String) (TaskIdWithObject.get(str)).get('number')).right(10)).Id;
+            System.debug('((String) (TaskIdWithObject.get(str)).get(number))' + ((String) (TaskIdWithObject.get(str)).get('number')));
+            tsk.OwnerId = PhoneWithContact.get(((String) (TaskIdWithObject.get(str)).get('number'))).OwnerId;
+            tsk.WhoId = PhoneWithContact.get(((String) (TaskIdWithObject.get(str)).get('number'))).Id;
             tsk.Status = 'Completed';
             tsk.Calling_Party__c = 'Callyzer';
             tsk.Call_Type__c = (String) (TaskIdWithObject.get(str)).get('callType');
@@ -452,7 +452,7 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
             tsk.Subject = (String) (TaskIdWithObject.get(str)).get('callType') + ' Callyzer Call Log';
             tsk.CallObject = (String) (TaskIdWithObject.get(str)).get('id');
             //This is the default...
-            System.debug('((String) (TaskIdWithObject.get(str)).get(number)).right(10)' + ((String) (TaskIdWithObject.get(str)).get('number')).right(10));
+            System.debug('((String) (TaskIdWithObject.get(str)).get(number))' + ((String) (TaskIdWithObject.get(str)).get('number')));
             tsk.OwnerId = ld.OwnerId;
             tsk.WhoId = ld.Id;
             tsk.Status = 'Completed';
@@ -477,8 +477,8 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
             tsk.Subject = (String) (TaskIdWithObject.get(str)).get('callType') + ' Callyzer Call Log';
             tsk.CallObject = (String) (TaskIdWithObject.get(str)).get('id');
             //This is the default...
-            tsk.OwnerId = PhoneWithOpp.OwnerId;//PhoneWithLead.get('+'+(String) (TaskIdWithObject.get(str)).get('countryCode')+ ((String) (TaskIdWithObject.get(str)).get('number')).right(10)).OwnerId;
-            tsk.whatId = PhoneWithOpp.Id;//PhoneWithLead.get('+'+(String) (TaskIdWithObject.get(str)).get('countryCode')+ ((String) (TaskIdWithObject.get(str)).get('number')).right(10)).Id;
+            tsk.OwnerId = PhoneWithOpp.OwnerId;//PhoneWithLead.get('+'+(String) (TaskIdWithObject.get(str)).get('countryCode')+ ((String) (TaskIdWithObject.get(str)).get('number'))).OwnerId;
+            tsk.whatId = PhoneWithOpp.Id;//PhoneWithLead.get('+'+(String) (TaskIdWithObject.get(str)).get('countryCode')+ ((String) (TaskIdWithObject.get(str)).get('number'))).Id;
             tsk.Status = 'Completed';
             tsk.Calling_Party__c = 'Callyzer';
             tsk.Call_Type__c = (String) (TaskIdWithObject.get(str)).get('callType');

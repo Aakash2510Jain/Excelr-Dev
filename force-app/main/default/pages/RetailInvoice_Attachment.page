@@ -1,41 +1,38 @@
 <apex:page standardController="Invoice__c" extensions="RetailInvoiceHelper" renderAs="pdf" setup="false" sidebar="false" showHeader="false">
     <apex:stylesheet value="{!$Resource.CSSHelper}"/>
-     
-        
-  
     <h1>
         <center><b>Tax Invoice </b> </center>
     </h1> 
-     
+    
     <div style="Width:120%; height:40%; margin-bottom:39%;   margin-">
         <table  style="width:50%; height:80%; float:left; padding-bottom:10%;  border:1px solid black; font-size:96.8%; text-align:left; border-collapse: collapse;">
             <tr  style="width:50%;">
                 <td  style="  border:1px solid black; padding-top:10px; padding-left:40px;">
                     <img src="{!$Resource.ExcelRLogo}" width="180px;" height="50px;"/><br/><br/><br/> 
-                        <b>{!getcustomData.Name}<br/></b>
-                        {!getcustomData.Address__c}<br/>
-                        {!getcustomData.City__c} {!getcustomData.Pin_Code__c}<br/>
-                        GSTIN/UIN:{!getcustomData.GSTIN__c}<br/>
-                        State Name:  {!getcustomData.State_Name__c}, Code:{!getcustomData.State_Code__c}<br/>
-                        E-Mail:{!getcustomData.EMail__c}<br/> <br/> <br/>  <br/>  <br/> 
+                    <b>{!getcustomData.Name}<br/></b>
+                    {!getcustomData.Address__c}<br/>
+                    {!getcustomData.City__c} {!getcustomData.Pin_Code__c}<br/>
+                    GSTIN/UIN:{!getcustomData.GSTIN__c}<br/>
+                    State Name:  {!getcustomData.State_Name__c}, Code:{!getcustomData.State_Code__c}<br/>
+                    E-Mail:{!getcustomData.EMail__c}<br/> <br/> <br/>  <br/>  <br/> 
                     
                 </td>
-                 </tr> 
+            </tr> 
         </table>
         <table  style="width:50%;  height:80%;float:right; border:1px solid black; font-size:82%; border-collapse: collapse;">
             <tr  style="width:50%;">
                 <td  style="  border:1px solid black; padding-left:5px; width:25%; padding-right:10px;" colspan="2">
                     
                     Buyer(Bill to)<br/><br/>
-                    <b>{!getinvoiceData.Opportunity__r.Name}</b><br/><br/>
-                    {!getinvoiceData.Opportunity__r.Email__c}<br/> 
-                   {!getinvoiceData.Opportunity__r.GST_State__c}<br/><br/>
-                    State Name:&nbsp;&nbsp;&nbsp;    {!getinvoiceData.Opportunity__r.GST_State__c},Code: {!StateCode}<br/><br/><br/><br/><br/><br/><br/><br/>
+                    <b>{!opportunityName}</b><br/><br/>
+                    {!opportunityEmail}<br/> 
+                    {!opportunityGSTState}<br/><br/>
+                    State Name:&nbsp;&nbsp;&nbsp;    {!opportunityGSTState},Code: {!StateCode}<br/><br/><br/><br/><br/><br/><br/><br/>
                 </td>
                 <td style="  border:0px solid black; width:25%; " >
-                     
-               </td>
-             </tr>
+                    
+                </td>
+            </tr>
             
             <tr>
                 <td style="  border:1px solid black; width:25%; padding-top:10px; padding-left:5px; padding-bottom:10px;">
@@ -45,115 +42,41 @@
                 <td style="  border:1px solid black; width:25%;  padding-top:10px; padding-bottom:10px; padding-left:5px;">
                     Dated<br/>
                     <b> <apex:outputText value="{0,date,dd'-'MMM'-'yy}">
-                        <apex:param value="{!getinvoiceData.Initiated_Date__c}" /> 
+                        <apex:param value="{!invoiceInitiatedDate}" /> 
                         </apex:outputText></b>
                 </td>
             </tr>
-           
+            
             
             
             
         </table>
     </div>
-    <!--    <div style="Width:50%; float:left">
-            <img src="{!$Resource.ExcelRLogo}" width="180px;" height="50px;"/><br/>
-             <b>{!getcustomData.Name}<br/></b>
-                        {!getcustomData.Address__c}<br/>
-                        {!getcustomData.City__c} {!getcustomData.Pin_Code__c}<br/>
-                        GSTIN/UIN:{!getcustomData.GSTIN__c}<br/>
-                        State Name: {!getcustomData.State_Name__c}, Code:{!getcustomData.State_Code__c}<br/>
-                        E-Mail:{!getcustomData.EMail__c}
-        </div>
-         <div style="Width:50%; float:right">
-            <div style="Width:50%; float:right"> 
-             Buyer(Bill to)<br/>
-                        <b>{!getAccData.Contacts[0].Name}</b><br/>
-                        {!getAccData.Contacts[0].Email}<br/>
-                        {!getAccData.City__c}<br/>
-                        State Name:    {!getoppData.GST_State__c},Code: {!StateCode}
-             </div>
-               <div style="Width:50%; float:right">
-                     <div style="Width:25%; float:right">
-                         Invoice No.<br/>
-                    <b> {!getinvoiceData.Name}</b>
-                         
-                   </div>
-                   <div style="Width:25%; float:left">
-                         Dated<br/>
-                    <b> <apex:outputText value="{0,date,dd'-'MMM'-'yy}">
-                        <apex:param value="{!getinvoiceData.Initiated_Date__c}" /> 
-                        </apex:outputText></b>
-                         
-                   </div>
-                   
-             </div>
-                   
-        </div>
-        
-    </div>-->
+    
     
     <div >
         
-   <!--     <table border="1" style="width: 100%;">
-            <tr>
-                <td colspan="2">
-                    <div style="float:right;margin-right:5px;">
-                        <b>{!getcustomData.Name}<br/></b>
-                        {!getcustomData.Address__c}<br/>
-                        {!getcustomData.City__c} {!getcustomData.Pin_Code__c}<br/>
-                        GSTIN/UIN:{!getcustomData.GSTIN__c}<br/>
-                        State Name: {!getcustomData.State_Name__c}, Code:{!getcustomData.State_Code__c}<br/>
-                        E-Mail:{!getcustomData.EMail__c}
-                    </div> 
-                    <div style="float:left;">
-                        <apex:image url="{!$Resource.ExcelRLogo}" width="130" height="120"/>
-                    </div> 
-                </td>                
-                <td style="text-align: center;">Invoice No.<br/>
-                    <b> {!getinvoiceData.Name}</b></td>
-                
-                <td style="text-align: center;">Dated<br/>
-                    <b> <apex:outputText value="{0,date,dd'-'MMM'-'yy}">
-                        <apex:param value="{!getinvoiceData.Initiated_Date__c}" /> 
-                        </apex:outputText></b>
-                </td>   
-                
-            </tr>             
-            <tr>
-                <td colspan="2"> Consignee (Ship to)<br/>
-                    <b> Other Debtors</b><br/>
-                    State Name&nbsp;&nbsp;&nbsp;&nbsp; :{!getoppData.GST_State__c},&nbsp;&nbsp; Code &nbsp;:&nbsp; {!StateCode} </td>
-                <td style="text-align: center;">Delivery Note <br/>
-                    {!getinvoiceData.Delivery_Note__c} </td>
-                <td style="text-align: center;">Mode/Terms of Payment<br/>
-                    {!getinvoiceData.Mode_Terms_of_Payment__c}</td>      
-            </tr>
-            <tr>
-                <td colspan="2" >
-                    <div style="float:bottom;margin-bottom:50px;">
-                        Buyer(Bill to)<br/>
-                        <b>{!getAccData.Contacts[0].Name}</b><br/>
-                        {!getAccData.Contacts[0].Email}<br/>
-                        {!getAccData.City__c}<br/>
-                        State Name:    {!getoppData.GST_State__c},Code: {!StateCode}
-                    </div> 
-                </td> 
-                
-                <td style="text-align: center;">Reference No.  &amp; Date.<br/>
-                    {!getinvoiceData.Reference_No__c}</td>
-                <td style="text-align: center;">Other References <br/>
-                    {!getinvoiceData.Other_References__c}</td></tr>
-            
-        </table>  -->                 
         <table border="2" style="width: 100%; margin-top:10%;" >
             <tr>
                 <td>SI No.</td>
-                <td style="text-align: center;">Particulars</td>
-                <td style="text-align: center;">HSN/SAC</td>
-                <td style="text-align: center;">Quantity</td>
-                <td style="text-align: center;">Rate</td>
-                <td style="text-align: center;">Percent</td>
-                <td style="text-align: center;">Amount</td>
+                <td style="text-align: center;">
+                    Particulars
+                </td>
+                <td style="text-align: center;">
+                    HSN/SAC
+                </td>
+                <td style="text-align: center;">
+                    Quantity
+                </td>
+                <td style="text-align: center;">
+                    Rate
+                </td>
+                <td style="text-align: center;">
+                    Percent
+                </td>
+                <td style="text-align: center;">
+                    Amount
+                </td>
             </tr>
             <tr>
                 <td>1 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/></td>
@@ -165,22 +88,46 @@
                 <td style="text-align: center;">1.00<br/> </td>
                 <td style="text-align: center;"><br/><br/> {!getcustomData.Rate__c} <br/> {!getcustomData.Rate__c}</td>
                 <td style="text-align: center;"><br/><br/> % <br/> % </td>
-                <td><b>{!getInvoiceTotalPrice} -- <br/><br/>{!PercentageTotal}<br/>{!PercentageTotal}</b></td> </tr> 
+                <td>
+                    <b>
+                        {!getInvoiceTotalPrice} -- <br/><br/>{!PercentageTotal}<br/>{!PercentageTotal}
+                    </b>
+                </td> 
+            </tr> 
             <tr>
-                <td> </td>
-                <td style="text-align: right;">Total </td>
-                <td> </td>
-                <td> </td>
-                <td> </td>
-                <td> </td> 
-                <td><b>{!getinvoiceData.Amount__c}</b></td> </tr> 
+                <td> 
+                </td>
+                <td style="text-align: right;">Total
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td> 
+                </td>
+                <td> 
+                </td> 
+                <td>
+                    <b>
+                        {!invoiceTotalAmount} 
+                    </b>
+                </td>
+            </tr> 
             <table border="2" style="width: 100%;">  
                 <td>
                     <h4>
-                        <apex:outputText escape="false"><p style="">Amount Chargeable(in words) &nbsp;&nbsp;&nbsp;&nbsp;  E. &amp; O.E.</p>  </apex:outputText>
+                        <apex:outputText escape="false">
+                            <p style="">
+                                Amount Chargeable(in words) &nbsp;&nbsp;&nbsp;&nbsp;     
+                            </p>  
+                        </apex:outputText>
                     </h4>
                     
-                    INR&nbsp;&nbsp;<b  style="font-size: 18px;"> {!AmountTotalAmountWithPercentageInWords}</b></td> 
+                    INR&nbsp;&nbsp;
+                    <b  style="font-size: 18px;"> 
+                        {!AmountTotalAmountWithPercentageInWords}&nbsp;ONLY
+                    </b>
+                </td> 
             </table> 
             
         </table>                   
@@ -220,31 +167,22 @@
                 <td style="text-align: center;"><b>{!TotalTaXAmount}</b></td>  </tr>   
         </table>
         <table border="2" style="width: 100%;">
-            <tr><td> Tax amount(in words):  &nbsp;INR &nbsp;<b> {!TotalTaXAmountInword}</b><br/>
-              <!--  Remarks:<br/>
-                invoice raised to {!getAccData.Contacts[0].Name}<br/>
-                {!getAccData.Email__c} <br/>
-                
-                <div style="float:right;margin-right:-1.5px;margin-bottom:-1.5px;padding-top:5px;padding-left:5px;padding-bottom:5px;padding-right:5px; border-style: solid;border-width:1px; !important">
-                    <b>for {!getcustomData.Name}<br/><br/></b>
-                    Authorised Signatory
-                </div>-->
-                
+            <tr>
+                <td> 
+                    Tax amount(in words):  &nbsp;INR &nbsp;<b> {!TotalTaXAmountInword}&nbsp; ONLY</b><br/>
                 </td>
-                
             </tr>
             <tr  >
                 <td  style="padding-left:410px;">
                     <b>for {!getcustomData.Name}<br/><br/></b>
-                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Authorised Signatory
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Authorised Signatory
                 </td>
             </tr>
-            
         </table> <br/>
         Note: This invoice is not a proof of payment. Please refer to the receipts for payment confirmation <br/><br/><br/> 
         <p style="text-align:center;margin-top:10px">
             This is a Computer Generated Invoice
         </p>    
     </div>  
-         
+    
 </apex:page>

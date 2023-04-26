@@ -1,0 +1,20 @@
+<aura:component implements="lightning:isUrlAddressable,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                access="global" controller="TransferLeadListViewID_Class" >
+    <aura:html tag="style">
+        .slds-modal__container{
+        max-width: 80rem !important;
+        width:80% !important;
+        }
+    </aura:html>
+    
+    <aura:handler name="init" value="{!this }" action="{!c.doInit }"/>
+    <aura:handler name="change" value="{!v.pageReference}" action="{!c.doInit}" />
+    <aura:attribute name="ListofLeads" type="List" />
+    <aura:attribute name="AllLeadListview" type="Object" />
+    <aura:attribute name="isModalOpen" type="boolean" default="true" />
+    
+    
+    
+    
+
+</aura:component>

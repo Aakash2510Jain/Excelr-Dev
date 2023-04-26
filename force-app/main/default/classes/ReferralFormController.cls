@@ -3,12 +3,15 @@ public without sharing class ReferralFormController{
     public static string SubmitReferralDetails(Lead Leadrec, String countrycode, string countrycodealternate){
 
         if (countrycode != null && Leadrec.Phone != null){
+            system.debug('Leadrec.Phone--->'+Leadrec.Phone);
             Leadrec.Phone = countrycode + Leadrec.Phone;
+            system.debug('Leadrec.Phone--->'+Leadrec.Phone);
         }
 
         if (countrycodealternate != null && Leadrec.Alternate_Phone__c != null){
+            system.debug('Leadrec.Alternate_Phone__c--->'+Leadrec.Alternate_Phone__c);
             Leadrec.Alternate_Phone__c = countrycodealternate + Leadrec.Alternate_Phone__c;
-
+            system.debug('Leadrec.Alternate_Phone__c--->'+Leadrec.Alternate_Phone__c);
         }
         string leadem = Leadrec.Email;
         string leadaltEm = Leadrec.Alternate_Email__c;
@@ -127,11 +130,11 @@ public without sharing class ReferralFormController{
                         Leadrec.Lead_Gen_Path__c = 'Reference';
                         Leadrec.OwnerId = UserInfo.getUserId();
                         if (countrycode != null && Leadrec.Phone != null){
-                            Leadrec.Phone = countrycode + Leadrec.Phone;
+                            Leadrec.Phone = Leadrec.Phone;
                         }
 
                         if (countrycodealternate != null && Leadrec.Alternate_Phone__c != null){
-                            Leadrec.Alternate_Phone__c = countrycodealternate + Leadrec.Alternate_Phone__c;
+                            Leadrec.Alternate_Phone__c = Leadrec.Alternate_Phone__c;
 
                         }
                         insert Leadrec;

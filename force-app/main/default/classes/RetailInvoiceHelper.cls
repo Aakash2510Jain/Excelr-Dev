@@ -13,16 +13,21 @@ global without sharing class RetailInvoiceHelper {
     global static List<GST_State_Code__c> gstdata {get;set;}
     global static Decimal StateCode {get;set;}
     global static String currentState {get;set;}
-    
     global String getOLIDataName {get;set;}
     global Decimal getInvoiceQuantity {get;set;}
     global Decimal getInvoiceTotalPrice {get;set;}
     
+    global String opportunityName {get;set;}
+    global String opportunityEmail {get;set;}
+    global String opportunityGSTState {get;set;}
+    global Date invoiceInitiatedDate {get;set;}
+    global String invoiceTotalAmount {get;set;}
+    
     global RetailInvoiceHelper(ApexPages.StandardController controller) {
         try{
-            String recordId = '';
-            String oppId = '';
-            String AccId = '';
+            String recordId;
+            String oppId;
+            String AccId;
             Decimal TotalPrice = 0.0;
             Decimal Rate = 0.0;
             
@@ -32,8 +37,13 @@ global without sharing class RetailInvoiceHelper {
             getinvoiceData = [Select Id,Opportunity__r.Email__c,Opportunity__r.Amount,Opportunity__r.GST_State__c,Opportunity__r.Product_Name__c,Opportunity__r.Name,Name,Initiated_Date__c,Opportunity__c,Delivery_Note__c,Mode_Terms_of_Payment__c,Reference_No__c,Other_References__c,Amount__c from Invoice__c where Id=:recordId  LIMIT 1];
             gstdata = [SELECT Id,Name,State_Code__c	 FROM GST_State_Code__c];
             
-            
+            opportunityName = getinvoiceData.Opportunity__r.Name;
+            opportunityEmail = getinvoiceData.Opportunity__r.Email__c;
+            opportunityGSTState = getinvoiceData.Opportunity__r.GST_State__c;
+            invoiceInitiatedDate = getinvoiceData.Initiated_Date__c;
+                    
             if (getinvoiceData.Amount__c != null) {
+                invoiceTotalAmount = string.valueOf(getinvoiceData.Amount__c);
                 getInvoiceTotalPrice = ((getinvoiceData.Amount__c) * 100)/118;
                 getInvoiceTotalPrice = getInvoiceTotalPrice.setScale(2);
                 PercentageTotal = (getInvoiceTotalPrice *9)/100;
