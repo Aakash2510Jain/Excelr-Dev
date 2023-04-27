@@ -1,13 +1,9 @@
 public without sharing class RazorpayPaymentHandler {
     
-    public static String sendPaymentLink(String recordId){ //invoice id will come here
+    public static String sendPaymentLink(String recordId){ 
         
         if(!String.isBlank(recordId)){
-            
-            // 1) Query particular invoice with lead and opp;
-            // 2) check if invoice is related with lead or opp and pass the value under email,contact,name,amount;
-            // 3) 
-            
+           
             Opportunity opp = [Select Id,Name,Amount,Email__c,Phone__c,AccountId,Account.Email__c,Account.Name,Account.Phone From Opportunity Where Id=:recordId];
             
             String email;
@@ -179,16 +175,14 @@ public without sharing class RazorpayPaymentHandler {
             string PaymentUrl = String.valueof(jsonBody.get('short_url'));
             System.debug('PaymentUrl ======> '+ PaymentUrl);
 
+            
+            System.debug('invrecID-->'+invrecID);
+
             if (PaymentUrl != null && invrecID != null ) {
                 Utility.SendPaymentLinkToISM( invrecID, PaymentUrl);
-                List<Invoice__c> invoicerec = [Select Id, Name,(Select id From Receipts__r order by CreatedDate Desc LIMIT 1) from Invoice__c where Id =:invrecID];
-                if (!invoicerec.isEmpty()) {
-                    if (!invoicerec[0].Receipts__r.isempty()) {
-                         
-                    }
-                    
-                }
-                
+                Receipt__c receiptRec = [Select Id,Payment_Link__c From Receipt__c where Type__c = 'RazorPay' and Receipt_Status__c = 'Link Sent' limit 1];
+                receiptRec.Payment_Link__c = PaymentUrl;
+                update receiptRec;
             }
         }
         catch (Exception e) {
