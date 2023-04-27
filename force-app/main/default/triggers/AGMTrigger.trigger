@@ -10,8 +10,7 @@ trigger AGMTrigger on Assignment_Group_Member__c (before update,after update, af
             // handlerInstance.beforeUpdate(Trigger.newMap, trigger.oldMap);
         }
         if (trigger.isUpdate && trigger.isafter) {
-            handlerInstance.reassignAssignmentAfterDeactivation( trigger.old);
-            
+            handlerInstance.reassignAssignmentAfterDeactivation( trigger.oldMap, Trigger.newMap);
         }
         if (trigger.isafter && trigger.isInsert){
             handlerInstance.afterInsert(Trigger.newMap, trigger.oldMap);

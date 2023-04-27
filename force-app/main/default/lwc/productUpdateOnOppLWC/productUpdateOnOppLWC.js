@@ -786,7 +786,7 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
             InsertOppLineItem({Prodlist:this.SelectedProduct,AddOnList:this.SelectedAddons,oppId:this.recordId})
             .then(result=>{
                 console.log('result',result);
-                if(result=='SUCCESS'){
+                if(result=='SUCCESS' || result==null || result==undefined){
                        console.log('result---',result);
                        this.LoadingSpinner=false;
                        //location.href='https://excelr2--qa.sandbox.lightning.force.com/lightning/r/Opportunity'+this.recordId + '/view';

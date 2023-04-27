@@ -104,14 +104,14 @@ public without sharing class ManualpaymentController{
                     DateTime followUpDateTime = DateTime.newInstanceGMT(Date.valueOf(nextPaymentDueDate), myTime);
                     invRec.Next_Followup_Date_Time__c = followUpDateTime;
                 }
-                invRec.Initiated_Amount__c = integer.valueOf(upfrontAmount);
+                invRec.Initiated_Amount__c = decimal.valueOf(upfrontAmount);
                 invRec.Due_Amount__c = decimal.valueOf(opportunityAmount);
                 insert invRec;
                 
-                if(integer.valueOf(upfrontAmount) > 0){
+                if(decimal.valueOf(upfrontAmount) > 0){
                     // create 2 receipt
                     Receipt__c receiptForDownPayment = new Receipt__c();
-                    receiptForDownPayment.Amount__c = integer.valueOf(upfrontAmount);
+                    receiptForDownPayment.Amount__c = decimal.valueOf(upfrontAmount);
                     receiptForDownPayment.Invoice__c = invRec.Id;
                     receiptForDownPayment.Type__c = paymentType;
                     receiptForDownPayment.Receipt_Status__c = 'Initiated';
@@ -133,11 +133,11 @@ public without sharing class ManualpaymentController{
                     receiptIdToreturn = receiptForLoanPayment.Id;
                 } 
             }else{
-                if(integer.valueOf(upfrontAmount) > 0){
+                if(decimal.valueOf(upfrontAmount) > 0){
                     // create 2 receipt
                     Receipt__c receiptForDownPayment = new Receipt__c();
                     receiptForDownPayment.Is_Pending_Receipt__c= true;
-                    receiptForDownPayment.Amount__c = integer.valueOf(upfrontAmount);
+                    receiptForDownPayment.Amount__c = decimal.valueOf(upfrontAmount);
                     receiptForDownPayment.Invoice__c = opportunityRecord.Invoices__r[0].Id;
                     receiptForDownPayment.Type__c = paymentType;
                     receiptForDownPayment.Receipt_Status__c = 'Initiated';
