@@ -28,8 +28,8 @@
               Upfront Amount
             </p>
             <lightning-input type="Number" placeholder="Enter Your Upfront payment" label="" name="UpfrontAmount"
-              value={PartialUpfrontAmount} onchange={HandlePartialLoanInputUpfrontAmount} disabled={disableUpfrontAmount}
-              style="margin-right:10px ;"></lightning-input>
+              value={PartialUpfrontAmount} onchange={HandlePartialLoanInputUpfrontAmount}
+              disabled={disableUpfrontAmount} style="margin-right:10px ;"></lightning-input>
           </div>
           <div class="slds-col slds-size_6-of-12">
             <p style="font-weight:bold">
@@ -52,7 +52,7 @@
               Select Next Due Date
             </p>
             <lightning-input type="date" label="" value={selectedDate} min={minDate}
-              onchange={HandleNextDueDate} ></lightning-input>
+              onchange={HandleNextDueDate}></lightning-input>
             <br />
           </div>
         </div>
@@ -66,7 +66,7 @@
               Select Your Payment Type
             </p>
             <lightning-combobox label="" name="Payment" value={PaymentType} placeholder="Select Your Payment Type"
-              options={Paymentoptions}  onchange={Showsavebutton}></lightning-combobox>
+              options={Paymentoptions} onchange={Showsavebutton}></lightning-combobox>
           </div>
         </div>
         <div class="slds-grid slds-gutters" style="">
@@ -75,7 +75,7 @@
               Link Expiry Date
             </p>
             <lightning-input type="date" label="" value={selectedExpiryDate} min={minDate}
-              onchange={handleLinkExpiry} ></lightning-input>
+              onchange={handleLinkExpiry}></lightning-input>
             <br />
           </div>
         </div>
@@ -96,7 +96,7 @@
     <template if:true={ShowFullLoanOption}>
       <div>
         <template if:true={Amount}>
-          <p>Original Price:&nbsp;<b>{originalPrice}</b></p>          
+          <p>Original Price:&nbsp;<b>{originalPrice}</b></p>
           <br />
           <p>Price Including GST:&nbsp;<b>{priceIncludingGst}</b></p>
           <br />
@@ -108,12 +108,13 @@
             <p style="font-weight:bold">
               Down Payment
             </p>
-            <lightning-input type="number" placeholder="Enter DownPayment Amount"  name="Tenure" value={DownPayfullLoan} onchange={HandleDownPayPFullLoan} ></lightning-input>
+            <lightning-input type="number" placeholder="Enter DownPayment Amount" name="Tenure" value={DownPayfullLoan}
+              onchange={HandleDownPayPFullLoan}></lightning-input>
           </div>
           <br />
 
           <div class="slds-col slds-size_6-of-12">
-            
+
           </div>
           <br />
           <div class="slds-col slds-size_6-of-12">
@@ -138,17 +139,12 @@
       <template if:true={showuploadFile}>
         <lightning-card title="File Upload Example" icon-name="standard:file">
           <div class="slds-p-horizontal_small">
-            <lightning-file-upload
-              label="Attach files"
-              record-id={recordId}
-              accept={acceptedFormats}
-              class="file-selector-large"
-              onuploadfinished={handleUploadFinished}
-            >
+            <lightning-file-upload label="Attach files" record-id={recordId} accept={acceptedFormats}
+              class="file-selector-large" onuploadfinished={handleUploadFinished}>
             </lightning-file-upload>
           </div>
         </lightning-card>
-  
+
       </template>
     </template>
 
@@ -177,7 +173,7 @@
               disabled style="font-weight:bold"></lightning-input>
           </div>
         </div>
-        <div class="slds-grid slds-wrap" >
+        <div class="slds-grid slds-wrap">
           <div class="slds-col slds-size_6-of-12">
             <p style="font-weight:bold">
               NBFCPartner
@@ -196,22 +192,17 @@
             <!-- <lightning-input type="text" placeholder="Enter Your Tenure" label="" name="Tenure" onchange={HandlePartialLoanInput} value={PartialLoanTenureValue} style="margin-left:10px;"></lightning-input> -->
           </div>
         </div>
-        
+
       </div>
       <template if:true={showuploadFilepartialLoan}>
         <lightning-card title="File Upload Example" icon-name="standard:file">
           <div class="slds-p-horizontal_small">
-            <lightning-file-upload
-              label="Attach files"
-              record-id={recordId}
-              accept={acceptedFormats}
-              class="file-selector-large"
-              onuploadfinished={handleUploadFinished}
-            >
+            <lightning-file-upload label="Attach files" record-id={recordId} accept={acceptedFormats}
+              class="file-selector-large" onuploadfinished={handleUploadFinished}>
             </lightning-file-upload>
           </div>
         </lightning-card>
-  
+
       </template>
     </template>
 
@@ -228,12 +219,12 @@
       <template if:true={PaymentSectionButton}>
         <!-- <lightning-button type="Sumbit" variant="Brand" label="Previous" name="PaymentSection" class="slds-m-around_xx-small"
           onclick={HandlePrevious}></lightning-button> -->
-          <!-- <template if:true={showpaymentButton}> -->
-            <lightning-button type="Sumbit" variant="Brand" label="Save" name="PaymentSection" class="slds-m-around_xx-small" disabled={showpaymentButton}
-          onclick={HandlePaymentType}></lightning-button>
+        <!-- <template if:true={showpaymentButton}> -->
+        <lightning-button type="Sumbit" variant="Brand" label="Save" name="PaymentSection"
+          class="slds-m-around_xx-small" disabled={showpaymentButton} onclick={HandlePaymentType}></lightning-button>
 
-          <!-- </template> -->
-          
+        <!-- </template> -->
+
       </template>
 
       <template if:true={FullLoanButton}>

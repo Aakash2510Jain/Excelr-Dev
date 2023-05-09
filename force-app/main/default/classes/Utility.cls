@@ -309,7 +309,7 @@ public without sharing class Utility{
                             appRecToUpdate.Id = appRec.Id;
                             if (convertedLeadRec.Course__c != null && appRec.Course__c != null){
                                 if (convertedLeadRec.Course__c == appRec.Course__c){
-                                    appRecToUpdate.Status__c = 'Closed Won';
+                                    appRecToUpdate.Status__c = 'Closed-Won';
                                 }
                             }
                             appRecToUpdate.Account__c = convertedLead.getAccountId();

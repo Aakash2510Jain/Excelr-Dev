@@ -303,7 +303,7 @@ debugger;
                                                 <input ng-model="userName" type="email" class="form-control input-lg" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter your email" style=" border-radius: 10px;"/ -->
     
                                                 <div class="form-floating mb-3">
-                                                    Enter Username :
+                                                    Enter Username  :
                                                     <apex:inputText id="txt1" value="{!userName}" styleClass="inputField"/>
                                                 </div>
                                             </div>

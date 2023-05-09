@@ -107,7 +107,7 @@ global without sharing class RetailInvoiceHelper {
                 oppToMarkClosedWon.Id = [Select Opportunity__c From Invoice__c where id =: recordId].Opportunity__c ;
                 oppToMarkClosedWon.Latest_Invoice_Id__c = recordId;
                 oppToMarkClosedWon.Can_Convert__c = true; 
-                oppToMarkClosedWon.StageName = 'Closed Won';
+                oppToMarkClosedWon.StageName = 'Closed-Won';
                 dateTime nextFollowupdate = [Select Opportunity__r.Next_follow_up_date_time__c From Invoice__c where id =: recordId].Opportunity__r.Next_follow_up_date_time__c;
                 if(nextFollowupdate == null){
                     nextFollowupdate = system.now().addDays(1);

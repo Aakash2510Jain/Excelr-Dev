@@ -57,7 +57,7 @@ public without sharing class LeadAssignmentExecutionCriteria {
                                      UTM_Experiment__c,UTM_Location__c,UTM_Medium__c,UTM_Term__c,UTM_Type__c,UTM_Variety__c,Visitor_ID__c,Website,
                                      Whatsapp_Opt_in__c,Why_This_Course__c,Year_of_Experience__c 
                                      FROM Lead 
-                                     where ownerId =: queueId and Is_Lead_Assigned_to_User__c = false order by CreatedDate DESC limit 3 ];
+                                     where ownerId =: queueId and Is_Lead_Assigned_to_User__c = false And To_Be_Deleted__c = false order by CreatedDate DESC limit 3 ];
 
             System.debug('queueLeads ==> ' + queueLeads);
             if(!queueLeads.isEmpty()){

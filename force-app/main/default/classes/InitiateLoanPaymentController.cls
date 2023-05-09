@@ -32,10 +32,14 @@ public class InitiateLoanPaymentController {
                 longUnixTimeStamp = Long.valueOf(strUnixTimeStamp);
                 
             }
-            
+            Opportunity oppRec = new Opportunity();
+            oppRec.Id = opportunityId;
+            oppRec.Payment_Status__c = 'In Progress';	
+            update oppRec;
+
             Invoice__c invRec = new Invoice__c();
             invRec.Opportunity__c = opportunityId;
-            invRec.Status__c = 'Initiated';
+            invRec.Status__c = 'Loan Processed';
             invRec.Amount__c = decimal.valueOf(opportunityAmount);
             invRec.Down_Payment__c = integer.valueOf(downPayment);
             invRec.Loan_Amount__c = decimal.valueOf(loanAmount);
@@ -47,6 +51,10 @@ public class InitiateLoanPaymentController {
             if(!string.isBlank(downPaymentType))
                 invRec.Down_Payment_Expiry_Date__c = Date.valueOf(expiryDate);
             invRec.Type__c = 'Loan';
+            if(integer.valueOf(downPayment) > 0)
+               invRec.Payment_Type__c = 'Partial Loan Payment';
+            else
+                invRec.Payment_Type__c = 'Full Loan Payment';
             invRec.Initiated_Date__c = System.Today();
             invRec.Due_Amount__c = decimal.valueOf(opportunityAmount);
             insert invRec;
@@ -58,7 +66,12 @@ public class InitiateLoanPaymentController {
                 receiptForDownPayment.Amount__c = integer.valueOf(downPayment);
                 receiptForDownPayment.Invoice__c = invRec.Id;
                 receiptForDownPayment.Type__c = downPaymentType;
-                receiptForDownPayment.Receipt_Status__c = Constants.RECEIPT_STATUS_LINKSENT;
+                if(downPaymentType == 'CC Avenue' || downPaymentType == 'RazorPay'){
+                    receiptForDownPayment.Receipt_Status__c = 'Link Sent';
+                }else{
+                     receiptForDownPayment.Receipt_Status__c = 'Initiated';
+                }
+                //receiptForDownPayment.Receipt_Status__c = Constants.RECEIPT_STATUS_LINKSENT;
                 receiptListToInsert.add(receiptForDownPayment);
                 
                 Receipt__c receiptForLoanPayment = new Receipt__c();

@@ -23,7 +23,7 @@ public without sharing class Opportunitytriggerhandler{
                     System.debug(' opp.StageName  ::'+ opp.StageName);
                     system.debug('oldOppMap.get(opp.Id).StageName--->'+oldOppMap.get(opp.Id).StageName);
                     accountIds.add(opp.AccountId);
-                    if(opp.StageName != oldOppMap.get(opp.Id).StageName && opp.StageName != null && opp.StageName == 'Closed Won')
+                    if(opp.StageName != oldOppMap.get(opp.Id).StageName && opp.StageName != null && opp.StageName == 'Closed-Won')
                         invoiceIds.add(opp.Latest_Invoice_Id__c);
                     AccountIdwithOpportunity.put(opp.AccountId, opp);
                 }

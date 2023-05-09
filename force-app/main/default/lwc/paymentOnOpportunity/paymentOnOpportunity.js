@@ -157,7 +157,7 @@ export default class PaymentOnOpportunity extends LightningElement {
     HandlePaymentType(event) {
         debugger;
         //this.PaymentType=event.detail.value;
-
+        this.showpaymentButton = true;
         if ((this.oppemail != undefined && this.oppemail != null && this.oppemail != '') && (this.oppPhone != undefined && this.oppPhone != null && this.oppPhone != '') ) {
             if (this.PaymentType == 'RazorPay') {
                 this.HandleRazorPay();
@@ -167,6 +167,7 @@ export default class PaymentOnOpportunity extends LightningElement {
             }
         }
         else{
+            this.showpaymentButton = false;
             this.showToast('Alert', 'Please Fill Email and Phone, before Proceding further', 'error');
         }
         
@@ -740,6 +741,7 @@ export default class PaymentOnOpportunity extends LightningElement {
 
 
     HandleSave() {
+       // this.DisableSave=true;
         debugger;
         OppUpdateOnFullLoan({ recordId: this.recordId, FullTenureValue: this.FullLoanTenureValue, FullNBFCValue: this.FullLoanNBFCPartnervalue, Quantity: this.QuantityValue, ProductName: this.ProductValue, Amount: this.priceIncludingGst, LoanType: this.Loanvalue, actualcost : this.originalPrice, DownPayment : this.DownPayfullLoan})
             .then(result => {

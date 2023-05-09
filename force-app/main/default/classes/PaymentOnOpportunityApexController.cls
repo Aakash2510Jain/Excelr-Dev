@@ -167,7 +167,8 @@ public without sharing class PaymentOnOpportunityApexController{
                     invRec.Amount__c = Amount ;
                     invRec.Initiated_Amount__c = Amount;
                     invRec.Type__c = 'Payment';
-                    invRec.Payment_Type__c = Constants.INVOICE_PAYMENT_TYPE_PARTIALPAYMENT;
+                    invRec.Payment_Type__c = Constants.INVOICE_PAYMENT_TYPE_FULLPAYMENT;
+                    invRec.Down_Payment_Type__c = paymentType; 
                     invRec.Mode_Terms_of_Payment__c = 'Online';
                     invRec.Initiated_Date__c = System.Today();
                     invRec.Invoice_Due_Date__c = System.Today() + 2;
@@ -278,6 +279,7 @@ public without sharing class PaymentOnOpportunityApexController{
                     invRec.Status__c = 'Initiated';
                     invRec.Amount__c = Amount + PendingAmount;
                     invRec.Initiated_Amount__c = Amount;
+                    invRec.Down_Payment_Type__c = paymentType; 
                     invRec.Type__c = 'Payment';
                     invRec.Payment_Type__c = Constants.INVOICE_PAYMENT_TYPE_PARTIALPAYMENT;
                     invRec.Mode_Terms_of_Payment__c = 'Online';

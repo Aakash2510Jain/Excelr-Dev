@@ -42,7 +42,7 @@ public without Sharing class Constants{
     public static final string OPP_STAGENAME_PROSPECT = 'Prospect';
     public static final string OPP_STAGENAME_HOT = 'Hot';
     public static final string OPP_STAGENAME_AWAITING_CONFIRMATION = 'Awaiting Confirmation';
-    public static final string OPP_STAGENAME_CLOSE_WON = '	Closed Won';
+    public static final string OPP_STAGENAME_CLOSE_WON = 'Closed-Won';
     
 
     // ============================================== Opportunity Payment Status ============================================

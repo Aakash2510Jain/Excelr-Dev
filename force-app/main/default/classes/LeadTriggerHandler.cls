@@ -42,7 +42,8 @@ public without sharing class LeadTriggerHandler{
             
             List<Opportunity> OpportunityToUpdate = new List<Opportunity>();
             List<Lead> LeadListTObeUpdated = new List<Lead>();
-
+            List<Lead> deadLeadsTOUpdateOwnership = new List<Lead>();
+            
             map<String, Lead> NewLeadEmailwithLead = new map<String, Lead>();
             map<String, Lead> NewLeadAlternateEmailwithLead = new map<String, Lead>();
             map<String, Lead> NewLeadPhonewithLead = new map<String, Lead>();
@@ -294,59 +295,6 @@ public without sharing class LeadTriggerHandler{
 
             for (Lead leadRec : leadList){
                 system.debug('leadRec---->' + leadRec);
-                /*if (!duplicateConvertedLeadList.isEmpty()){
-                    string course = '';
-                    string leadId = '';
-                    string accountId = '';
-                    string LID = '';
-                    String CustomerId = '';
-
-                    if (convertedLeadByEmail.containsKey(leadRec.Email)){
-                        course = leadRec.course__c;
-                        leadId = convertedLeadByEmail.get(leadRec.Email).id;
-                        accountId = string.valueOf(convertedLeadByEmail.get(leadRec.Email).ConvertedAccountId);
-                        LID = convertedLeadByEmail.get(leadRec.Email).LID__c;
-                        CustomerId = convertedLeadByEmail.get(leadRec.Email).Customers__c;
-                        leadRec.To_Be_Deleted__c = true;
-                        leadRec.Parent_Lead_Id__c = convertedLeadByEmail.get(leadRec.Email).Id;
-
-                    } else if (convertedLeadByAlternateEmail.containsKey(leadRec.Alternate_Email__c)){
-                        course = leadRec.course__c;
-                        leadId = convertedLeadByAlternateEmail.get(leadRec.Alternate_Email__c).id;
-                        accountId = string.valueOf(convertedLeadByAlternateEmail.get(leadRec.Alternate_Email__c).ConvertedAccountId);
-                        LID = convertedLeadByAlternateEmail.get(leadRec.Alternate_Email__c).LID__c;
-                        CustomerId = convertedLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Customers__c;
-                        leadRec.To_Be_Deleted__c = true;
-                        leadRec.Parent_Lead_Id__c = convertedLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Id;
-
-                    } else if (convertedLeadByPhone.containsKey(leadRec.Phone)){
-                        course = leadRec.course__c;
-                        leadId = convertedLeadByPhone.get(leadRec.Phone).id;
-                        accountId = string.valueOf(convertedLeadByPhone.get(leadRec.Phone).ConvertedAccountId);
-                        LID = convertedLeadByPhone.get(leadRec.Phone).LID__c;
-                        CustomerId = convertedLeadByPhone.get(leadRec.Phone).Customers__c;
-                        leadRec.To_Be_Deleted__c = true;
-                        leadRec.Parent_Lead_Id__c = convertedLeadByPhone.get(leadRec.Phone).Id;
-
-                    } else if (convertedLeadByAlternatePhone.containsKey(leadRec.Alternate_Phone__c)){
-                        course = leadRec.course__c;
-                        leadId = convertedLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).id;
-                        accountId = string.valueOf(convertedLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).ConvertedAccountId);
-                        LID = convertedLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).LID__c;
-                        CustomerId = convertedLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Customers__c;
-                        leadRec.To_Be_Deleted__c = true;
-                        leadRec.Parent_Lead_Id__c = convertedLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Id;
-
-                    }
-                    System.debug('course ====> ' + course);
-                    System.debug('leadId ====> ' + leadId);
-                    System.debug('accountId ====> ' + accountId);
-                    System.debug('LID ====> ' + LID);
-                    System.debug('CustomerId ====> ' + CustomerId);
-                    applicationListToInsert.add(Utility.returnApplicationInstance(accountId, course));
-                    Opportunity opportunityRec = new Opportunity(Name = course, AccountId = accountId, CloseDate = Date.today().addDays(2), StageName = 'Proposal', LID__c = LID, Customers__c = CustomerId);
-                    opportunityListToInsert.add(opportunityRec);
-                }*/
 
                 Utility.ApplicationtaskWrapper ApptaskWrap = new Utility.ApplicationtaskWrapper();
                 DateTime Currentdate = System.now();
@@ -362,6 +310,7 @@ public without sharing class LeadTriggerHandler{
 
                     if (ExistingOppByEmail.containsKey(leadRec.Email)){
                         if (ExistingOppByEmail.get(leadRec.Email).Stagename != Constants.OPP_STAGENAME_CLOSE_LOST){
+                            //
                             leadRec.To_Be_Deleted__c = true;
                             opp = ExistingOppByEmail.get(leadRec.Email);
                             accountId = ExistingOppByEmail.get(leadRec.Email).AccountId;
@@ -370,18 +319,21 @@ public without sharing class LeadTriggerHandler{
                             course = leadRec.Course__c;
 
                         } else if (ExistingOppByEmail.get(leadRec.Email).Stagename == Constants.OPP_STAGENAME_CLOSE_LOST){
+                            //transferring Lost opp to Umesh
                             Opportunity updatedopp = new Opportunity();
                             updatedopp.Id = ExistingOppByEmail.get(leadRec.Email).Id;
                             updatedopp.OwnerId = Constants.UmeshUserId; //UmeshUserId
                             OpportunityToUpdate.add(updatedopp);
                             
                             if (((currentdatetimeMilisec - (ExistingOppByEmail.get(leadRec.Email).ClosedLostDateTime__c).getTime()) / (60000 * 60 * 24)) < 30){
+                                // assign lead to same ISM
                                 leadRec.ownerId = ExistingOppByEmail.get(leadRec.Email).ownerId;
                                 leadRec.Is_Lead_Assigned_to_User__c = true;
                                 leadRec.Customers__c = ExistingOppByEmail.get(leadRec.Email).Customers__c;
                                 leadRec.Next_follow_up_date_time__c = system.now().addHours(2);
 
                             } else if (((currentdatetimeMilisec - (ExistingOppByEmail.get(leadRec.Email).ClosedLostDateTime__c).getTime()) / (60000 * 60 * 24)) > 30){
+                                // Assign Lead via RR
                                 leadRec.ownerId = constants.queueId;
                             }
                         }
@@ -408,10 +360,7 @@ public without sharing class LeadTriggerHandler{
 
                             } else if (((currentdatetimeMilisec - (ExistingOppByAlternateEmail.get(leadRec.Alternate_Email__c).ClosedLostDateTime__c).getTime()) / (60000 * 60 * 24)) > 30){
                                 leadRec.ownerId = constants.queueId;
-                                // Opportunity updatedopp = new Opportunity();
-                                // updatedopp.Id = ExistingOppByAlternateEmail.get(leadRec.Alternate_Email__c).Id;
-                                // updatedopp.OwnerId = Constants.syedUserId;
-                                // OpportunityToUpdate.add(updatedopp);
+                                
                             }
                         }
                     }
@@ -438,10 +387,6 @@ public without sharing class LeadTriggerHandler{
 
                             } else if (((currentdatetimeMilisec - (ExistingOppByPhone.get(leadRec.Phone).ClosedLostDateTime__c).getTime()) / (60000 * 60 * 24)) > 30){
                                 leadRec.ownerId = constants.queueId;
-                                // Opportunity updatedopp = new Opportunity();
-                                // updatedopp.Id = ExistingOppByPhone.get(leadRec.Phone).Id;
-                                // updatedopp.OwnerId = Constants.syedUserId;
-                                // OpportunityToUpdate.add(updatedopp);
                             }
 
                         }
@@ -493,7 +438,8 @@ public without sharing class LeadTriggerHandler{
                     }
 
 
-                } else{
+                } 
+                else{
                     system.debug('Non-Converted Lead doesnot exist');
                     system.debug('duplicateExistingLeadList--->' + duplicateExistingLeadList);
                     
@@ -515,7 +461,13 @@ public without sharing class LeadTriggerHandler{
                                 leadtoBeupdated.id = existingLeadByEmail.get(leadRec.Email).Id;
                                 leadtoBeupdated.OwnerId = Constants.UmeshUserId;
                                 LeadListTObeUpdated.add(leadtoBeupdated);
+                                system.debug('existingLeadByEmail.get(leadRec.Email)--->'+existingLeadByEmail.get(leadRec.Email));
                                 if(existingLeadByEmail.get(leadRec.Email).DeadDateTime__c != null){
+                                    Lead leadRecToUpdate = new Lead();
+                                    system.debug('existingLeadByEmail.get(leadRec.Email).Id--->'+existingLeadByEmail.get(leadRec.Email).Id);
+                                    leadRecToUpdate.Id = existingLeadByEmail.get(leadRec.Email).Id;
+                                    leadRecToUpdate.OwnerId = Constants.UmeshUserId;
+                                    deadLeadsTOUpdateOwnership.add(leadRecToUpdate);
                                     if (((currentdatetimeMilisec - (existingLeadByEmail.get(leadRec.Email).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) < 30 &&  existingLeadByEmail.get(leadRec.Email).status == 'Dead'){
                                         leadRec.ownerId = existingLeadByEmail.get(leadRec.Email).ownerId;   
                                         leadRec.Is_Lead_Assigned_to_User__c = true; 
@@ -547,7 +499,14 @@ public without sharing class LeadTriggerHandler{
                                 leadtoBeupdated.id = existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Id;
                                 leadtoBeupdated.OwnerId = Constants.UmeshUserId;
                                 LeadListTObeUpdated.add(leadtoBeupdated);
+                                //system.debug('existingLeadByEmail.get(leadRec.Alternate_Email__c).DeadDateTime__c--->'+existingLeadByEmail.get(leadRec.Alternate_Email__c).DeadDateTime__c);
                                 if(existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).DeadDateTime__c != null){
+                                    //system.debug('existingLeadByEmail.get(leadRec.Alternate_Email__c).Id--->'+existingLeadByEmail.get(leadRec.Alternate_Email__c).Id);
+
+                                    Lead leadRecToUpdate = new Lead();
+                                    leadRecToUpdate.Id = existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Id;
+                                    leadRecToUpdate.OwnerId = Constants.UmeshUserId;
+                                    deadLeadsTOUpdateOwnership.add(leadRecToUpdate);
                                     if (((currentdatetimeMilisec - (existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) < 30 &&  existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).status == 'Dead'){
                                         leadRec.ownerId = existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).ownerId;
                                         leadRec.Is_Lead_Assigned_to_User__c = true;  
@@ -578,8 +537,15 @@ public without sharing class LeadTriggerHandler{
                                 leadtoBeupdated.id = existingLeadByPhone.get(leadRec.Phone).Id;
                                 leadtoBeupdated.OwnerId = Constants.UmeshUserId;
                                 LeadListTObeUpdated.add(leadtoBeupdated);
-
+								
+                                //system.debug('existingLeadByEmail.get(leadRec.Phone).DeadDateTime__c--->'+existingLeadByEmail.get(leadRec.Phone).DeadDateTime__c);
                                 if(existingLeadByPhone.get(leadRec.Phone).DeadDateTime__c != null){
+                                    //system.debug('existingLeadByEmail.get(leadRec.Phone).Id--->'+existingLeadByEmail.get(leadRec.Phone).Id);
+                                    Lead leadRecToUpdate = new Lead();
+                                    leadRecToUpdate.Id = existingLeadByPhone.get(leadRec.Phone).Id;
+                                    leadRecToUpdate.OwnerId = Constants.UmeshUserId;
+                                    deadLeadsTOUpdateOwnership.add(leadRecToUpdate);
+                                    
                                     if (((currentdatetimeMilisec - (existingLeadByPhone.get(leadRec.Phone).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) < 30 &&  existingLeadByPhone.get(leadRec.Phone).status == 'Dead'){
                                         leadRec.ownerId = existingLeadByPhone.get(leadRec.Phone).ownerId;   
                                         leadRec.Is_Lead_Assigned_to_User__c = true; 
@@ -611,8 +577,14 @@ public without sharing class LeadTriggerHandler{
                                 leadtoBeupdated.id = existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Id;
                                 leadtoBeupdated.OwnerId = Constants.UmeshUserId;
                                 LeadListTObeUpdated.add(leadtoBeupdated);
-                                
+                                //system.debug('existingLeadByEmail.get(leadRec.Alternate_Phone__c).DeadDateTime__c--->'+existingLeadByEmail.get(leadRec.Alternate_Phone__c).DeadDateTime__c);
                                 if(existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).DeadDateTime__c != null){
+                                    //system.debug('existingLeadByEmail.get(leadRec.Alternate_Phone__c).Id--->'+existingLeadByEmail.get(leadRec.Alternate_Phone__c).Id);
+                                    Lead leadRecToUpdate = new Lead();
+                                    leadRecToUpdate.Id = existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Id;
+                                    leadRecToUpdate.OwnerId = Constants.UmeshUserId;
+                                    deadLeadsTOUpdateOwnership.add(leadRecToUpdate);
+                                    
                                     if (((currentdatetimeMilisec - (existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).DeadDateTime__c).getTime()) / (60000 * 60 * 24)) < 30 &&  existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).status == 'Dead'){
                                         leadRec.ownerId = existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).ownerId;    
                                         leadRec.Is_Lead_Assigned_to_User__c = true;
@@ -667,6 +639,18 @@ public without sharing class LeadTriggerHandler{
             }
             if (!opportunityListToInsert.isEmpty()){
                 insert opportunityListToInsert;
+            }
+            system.debug('deadLeadsTOUpdateOwnership--->'+deadLeadsTOUpdateOwnership);
+            if(!deadLeadsTOUpdateOwnership.isEMpty()){
+                Map<Id,Lead> leadIdByLeadRecMap = new Map<Id, Lead>();
+                
+                for(Lead leadRec : deadLeadsTOUpdateOwnership){
+                    leadIdByLeadRecMap.put(leadRec.id, leadRec);
+                }
+                system.debug('leadIdByLeadRecMap--->'+leadIdByLeadRecMap);
+                if(!leadIdByLeadRecMap.isEmpty()){
+                    update leadIdByLeadRecMap.values();
+                }
             }
             System.debug('applicationListToInsert =====> ' + applicationListToInsert);
             if (!applicationListToInsert.isEmpty()){
@@ -857,9 +841,8 @@ public without sharing class LeadTriggerHandler{
                     if (!emailSet.isEmpty()){
                         duplicateLeadsByEmail = [Select Id, Email, Alternate_Email__c
                                                  From Lead
-                                                 Where Email In:emailSet or Alternate_Email__c In:emailSet
-                                                 limit 1];
-                        duplicateOpportunitysByEmail = [Select Id,Email__c,Alternate_Email__c from Opportunity where Email__c In:emailSet or Alternate_Email__c In:emailSet limit 1];
+                                                 Where (Email In:emailSet or Alternate_Email__c In:emailSet) and Id !=: ld.Id limit 1];
+                        duplicateOpportunitysByEmail = [Select Id,Email__c,Alternate_Email__c from Opportunity where (Email__c In:emailSet or Alternate_Email__c In:emailSet) and Id !=: ld.Id limit 1];
                         
                         system.debug('duplicateLeadsByEmail-->' + duplicateLeadsByEmail);
                         if (!duplicateLeadsByEmail.isEmpty()){
@@ -875,9 +858,9 @@ public without sharing class LeadTriggerHandler{
                     if (!emailSet.isEmpty()){
                         duplicateLeadsByEmail = [Select Id, Email, Alternate_Email__c
                                                  From Lead
-                                                 Where Email In:emailSet or Alternate_Email__c In:emailSet
+                                                 Where (Email In:emailSet or Alternate_Email__c In:emailSet ) and Id !=: ld.Id
                                                  limit 1];
-                        duplicateOpportunitysByEmail = [Select Id,Email__c,Alternate_Email__c from Opportunity where Email__c In:emailSet or Alternate_Email__c In:emailSet limit 1];
+                        duplicateOpportunitysByEmail = [Select Id,Email__c,Alternate_Email__c from Opportunity where (Email__c In:emailSet or Alternate_Email__c In:emailSet ) and Id !=: ld.Id limit 1];
                         
                         system.debug('duplicateLeadsByEmail-->' + duplicateLeadsByEmail);
                         if (!duplicateLeadsByEmail.isEmpty()){
@@ -895,9 +878,9 @@ public without sharing class LeadTriggerHandler{
                     if (!PhoneSet.isEmpty()){
                         duplicateLeadsByPhone = [Select Id, Phone, Alternate_Phone__c
                                                  From Lead
-                                                 Where Phone Like:PhoneSet or Alternate_Phone__c Like:PhoneSet
+                                                 Where (Phone Like:PhoneSet or Alternate_Phone__c Like:PhoneSet) and Id !=: ld.Id
                                                  limit 1];
-                        duplicateOpportunityByPhone = [Select Id,Phone__c,Alternate_Phone__c From Opportunity where Phone__c Like:PhoneSet or Alternate_Phone__c Like:PhoneSet limit 1];
+                        duplicateOpportunityByPhone = [Select Id,Phone__c,Alternate_Phone__c From Opportunity where ( Phone__c Like:PhoneSet or Alternate_Phone__c Like:PhoneSet ) and Id !=: ld.Id limit 1];
                         if (!duplicateLeadsByPhone.isEmpty()){
                             ld.Alternate_Phone__c.addError('Other Leads exists with Same Phone No.');
                         }
@@ -913,9 +896,9 @@ public without sharing class LeadTriggerHandler{
                     if (!PhoneSet.isEmpty()){
                         duplicateLeadsByPhone = [Select Id, Phone, Alternate_Phone__c
                                                  From Lead
-                                                 Where Phone Like:PhoneSet or Alternate_Phone__c Like:PhoneSet
+                                                 Where (Phone Like:PhoneSet or Alternate_Phone__c Like:PhoneSet ) and Id !=: ld.Id
                                                  limit 1];
-                        duplicateOpportunityByPhone = [Select Id,Phone__c,Alternate_Phone__c From Opportunity where Phone__c Like:PhoneSet or Alternate_Phone__c Like:PhoneSet limit 1];
+                        duplicateOpportunityByPhone = [Select Id,Phone__c,Alternate_Phone__c From Opportunity where (Phone__c Like:PhoneSet or Alternate_Phone__c Like:PhoneSet ) and Id !=: ld.Id limit 1];
                         if (!duplicateLeadsByPhone.isEmpty()){
                             ld.Phone.addError('Other Leads exists with Same Phone No.');
                         }

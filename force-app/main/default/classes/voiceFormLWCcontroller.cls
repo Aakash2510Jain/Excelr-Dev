@@ -332,8 +332,8 @@ public without sharing class voiceFormLWCcontroller{
             System.debug('ownerMail =======> ' + ownerMail);
             string message = '';
             try{
-                Lead leadRec = new Lead();
-                leadRec = [SELECT Name, Owner.email
+                List<Lead> leadList = new List<Lead>();
+                leadList = [SELECT Name, Owner.email
                            FROM Lead
                            WHERE Owner.Email = :ownerMail AND Id = :LiD
                            limit 1];
@@ -342,7 +342,7 @@ public without sharing class voiceFormLWCcontroller{
                                     from EmailTemplate
                                     where name = 'Notify ISM'];
 
-                if (leadRec != null && leadRec.Owner.email != null){
+                if (leadList != null && leadList[0].Owner.email != null){
                     Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
                     String[] toAddresses = new String[]{ ownerMail };
                     mail.setSubject('Lead assignment ');

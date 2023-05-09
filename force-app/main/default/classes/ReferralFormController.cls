@@ -26,7 +26,7 @@ public without sharing class ReferralFormController{
         boolean booleanvalue = false;
 
         // ==========================================Opportunity Dynamic Query ===================================================
-        String queryStringforOpportunityLead = 'SELECT CreatedDate,OwnerId,Alternate_Email__c,Alternate_Phone__c,Course__c,Email__c,Id,Lead_Gen_Path__c,Loan_Amount__c,Name,Phone__c,StageName FROM Opportunity where ';
+        String queryStringforOpportunityLead = 'SELECT CreatedDate,OwnerId,CID_V1__c,Alternate_Email__c,Alternate_Phone__c,Course__c,Email__c,Id,Lead_Gen_Path__c,Loan_Amount__c,Name,Phone__c,StageName FROM Opportunity where ';
         String whereClausesForOpp = '';
 
         System.debug('Leadrec =====> ' + Leadrec);
@@ -66,9 +66,9 @@ public without sharing class ReferralFormController{
             }
             if (Leadrec.Alternate_Email__c != null) {
                 if (!string.isBlank(whereClausesForOpp) && whereClausesForOpp.length() > 0) {
-                    whereClausesForOpp = whereClausesForOpp + 'OR ( Alternate_Email__c = : leadaltEm OR Email =: leadaltEm ) ';
+                    whereClausesForOpp = whereClausesForOpp + 'OR ( Alternate_Email__c = : leadaltEm OR Email__c =: leadaltEm ) ';
                 }else {
-                    whereClausesForOpp = whereClausesForOpp + ' ( Alternate_Email__c = : leadaltEm OR Email =: leadaltEm) ';
+                    whereClausesForOpp = whereClausesForOpp + ' ( Alternate_Email__c = : leadaltEm OR Email__c =: leadaltEm) ';
                 }   
             }
             if (Leadrec.Phone != null) {
@@ -119,6 +119,9 @@ public without sharing class ReferralFormController{
                                            where CID__c = :Leadrec.CID_of_Referer__c
                                            LIMIT 1];
                     System.debug('LeadList  ====> ' + LeadList);
+                   
+                    List<Opportunity> oppList = [Select Id,OwnerId,Email__c,Phone__c,CID_V1__c From Opportunity where CID_V1__c=:Leadrec.CID_of_Referer__c order by LastmodifiedDate Desc Limit 1];
+                    System.debug('oppList  ====> ' + oppList);
 
                     leadRec.Company = Leadrec.Lastname;
                     if (LeadList.size() > 0){
@@ -141,7 +144,27 @@ public without sharing class ReferralFormController{
                         if (leadRec.id != null){
                             message = 'SUCCESS';
                         }
-                    } else{
+                    } else if(oppList.size() > 0){
+                        Leadrec.Referral_Email__c = oppList[0].Email__c;
+                        Leadrec.Referral_Phone__c = oppList[0].Phone__c;
+                        Leadrec.CID_of_Referer__c = oppList[0].CID_V1__c;
+                        Leadrec.Referrer_Opportunity__c = oppList[0].id;
+                        Leadrec.LeadSource = 'Reference';
+                        Leadrec.Lead_Gen_Path__c = 'Reference';
+                        Leadrec.OwnerId = UserInfo.getUserId();
+                        if (countrycode != null && Leadrec.Phone != null){
+                            Leadrec.Phone = Leadrec.Phone;
+                        }
+                        
+                        if (countrycodealternate != null && Leadrec.Alternate_Phone__c != null){
+                            Leadrec.Alternate_Phone__c = Leadrec.Alternate_Phone__c;
+                            
+                        }
+                        insert Leadrec;
+                        if (leadRec.id != null){
+                            message = 'SUCCESS';
+                        }
+                    }else{
                         message = 'Referral CID does not found in the system';
                     }
                 } else{

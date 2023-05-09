@@ -76,6 +76,7 @@
         debugger;
         var selectedNBFC = event.getSource().get("v.value");
         var NBFCList = component.get("v.NBFCList");
+        component.set("v.selectedTenure", null);
         var loanTenure = [];
         for(var i =0;i<NBFCList.length;i++){
             if(NBFCList[i].NBFC_Name__c == selectedNBFC){

@@ -394,7 +394,7 @@ public without sharing class RoundRobinLeadAssignment{
             List<Assignment_Group_Member__c> agentAvailablity = new List<Assignment_Group_Member__c>();
             agentAvailablity = [select id, Out_Of_Office__c, Group_Member__r.Id, Assignment_Group__r.name
                                 from Assignment_Group_Member__c
-                                where Assignment_Group__r.name = :assignmentGroupName and Out_Of_Office__c = false];
+                                where Assignment_Group__r.name = :assignmentGroupName and Out_Of_Office__c = false AND Active__c = true];
 
             for (Assignment_Group_Member__c Aa : agentAvailablity){
                 userIdToUserAvailablityMap.put(aa.Group_Member__r.Id, true);
@@ -413,7 +413,7 @@ public without sharing class RoundRobinLeadAssignment{
             list<Assignment_Group_Member__c> agmList = new list<Assignment_Group_Member__c>();
             agmList = [select id, Assignment_Group__r.name, Assignment_Id__c, Group_Member__r.Id
                        from Assignment_Group_Member__c
-                       where Assignment_Group__r.name = :groupName];
+                       where Assignment_Group__r.name = :groupName AND Active__c = true ];
 
             if (!agmList.isEmpty()){
                 for (Assignment_Group_Member__c agm : agmList){
@@ -439,7 +439,7 @@ public without sharing class RoundRobinLeadAssignment{
             list<Assignment_Group_Member__c> agmList = new list<Assignment_Group_Member__c>();
             agmList = [select id, Assignment_Group__r.name, Assignment_Id__c, Group_Member__r.Id, Out_Of_Office__c
                        from Assignment_Group_Member__c
-                       where Assignment_Group__r.name = :groupName and Out_Of_Office__c = false];
+                       where Assignment_Group__r.name = :groupName and Out_Of_Office__c = false AND Active__c = true];
             if (!agmList.isEmpty()){
                 for (Assignment_Group_Member__c agm : agmList){
                     String qName = agm.Assignment_Group__r.name;
