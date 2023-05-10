@@ -133,7 +133,7 @@ public without sharing class ManualpaymentController{
                     receiptIdToreturn = receiptForLoanPayment.Id;
                 } 
             }else{
-                if(decimal.valueOf(upfrontAmount) > 0){
+                if(!string.isBlank(upfrontAmount) && decimal.valueOf(upfrontAmount) > 0){
                     // create 2 receipt
                     Receipt__c receiptForDownPayment = new Receipt__c();
                     receiptForDownPayment.Is_Pending_Receipt__c= true;

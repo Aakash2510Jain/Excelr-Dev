@@ -21,7 +21,7 @@
         }
         if(enterAmount > 0 && enterAmount != component.get("v.oppAmount")){
             component.set("v.partialPayment",true);
-        }else if(enterAmount == "0" || enterAmount == null || enterAmount == undefined || enterAmount == component.get("v.oppAmount")){
+        }else if(enterAmount == "0" || enterAmount == null || enterAmount == "" || enterAmount == undefined || enterAmount == component.get("v.oppAmount")){
             component.set("v.partialPayment",false);
         }
         component.set("v.enteredAmount", enterAmount);
