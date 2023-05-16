@@ -661,9 +661,9 @@ public without sharing class Utility{
                 Invoice__c iv = ccAvenueLwcController.getInvoice(RecId);
     
                 if (iv.Opportunity__c!=null) {
-                    ISMEmail = iv.Opportunity__r.Account.owner.Email;
-                    ISMName = iv.Opportunity__r.Account.owner.Name;
-                    LeadName = iv.Opportunity__r.Account.Name;
+                    ISMEmail = iv.Opportunity__r.owner.Email;
+                    ISMName = iv.Opportunity__r.owner.Name;
+                    LeadName = iv.Opportunity__r.Name;
                 }
                 else if(iv.LeadInvoice__c!=null){
                     ISMEmail = iv.LeadInvoice__r.owner.Email;
@@ -717,9 +717,9 @@ public without sharing class Utility{
                 Invoice__c iv = ccAvenueLwcController.getInvoice(recId);
     
                 if (iv.Opportunity__c!=null) {
-                    ISMEmail = iv.Opportunity__r.Account.owner.Email;
-                    ISMName = iv.Opportunity__r.Account.owner.Name;
-                    LeadName = iv.Opportunity__r.Account.Name;
+                    ISMEmail = iv.Opportunity__r.owner.Email;
+                    ISMName = iv.Opportunity__r.owner.Name;
+                    LeadName = iv.Opportunity__r.Name;
                 }
                 else if(iv.LeadInvoice__c!=null){
                     ISMEmail = iv.LeadInvoice__r.owner.Email;
@@ -739,8 +739,8 @@ public without sharing class Utility{
 
                 String Emailbody = eTemplate.HtmlValue;
                 if (Emailbody != Null) {
-                    if ((Emailbody).contains('{!Ism}')) {
-                        Emailbody   = Emailbody.replace('{!Ism}', ISMName);                 
+                    if ((Emailbody).contains('{!ISM}')) {
+                        Emailbody   = Emailbody.replace('{!ISM}', ISMName);                 
                     }
                     if ((Emailbody).contains('{!Leadname}')) {
                         Emailbody   = Emailbody.replace('{!Leadname}', LeadName);   

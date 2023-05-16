@@ -69,9 +69,12 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                         ContactCustomerPhoneWithEmployeePhone.put(((String) logmap.get('number')), EmployeePhone);
 
                         CustomerPhones.add('+' + (String) logmap.get('countryCode') + ((String) logmap.get('number')));
+                        //country code and + should be added
                         CustomerPhonesForContact.add(((String) logmap.get('number')));
                         TaskIds.add((string) logmap.get('id'));
-                        CustomerPhoneWithObject.put((string) logmap.get('number'), logmap);
+                        //country code and + should be added
+                        //CustomerPhoneWithObject.put((string) logmap.get('number'), logmap);
+                        CustomerPhoneWithObject.put('+' + (String) logmap.get('countryCode')+(string) logmap.get('number'), logmap);
                         TaskIdWithObject.put((string) logmap.get('id'), logmap);
                         TaskIdwithCutomerPone.put((string) logmap.get('id'), (string) logmap.get('number'));
                     }

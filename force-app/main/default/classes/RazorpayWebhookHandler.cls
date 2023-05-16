@@ -111,7 +111,7 @@ global without sharing class RazorpayWebhookHandler{
                         else if(invoiceRec.Due_Amount__c == 0 ) {
                             Opprec.Due_Amount__c = 0;
                             opprec.Approval_Status__c = 'Payment Approved';
-                            Opprec.stagename = Constants.OPP_STAGENAME_CLOSE_WON;
+                            //Opprec.stagename = Constants.OPP_STAGENAME_CLOSE_WON;
                             opprec.Upfront_Amount__c = 0;
                         }
                         update opprec;

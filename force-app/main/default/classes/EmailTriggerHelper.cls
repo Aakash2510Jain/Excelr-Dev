@@ -104,14 +104,23 @@ public without sharing class EmailTriggerHelper {
                     SetWhatIdForOpp = OpportunityRecordBasedSetToAddress[0].Id;
                 }
             }
-            
+            system.debug('leadRecordBasedSetToAddress-->'+leadRecordBasedSetToAddress);
+            system.debug('OpportunityRecordBasedSetToAddress-->'+OpportunityRecordBasedSetToAddress);
+
             for(EmailMessage email : emailList){
-                
-                if(!String.isBlank(SetWhatIdForOpp)){
-                    email.RelatedToId = SetWhatIdForOpp;
-                }else  if(!String.isBlank(RelatedIdForLead)){
-                    email.RelatedToId = RelatedIdForLead;
-                } 
+                system.debug('SetWhatIdForOpp-->'+SetWhatIdForOpp);
+                system.debug('RelatedIdForLead-->'+RelatedIdForLead);
+                system.debug('email.RelatedToId--->'+email.RelatedToId);
+                if(email.RelatedToId == null){
+                    if(!String.isBlank(SetWhatIdForOpp)){
+                        system.debug('Set opportunity Id');
+                        email.RelatedToId = SetWhatIdForOpp;
+                    }else  if(!String.isBlank(RelatedIdForLead)){
+                         system.debug('Set Lead Id');
+                        email.RelatedToId = RelatedIdForLead;
+                    } 
+                }
+                system.debug('email.RelatedToId--->'+email.RelatedToId);
             }
             
         }
