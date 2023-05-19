@@ -24,6 +24,9 @@ global class BatchToSendEmailForFollowupFromLead implements Database.Batchable<S
                 email.setToAddresses(new List<String>{ leadRec.Owner.Email });
                 email.setSubject(emailTemplateRec.Subject);
                 string emailHtmlValue = emailTemplateRec.HtmlValue;
+                Id orgWideEmailAddressId = '0D2N00000004HvgKAE';
+                email.setOrgWideEmailAddressId(orgWideEmailAddressId);
+
                 system.debug('');
                 emailHtmlValue = emailHtmlValue.replace('{!Lead.OwnerFullName}', leadRec.Owner.LastName);
                 emailHtmlValue = emailHtmlValue.replace('{!Lead.Name}', leadRec.LastName);

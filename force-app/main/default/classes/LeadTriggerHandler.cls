@@ -896,13 +896,16 @@ public without sharing class LeadTriggerHandler{
                     if (!PhoneSet.isEmpty()){
                         duplicateLeadsByPhone = [Select Id, Phone, Alternate_Phone__c
                                                  From Lead
-                                                 Where (Phone Like:PhoneSet or Alternate_Phone__c Like:PhoneSet ) and Id !=: ld.Id
+                                                 Where (Phone Like:PhoneSet or Alternate_Phone__c Like:PhoneSet ) and Id !=: ld.Id and isConverted = False
                                                  limit 1];
                         duplicateOpportunityByPhone = [Select Id,Phone__c,Alternate_Phone__c From Opportunity where (Phone__c Like:PhoneSet or Alternate_Phone__c Like:PhoneSet ) and Id !=: ld.Id limit 1];
                         if (!duplicateLeadsByPhone.isEmpty()){
+                            system.debug('duplicateLeadsByPhone-->'+duplicateLeadsByPhone);
+                                
                             ld.Phone.addError('Other Leads exists with Same Phone No.');
                         }
                         if (!duplicateOpportunityByPhone.isEmpty()){
+                            system.debug('duplicateOpportunityByPhone-->'+duplicateOpportunityByPhone);
                             ld.Phone.addError('Other Opportunity exists with Same Phone No.');
                         }
                     }

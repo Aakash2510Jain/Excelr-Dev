@@ -163,6 +163,7 @@ public without sharing class Opportunitytriggerhandler{
                         opp.Phone__c.addError('Duplicate Phone Found on Opportunity.');
                     }
                     if(!leadList.isEmpty()){
+                        system.debug('leadList--->'+leadList);
                         opp.Phone__c.addError('Duplicate Phone Found on Lead.');
                     }
                 }
