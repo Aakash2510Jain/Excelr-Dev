@@ -1,32 +1,37 @@
+/**
+ * @author Aakash Jain
+ * @email aakash.jain@utilitarianlab.com
+ * @create date 19-05-2023 12:07:30
+ * @modify date 19-05-2023 12:07:30
+ * @desc [description]
+ */
 global class BatchToSendFollowupEmailThirtyMinOpp implements Database.Batchable<SObject> {
     global Database.QueryLocator start(Database.BatchableContext bc) {
-        // Query all opportunity with follow-up date and time within the next 30 minutes
-        Datetime now = Datetime.now();
+        Datetime now = Datetime.now().addMinutes(15);
         Datetime cutoffTime = now.addMinutes(40);
-        return Database.getQueryLocator([SELECT Id, Name,Email__C, Next_follow_up_date_time__c,Owner.Name,Owner.LastName,Owner.Email,ownerid FROM Opportunity WHERE Next_follow_up_date_time__c >= :now AND Next_follow_up_date_time__c < :cutoffTime ]);
+        return Database.getQueryLocator([SELECT Id, Name,Email__C,Opportunity_URL__c, Next_follow_up_date_time__c,Owner.Name,Owner.LastName,Owner.Email,ownerid FROM Opportunity WHERE Next_follow_up_date_time__c >= :now AND Next_follow_up_date_time__c < :cutoffTime ]);
     }
     
     global void execute(Database.BatchableContext bc, List<opportunity> opportunityList) {
         try{
             CustomNotificationType notificationType = [SELECT Id, DeveloperName FROM CustomNotificationType WHERE DeveloperName='FollowUpTaskReminder'];
-
-            
-            system.debug('opportunityList--->'+opportunityList);
             EmailTemplate emailTemplateRec = [Select Id,HtmlValue,Subject From EmailTemplate where Name ='OppFollowUpBeforeThirtyMin'];
-            system.debug('emailTemplateRec--->'+emailTemplateRec);
+
             List<Messaging.SingleEmailMessage> emails = new List<Messaging.SingleEmailMessage>();
             for (Opportunity oppRec : opportunityList) {
-                // Create email message with recipient, subject, and body
-                system.debug('oppRec.Owner.Email--->'+oppRec.Owner.Email);
+
                 Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
                 email.setToAddresses(new List<String>{ oppRec.Owner.Email });
                 email.setSubject(emailTemplateRec.Subject);
+                email.setReplyTo(system.label.emailForReminders);
+                email.setSenderDisplayName('Excelr Team');
                 string emailHtmlValue = emailTemplateRec.HtmlValue;
                 
                 emailHtmlValue = emailHtmlValue.replace('{!Lead.OwnerFullName}', oppRec.Owner.LastName);
                 emailHtmlValue = emailHtmlValue.replace('{!Lead.Name}', oppRec.Name);
                 emailHtmlValue = emailHtmlValue.replace('{!Lead.Next_follow_up_date_time__c}', String.valueOf(oppRec.Next_follow_up_date_time__c));
-                
+                emailHtmlValue = emailHtmlValue.replace('{!Lead.Lead_URL__c}', String.valueOf(oppRec.Opportunity_URL__c));
+
                 email.setHtmlBody(emailHtmlValue);
                 emails.add(email);
                 if(notificationType != null){
@@ -39,8 +44,6 @@ global class BatchToSendFollowupEmailThirtyMinOpp implements Database.Batchable<
                 }
             }
             system.debug('emails--->'+emails);
-            
-            // Send email messages
             if(!emails.isEmpty())
                 Messaging.sendEmail(emails);
         } catch (Exception e){
@@ -50,6 +53,5 @@ global class BatchToSendFollowupEmailThirtyMinOpp implements Database.Batchable<
     }
     
     global void finish(Database.BatchableContext bc) {
-        // Do nothing
     }
 }

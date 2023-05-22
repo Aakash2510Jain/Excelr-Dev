@@ -75,6 +75,7 @@ global without sharing class RetailInvoiceHelper {
             
         }
     }
+    @future(callout=true)
     global static void attachPdf(string recordId){
         system.debug('recordId---->'+recordId);
         try{

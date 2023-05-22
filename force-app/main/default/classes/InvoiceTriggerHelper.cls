@@ -36,10 +36,20 @@ public without sharing class InvoiceTriggerHelper{
                 List<Invoice_Attachment__e> invAttList = new List<Invoice_Attachment__e>();
                 for ( Id invoiceId : invoiceIds ){
                     system.debug('invoiceId--->'+invoiceId);
+                    //1. First Approach - FAILED
+                    //Have to call this but attachpdf is not future so error to get content in pdf and if making it future
+                    // then future can not be called from future
                     //RetailInvoiceHelper.attachPdf(invoiceId);
-                    Invoice_Attachment__e invAtt = new Invoice_Attachment__e();
+                    //2. Second Approach - FAILED
+                    //Used a platform event but process is running from automated user i.e not working for gmail customers
+                   /* Invoice_Attachment__e invAtt = new Invoice_Attachment__e();
                     invAtt.Invoice__c = invoiceId;
-                    invAttList.add(invAtt);
+                    invAttList.add(invAtt);*/
+                    //3. Third Approcah 
+                    //Calling a queueable method
+                    system.debug('Calling queable');
+                    InvoiceAndReceiptFlowHandler queueable = new InvoiceAndReceiptFlowHandler(invoiceId);
+                    System.enqueueJob(queueable);
                 }
                 system.debug('invAttList--->'+invAttList);
                 if(!invAttList.isEmpty()){

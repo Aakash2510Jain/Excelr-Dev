@@ -2,6 +2,6 @@ global class ScheduleBatchFollowupEmailFifteenMinOpp implements Schedulable {
     
     global void execute(SchedulableContext ctx) {
         BatchToSendFollowupEmailFifteenMinOpp batchableInstance = new BatchToSendFollowupEmailFifteenMinOpp();
-        database.executeBatch(batchableInstance);
+        database.executeBatch(batchableInstance,100);
     }   
 }

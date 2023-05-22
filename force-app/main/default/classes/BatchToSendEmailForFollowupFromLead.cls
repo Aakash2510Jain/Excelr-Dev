@@ -1,37 +1,38 @@
+/**
+ * @author Aakash Jain
+ * @email aakash.jain@utilitarianlab.com
+ * @create date 19-05-2023 12:06:21
+ * @modify date 19-05-2023 12:06:21
+ * @desc [description]
+ */
 global class BatchToSendEmailForFollowupFromLead implements Database.Batchable<SObject> {
     
     global Database.QueryLocator start(Database.BatchableContext bc) {
-        // Query all leads with follow-up date and time within the next 15 minutes
         Datetime now = Datetime.now();
         Datetime cutoffTime = now.addMinutes(20);
-        String query = '';
-        return Database.getQueryLocator([SELECT Id, Name,LastName, Email, Next_follow_up_date_time__c,Owner.Name,Owner.LastName,Owner.Email FROM Lead WHERE Next_follow_up_date_time__c >= :now AND Next_follow_up_date_time__c < :cutoffTime and IsConverted = false]);
+        return Database.getQueryLocator([SELECT Id, Name,LastName,Lead_URL__c, Email, Next_follow_up_date_time__c,Owner.Name,Owner.LastName,Owner.Email FROM Lead WHERE Next_follow_up_date_time__c >= :now AND Next_follow_up_date_time__c < :cutoffTime and IsConverted = false]);
     }
     
     global void execute(Database.BatchableContext bc, List<Lead> leadList) {
         try{
-            CustomNotificationType notificationType = [SELECT Id, DeveloperName FROM CustomNotificationType WHERE DeveloperName='FollowUpTaskReminder'];
-
-            
-            system.debug('leadList--->'+leadList);
-            EmailTemplate emailTemplateRec = [Select Id,HtmlValue,Subject From EmailTemplate where Name ='LeadFollowUpBeforeFifteenMin'];
-            system.debug('emailTemplateRec--->'+emailTemplateRec);
             List<Messaging.SingleEmailMessage> emails = new List<Messaging.SingleEmailMessage>();
+
+            CustomNotificationType notificationType = [SELECT Id, DeveloperName FROM CustomNotificationType WHERE DeveloperName='FollowUpTaskReminder'];
+            EmailTemplate emailTemplateRec = [Select Id,HtmlValue,Subject From EmailTemplate where Name ='LeadFollowUpBeforeFifteenMin'];
+
             for (Lead leadRec : leadList) {
-                // Create email message with recipient, subject, and body
-                system.debug('leadRec.Owner.Email--->'+leadRec.Owner.Email);
+
                 Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+
                 email.setToAddresses(new List<String>{ leadRec.Owner.Email });
                 email.setSubject(emailTemplateRec.Subject);
                 string emailHtmlValue = emailTemplateRec.HtmlValue;
-                Id orgWideEmailAddressId = '0D2N00000004HvgKAE';
-                email.setOrgWideEmailAddressId(orgWideEmailAddressId);
-
-                system.debug('');
+                email.setReplyTo(system.label.emailForReminders);
+                email.setSenderDisplayName('Excelr Team');
                 emailHtmlValue = emailHtmlValue.replace('{!Lead.OwnerFullName}', leadRec.Owner.LastName);
                 emailHtmlValue = emailHtmlValue.replace('{!Lead.Name}', leadRec.LastName);
                 emailHtmlValue = emailHtmlValue.replace('{!Lead.Next_follow_up_date_time__c}', String.valueOf(leadRec.Next_follow_up_date_time__c));
-                
+                emailHtmlValue = emailHtmlValue.replace('{!Lead.Lead_URL__c}', String.valueOf(leadRec.Lead_URL__c));
                 email.setHtmlBody(emailHtmlValue);
                 emails.add(email);
                 
@@ -44,9 +45,6 @@ global class BatchToSendEmailForFollowupFromLead implements Database.Batchable<S
                     notification.send(new Set<String> {leadRec.OwnerId});
                 }
             }
-            system.debug('emails--->'+emails);
-            
-            // Send email messages
             if(!emails.isEmpty())
                 Messaging.sendEmail(emails);
         } catch (Exception e){
@@ -56,6 +54,5 @@ global class BatchToSendEmailForFollowupFromLead implements Database.Batchable<S
     }
     
     global void finish(Database.BatchableContext bc) {
-        // Do nothing
     }
 }
