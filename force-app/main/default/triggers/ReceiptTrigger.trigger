@@ -12,7 +12,7 @@ trigger ReceiptTrigger on Receipt__c (after update, before update) {
         }
         if(trigger.isBefore && trigger.isUpdate){
             system.debug('Before Update of Receipt');
-            //handlerInstance.beforeUpdate(trigger.newMap, trigger.oldmap);
+            handlerInstance.beforeUpdate(trigger.newMap, trigger.oldmap);
         }
     }
 }

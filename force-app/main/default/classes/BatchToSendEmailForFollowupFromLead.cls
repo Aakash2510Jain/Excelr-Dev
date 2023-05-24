@@ -8,9 +8,10 @@
 global class BatchToSendEmailForFollowupFromLead implements Database.Batchable<SObject> {
     
     global Database.QueryLocator start(Database.BatchableContext bc) {
+        string queueId = [SELECT Id, Type FROM Group WHERE Type = 'Queue' AND Name = 'Excelr Default Queue' limit 1].Id;
         Datetime now = Datetime.now();
         Datetime cutoffTime = now.addMinutes(20);
-        return Database.getQueryLocator([SELECT Id, Name,LastName,Lead_URL__c, Email, Next_follow_up_date_time__c,Owner.Name,Owner.LastName,Owner.Email FROM Lead WHERE Next_follow_up_date_time__c >= :now AND Next_follow_up_date_time__c < :cutoffTime and IsConverted = false]);
+        return Database.getQueryLocator([SELECT Id, Name,LastName,Lead_URL__c, Email, Next_follow_up_date_time__c,Owner.Name,Owner.LastName,Owner.Email FROM Lead WHERE Next_follow_up_date_time__c >= :now AND Next_follow_up_date_time__c < :cutoffTime and IsConverted = false and OwnerId != : queueId]);
     }
     
     global void execute(Database.BatchableContext bc, List<Lead> leadList) {
@@ -28,7 +29,8 @@ global class BatchToSendEmailForFollowupFromLead implements Database.Batchable<S
                 email.setSubject(emailTemplateRec.Subject);
                 string emailHtmlValue = emailTemplateRec.HtmlValue;
                 email.setReplyTo(system.label.emailForReminders);
-                email.setSenderDisplayName('Excelr Team');
+                Id orgId = [SELECT Id, Address, DisplayName FROM OrgWideEmailAddress where address =: system.label.emailForReminders].Id;
+                email.setOrgWideEmailAddressId(orgId);
                 emailHtmlValue = emailHtmlValue.replace('{!Lead.OwnerFullName}', leadRec.Owner.LastName);
                 emailHtmlValue = emailHtmlValue.replace('{!Lead.Name}', leadRec.LastName);
                 emailHtmlValue = emailHtmlValue.replace('{!Lead.Next_follow_up_date_time__c}', String.valueOf(leadRec.Next_follow_up_date_time__c));

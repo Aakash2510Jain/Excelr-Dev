@@ -27,8 +27,8 @@ public without sharing class EmailTriggerHelper {
                 }
             }
             if(!emailList.isEmpty()){
-                leadsListwithEmail = [select id,Name,Email,Alternate_email__c from Lead where (email in : emailList or Alternate_email__c in: emailList) AND isConverted = False];
-                opportunityListwithEmail = [select id,Name,Email__c,Alternate_email__c from Opportunity where email__c in : emailList or Alternate_email__c in: emailList];
+                leadsListwithEmail = [select id,Name,Email,Alternate_email__c from Lead where (email in : emailList or Alternate_email__c in: emailList) AND isConverted = False limit 40];
+                opportunityListwithEmail = [select id,Name,Email__c,Alternate_email__c from Opportunity where email__c in : emailList or Alternate_email__c in: emailList limit 40];
                 
                 if(!leadsListwithEmail.isEmpty()){
                     for(Lead leadRec : leadsListwithEmail){
@@ -83,6 +83,7 @@ public without sharing class EmailTriggerHelper {
 
     public  void AttacheRelated_SetWhatId(List<EmailMessage> emailList){
         System.debug('emailList ===> '+emailList);
+        list<EmailMessageRelation> emrlist = new List<EmailMessageRelation>();
      try{
         List<Lead> leadRecordBasedSetToAddress = new List<Lead>();
         List<Opportunity> OpportunityRecordBasedSetToAddress = new List<Opportunity>();
@@ -95,11 +96,11 @@ public without sharing class EmailTriggerHelper {
             }
             System.debug('setToAddressSet ==>'+setToAddressSet);
             if(setToAddressSet.size() > 0){
-                leadRecordBasedSetToAddress = [SELECT id,Name,Email FROM Lead WHERE Email IN:setToAddressSet order by lastModifiedDate DESC];
+                leadRecordBasedSetToAddress = [SELECT id,Name,Email FROM Lead WHERE Email IN:setToAddressSet order by lastModifiedDate DESC limit 40];
                 if(leadRecordBasedSetToAddress.size() > 0){
                     RelatedIdForLead = leadRecordBasedSetToAddress[0].Id;
                 }
-                OpportunityRecordBasedSetToAddress = [SELECT Id,Name,Email__c FROM Opportunity WHERE Email__c IN:setToAddressSet order by lastModifiedDate DESC];
+                OpportunityRecordBasedSetToAddress = [SELECT Id,Name,Email__c FROM Opportunity WHERE Email__c IN:setToAddressSet order by lastModifiedDate DESC limit 40];
                 if(OpportunityRecordBasedSetToAddress.size() > 0){
                     SetWhatIdForOpp = OpportunityRecordBasedSetToAddress[0].Id;
                 }
@@ -117,13 +118,20 @@ public without sharing class EmailTriggerHelper {
                         email.RelatedToId = SetWhatIdForOpp;
                     }else  if(!String.isBlank(RelatedIdForLead)){
                          system.debug('Set Lead Id');
-                        email.RelatedToId = RelatedIdForLead;
+                        //email.RelatedToId = RelatedIdForLead;
+                        EmailMessageRelation emr = new EmailMessageRelation();  
+                        emr.emailMessageId = email.Id;  
+                        emr.relationId = RelatedIdForLead; // Lead Id  
+                        emr.relationType = 'FromAddress'; 
+                        emrlist.add(emr);
+                        //insert emr;  
                     } 
                 }
                 system.debug('email.RelatedToId--->'+email.RelatedToId);
             }
             
         }
+         insert emrlist;
      }catch(Exception e){
          System.debug('The Error '+e.getMessage());
          System.debug('Erron Line '+e.getLineNumber());

@@ -22,10 +22,10 @@ public without sharing class Opportunitytriggerhandler{
                 for ( Opportunity opp : newOppMap.values() ){
                     System.debug(' opp.StageName  ::'+ opp.StageName);
                     system.debug('oldOppMap.get(opp.Id).StageName--->'+oldOppMap.get(opp.Id).StageName);
-                    accountIds.add(opp.AccountId);
+                    //accountIds.add(opp.AccountId);
                     if(opp.StageName != oldOppMap.get(opp.Id).StageName && opp.StageName != null && opp.StageName == 'Closed-Won')
                         invoiceIds.add(opp.Latest_Invoice_Id__c);
-                    AccountIdwithOpportunity.put(opp.AccountId, opp);
+                    //AccountIdwithOpportunity.put(opp.AccountId, opp);
                 }
                 if (!accountIds.isEmpty() ){
                     accountList = [SELECT AccountSource, Approval_Status__c, Email__c, GCLID__c, Id,  Name, OwnerId, Phone, Referral_Email__c, Referral_Phone__c FROM Account where Id In:accountIds];
@@ -248,7 +248,11 @@ public without sharing class Opportunitytriggerhandler{
                         opp.CloseDate.addError('Close Date cannot be greater than 30 days!');                   
                     }
                 }
-                
+              if (opp.StageName != null && opp.StageName != oldOppMap.get(opp.Id).StageName && opp.StageName == 'Closed-Won') {
+                    if (opp.Closed_Won_Date_Time__c == null) {
+                        opp.Closed_Won_Date_Time__c = system.now();
+                    }
+                }
             }
             
         } catch (Exception e) {

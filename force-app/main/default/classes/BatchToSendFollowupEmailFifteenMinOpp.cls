@@ -32,7 +32,8 @@ global class BatchToSendFollowupEmailFifteenMinOpp implements Database.Batchable
                 emailHtmlValue = emailHtmlValue.replace('{!Lead.Lead_URL__c}', String.valueOf(oppRec.Opportunity_URL__c));
 
                 email.setReplyTo(system.label.emailForReminders);
-                email.setSenderDisplayName('Excelr Team');    
+                Id orgId = [SELECT Id, Address, DisplayName FROM OrgWideEmailAddress where address =: system.label.emailForReminders].Id;
+                email.setOrgWideEmailAddressId(orgId);   
                 email.setHtmlBody(emailHtmlValue);
                 emails.add(email);
                 

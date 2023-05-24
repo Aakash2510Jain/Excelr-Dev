@@ -24,7 +24,8 @@ global class BatchToSendFollowupEmailThirtyMinOpp implements Database.Batchable<
                 email.setToAddresses(new List<String>{ oppRec.Owner.Email });
                 email.setSubject(emailTemplateRec.Subject);
                 email.setReplyTo(system.label.emailForReminders);
-                email.setSenderDisplayName('Excelr Team');
+                Id orgId = [SELECT Id, Address, DisplayName FROM OrgWideEmailAddress where address =: system.label.emailForReminders].Id;
+                email.setOrgWideEmailAddressId(orgId);
                 string emailHtmlValue = emailTemplateRec.HtmlValue;
                 
                 emailHtmlValue = emailHtmlValue.replace('{!Lead.OwnerFullName}', oppRec.Owner.LastName);

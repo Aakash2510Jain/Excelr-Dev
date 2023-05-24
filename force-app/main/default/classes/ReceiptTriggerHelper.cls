@@ -6,6 +6,15 @@ public class ReceiptTriggerHelper {
             handlerInstance = new ReceiptTriggerHelper();
         return handlerInstance;
     }
+     public void beforeUpdate(Map<Id, Receipt__c> newMap, Map<Id,Receipt__c> oldmap){
+         
+        for(Receipt__c receiptRecord : newMap.values()){
+             if(receiptRecord.Receipt_Status__c != oldmap.get(receiptRecord.Id).Receipt_Status__c && receiptRecord.Receipt_Status__c != null && receiptRecord.Receipt_Status__c == 'Received/Paid'){
+                if(receiptRecord.Payment_Realized_Date_Time__c == null)
+                    receiptRecord.Payment_Realized_Date_Time__c = system.now();
+            }
+        }
+     }
     public void afterUpdate(Map<Id, Receipt__c> newMap, Map<Id,Receipt__c> oldmap){
         system.debug('Receipt Helper after update');
         set<Id> receiptIds = new Set<Id>();
