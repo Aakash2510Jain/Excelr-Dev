@@ -44,7 +44,7 @@ global without sharing class RazorpayWebhookHandler{
                                 //receipt.Receipt_Status__c = Constants.RECEIPT_STATUS_RECEIVED_PAID;
                                 receipt.TranactionId__c = String.ValueOf(m4.get('id'));
                                 //receipt.Invoice__c = invoiceRec.id; 
-                                receipt.Payment_Realized_Date_Time__c = System.now();
+                                //receipt.Payment_Realized_Date_Time__c = System.now();
                                 //receipt.amount__c = Integer.valueOf(String.ValueOf(m4.get('amount')))/100;
                             }
                         }

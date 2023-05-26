@@ -22,7 +22,14 @@ public without sharing class RoundRobinLeadAssignment{
             Map<String, Integer> qNameAndMemberIdTORoundRobinIDMaP = new Map<String, Integer>();
             Map<String, Integer> qNameToLastAssignedQmemberRRid = new Map<String, Integer>();
             Map<String, String> QnameAndRRidToMemberIDMap = new Map<String, String>();
-
+			Assignment_Group__c ag = [select id,Name,Last_Allocated_RRid__c,(select id from Assignment_Group_Members__r) from Assignment_Group__c where name =: courseName for update];
+            integer lastRRIdFinal = 0;
+            if(ag.Assignment_Group_Members__r.size() != ag.Last_Allocated_RRid__c){
+                lastRRIdFinal = Integer.valueOf(ag.Last_Allocated_RRid__c);
+            }
+            lastRRIdFinal = lastRRIdFinal + 1;
+            Assignment_Group_Member__c agmTemp= [select id,Group_Member__c from Assignment_Group_Member__c where Assignment_Id__c =: lastRRIdFinal and Assignment_Group__c =:ag.Id];
+            system.debug('agmTemp::'+agmTemp);
             // ================================================= for Application Creation ========================================================
             Map<Id, Lead> LeadListMap = new Map<Id, Lead>();
             List<Application__c> ApplicationTobeInserted = new List<Application__c>();
@@ -40,7 +47,7 @@ public without sharing class RoundRobinLeadAssignment{
             qNameToLastAssignedQmemberRRid = BuildMaps.makeQNameToLastAssignedQmemberRRid();
             QnameAndRRidToMemberIDMap = makeQnameAndRRidToMemberID(courseName);
             BuildMaps.validateUserCapacity(courseName, leadIdList);
-
+			String finalMemberId = '';
             for (String qName : qNameToListOfLeadsMap.keySet()){
                 System.debug('qName ====> ' + qName);
                 if (qName != null){
@@ -68,10 +75,13 @@ public without sharing class RoundRobinLeadAssignment{
                             }
                             QnameAndRRid = qName + String.valueOf(currentRRid);
                             qMemberID = QnameAndRRidToMemberIDMap.get(QnameAndRRid);
-                            boolean test = true;
-                            if (assignmentConditionSatisfied(qName, qMemberID, '123', courseName )){
-                                if (userIdToUserAvailablityMap.get(qMemberID) == true){
-                                    ld.ownerId = Id.valueOf(qMemberID);
+                            boolean flagConsideration = true;
+                            if(flagConsideration){
+                                if(flagConsideration){
+                                    // if (assignmentConditionSatisfied(qName, qMemberID, '123', courseName )){
+                                    //    if (userIdToUserAvailablityMap.get(qMemberID) == true){
+                                    finalMemberId = Id.valueOf(qMemberID);
+                                    ld.ownerId = agmTemp.Group_Member__c;
                                     ld.Lead_Assigned_Date__c = system.today();
                                     ld.Lead_Assigned_Date_TIme__c = system.now();
                                     ld.Lead_Assigned_Time__c = Time.newInstance(Datetime.now().hour(), Datetime.now().minute(), Datetime.now().second(), 0);
@@ -163,6 +173,7 @@ public without sharing class RoundRobinLeadAssignment{
             }
 
             System.debug('qNameToLastAssignedQmemberRRid ====> ' + qNameToLastAssignedQmemberRRid);
+            
             if (!qNameToLastAssignedQmemberRRid.keySet().isEmpty()){
                 List<Assignment_Group__c> updateQrId = new List<Assignment_Group__c>();
                 updateQrId = [Select id, name, Last_Allocated_RRid__c

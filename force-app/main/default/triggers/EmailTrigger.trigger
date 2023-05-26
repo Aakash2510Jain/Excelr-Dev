@@ -5,11 +5,12 @@ trigger EmailTrigger on EmailMessage (after insert,before insert) {
     if (triggerConfig != null && triggerConfig.Trigger_Status__c){
         EmailTriggerHelper handlerInstance = EmailTriggerHelper.getInstance();
         
-        if(trigger.isAfter && trigger.isInsert){
-            handlerInstance.attachEmailToLead(trigger.new);
-        }
         if(trigger.isBefore && trigger.isInsert){
             handlerInstance.AttacheRelated_SetWhatId(trigger.new);
         }
+        if(trigger.isAfter && trigger.isInsert){
+            handlerInstance.attachEmailToLead(trigger.new);
+        }
+        
     }
 }

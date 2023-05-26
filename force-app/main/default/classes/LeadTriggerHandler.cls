@@ -707,8 +707,15 @@ public without sharing class LeadTriggerHandler{
             List<opportunity> duplicateOpportunityByPhone = new List<opportunity>();
             Set<String> emailSet = new Set<String>();
             Set<String> PhoneSet = new Set<String>();
-
+            
+            string queueId = [SELECT Id, Type FROM Group WHERE Type = 'Queue' AND Name = 'Excelr Default Queue' limit 1].Id;
+            
             for (Lead ld : newLeadMap.values()){
+                if(ld.OwnerId != oldLeadMap.get(ld.Id).OwnerId && oldLeadMap.get(ld.Id).OwnerId == queueId && ld.OwnerId != queueId ){
+                    DateTime startTime = ld.CreatedDate;
+                    DateTime endTime = system.now();
+                    ld.queue_spent_time__c = endTime.getTime() - startTime.getTime();
+                }
                 if (ld.Enter_UTM_Link__c != null && ld.Lead_Generation_Method__c != null && (ld.Lead_Generation_Method__c == 'Chat Form' || ld.Lead_Generation_Method__c == 'Generic Form')){
                     Utility.UTMLinkParams(ld);
                 }
