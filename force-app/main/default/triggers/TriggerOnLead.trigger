@@ -11,7 +11,10 @@ trigger TriggerOnLead on Lead (before insert, After Insert, Before Update, After
         if (trigger.isInsert && trigger.isAfter){
             LeadAssignmentExecutionCriteria.validateEntryCriteria();
             handlerInstance.afterInsert(Trigger.new);
+            system.debug('leadList--->'+Trigger.new);
             
+            API_WEBENGAGE batchInstancetoSendData = new API_WEBENGAGE();
+            database.executeBatch(batchInstancetoSendData, 20);
         }
         
         if (trigger.isUpdate && trigger.isBefore){

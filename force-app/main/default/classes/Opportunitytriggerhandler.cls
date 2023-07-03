@@ -68,7 +68,7 @@ public without sharing class Opportunitytriggerhandler{
                 }
                 system.debug('invoiceIds--->'+invoiceIds);
                 if(!invoiceIds.isEmpty()){
-                    EmailIUtility.sendEmailWithReceiptAndInvoice(invoiceIds,'InvoicePlusReceiptTemplate');
+                    //EmailIUtility.sendEmailWithReceiptAndInvoice(invoiceIds,'InvoicePlusReceiptTemplate');
                 }
             }
         }

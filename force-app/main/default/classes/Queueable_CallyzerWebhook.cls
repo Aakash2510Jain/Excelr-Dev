@@ -374,7 +374,7 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
                                     System.debug('The following error has occurred.');
                                     System.debug(err.getStatusCode() + ': ' + err.getMessage());
                                     System.debug('Account fields that affected this error: ' + err.getFields());
-                                    Utility.API_ErrorORSuccess(err.getFields(), err.getMessage(), Integer.valueof(err.getStatusCode()), null, 'Queueable_CallyzerWebhook', 'execute', callLogString);
+                                    Utility.API_ErrorORSuccess(err.getFields(), err.getMessage(), String.valueof(err.getStatusCode()), null, 'Queueable_CallyzerWebhook', 'execute', callLogString);
                                 }
                             }
                         }

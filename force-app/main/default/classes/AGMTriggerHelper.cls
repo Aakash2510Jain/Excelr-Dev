@@ -90,7 +90,7 @@ public without sharing class AGMTriggerHelper{
                 if(!assignmentGroupList.isEmpty()){
                     system.debug('assignmentGroupList-->'+assignmentGroupList);
                     for(Assignment_Group__c agRec : assignmentGroupList){
-                       
+                        
                         system.debug('agRec--->'+agRec);
                         integer i = 1;
                         for(Assignment_Group_Member__c agmRec : agRec.Assignment_Group_Members__r){
@@ -120,7 +120,7 @@ public without sharing class AGMTriggerHelper{
             HandleBusinessException.captureError('AGMTriggerHelper', 'After AGM Insert', e, null);
         }
     }
-     public void afterDelete(Map<Id,Assignment_Group_Member__c> oldMap){
+    public void afterDelete(Map<Id,Assignment_Group_Member__c> oldMap){
         try{
             Set<Id> assignmentGroupIds = new Set<Id>();
             List<Assignment_Group__c> assignmentGroupList = new List<Assignment_Group__c>();
@@ -137,7 +137,7 @@ public without sharing class AGMTriggerHelper{
                 if(!assignmentGroupList.isEmpty()){
                     system.debug('assignmentGroupList-->'+assignmentGroupList);
                     for(Assignment_Group__c agRec : assignmentGroupList){
-                       
+                        
                         system.debug('agRec--->'+agRec);
                         integer i = 1;
                         for(Assignment_Group_Member__c agmRec : agRec.Assignment_Group_Members__r){
@@ -167,7 +167,7 @@ public without sharing class AGMTriggerHelper{
             HandleBusinessException.captureError('AGMTriggerHelper', 'After AGM Delete', e, null);
         }
     }
-
+    
     public void reassignAssignmentAfterDeactivation(Map<Id, Assignment_Group_Member__c> agmOldmap , Map<Id, Assignment_Group_Member__c> agmNewmap){
         try{
             system.debug('agmOldmap::'+agmOldmap);
@@ -175,12 +175,12 @@ public without sharing class AGMTriggerHelper{
             Set<Id> assignmentGroupId = new Set<Id>();
             List<Assignment_Group_Member__c> agmListToBeUpdated = new List<Assignment_Group_Member__c>();
             List<Assignment_Group__c> assignmentGroup = new List<Assignment_Group__c>();
-
+            
             List<Assignment_Group_Member__c> assignmentGroupMemberList = new List<Assignment_Group_Member__c>();
             Map<String, List<Assignment_Group_Member__c>> deactivatedAGMListwithAGId = new Map<String, List<Assignment_Group_Member__c>>();
             Map<String, List<Assignment_Group_Member__c>> ActivatedAGMListwithAGId = new Map<String, List<Assignment_Group_Member__c>>();
             Map<String, List<Assignment_Group_Member__c>> UpdatedAGMListwithAGId = new Map<String, List<Assignment_Group_Member__c>>();
-
+            
             List<Assignment_Group_Member__c> FinalAGMListUpdated = new List<Assignment_Group_Member__c>();
             
             if(!agmNewmap.isEmpty()){
@@ -192,7 +192,7 @@ public without sharing class AGMTriggerHelper{
                 system.debug('assignmentGroupId--->'+assignmentGroupId);
                 if(!assignmentGroupId.isEmpty()){
                     assignmentGroupMemberList = [SELECT Active__c,Assignment_Group__c,Assignment_Id__c,BreakTime_Started__c,End_Date__c,Group_Member__c,Id,Name,Out_Of_Office__c 
-                                                    FROM Assignment_Group_Member__c Where Assignment_Group__c IN:assignmentGroupId];
+                                                 FROM Assignment_Group_Member__c Where Assignment_Group__c IN:assignmentGroupId];
                     system.debug('assignmentGroupMemberList-->'+assignmentGroupMemberList);
                     if (!assignmentGroupMemberList.isEmpty()) {
                         for (Assignment_Group_Member__c agmRec : assignmentGroupMemberList) {
@@ -239,7 +239,7 @@ public without sharing class AGMTriggerHelper{
                             if (!deactivatedAGMListwithAGId.isEmpty()) {
                                 if(deactivatedAGMListwithAGId.ContainsKey(str)){
                                     for (Assignment_Group_Member__c deactiveagmRec : deactivatedAGMListwithAGId.get(str)) {
-                                         system.debug('i ==>'+i);
+                                        system.debug('i ==>'+i);
                                         Assignment_Group_Member__c agmRecToBeUpdated = new Assignment_Group_Member__c();
                                         agmRecToBeUpdated.id = deactiveagmRec.Id;
                                         agmRecToBeUpdated.Assignment_Id__c = i;
@@ -253,31 +253,38 @@ public without sharing class AGMTriggerHelper{
                     }
                     if (!FinalAGMListUpdated.isEmpty()) {
                         update FinalAGMListUpdated;
-                    }
-
-                    
-                    /*assignmentGroup = [Select Id,(Select Id,Assignment_Id__c,Assignment_Group__c From Assignment_Group_Members__r) From Assignment_Group__c where Id in: assignmentGroupId];
-                    if(!assignmentGroup.isEmpty()){
-                        for(Assignment_Group__c assignmentGroupRec : assignmentGroup){
-                            integer i = 1;
-                            for(Assignment_Group_Member__c agmRec : assignmentGroupRec.Assignment_Group_Members__r){
-                                Assignment_Group_Member__c agmRecToBeUpdated = new Assignment_Group_Member__c();
-                                agmRecToBeUpdated.id = agmRec.Id;
-                                agmRecToBeUpdated.Assignment_Id__c = i;
-                                agmListToBeUpdated.add(agmRecToBeUpdated);
-                                i++;
-                            }
-                        }
-                        if(!agmListToBeUpdated.isEmpty()){
-                            update agmListToBeUpdated;
-                        }
-                    }*/
+                    }                    
                 }
             }
         }
         catch(Exception ex){
             system.debug('Erro>>'+ex.getMessage());
             system.debug('Error@@@'+ex.getLineNumber());
+        }
+    }
+    
+    
+    Public void  BeforeDelteCheckAGMCheck( Map<Id, Assignment_Group_Member__c> oldAGMmap, Map<Id, Assignment_Group_Member__c> newAGMmap){
+        system.debug('oldAGMmap---->'+oldAGMmap);
+        system.debug('newAGMmap---->'+newAGMmap);
+        
+        
+        Map<string, integer> assignmentGroupIdByLastAllocatedCount = new  Map<string, integer>();
+        List<Assignment_Group__c> agRecToUpdateList  = new List<Assignment_Group__c>();
+        for (Assignment_Group_Member__c agmRecord : oldAGMmap.values()) {
+            if(agmRecord.Assignment_Id__c == agmRecord.Last_Allocated_RRID__c)
+                assignmentGroupIdByLastAllocatedCount.put(agmRecord.Assignment_Group__c, integer.valueOf(agmRecord.Last_Allocated_RRID__c));
+        }
+        if(!assignmentGroupIdByLastAllocatedCount.isEmpty()){
+            for(string agId : assignmentGroupIdByLastAllocatedCount.keySet()){
+                Assignment_Group__c agRecToUpdate = new Assignment_Group__c();
+                agRecToUpdate.Id = agId;
+                agRecToUpdate.Last_Allocated_RRid__c = integer.valueOf(assignmentGroupIdByLastAllocatedCount.get(agId)) - 1;
+                agRecToUpdateList.add(agRecToUpdate);
+            }
+            if(!agRecToUpdateList.isEmpty()){
+                update agRecToUpdateList;
+            }
         }
     }
 }

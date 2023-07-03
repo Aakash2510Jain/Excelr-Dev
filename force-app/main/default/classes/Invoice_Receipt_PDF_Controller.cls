@@ -130,7 +130,7 @@ public without sharing class Invoice_Receipt_PDF_Controller {
                         }
                     }
                 }
-                sendReceiptForPayment(attachmentByReceiptid.keySet());
+                //sendReceiptForPayment(attachmentByReceiptid.keySet());
             }
         }
     }

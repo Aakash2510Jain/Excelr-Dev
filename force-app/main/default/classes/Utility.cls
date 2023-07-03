@@ -462,7 +462,7 @@ public without sharing class Utility{
         return AcctaskWrap;
     }
     
-    Public static void API_ErrorORSuccess(List<String> ErrorFields, String ErrorMsg, Integer ErrorStatus, string ErrOrSuccId, STring ClassName, String MethodName, string JSONString){
+    Public static void API_ErrorORSuccess(List<String> ErrorFields, String ErrorMsg, String ErrorStatus, string ErrOrSuccId, STring ClassName, String MethodName, string JSONString){
         try{
             API_Log__c APILog = new API_Log__c();
             if (ErrorFields != null){

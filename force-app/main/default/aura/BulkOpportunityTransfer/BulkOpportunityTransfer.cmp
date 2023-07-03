@@ -1,0 +1,46 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+    <aura:attribute name="selectedOpportunityIds" type="String[]" default="[]" />
+    <aura:attribute name="selectedUser" type="String" />
+    <aura:attribute name="users" type="List" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    
+    <div class="slds-grid slds-gutters">
+        <div class="slds-col">
+            <lightning:dualListbox name="opportunitySelection"
+                                   label="Select Opportunities"
+                                   sourceLabel="Available Opportunities"
+                                   selectedLabel="Selected Opportunities"
+                                   options="{!v.opportunityOptions}"
+                                   value="{!v.selectedOpportunityIds}" />
+        </div>
+        <div class="slds-col">
+            <lightning:input type="search"
+                             label="Assign to User"
+                             placeholder="Search for User"
+                             value="{!v.selectedUser}"
+                             aura:id="userSearch"
+                             required="true"
+                             onchange="{!c.handleUserSearchChange}" />
+            <aura:if isTrue="{!v.users.length > 0}">
+                <ul class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid">
+                    <aura:iteration items="{!v.users}" var="user">
+                        <li role="presentation" class="slds-listbox__item">
+                            <a role="option" tabindex="0" onclick="{!c.selectUser}">
+                                <span class="slds-media__body">
+                                    <span class="slds-truncate" title="{!user.Name}">
+                                        {!user.Name}
+                                    </span>
+                                </span>
+                            </a>
+                        </li>
+                    </aura:iteration>
+                </ul>
+            </aura:if>
+        </div>
+    </div>
+    <div class="slds-m-top_medium">
+        <lightning:button variant="brand" label="Assign Opportunities"
+                          onclick="{!c.assignOpportunities}" />
+    </div>
+</aura:component>

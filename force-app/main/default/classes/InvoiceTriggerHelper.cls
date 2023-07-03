@@ -187,7 +187,7 @@ List<Approval.ProcessResult> result = Approval.process( InvoiceToapprovalRequest
                 
                 if (!ApprovedReferrarMap.isEmpty()) {
                     //https://excelr2--dev.sandbox.my.salesforce-sites.com/Loginpage/CaptureBankDetails
-                    EmailIUtility.SendReferralFormToReferrar(ApprovedReferrarMap);
+                    //EmailIUtility.SendReferralFormToReferrar(ApprovedReferrarMap);
                 }
                 
             }

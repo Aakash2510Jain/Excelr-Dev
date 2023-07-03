@@ -11,6 +11,8 @@ public without sharing class EmailTriggerHelper {
         try {
             List<EmailMessageRelation> emailMsgRelationList = new List<EmailMessageRelation>();
             set<String> emailList = new Set<String>();
+            Map<Id,Lead> leadIdByLeadRecMap = new Map<Id, Lead>();
+            Map<String, EmailMessage> leadIdBYEmailMessageRecordMap = new Map<String, EmailMessage>();
             List<Lead> leadsListwithEmail = new List<Lead>();
             List<Lead> leadsListToUpdate = new List<Lead>();
             List<task> taskListToInsert = new List<Task>();
@@ -56,38 +58,36 @@ public without sharing class EmailTriggerHelper {
                             if(leadEmailByLeadList.containsKey(emailMessageRec.ToAddress)){
                                 system.debug('leadEmailByLeadList.get(emailMessageRec.ToAddress)--->'+leadEmailByLeadList.get(emailMessageRec.ToAddress));
                                 for(Lead leadRecords : leadEmailByLeadList.get(emailMessageRec.ToAddress)){
-                                    Lead leadRecToUpdate  = new Lead();
-                                    leadRecToUpdate.Id = leadRecords.Id;
-                                    leadRecToUpdate.Email_Conversation_Done__c = true;
-                                    leadsListToUpdate.add(leadRecToUpdate);
-                                    
-                                    Task taskLeadRec = new Task();
-                                    taskLeadRec.Email__c = emailMessageRec.ToAddress;
-                                    taskLeadRec.Subject = 'Email: '+leadRecords.Name;
-                                    taskLeadRec.WhoId = leadRecords.Id;
-                                    taskLeadRec.Status = 'Completed';
-                                    taskLeadRec.OwnerId = leadRecords.OwnerId;
-                                    taskLeadRec.Description = 'To: '+emailMessageRec.ToAddress+'\n CC: '+emailMessageRec.CcAddress+'\n BCC: '+emailMessageRec.BccAddress+'\n\n Subject: '+emailMessageRec.Subject+'\n Body: '+emailMessageRec.TextBody;
-                                    taskListToInsert.add(taskLeadRec);
+                                    leadIdByLeadRecMap.put(leadRecords.Id, leadRecords);
+                                    leadIdBYEmailMessageRecordMap.put(leadRecords.Id, emailMessageRec);
                                 }
                             }
                         }
-                        if(!leadsListToUpdate.isEmpty()){
-                            Update leadsListToUpdate;
-                        }
-                        if(!taskListToInsert.isEmpty()){
-                            system.debug('taskListToInsert--->'+taskListToInsert);
-                            insert taskListToInsert;
-                            /*
-                            for(Task taskRec : taskListToInsert){
-                                emailByTaskId.put(taskRec.Email__c, taskRec.Id);
+                        if(!leadIdByLeadRecMap.isEmpty()){
+                            for(Lead leadRec: leadIdByLeadRecMap.values()){
+                                Lead leadRecToUpdate  = new Lead();
+                                leadRecToUpdate.Id = leadRec.Id;
+                                leadRecToUpdate.Email_Conversation_Done__c = true;
+                                leadsListToUpdate.add(leadRecToUpdate);
+                                
+                                Task taskLeadRec = new Task();
+                                if(leadIdBYEmailMessageRecordMap.containsKey(leadRec.Id))
+                                    taskLeadRec.Email__c = leadIdBYEmailMessageRecordMap.get(leadRec.Id).ToAddress;
+                                taskLeadRec.Subject = 'Email: '+leadRec.Name;
+                                taskLeadRec.WhoId = leadRec.Id;
+                                taskLeadRec.Status = 'Completed';
+                                taskLeadRec.OwnerId = leadRec.OwnerId;
+                                if(leadIdBYEmailMessageRecordMap.containsKey(leadRec.Id))
+                                    taskLeadRec.Description = 'To: '+leadIdBYEmailMessageRecordMap.get(leadRec.Id).ToAddress+'\n CC: '+leadIdBYEmailMessageRecordMap.get(leadRec.Id).CcAddress+'\n BCC: '+leadIdBYEmailMessageRecordMap.get(leadRec.Id).BccAddress+'\n\n Subject: '+leadIdBYEmailMessageRecordMap.get(leadRec.Id).Subject+'\n Body: '+leadIdBYEmailMessageRecordMap.get(leadRec.Id).TextBody;
+                                taskListToInsert.add(taskLeadRec);
                             }
-                            if(!emailByTaskId.isEmpty()){
-                                for(EmailMessage emailMessageRec : emailMessageList){
-                                    if(emailByTaskId.containsKey(emailMessageRec.ToAddress)){}
-                                  //  emailMessageRec.ActivityId = emailByTaskId.get(emailMessageRec.ToAddress);
-                                }
-                            }*/
+                            if(!leadsListToUpdate.isEmpty()){
+                                Update leadsListToUpdate;
+                            }
+                            if(!taskListToInsert.isEmpty()){
+                                system.debug('taskListToInsert--->'+taskListToInsert);
+                                insert taskListToInsert;
+                            }
                         }
                     }
                 }
