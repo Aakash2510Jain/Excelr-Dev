@@ -118,7 +118,7 @@
                     <h4>
                         <apex:outputText escape="false">
                             <p style="">
-                                Amount Chargeable(in words) &nbsp;&nbsp;&nbsp;&nbsp;     
+                                Invoice Value (in words)  &nbsp;&nbsp;&nbsp;&nbsp;     
                             </p>  
                         </apex:outputText>
                     </h4>
@@ -149,7 +149,7 @@
                 <td></td>
             </tr>
             <tr> 
-                <td >{!getcustomData.HSN_SAC__c}</td>
+                <td style="text-align: center;">{!getcustomData.HSN_SAC__c}</td>
                 <td style="text-align: center;">{!getInvoiceTotalPrice}</td>
                 <td style="text-align: center;">{!getcustomData.Rate__c}%</td>
                 <td style="text-align: center;">{!PercentageTotal}</td>
@@ -172,6 +172,102 @@
                     Tax amount(in words):  &nbsp;INR &nbsp;<b> {!TotalTaXAmountInword}&nbsp; ONLY</b><br/>
                 </td>
             </tr>
+        </table>
+        <br/><br/>
+        <table border="2" style="width: 100%;border-collapse: collapse;">
+            <thead style="border-collapse: collapse;">
+                <th style="border-collapse: collapse;">
+                    Receipt No.
+                </th>
+                <th>
+                    Receipt Date
+                </th>
+                <th>
+                    Ref Inv No
+                </th>
+                <th>
+                    Ref Inv Date
+                </th>
+                <th>
+                    Amount
+                </th>
+                
+            </thead>
+            <tbody>
+                <apex:repeat value="{!receiptList}" var="receiptRec">
+                    <tr>
+                        <td>
+                            {!receiptRec.Name}
+                        </td>
+                        <td>
+                            <apex:outputText value="{0,date,dd/MM/yyyy}"> <apex:param value="{!receiptRec.Receipt_Created_Date__c}" /> </apex:outputText>
+                        </td>
+                        <td>
+                            {!receiptRec.Invoice__r.Name}
+                        </td>
+                        <td>
+                            <apex:outputText value="{0,date,dd/MM/yyyy}"> <apex:param value="{!receiptRec.Invoice_Created_Date__c}" /> </apex:outputText> 
+                        </td>
+                        <td>
+                            <b>{!receiptRec.Amount__c}</b>
+                        </td>
+                    </tr>
+                </apex:repeat>
+                <tr>
+                    <td>
+                        &nbsp;
+                    </td>
+                    <td>
+                        &nbsp;
+                    </td>
+                    <td>
+                        &nbsp;
+                    </td>
+                    <td>
+                        &nbsp;
+                    </td>
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Due</b>
+                    </td>
+                    <td>
+                        
+                    </td>
+                    <td>
+                        
+                    </td>
+                    <td>
+                        
+                    </td>
+                    <td>
+                        <b>{!getinvoiceData.Due_Amount__c}</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        &nbsp;
+                    </td>
+                    <td>
+                        &nbsp;
+                    </td>
+                    <td>
+                        &nbsp;
+                    </td>
+                    <td>
+                        &nbsp;
+                    </td>
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <br/><br/>
+        <table  border="2" style="width: 100%;">
             <tr  >
                 <td  style="padding-left:410px;">
                     <b>for {!getcustomData.Name}<br/><br/></b>
@@ -179,6 +275,8 @@
                 </td>
             </tr>
         </table> <br/>
+        
+        
         Note: This invoice is not a proof of payment. Please refer to the receipts for payment confirmation <br/><br/><br/> 
         <p style="text-align:center;margin-top:10px">
             This is a Computer Generated Invoice

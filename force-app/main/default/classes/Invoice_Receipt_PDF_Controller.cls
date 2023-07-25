@@ -121,7 +121,7 @@ public without sharing class Invoice_Receipt_PDF_Controller {
                             invoiceToUpdate.Id = receiptRec.Invoice__c;
                             invoiceToUpdate.Realized_Amount__c = receiptRec.Invoice__r.Realized_Amount__c != null? receiptRec.Invoice__r.Realized_Amount__c + receiptRec.Amount__c : receiptRec.Amount__c;
                             invoiceToUpdate.Due_Amount__c = receiptRec.Invoice__r.Amount__c - invoiceToUpdate.Realized_Amount__c ;
-                            invoiceToUpdate.Do_Not_Send_Invoice__c = true;
+                           // invoiceToUpdate.Do_Not_Send_Invoice__c = true;
                             invoiceRecordsToUpdate.add(invoiceToUpdate);
                         }
                         system.debug('invoiceRecordsToUpdate--->'+invoiceRecordsToUpdate);

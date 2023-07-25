@@ -51,7 +51,7 @@ public without sharing class LeadTriggerHandler{
 
             for (Lead ld : leadList){
                 system.debug('ld.OwnerId--->' + ld.OwnerId);
-
+                ld.Next_follow_up_date_time__c = system.now().addHours(2);
                 if (ld.Enter_UTM_Link__c != null && ld.Lead_Generation_Method__c != null && (ld.Lead_Generation_Method__c == 'Chat Form' || ld.Lead_Generation_Method__c == 'Generic Form')){
                     Utility.UTMLinkParams(ld);
                 }

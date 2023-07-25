@@ -219,5 +219,110 @@ public without sharing class EmailIUtility{
             
         }
     }
-    
+    public static void sendInvoiceAndReceiptAsAttach(Set<Id> opportunityIds, String templateName){
+        try{
+            system.debug('opportunityIds--->'+opportunityIds);
+            Set<Id> invoiceIds = new Set<Id>();
+            Set<Id> receiptIds = new Set<Id>();
+            List<Attachment> attachmentList = new List<Attachment>();
+            List<Attachment> attachmentListUnderReceipt = new List<Attachment>();
+            List<Invoice__c> invoiceListToBeForwarded = new List<Invoice__c>();
+            List<Receipt__c> receiptListToBeForwarded = new List<Receipt__c>();
+            List<Messaging.SingleEmailMessage> mails = new List<Messaging.SingleEmailMessage>();
+            Map<string, Attachment> attachmentByParentId = new Map<String, Attachment>();
+            Map<String, Attachment> opportunityIdByInvoiceAttachment = new Map<String, Attachment>();
+            Map<String, string> opportunityIdByInvoiceId = new Map<String, String>();
+            Map<String, Receipt__c> opportunityIdByReceiptRecord = new Map<String, Receipt__c>();
+            Map<Id, Opportunity> opportunityRecordMap = new Map<Id,Opportunity>([Select Id,Email__c,Account.Name,Owner.Name FRom Opportunity where Id in:opportunityIds]);
+            
+            invoiceListToBeForwarded = [Select Id,Opportunity__r.Email__c,Opportunity__r.Amount,Opportunity__r.Account.Name From Invoice__c where Opportunity__c in : opportunityIds order by CreatedDate DESC];
+            receiptListToBeForwarded = [Select Id,Invoice__r.Opportunity__c,LastModifiedDate from Receipt__c where Receipt_Status__c = 'Received/Paid' AND Opportunity_Id__c in : opportunityIds order by CreatedDate DESC];
+            EmailTemplate et = [Select id, Name, DeveloperName, Subject, Body, HtmlValue from EmailTemplate where name = :templateName];
+            
+            system.debug('invoiceListToBeForwarded-->'+invoiceListToBeForwarded);
+            system.debug('receiptListToBeForwarded-->'+receiptListToBeForwarded);
+                        
+            if(!invoiceListToBeForwarded.isEmpty()){
+                for(Invoice__c invoiceRec : invoiceListToBeForwarded){
+                    opportunityIdByInvoiceId.put(invoiceRec.Opportunity__c , invoiceRec.Id);
+                }
+            }
+            if(!receiptListToBeForwarded.isEmpty()){
+                for(Receipt__c receiptRec : receiptListToBeForwarded){
+                    system.debug('receiptRec--->'+receiptRec);
+                    receiptIds.add(receiptRec.Id);
+                    if(opportunityIdByReceiptRecord.containsKey(receiptRec.Invoice__r.Opportunity__c) && opportunityIdByReceiptRecord.get(receiptRec.Invoice__r.Opportunity__c).LastModifiedDate < receiptRec.LastModifiedDate)
+                        opportunityIdByReceiptRecord.put(receiptRec.Invoice__r.Opportunity__c,receiptRec);
+                    else
+                        opportunityIdByReceiptRecord.put(receiptRec.Invoice__r.Opportunity__c,receiptRec);
+                }
+            }
+            system.debug('opportunityIdByInvoiceId--->'+opportunityIdByInvoiceId);
+            system.debug('opportunityIdByReceiptRecord--->'+opportunityIdByReceiptRecord);
+            system.debug('receiptIds--->'+receiptIds);
+
+            attachmentList = [SELECT Name, Body, ParentId,ContentType,createdDate FROM Attachment WHERE ParentId IN :opportunityIdByInvoiceId.values() or ParentId IN :receiptIds order By CreatedDate ASC];
+            system.debug('attachmentList--->'+attachmentList);
+            
+            if(!attachmentList.isEmpty()){
+                for(Attachment attachmentRec : attachmentList){
+                    system.debug('attachmentRec--->'+attachmentRec);
+                    if(attachmentByParentId.containsKey(attachmentRec.ParentId) && attachmentByParentId.get(attachmentRec.ParentId).createdDate < attachmentRec.createdDate)
+                        attachmentByParentId.put(attachmentRec.ParentId, attachmentRec);
+                    else
+                        attachmentByParentId.put(attachmentRec.ParentId, attachmentRec);
+                  
+                    system.debug('attachmentByParentId.containsKey(attachmentRec.ParentId).Name-->'+attachmentByParentId.get(attachmentRec.ParentId).Name);
+                    system.debug('attachmentByParentId.get(attachmentRec.ParentId).createdDate-->'+attachmentByParentId.get(attachmentRec.ParentId).createdDate);
+                    system.debug('attachmentRec.createdDate-->'+attachmentRec.createdDate);
+
+                }
+                
+            }
+            for(Id oppId : opportunityIds){
+                system.debug('oppId--->'+oppId);
+                system.debug('opportunityIdByInvoiceId.get(oppId)---->'+opportunityIdByInvoiceId.get(oppId));
+                system.debug('attachmentByParentId.get(opportunityIdByInvoiceId.get(oppId)).Name--->'+attachmentByParentId.get(opportunityIdByInvoiceId.get(oppId)).Name);
+                
+                List<Messaging.EmailFileAttachment> attachments = new List<Messaging.EmailFileAttachment>();
+                Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+                
+                Messaging.EmailFileAttachment invoiceAttach = new Messaging.EmailFileAttachment();
+                invoiceAttach.setFileName( attachmentByParentId.get(opportunityIdByInvoiceId.get(oppId)).Name);
+                invoiceAttach.setBody(attachmentByParentId.get(opportunityIdByInvoiceId.get(oppId)).Body);
+                invoiceAttach.setContentType(attachmentByParentId.get(opportunityIdByInvoiceId.get(oppId)).ContentType);
+                attachments.add(invoiceAttach);
+                
+                Messaging.EmailFileAttachment receiptAttachment = new Messaging.EmailFileAttachment();
+                receiptAttachment.setFileName(attachmentByParentId.get(opportunityIdByReceiptRecord.get(oppId).Id).Name);
+                receiptAttachment.setBody(attachmentByParentId.get(opportunityIdByReceiptRecord.get(oppId).Id).Body);
+                receiptAttachment.setContentType(attachmentByParentId.get(opportunityIdByReceiptRecord.get(oppId).Id).ContentType);
+                attachments.add(receiptAttachment);
+                
+                mail.setFileAttachments(attachments);
+                List<String> recipients = new List<String>();
+                recipients.add(opportunityRecordMap.get(oppId).Email__c);
+                mail.setToAddresses(recipients);
+                mail.setReplyTo('test@email.com');
+                mail.setSenderDisplayName('Excelr');
+                String subject = et.Subject;
+                String htmlBody = et.HtmlValue;
+                htmlBody = htmlBody.replace('{!Opportunity.OwnerName}', opportunityRecordMap.get(oppId).Owner.Name);
+                
+                if (htmlBody.contains('{!Account.Name}')){
+                    htmlBody = htmlBody.replace('{!Account.Name}', opportunityRecordMap.get(oppId).Account.Name);
+                }
+                
+                mail.setSubject(subject);
+                mail.setHtmlBody(htmlBody);
+                mails.add(mail);
+                system.debug('mails :: ' + mails);
+            }
+            if(!mails.isEMpty()){
+                Messaging.sendEmail(mails);
+            }
+        }catch (Exception e){
+            System.debug('Error Line==>' + e.getLineNumber() + 'Error Message==>' + e.getMessage());
+        }
+    }
 }

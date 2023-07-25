@@ -8,7 +8,7 @@ trigger ReceiptTrigger on Receipt__c (after update, before update) {
         if(trigger.isAfter && trigger.isUpdate){
             system.debug('After Update of Receipt');
             handlerInstance.afterUpdate(trigger.newMap, trigger.oldmap);
-            handlerInstance.handleSecondReceipt(trigger.newMap, trigger.oldmap); 
+           // handlerInstance.handleSecondReceipt(trigger.newMap, trigger.oldmap); 
         }
         if(trigger.isBefore && trigger.isUpdate){
             system.debug('Before Update of Receipt');

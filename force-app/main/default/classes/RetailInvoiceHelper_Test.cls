@@ -105,7 +105,7 @@ public without sharing class RetailInvoiceHelper_Test {
         invRec.LeadInvoice__c = led.Id;
         insert invRec;
         
-         PageReference pdfPage = Page.RetailInvoice_Attachment;
+        PageReference pdfPage = Page.RetailInvoice_Attachment;
         pdfPage.getParameters().put('id',invRec.id);
         Blob b;
         if(Test.isRunningTest()){
@@ -113,7 +113,7 @@ public without sharing class RetailInvoiceHelper_Test {
         }else{
             b = pdfPage.getContentAsPDF();
         }
-         List<Attachment> attachList = new List<Attachment>();
+        List<Attachment> attachList = new List<Attachment>();
         //  Blob b = Blob.valueOf('Test Data');
         Attachment attachment = new Attachment();
         attachment.ParentId = invRec.Id;

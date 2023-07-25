@@ -143,3 +143,6 @@ div.footer {
     text-align:center;
     font-size:13px;
 }
+table, td, th {
+  border: 1px solid black;
+}

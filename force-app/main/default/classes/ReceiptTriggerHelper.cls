@@ -28,15 +28,15 @@ public class ReceiptTriggerHelper {
         for(Receipt__c receiptRecord : newMap.values()){
             InvoiceIds.add(receiptRecord.Invoice__c);
             MapOfINvoiceIdWithReceipts.put(receiptRecord.Invoice__c, receiptRecord);
-            if(receiptRecord.Receipt_Status__c != oldmap.get(receiptRecord.Id).Receipt_Status__c && receiptRecord.Receipt_Status__c != null && receiptRecord.Receipt_Status__c == 'Received/Paid' && receiptRecord.Is_Pending_Receipt__c == false ){
+            if(receiptRecord.Receipt_Status__c != oldmap.get(receiptRecord.Id).Receipt_Status__c && receiptRecord.Receipt_Status__c != null && receiptRecord.Receipt_Status__c == 'Received/Paid'){// && receiptRecord.Is_Pending_Receipt__c == false ){
                 system.debug('Receipt status is updated as Received -- '+receiptIds);
                 receiptIds.add(receiptRecord.Id);
                 
             }
-            if(receiptRecord.Receipt_Status__c != oldmap.get(receiptRecord.Id).Receipt_Status__c && receiptRecord.Receipt_Status__c != null && receiptRecord.Receipt_Status__c == 'Received/Paid' && receiptRecord.Is_Pending_Receipt__c == true ){
-                system.debug('Receipt status is updated as Received -- '+receiptIds);
-                secondReceiptId.add(receiptRecord.Id);
-            }
+             if(receiptRecord.Receipt_Status__c != oldmap.get(receiptRecord.Id).Receipt_Status__c && receiptRecord.Receipt_Status__c != null && receiptRecord.Receipt_Status__c == 'Received/Paid' && receiptRecord.Is_Pending_Receipt__c == true ){
+                 system.debug('Receipt status is updated as Received -- '+receiptIds);
+                // secondReceiptId.add(receiptRecord.Id);
+             }
         }
 
         if (!InvoiceIds.isEmpty()) {

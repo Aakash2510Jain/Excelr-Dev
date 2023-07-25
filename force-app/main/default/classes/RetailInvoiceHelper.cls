@@ -23,6 +23,8 @@ global without sharing class RetailInvoiceHelper {
     global Date invoiceInitiatedDate {get;set;}
     global String invoiceTotalAmount {get;set;}
     
+    global static List<Receipt__c> receiptList {get;set;}
+
     global RetailInvoiceHelper(ApexPages.StandardController controller) {
         try{
             String recordId;
@@ -34,9 +36,12 @@ global without sharing class RetailInvoiceHelper {
             recordId = ApexPages.currentPage().getParameters().get('Id');
             
             getcustomData=[Select Name,Address__c,City__c,Pin_Code__c,State_Code__c,GSTIN__c,State_Name__c,EMail__c,Central_GST__c,State_GST__c,HSN_SAC__c,Rate__c from CustomInformation__c LIMIT 1];
-            getinvoiceData = [Select Id,Opportunity__r.Email__c,Opportunity__r.Amount,Opportunity__r.GST_State__c,Opportunity__r.Product_Name__c,Opportunity__r.Name,Name,Initiated_Date__c,Opportunity__c,Delivery_Note__c,Mode_Terms_of_Payment__c,Reference_No__c,Other_References__c,Amount__c from Invoice__c where Id=:recordId  LIMIT 1];
+            getinvoiceData = [Select Id,Opportunity__r.Email__c,Opportunity__r.Amount,Due_Amount__c,Opportunity__r.GST_State__c,Opportunity__r.Product_Name__c,Opportunity__r.Name,Name,Initiated_Date__c,Opportunity__c,Delivery_Note__c,Mode_Terms_of_Payment__c,Reference_No__c,Other_References__c,Amount__c from Invoice__c where Id=:recordId  LIMIT 1];
             gstdata = [SELECT Id,Name,State_Code__c	 FROM GST_State_Code__c];
-            
+            system.debug('getinvoiceData.Opportunity__c--->'+getinvoiceData.Opportunity__c);
+                
+            receiptList = [Select Id,Name,Receipt_Created_Date__c,Invoice__r.Name,Invoice_Created_Date__c,Amount__c From Receipt__c Where Opportunity_Id__c =: getinvoiceData.Opportunity__c AND Receipt_Status__c = 'Received/Paid'];
+            system.debug('receiptList--->'+receiptList);
             opportunityName = getinvoiceData.Opportunity__r.Name;
             opportunityEmail = getinvoiceData.Opportunity__r.Email__c;
             opportunityGSTState = getinvoiceData.Opportunity__r.GST_State__c;
@@ -129,6 +134,10 @@ system.debug('reciepientEmail :: ' + reciepientEmail);
 if (!string.isBlank(reciepientEmail)){
 //EmailIUtility.sendEmailForPaymentSuccess(reciepientEmail, 'Razor Pay Success Status Opportunity', 'Opportunity', recordId);
 }*/
+                Set<Id> opportunityIds = new Set<Id>();
+                opportunityIds.add([Select Opportunity__c From Invoice__c where id =: recordId].Opportunity__c);
+                EmailIUtility.sendInvoiceAndReceiptAsAttach(opportunityIds,'Payment Success Email');
+
             }
             
         } catch (exception e){

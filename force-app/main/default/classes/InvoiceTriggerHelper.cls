@@ -15,7 +15,7 @@ public without sharing class InvoiceTriggerHelper{
             List<opportunity> opportunityToUpdateAsWon = new List<Opportunity>();
             
             for ( Invoice__c invoiceRec : newMap.values() ){
-                if ( invoiceRec.Status__c != oldMap.get(invoiceRec.Id).Status__c && invoiceRec.Status__c == 'Realized' ){
+                if ( (invoiceRec.Status__c != oldMap.get(invoiceRec.Id).Status__c && invoiceRec.Status__c == 'Realized') ||(invoiceRec.No_of_time_Realized_amount_Updated__c != oldMap.get(invoiceRec.Id).No_of_time_Realized_amount_Updated__c) ){
                     system.debug('Status of Invoice is updated as Realized');
                     invoiceIds.add(invoiceRec.Id);
                 }
@@ -70,9 +70,12 @@ public without sharing class InvoiceTriggerHelper{
                 system.debug('oldMap.get(invoiceRec.Id).Due_Amount__c---->'+oldMap.get(invoiceRec.Id).Due_Amount__c);
                 system.debug('invoiceRec.Due_Amount__c--->'+invoiceRec.Due_Amount__c);
                     
-                if (invoiceRec.Realized_Amount__c != oldMap.get(invoiceRec.Id).Realized_Amount__c && invoiceRec.Realized_Amount__c != 0 && invoiceRec.Do_Not_Send_Invoice__c == false){
+                if (invoiceRec.Realized_Amount__c != oldMap.get(invoiceRec.Id).Realized_Amount__c && invoiceRec.Realized_Amount__c != 0){// && invoiceRec.Do_Not_Send_Invoice__c == false){
                     system.debug('Updating Invoice Status as realized');
                     invoiceRec.Status__c = 'Realized';
+                    if(invoiceRec.No_of_time_Realized_amount_Updated__c == null	)
+                        invoiceRec.No_of_time_Realized_amount_Updated__c = 0;
+                    invoiceRec.No_of_time_Realized_amount_Updated__c = invoiceRec.No_of_time_Realized_amount_Updated__c + 1;
                 }
             }
         }catch ( exception ex ){

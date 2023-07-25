@@ -16,6 +16,8 @@ public without Sharing class BuildMaps{
     public static map<string, Integer> mapofMemidByLeadsToAssignInSIngleShot = new map<string, integer>();
     public static map<String, map<String, Integer>> mapofAGIdWithMapOfMemIdAssignedLead = new map<String, map<String, Integer>>();
     public static map<string, String> mapofAssignGroupNameById = new map<string, String>();
+    
+    
     /* Condition map end*/
     public static boolean CheckBusinessHours(){
         try{
@@ -232,8 +234,83 @@ public without Sharing class BuildMaps{
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
             HandleBusinessException.captureError('BuildMaps', 'makeAllMemberOOF', e, null);
-
+            
         }
     }
-
+    public static string processAGMId(string assignmentGroupId, integer lastAllocatedRRId){
+        // as per the assignemtn group name , last allocated rr id and max lead capacity and return agm Id to which lead is going to assign
+        system.debug('assignmentGroupId-->'+assignmentGroupId);
+        system.debug('lastAllocatedRRId--->'+lastAllocatedRRId);
+            
+        set<id> userIds = new Set<Id>();
+        List<Lead> leadListAssignedToday = new List<Lead>();
+        Map<String, integer> leadOwnerByLeadsAssignedToday = new Map<String, Integer>();
+        Map<String, integer> finalleadOwnerByLeadsAssignedToday = new Map<String, Integer>();
+        string assignmentGroupMemberIdToAssignLead = '';
+        List<Assignment_Group_Member__c> agmByLastRRidInASCOrder = new List<Assignment_Group_Member__c>();
+        List<Assignment_Group_Member__c> dummyAGMlist = new List<Assignment_Group_Member__c>();
+        
+        List<Assignment_Group_Member__c> agmList = [Select Id,Max_Lead_Per_Day__c,Group_Member__c,Assignment_Id__c From Assignment_Group_Member__c where Assignment_Group__c =: assignmentGroupId order by Assignment_Id__c Asc]; //and Assignment_Id__c >=: lastAllocatedRRId 
+        system.debug('agmList-->'+agmList);
+        if(!agmList.isEmpty()){
+            for(Assignment_Group_Member__c agmRec : agmList){
+                userIds.add(agmRec.Group_Member__c);
+                if(lastAllocatedRRId == agmList.size()){
+                    if(lastAllocatedRRId == agmRec.Assignment_Id__c){
+                        agmByLastRRidInASCOrder.add(agmRec);
+                    }else{
+                        dummyAGMlist.add(agmRec);
+                    }
+                }else{
+                    if(lastAllocatedRRId <= agmRec.Assignment_Id__c){
+                        agmByLastRRidInASCOrder.add(agmRec);
+                    }else{
+                        dummyAGMlist.add(agmRec);
+                    }
+                }
+            }
+            system.debug('agmByLastRRidInASCOrder--->'+agmByLastRRidInASCOrder);
+            system.debug('dummyAGMlist-->'+dummyAGMlist);
+            system.debug('userIds--->'+userIds);
+            
+            if(!dummyAGMlist.isEmpty())
+                agmByLastRRidInASCOrder.addAll(dummyAGMlist);
+            system.debug('agmByLastRRidInASCOrder--->'+agmByLastRRidInASCOrder);
+            if(!userIds.isEmpty()){
+                leadListAssignedToday = [Select Id,OwnerId from Lead where OwnerId in : userIds and Lead_Assigned_Date__c = today];
+                system.debug('leadListAssignedToday--->'+leadListAssignedToday);
+                if(!leadListAssignedToday.isEmpty()){
+                    for(Lead leadRec : leadListAssignedToday){
+                        if(leadOwnerByLeadsAssignedToday.containsKey(leadRec.OwnerId)){
+                            leadOwnerByLeadsAssignedToday.put(leadRec.OwnerId, leadOwnerByLeadsAssignedToday.get(leadRec.OwnerId) + 1);
+                        }else{
+                            leadOwnerByLeadsAssignedToday.put(leadRec.OwnerId, 1);
+                        }
+                    }
+                }
+                for(Id userId : userIds){
+                    if(leadOwnerByLeadsAssignedToday.containsKey(userId)){
+                        finalleadOwnerByLeadsAssignedToday.put(userId, finalleadOwnerByLeadsAssignedToday.get(userId));
+                    }else{
+                        finalleadOwnerByLeadsAssignedToday.put(userId, 0);
+                    }
+                }
+                if(!finalleadOwnerByLeadsAssignedToday.isEmpty()){
+                    
+                    if(!finalleadOwnerByLeadsAssignedToday.isEmpty()){
+                        for(Assignment_Group_Member__c agmRec : agmList){
+                            system.debug('finalleadOwnerByLeadsAssignedToday.get(agmRec.Group_Member__c)-->'+finalleadOwnerByLeadsAssignedToday.get(agmRec.Group_Member__c));
+                            system.debug('agmRec.Max_Lead_Per_Day__c-->'+agmRec.Max_Lead_Per_Day__c);
+                                
+                            if(finalleadOwnerByLeadsAssignedToday.get(agmRec.Group_Member__c) < agmRec.Max_Lead_Per_Day__c){
+                                assignmentGroupMemberIdToAssignLead = agmRec.Id;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return assignmentGroupMemberIdToAssignLead;
+    }
 }

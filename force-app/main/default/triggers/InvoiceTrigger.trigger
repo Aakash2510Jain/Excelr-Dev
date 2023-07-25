@@ -7,7 +7,7 @@ trigger InvoiceTrigger on Invoice__c(after update, before insert,After insert,be
         
         if (trigger.isafter && trigger.isUpdate){
             handlerInstance.afterUpdate(trigger.newMap, trigger.oldMap);
-            handlerInstance.sendReferralFormViaEmail(trigger.oldMap, trigger.newMap);
+            //handlerInstance.sendReferralFormViaEmail(trigger.oldMap, trigger.newMap);
         }
  
         if (trigger.isbefore && trigger.isUpdate) {
