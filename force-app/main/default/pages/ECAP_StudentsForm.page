@@ -1,0 +1,202 @@
+<apex:page sidebar="false" showHeader="false" standardStylesheets="false" controller="ECAP_StudentsFormController">
+    <head>
+        <c:libraries ></c:libraries>
+        <style>
+            body {
+            font-family: "Roboto", sans-serif;
+            background-color: #fff;
+            line-height: 1.9;
+            color: #8c8c8c; }
+            
+            h1, h2, h3, h4, h5, h6,
+            .h1, .h2, .h3, .h4, .h5, .h6 {
+            font-family: "Roboto", sans-serif;
+            color: #000; }
+            
+            a {
+            -webkit-transition: .3s all ease;
+            -o-transition: .3s all ease;
+            transition: .3s all ease; }
+            a, a:hover {
+            text-decoration: none !important; }
+            
+            .text-black {
+            color: #000; }
+            
+            .content {
+            padding: 7rem 0; }
+            
+            .heading {
+            font-size: 2.5rem;
+            font-weight: 900; }
+            
+            .form-control {
+            border: none;
+            background: #f3f3f3; }
+            .form-control:active, .form-control:focus {
+            outline: none;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+            border-color: #000;
+            background: #f3f3f3; }
+            
+            .col-form-label {
+            color: #000; }
+            
+            .btn, .form-control, .custom-select {
+            height: 50px; }
+            
+            .custom-select:active, .custom-select:focus {
+            outline: none;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+            border-color: #000; }
+            
+            .btn {
+            border: none;
+            border-radius: 4px !important; }
+            .btn.btn-primary {
+            background: #000;
+            color: #fff;
+            padding: 15px 20px; }
+            .btn:hover {
+            color: #fff; }
+            .btn:active, .btn:focus {
+            outline: none;
+            -webkit-box-shadow: none;
+            box-shadow: none; }
+            
+            .box {
+            padding: 40px;
+            background: #fff;
+            -webkit-box-shadow: -30px 30px 0px 0 rgba(0, 0, 0, 0.08);
+            box-shadow: -30px 30px 0px 0 rgba(0, 0, 0, 0.08); }
+            .box h3 {
+            font-size: 14px;
+            margin-bottom: 30px;
+            text-align: center; }
+            
+            label.error {
+            font-size: 12px;
+            color: red; }
+            
+            #message {
+            resize: vertical; }
+            
+            #form-message-warning, #form-message-success {
+            display: none; }
+            
+            #form-message-warning {
+            color: #B90B0B; }
+            
+            #form-message-success {
+            color: #55A44E;
+            font-size: 18px;
+            font-weight: bold; }
+            
+            .submitting {
+            float: left;
+            width: 100%;
+            padding: 10px 0;
+            display: none;
+            font-weight: bold;
+            font-size: 12px;
+            color: #000; }
+        </style>
+    </head>
+    
+    <script>
+    
+    var app = angular.module('student_App', []);
+    app.controller('student_Ctrl', function($scope) {
+        debugger;
+        var campId = '{!$CurrentPage.parameters.cid}';
+        $scope.studentDetails={"FirstName": "", "LastName": ""};
+        $scope.description = "";
+        var campid = '{!getCampaignId}';
+        $scope.saveContact = function(){
+            debugger;
+            ECAP_StudentsFormController.saveFormDetails( $scope.studentDetails, $scope.description, campid, function(result,event){
+                if(event.status && result){
+                    alert ('Submitted');
+                    window.location.replace('https://www.excelr.com/');
+                }
+                $scope.$apply();   
+            })
+        }
+        
+    </script>
+    
+    <body ng-app="student_App" ng-controller="student_Ctrl">
+        <div class="content">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-10">
+                        <div class="row justify-content-center">
+                            <div class="col-md-6">
+                                <h3 class="heading mb-4">Let's talk about everything!</h3>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptas debitis, fugit natus?</p>
+                                <p><img src="https://preview.colorlib.com/theme/bootstrap/contact-form-16/images/undraw-contact.svg" alt="Image" class="img-fluid"/></p>
+                            </div>
+                            <div class="col-md-6">
+                                <form class="mb-5" method="post" id="contactForm" name="contactForm">
+                                    <div class="row">
+                                        <div class="col-md-12 form-group">
+                                            <input type="text" class="form-control" name="name" id="name" placeholder="First Name" ng-model="studentDetails.FirstName" />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 form-group">
+                                            <input type="text" class="form-control" name="name" id="name" placeholder="Last Name" ng-model="studentDetails.LastName"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 form-group">
+                                            <input type="text" class="form-control" name="email" id="email" placeholder="Email" ng-model="studentDetails.Email"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 form-group">
+                                            <input type="text" class="form-control" name="subject" id="subject" placeholder="Phone" ng-model="studentDetails.Phone"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            <input type="text" class="form-control" name="subject" id="subject" placeholder="City" ng-model="studentDetails.MailingCity"/>
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <input type="text" class="form-control" name="subject" id="subject" placeholder="State" ng-model="studentDetails.MailingState"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            <input type="text" class="form-control" name="subject" id="subject" placeholder="Country" ng-model="studentDetails.MailingCountry"/>
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <input type="text" class="form-control" name="subject" id="subject" placeholder="Postal Code" ng-model="studentDetails.MailingPostalCode"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 form-group">
+                                            <textarea class="form-control" name="message" id="message" cols="30" rows="7" placeholder="Description" ng-model="description"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                                <input type="submit" value="Save Details" class="btn btn-primary rounded-0 py-2 px-4" ng-click ="saveContact()"/>
+                                            <span class="submitting"></span>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div id="form-message-warning mt-4"></div>
+                                <div id="form-message-success">
+                                    Your message was sent, thank you!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</apex:page>

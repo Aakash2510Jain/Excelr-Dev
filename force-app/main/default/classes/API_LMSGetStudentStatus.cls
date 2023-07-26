@@ -11,10 +11,10 @@ global with sharing class API_LMSGetStudentStatus{
             String studentId = req.params.get('student_Id');
             System.debug('studentId =====> ' + studentId);
             if (studentId != null){
-                res.responseBody = Blob.valueOf('[{"status": "", "refered_by_details" : {"referrer_id" : "cust-1311","referrer_name" : "XYZ","referrer_email" : "referrer.email123@mailinator.com"},"student_id": "003N000001xyPbwIAE"},{"status": "","refered_by_details" : { "referrer_id" : "cust-1311","referrer_name" : "XYZ", "referrer_email" : "referrer.email123@mailinator.com"},"student_id": "003N000001xyPbwIAE" }]');
+                res.responseBody = Blob.valueOf('{ "status":"success","message": "Leads created successfully"}');
                 res.statusCode = 200;
             } else{
-                RestContext.response.responseBody = Blob.valueOf(JSON.serialize(new IntegrationWrapper.APIResponseWrapper('Error', 'Could not Fetch Student Status. StudentID is null')));
+                RestContext.response.responseBody = Blob.valueOf(JSON.serialize(new IntegrationWrapper.APIResponseWrapper('Error', '[{"ref": "003N000001xyPbwIAE","message": "Couldn\'t process this lead due to error"}, { "ref": "003N000001xyPbwIAE","message": "Couldn\'t process this lead due to error" }]')));
                 res.statusCode = 400;
             }
         } catch (Exception e){

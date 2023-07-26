@@ -771,13 +771,13 @@ public without sharing class LeadTriggerHandler{
                 }
                 //Validation for data null points
                 if (ld.Email != oldLeadMap.get(ld.Id).Email && ld.Email == null){
-                    ld.Email.addError('Email cannot be Empty!!');
+                    //ld.Email.addError('Email cannot be Empty!!');
                 }
                 if (ld.Alternate_Email__c != oldLeadMap.get(ld.Id).Alternate_Email__c && ld.Alternate_Email__c == null){
-                    ld.Alternate_Email__c.addError('Alternate Email cannot be Empty!!');
+                    //ld.Alternate_Email__c.addError('Alternate Email cannot be Empty!!');
                 }
                 if (ld.Alternate_Phone__c != oldLeadMap.get(ld.Id).Alternate_Phone__c && ld.Alternate_Phone__c == null){
-                    ld.Alternate_Phone__c.addError('Alternate Phone cannot be Empty!!');
+                    //ld.Alternate_Phone__c.addError('Alternate Phone cannot be Empty!!');
                 }
                 if (ld.Profession__c != oldLeadMap.get(ld.Id).Profession__c && ld.Profession__c == null){
                     ld.Profession__c.addError('Profession cannot be Empty!!');

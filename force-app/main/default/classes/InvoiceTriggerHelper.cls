@@ -65,41 +65,68 @@ public without sharing class InvoiceTriggerHelper{
     }
     public void beforeUpdate(Map<Id, Invoice__c> newMap, Map<Id, Invoice__c> oldMap){
         try{
+            Map<Id, Approval.ProcessSubmitRequest> cdToapprovalRequestMap = new Map<Id, Approval.ProcessSubmitRequest>();
+            List<ProcessInstance> existingApprovals = [SELECT Id, TargetObjectId FROM ProcessInstance WHERE TargetObjectId IN :newMap.keySet() AND Status = 'Pending'];
             system.debug('Before Update Invoice Trigger');
             for ( Invoice__c invoiceRec : newMap.values() ){
                 system.debug('oldMap.get(invoiceRec.Id).Due_Amount__c---->'+oldMap.get(invoiceRec.Id).Due_Amount__c);
                 system.debug('invoiceRec.Due_Amount__c--->'+invoiceRec.Due_Amount__c);
-                    
-                if (invoiceRec.Realized_Amount__c != oldMap.get(invoiceRec.Id).Realized_Amount__c && invoiceRec.Realized_Amount__c != 0){// && invoiceRec.Do_Not_Send_Invoice__c == false){
-                    system.debug('Updating Invoice Status as realized');
-                    invoiceRec.Status__c = 'Realized';
-                    if(invoiceRec.No_of_time_Realized_amount_Updated__c == null	)
-                        invoiceRec.No_of_time_Realized_amount_Updated__c = 0;
-                    invoiceRec.No_of_time_Realized_amount_Updated__c = invoiceRec.No_of_time_Realized_amount_Updated__c + 1;
+
+            if(existingApprovals.isEmpty()){
+                if(invoiceRec.Credit_Note_Amount__c != 0 && invoiceRec.Credit_Note_Amount__c != oldMap.get(invoiceRec.Id).Credit_Note_Amount__c){
+                    Id approverId;
+                String userRoleId;
+                Utility.ApprovalWrapper approvalParentIdWrapper = Utility.getParentUserMap();
+                
+                Approval.ProcessSubmitRequest approvalRequest = new Approval.ProcessSubmitRequest();
+                approvalRequest.setComments('Submitting Credit Note Amount for Manager Approval');
+                approvalRequest.setObjectId(invoiceRec.Id);
+                approvalRequest.setProcessDefinitionNameOrId('Invoice_Credit_Note_Amount_Approval');
+                userRoleId = invoiceRec.Opportunity__r.Owner.UserRoleId;
+                if(invoiceRec.Opportunity_s_Manager__c != null){
+                    approverId = invoiceRec.Opportunity_s_Manager__c;
+                }
+                else{
+                    approverId = approvalParentIdWrapper.smToManagerMap.containsKey(userRoleId) && approvalParentIdWrapper.managerRoleToUserIdMap.containsKey(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) ? approvalParentIdWrapper.managerRoleToUserIdMap.get(approvalParentIdWrapper.smToManagerMap.get(userRoleId)) : null; //userBhMap.containsKey(oppOwnersRoleId) ? userBhMap.get(oppOwnersRoleId) : null;
+                }
+                approvalRequest.setNextApproverIds(new List<Id> {approverId});
+                cdToapprovalRequestMap.put(invoiceRec.Id, approvalRequest);
                 }
             }
-        }catch ( exception ex ){
-            system.debug('Errror-->' + ex.getMessage());
-            system.debug('Errror-->' + ex.getCause());
-            system.debug('Errror-->' + ex.getLineNumber());
-            HandleBusinessException.captureError('InvoiceTriggerHelper', 'Before Update', ex, null);
+                
+            if (invoiceRec.Realized_Amount__c != oldMap.get(invoiceRec.Id).Realized_Amount__c && invoiceRec.Realized_Amount__c != 0){// && invoiceRec.Do_Not_Send_Invoice__c == false){
+                system.debug('Updating Invoice Status as realized');
+                invoiceRec.Status__c = 'Realized';
+                if(invoiceRec.No_of_time_Realized_amount_Updated__c == null	)
+                    invoiceRec.No_of_time_Realized_amount_Updated__c = 0;
+                invoiceRec.No_of_time_Realized_amount_Updated__c = invoiceRec.No_of_time_Realized_amount_Updated__c + 1;
+            }
         }
+        if(!cdToapprovalRequestMap.isEmpty()){
+            List<Approval.ProcessResult> result = Approval.process(cdToapprovalRequestMap.values());
+        }
+    }catch ( exception ex ){
+        system.debug('Errror-->' + ex.getMessage());
+        system.debug('Errror-->' + ex.getCause());
+        system.debug('Errror-->' + ex.getLineNumber());
+        HandleBusinessException.captureError('InvoiceTriggerHelper', 'Before Update', ex, null);
     }
-    public void sendforApproval(list<Invoice__c> invoiceList){
-        System.debug('invoiceList =====> ' + invoiceList);
-        set<id> invoiceIds = new Set<Id>();
-        Set<Id> underApprovalCaseSet = new Set<Id>();
-        list<task> TaskListTobeCreated = new List<task>();
-        try{
-            if ( !invoiceList.isEmpty() ){
-                for ( invoice__c inv : invoiceList ){
-                    if(inv.Type__c == 'Credit Note')
-                        invoiceIds.add(inv.Id);
-                }
-                Id financeUserId = [SELECT Id, Name
-                                    FROM User
-                                    WHERE Profile.Name = 'Finance'
-                                    LIMIT 1].Id;
+}
+public void sendforApproval(list<Invoice__c> invoiceList){
+    System.debug('invoiceList =====> ' + invoiceList);
+    set<id> invoiceIds = new Set<Id>();
+    Set<Id> underApprovalCaseSet = new Set<Id>();
+    list<task> TaskListTobeCreated = new List<task>();
+    try{
+        if ( !invoiceList.isEmpty() ){
+            for ( invoice__c inv : invoiceList ){
+                if(inv.Type__c == 'Credit Note')
+                    invoiceIds.add(inv.Id);
+            }
+            Id financeUserId = [SELECT Id, Name
+                                FROM User
+                                WHERE Profile.Name = 'Finance'
+                                LIMIT 1].Id;
                 
                 List<ProcessInstance> recordUnderApprovalList = [Select ID, Status, TargetObjectID, TargetObject.Name
                                                                  From ProcessInstance
