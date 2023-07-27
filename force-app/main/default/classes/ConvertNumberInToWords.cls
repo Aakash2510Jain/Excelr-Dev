@@ -1,10 +1,10 @@
 public without sharing class ConvertNumberInToWords {
-    static String[] to_19 = new string[]{ 'zero', 'one',  'two', 'three', 'four',  'five',  'six',  
-        'seven', 'eight', 'nine', 'ten',  'eleven', 'twelve', 'thirteen',  
-        'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen' };  
-            static String[] tens = new string[]{ 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'};  
+    static String[] to_19 = new string[]{ 'Zero', 'One',  'Two', 'Three', 'Four',  'Five',  'Six',  
+        'Seven', 'Eight', 'Nine', 'Ten',  'Eleven', 'Twelve', 'Thirteen',  
+        'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen' };  
+            static String[] tens = new string[]{ 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'};  
                 static String[] denom = new string[]{ '',  
-                    'thousand',   'million',     'billion',    'trillion',    'quadrillion',  
+                    'Thousand',   'million',     'billion',    'trillion',    'quadrillion',  
                     'quintillion', 's!xtillion',   'septillion',  'octillion',   'nonillion',  
                     'decillion',  'undecillion',   'duodecillion', 'tredecillion',  'quattuordecillion',  
                     's!xdecillion', 'septendecillion', 'octodecillion', 'novemdecillion', 'vigintillion' };  

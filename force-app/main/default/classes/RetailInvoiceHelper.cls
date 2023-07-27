@@ -5,6 +5,7 @@ global without sharing class RetailInvoiceHelper {
     global static Account getAccData {get;set;} 
     global static List<OpportunityLineItem> getOLIData {get;set;} 
     global static Decimal PercentageTotal {get;set;}
+    global static Decimal PercentageTotalInterstate {get;set;}
     global static Decimal TotalAmountWithPercentage {get;set;}
     global static Decimal TotalTaXAmount {get;set;}
     global static String TotalTaXAmountInword {get;set;}
@@ -35,7 +36,7 @@ global without sharing class RetailInvoiceHelper {
             
             recordId = ApexPages.currentPage().getParameters().get('Id');
             
-            getcustomData=[Select Name,Address__c,City__c,Pin_Code__c,State_Code__c,GSTIN__c,State_Name__c,EMail__c,Central_GST__c,State_GST__c,HSN_SAC__c,Rate__c from CustomInformation__c LIMIT 1];
+            getcustomData=[Select Name,InterState_Rate__c,Address__c,InterState_GST__c,City__c,Pin_Code__c,State_Code__c,GSTIN__c,State_Name__c,EMail__c,Central_GST__c,State_GST__c,HSN_SAC__c,Rate__c from CustomInformation__c LIMIT 1];
             getinvoiceData = [Select Id,Opportunity__r.Email__c,Opportunity__r.Amount,Due_Amount__c,Opportunity__r.GST_State__c,Opportunity__r.Product_Name__c,Opportunity__r.Name,Name,Initiated_Date__c,Opportunity__c,Delivery_Note__c,Mode_Terms_of_Payment__c,Reference_No__c,Other_References__c,Amount__c from Invoice__c where Id=:recordId  LIMIT 1];
             gstdata = [SELECT Id,Name,State_Code__c	 FROM GST_State_Code__c];
             system.debug('getinvoiceData.Opportunity__c--->'+getinvoiceData.Opportunity__c);
@@ -53,6 +54,8 @@ global without sharing class RetailInvoiceHelper {
                 getInvoiceTotalPrice = getInvoiceTotalPrice.setScale(2);
                 PercentageTotal = (getInvoiceTotalPrice *9)/100;
                 PercentageTotal = PercentageTotal.setScale(2);
+                PercentageTotalInterstate = (getInvoiceTotalPrice *18)/100;
+                PercentageTotalInterstate = PercentageTotalInterstate.setScale(2);
                 AmountTotalAmountWithPercentageInWords = NumberToText.convert(Integer.valueOf(getinvoiceData.Amount__c));
                 TotalTaXAmount = (PercentageTotal * 2);
                 TotalTaXAmountInword = NumberToText.convert(Integer.valueOf(TotalTaXAmount));

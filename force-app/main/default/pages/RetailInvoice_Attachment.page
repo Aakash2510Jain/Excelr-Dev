@@ -4,7 +4,7 @@
         <center><b>Tax Invoice </b> </center>
     </h1> 
     
-    <div style="Width:120%; height:40%; margin-bottom:39%;   margin-">
+    <div style="Width:120%; height:10%; margin-bottom:39%;">
         <table  style="width:50%; height:80%; float:left; padding-bottom:10%;  border:1px solid black; font-size:96.8%; text-align:left; border-collapse: collapse;">
             <tr  style="width:50%;">
                 <td  style="  border:1px solid black; padding-top:10px; padding-left:40px;">
@@ -14,7 +14,7 @@
                     {!getcustomData.City__c} {!getcustomData.Pin_Code__c}<br/>
                     GSTIN/UIN:{!getcustomData.GSTIN__c}<br/>
                     State Name:  {!getcustomData.State_Name__c}, Code:{!getcustomData.State_Code__c}<br/>
-                    E-Mail:{!getcustomData.EMail__c}<br/> <br/> <br/>  <br/>  <br/> 
+                    E-Mail:{!getcustomData.EMail__c}<br/> <br/> <br/>   
                     
                 </td>
             </tr> 
@@ -27,7 +27,7 @@
                     <b>{!opportunityName}</b><br/><br/>
                     {!opportunityEmail}<br/> 
                     {!opportunityGSTState}<br/><br/>
-                    State Name:&nbsp;&nbsp;&nbsp;    {!opportunityGSTState},Code: {!StateCode}<br/><br/><br/><br/><br/><br/><br/><br/>
+                    State Name:&nbsp;&nbsp;&nbsp;    {!opportunityGSTState},Code: {!StateCode}<br/><br/><br/><br/><br/><br/>
                 </td>
                 <td style="  border:0px solid black; width:25%; " >
                     
@@ -35,11 +35,11 @@
             </tr>
             
             <tr>
-                <td style="  border:1px solid black; width:25%; padding-top:10px; padding-left:5px; padding-bottom:10px;">
+                <td style="  border:1px solid black; width:25%; padding-left:5px; padding-bottom:10px;">
                     Invoice No.<br/>
                     <b> {!getinvoiceData.Name}</b>
                 </td>
-                <td style="  border:1px solid black; width:25%;  padding-top:10px; padding-bottom:10px; padding-left:5px;">
+                <td style="  border:1px solid black; width:25%; padding-bottom:10px; padding-left:5px;">
                     Dated<br/>
                     <b> <apex:outputText value="{0,date,dd'-'MMM'-'yy}">
                         <apex:param value="{!invoiceInitiatedDate}" /> 
@@ -56,7 +56,7 @@
     
     <div >
         
-        <table border="2" style="width: 100%; margin-top:10%;" >
+        <table border="2" style="width: 100%;" >
             <tr>
                 <td>SI No.</td>
                 <td style="text-align: center;">
@@ -79,18 +79,65 @@
                 </td>
             </tr>
             <tr>
-                <td>1 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/></td>
+                <td>1 <br/><br/><br/><br/><br/></td>
                 <td ><b style="text-align: center;"> Consulting Fee</b><br/>
                     {!getOLIDataName}<br/>
-                    <b style="text-align: right;">{!getcustomData.Central_GST__c}</b><br/>
-                    <b style="text-align: right;">{!getcustomData.State_GST__c}</b></td>
+                    <apex:outputPanel rendered="{!opportunityGSTState != 'KARNATAKA' && opportunityGSTState != ''}">
+                        <b style="text-align: right;">{!getcustomData.InterState_GST__c}</b><br/>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!opportunityGSTState == 'KARNATAKA'}">
+                        <b style="text-align: right;">{!getcustomData.Central_GST__c}</b><br/>
+                        <b style="text-align: right;">{!getcustomData.State_GST__c}</b>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!opportunityGSTState == ''}">
+                        <b style="text-align: right;">{!getcustomData.Central_GST__c}</b><br/>
+                        <b style="text-align: right;">{!getcustomData.State_GST__c}</b>
+                    </apex:outputPanel>
+                </td>
                 <td style="text-align: center;"><b>{!getcustomData.HSN_SAC__c} </b></td>
                 <td style="text-align: center;">1.00<br/> </td>
-                <td style="text-align: center;"><br/><br/> {!getcustomData.Rate__c} <br/> {!getcustomData.Rate__c}</td>
-                <td style="text-align: center;"><br/><br/> % <br/> % </td>
+                <td style="text-align: center;">
+                    <br/><br/> 
+                    <apex:outputPanel rendered="{!opportunityGSTState != 'KARNATAKA' && opportunityGSTState != ''}">
+                        <b style="text-align: right;">{!getcustomData.InterState_Rate__c}</b><br/>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!opportunityGSTState == 'KARNATAKA'}">                       
+                        <b style="text-align: right;">{!getcustomData.Rate__c}</b><br/>
+                        <b style="text-align: right;">{!getcustomData.Rate__c}</b>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!opportunityGSTState == ''}">
+                        <b style="text-align: right;">{!getcustomData.Rate__c}</b><br/>
+                        <b style="text-align: right;">{!getcustomData.Rate__c}</b>
+                    </apex:outputPanel>
+                    
+                </td>
+                <td style="text-align: center;"><br/><br/>
+                    <apex:outputPanel rendered="{!opportunityGSTState != 'KARNATAKA' && opportunityGSTState != ''}">
+                        %
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!opportunityGSTState == 'KARNATAKA'}">                       
+                        % <br/> % 
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!opportunityGSTState == ''}">
+                        % <br/> % 
+                    </apex:outputPanel>
+                    
+                </td>
                 <td>
                     <b>
-                        {!getInvoiceTotalPrice} -- <br/><br/>{!PercentageTotal}<br/>{!PercentageTotal}
+                        {!getInvoiceTotalPrice} -- <br/><br/>
+                        
+                        <apex:outputPanel rendered="{!opportunityGSTState != 'KARNATAKA' && opportunityGSTState != ''}">
+                            <b style="text-align: right;">{!PercentageTotalInterstate}</b><br/>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!opportunityGSTState == 'KARNATAKA'}">                       
+                           {!PercentageTotal}<br/>{!PercentageTotal}
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!opportunityGSTState == ''}">
+                          {!PercentageTotal}<br/>{!PercentageTotal}
+                        </apex:outputPanel>
+                        
+                        
                     </b>
                 </td> 
             </tr> 
@@ -151,29 +198,91 @@
             <tr> 
                 <td style="text-align: center;">{!getcustomData.HSN_SAC__c}</td>
                 <td style="text-align: center;">{!getInvoiceTotalPrice}</td>
-                <td style="text-align: center;">{!getcustomData.Rate__c}%</td>
-                <td style="text-align: center;">{!PercentageTotal}</td>
-                <td style="text-align: center;">{!getcustomData.Rate__c}%</td>
-                <td style="text-align: center;">{!PercentageTotal}</td>
+                <td style="text-align: center;">
+                    <apex:outputPanel rendered="{!opportunityGSTState != 'KARNATAKA' && opportunityGSTState != ''}">
+                        {!getcustomData.InterState_Rate__c}
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!opportunityGSTState == 'KARNATAKA'}">                       
+                        {!getcustomData.Rate__c}
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!opportunityGSTState == ''}">
+                        {!getcustomData.Rate__c}
+                    </apex:outputPanel>
+                    
+                    %
+                </td>
+                <td style="text-align: center;">
+                    <apex:outputPanel rendered="{!opportunityGSTState != 'KARNATAKA' && opportunityGSTState != ''}">
+                        <b style="text-align: right;">{!PercentageTotalInterstate}</b><br/>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!opportunityGSTState == 'KARNATAKA'}">                       
+                        {!PercentageTotal}
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!opportunityGSTState == ''}">
+                        {!PercentageTotal}
+                    </apex:outputPanel>
+                </td>
+                <td style="text-align: center;"><apex:outputPanel rendered="{!opportunityGSTState != 'KARNATAKA' && opportunityGSTState != ''}">
+                    0
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!opportunityGSTState == 'KARNATAKA'}">                       
+                        {!getcustomData.Rate__c}
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!opportunityGSTState == ''}">
+                        {!getcustomData.Rate__c}
+                    </apex:outputPanel>
+                    
+                    %</td>
+                <td style="text-align: center;">
+                    <apex:outputPanel rendered="{!opportunityGSTState != 'KARNATAKA' && opportunityGSTState != ''}">
+                        NA
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!opportunityGSTState == 'KARNATAKA'}">                       
+                        {!PercentageTotal}
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!opportunityGSTState == ''}">
+                        {!PercentageTotal}
+                    </apex:outputPanel>
+                </td>
                 <td style="text-align: center;">{!TotalTaXAmount}</td>
             </tr>
             <tr> 
                 <td style="text-align: right;"><b>Total</b></td>
                 <td style="text-align: center;"><b>{!getInvoiceTotalPrice}</b></td>
                 <td></td>
-                <td style="text-align: center;"><b>{!PercentageTotal}</b></td>
+                <td style="text-align: center;">
+                    <apex:outputPanel rendered="{!opportunityGSTState != 'KARNATAKA' && opportunityGSTState != ''}">
+                        <b style="text-align: right;">{!PercentageTotalInterstate}</b><br/>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!opportunityGSTState == 'KARNATAKA'}">                       
+                        {!PercentageTotal}
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!opportunityGSTState == ''}">
+                        {!PercentageTotal}
+                    </apex:outputPanel>
+                </td>
                 <td></td>
-                <td style="text-align: center;"><b>{!PercentageTotal}</b></td>
+                <td style="text-align: center;">
+                    <apex:outputPanel rendered="{!opportunityGSTState != 'KARNATAKA' && opportunityGSTState != ''}">
+                        <b style="text-align: right;">NA</b><br/>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!opportunityGSTState == 'KARNATAKA'}">                       
+                        {!PercentageTotal}
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!opportunityGSTState == ''}">
+                        {!PercentageTotal}
+                    </apex:outputPanel>
+                </td>
                 <td style="text-align: center;"><b>{!TotalTaXAmount}</b></td>  </tr>   
         </table>
         <table border="2" style="width: 100%;">
             <tr>
                 <td> 
-                    Tax amount(in words):  &nbsp;INR &nbsp;<b> {!TotalTaXAmountInword}&nbsp; ONLY</b><br/>
+                    Tax amount(in words):  &nbsp;INR &nbsp;<b> {!TotalTaXAmountInword}&nbsp; ONLY</b>
                 </td>
             </tr>
         </table>
-        <br/><br/>
+        <br/>
         <table border="2" style="width: 100%;border-collapse: collapse;">
             <thead style="border-collapse: collapse;">
                 <th style="border-collapse: collapse;">
@@ -266,19 +375,19 @@
                 </tr>
             </tbody>
         </table>
-        <br/><br/>
+        <br/>
         <table  border="2" style="width: 100%;">
             <tr  >
                 <td  style="padding-left:410px;">
-                    <b>for {!getcustomData.Name}<br/><br/></b>
+                    <b>for {!getcustomData.Name}<br/></b>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Authorised Signatory
                 </td>
             </tr>
         </table> <br/>
         
         
-        Note: This invoice is not a proof of payment. Please refer to the receipts for payment confirmation <br/><br/><br/> 
-        <p style="text-align:center;margin-top:10px">
+        Note: This invoice is not a proof of payment. Please refer to the receipts for payment confirmation 
+        <p style="text-align:center;">
             This is a Computer Generated Invoice
         </p>    
     </div>  

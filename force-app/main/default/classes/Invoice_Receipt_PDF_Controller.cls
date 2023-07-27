@@ -10,7 +10,7 @@ public without sharing class Invoice_Receipt_PDF_Controller {
     public String previouslyPaidAmount {get; set;}
     public String totalPaidAmount {get; set;}
     public String dueAmount {get; set;}
-    public string  amountinwords {get; set;}
+    public string amountinwords {get; set;}
     public Date  receiptCreationDate {get; set;}
     
     

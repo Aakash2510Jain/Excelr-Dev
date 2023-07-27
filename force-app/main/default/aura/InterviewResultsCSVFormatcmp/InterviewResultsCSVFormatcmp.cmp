@@ -1,0 +1,29 @@
+<aura:component controller ="UploadInterviewResultsController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+	
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>  
+    <aura:attribute name="uploadCSVFileFormat" type="Upload_Interview_Results__mdt"/>
+    
+    
+    <div class="slds-grid slds-gutters">
+        
+        <div class="slds-col slds-size_1-of-2">
+            <span>
+                <div class="slds-text-body_large slds-align_absolute-center slds-text-color_black">Download the interview result file format.</div><br/>
+                <div class="slds-text-body_small slds-text-color_error">- Aptitude result will accept % value.</div>
+                <div class="slds-text-body_small slds-text-color_error">- GD Result will accpet Pass, Fail (Picklist) value.</div>
+            </span>
+        </div>
+        <div class="slds-col slds-size_2of-2">
+            <div style="width:100%;padding: 25px">
+                <div style="float:right">
+                    <lightning:button iconName="utility:download" 
+                                      iconPosition="left" 
+                                      label="Download Format" 
+                                      onclick="{!c.downloadFormat}" 
+                                      class="slds-button slds-button_brand"/>        
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</aura:component>
