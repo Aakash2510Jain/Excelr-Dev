@@ -1,4 +1,4 @@
-<aura:component controller ="UploadInterviewResultsController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+<aura:component controller ="InterviewResultsCSVFormatController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
 	
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>  
     <aura:attribute name="uploadCSVFileFormat" type="Upload_Interview_Results__mdt"/>

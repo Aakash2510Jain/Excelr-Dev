@@ -25,6 +25,7 @@ global without sharing class RetailInvoiceHelper {
     global String invoiceTotalAmount {get;set;}
     
     global static List<Receipt__c> receiptList {get;set;}
+    //global static List<wrapReceipt> wrapReceiptList {get;set;}
 
     global RetailInvoiceHelper(ApexPages.StandardController controller) {
         try{
@@ -41,12 +42,20 @@ global without sharing class RetailInvoiceHelper {
             gstdata = [SELECT Id,Name,State_Code__c	 FROM GST_State_Code__c];
             system.debug('getinvoiceData.Opportunity__c--->'+getinvoiceData.Opportunity__c);
                 
-            receiptList = [Select Id,Name,Receipt_Created_Date__c,Invoice__r.Name,Invoice_Created_Date__c,Amount__c From Receipt__c Where Opportunity_Id__c =: getinvoiceData.Opportunity__c AND Receipt_Status__c = 'Received/Paid'];
+            receiptList = [Select Id,Name,Receipt_Created_Date__c,Invoice__r.Name,Invoice_Created_Date__c,Amount__c,Type__c,Custom_Auto_Number__c From Receipt__c Where Opportunity_Id__c =: getinvoiceData.Opportunity__c AND Receipt_Status__c = 'Received/Paid'];
             system.debug('receiptList--->'+receiptList);
             opportunityName = getinvoiceData.Opportunity__r.Name;
             opportunityEmail = getinvoiceData.Opportunity__r.Email__c;
             opportunityGSTState = getinvoiceData.Opportunity__r.GST_State__c;
             invoiceInitiatedDate = getinvoiceData.Initiated_Date__c;
+            
+       // code for wrappper Receipt Object    
+       /*     if(wrapReceiptList == null){
+                wrapReceiptList = new List<wrapReceipt>();
+                for(Receipt__c  r :[Select Id,Name,Receipt_Created_Date__c,Invoice__r.Name,Invoice_Created_Date__c,Amount__c,Type__c From Receipt__c Where Opportunity_Id__c =: getinvoiceData.Opportunity__c AND Receipt_Status__c = 'Received/Paid']){
+                    wrapReceiptList.add(new wrapReceipt(r));
+                }
+            }*/
                     
             if (getinvoiceData.Amount__c != null) {
                 invoiceTotalAmount = string.valueOf(getinvoiceData.Amount__c);
@@ -149,4 +158,20 @@ if (!string.isBlank(reciepientEmail)){
             HandleBusinessException.captureError('RetailInvoiceHelper','attachPdf', e, null);
         }
     }
+    
+    
+    //Wrapper For Receipt Object
+   /* public class wrapReceipt {
+        Public String RecepitName{get;set;}
+        Public Date ReceiptCreatedDate{get;set;}
+        Public String InvoiceName{get;set;}
+        Public Date InvoiceCreatedDate{get;set;}
+        Public Integer Amount{get;set;}
+        
+        public Receipt__c receipt {get;set;}
+        
+        public wrapReceipt(Receipt__c recp){
+            receipt = recp;
+        }
+    }  */
 }

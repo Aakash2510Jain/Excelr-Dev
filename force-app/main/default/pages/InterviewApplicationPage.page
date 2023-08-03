@@ -115,6 +115,8 @@
         var app = angular.module('interview_app', []);
         app.controller('interview_ctrl', function($scope) {
             var opportunityId = '006N000000KcOxAIAV';
+             $scope.collegeList = [];
+            $scope.selectedName = 'None';
             
             // var opportunityId = '{!$CurrentPage.parameters.oid}';
             $scope.studentDet = {FirstName:"",LastName:"",Email: ""};
@@ -160,7 +162,7 @@
                 }
                 $("#btnSubmit").hide();
                 $("#btnPleaseWait").show();
-                InterviewApplicationController.saveStudentDetails($scope.studentDet,opportunityId,function(result,event){
+                InterviewApplicationController.saveStudentDetails($scope.studentDet,opportunityId,$scope.selectedName,function(result,event){
                     debugger;
                     $("#btnPleaseWait").hide();
                     $("#btnSubmit").show();
@@ -204,7 +206,24 @@
                 debugger;
                 $("#"+controlid+"").removeClass('border-theme');
             }
+            
+            
+             $scope.getAllCollegeRecords = function(){
+              debugger;
+               InterviewApplicationController.getAllCollegeRecords(function (result,event){
+                 debugger;
+                  if(event.status && result != null){
+                      console.log('result----->',result);   
+                       $scope.collegeList = result;
+                          $scope.$apply();
+                      }
+               
+               }) 
+           
+       }
+              $scope.getAllCollegeRecords();
         });
+          
     </script>
 
 
@@ -246,7 +265,19 @@
                             <div class="mb-3">
                                 <input type="text" class="form-control" id="txtPin" ng-model="studentDet.MailingPostalCode" ng-focus="removeClass('txtLastName')" placeholder="Pin Code"/>
                             </div>
+                           
+                          
+                       <div class="mb-3">
+                           <select class="form-control" aria-label="Default select example" ng-model="selectedName" >
+                              <!-- <option value="none" ng-selected="true">--None--</option> -->
+                                <option  value="Default" ng-selected="true">Select College</option>
+                               <option ng-repeat="college in collegeList" value="none" ng-selected="true" >{{college.Name}}</option>
+                           </select>
                         </div>
+                            
+                        </div>
+                        <!--collegeList PickList-->               
+                        
 
                         <div class="row my-3">
                             <div class="col-6">

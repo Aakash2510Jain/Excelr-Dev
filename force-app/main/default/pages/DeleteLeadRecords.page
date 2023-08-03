@@ -1,0 +1,5 @@
+<apex:page extensions="DeleteLeadRecords_BatchClass_Ctrl" action="{!deleteLeadRecords}"  standardController="Lead" recordSetVar="leadrec">
+     <script  >
+      window.history.back();
+       </script>
+</apex:page>

@@ -26,11 +26,14 @@
     <aura:attribute name="TargetFileName" type="String" description="Name of the file"/> 
     <aura:attribute name="tableheaders" type="Object[]"/>
     <aura:attribute name="fileContentData" type="String"/>
-    <aura:attribute name="NumOfRecords" type="Integer"/>
+    <aura:attribute name="formLabel" type="String"/>
+    <aura:attribute name="NumOfRecords" type="Integer" default="10"/>
     <aura:attribute name="showMain" type="Boolean" default="true"/>
+    <aura:attribute name="loading" type="Boolean" default="false"/>
     <aura:attribute name="showError" type="Boolean" default="false"/>
     <aura:attribute name="recordId" type="String"/>
     <aura:attribute name="fileName" type="String" default="No File Selected."/>
+    <aura:attribute name="newfileName" type="String" default="No File Selected."/>
     <aura:attribute name="buttonLabel" type="string" default="Upload File" access="global" description="The label of the button."/>
     <aura:attribute name="disabled" type="Boolean" default="false" access="global"/>
     
@@ -59,7 +62,7 @@
                         <div class="slds-col slds-size_2-of-4.5">
                             <span>
                                 <lightning:input aura:id="fuploader" onchange="{!c.onchange}" type="file" name="file" label="Upload File" multiple="false"/>
-                                <div class="slds-text-body_small slds-text-color_error">{!v.fileName}</div>
+                                <div class="slds-text-body_small slds-text-color_error">{!v.newfileName}</div>
                               </span>
                         </div>
                       </div>

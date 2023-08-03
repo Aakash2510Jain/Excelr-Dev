@@ -1,5 +1,6 @@
 ({
     readFile: function(component, helper, file) {
+        debugger;
         if (!file) return;
         console.log('file'+file.name);
         if(!file.name.match(/\.(csv||CSV)$/)){
@@ -26,9 +27,9 @@
                 alert('File read cancelled');
             };
             reader.onloadstart = function(e) { 
-                
+                debugger;
                 var output = '<ui type=\"disc\"><li><strong>'+file.name +'</strong> ('+file.type+')- '+file.size+'bytes, last modified: '+file.lastModifiedDate.toLocaleDateString()+'</li></ui>';
-                component.set("v.filename",file.name);
+                component.set("v.newfileName",file.name);
                 component.set("v.TargetFileName",output);
                
             };
@@ -45,8 +46,7 @@
               
                 	var numOfRows=component.get("v.NumOfRecords");
                     if(dataRows > numOfRows+1 || dataRows == 1 || dataRows== 0){
-                   
-                     alert("File Rows between 1 to "+numOfRows+" .");
+                   	alert("File Rows between 1 to .");
                     component.set("v.showMain",true);
                     
                 } 
@@ -100,7 +100,7 @@
         var fieldsList = headers;
        
         action.setParams({ fileData : component.get("v.fileContentData"),
-                          sobjectName:'Opportunity', //Any object
+                          sobjectName:'Interview_Application__c', //Any object
                           fields:fieldsList,
                           recordId:recId});
         action.setCallback(this, function(response) {

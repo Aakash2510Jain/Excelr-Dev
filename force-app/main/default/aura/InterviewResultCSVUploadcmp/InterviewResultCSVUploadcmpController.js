@@ -11,7 +11,7 @@
         if (event.getSource().get("v.files").length > 0) { 
             fileName = event.getSource().get("v.files")[0];//['name'];
         }
-        component.set("v.fileName", fileName['name']);
+        component.set("v.newfileName", fileName['name']);
         helper.readFile(component,helper,fileName);
         
   	},
