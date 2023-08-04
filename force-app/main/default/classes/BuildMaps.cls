@@ -16,8 +16,43 @@ public without Sharing class BuildMaps{
     public static map<string, Integer> mapofMemidByLeadsToAssignInSIngleShot = new map<string, integer>();
     public static map<String, map<String, Integer>> mapofAGIdWithMapOfMemIdAssignedLead = new map<String, map<String, Integer>>();
     public static map<string, String> mapofAssignGroupNameById = new map<string, String>();
+
+    public static map<string, String> mapofAllocatedIdByMaxLeadCap = new map<string, String>();
+    public static map<string, String> mapofOwnerIdByTodaysLeadAssignedCount = new map<string, String>();
+    public static map<string, String> mapofAllocatedIdByOwnerId = new map<string, String>();
     
-    
+
+
+    public static void mapsForUserCapacity(string assignmentGroupName){
+        try{
+            List<Assignment_Group_Member__c> agmList = new List<Assignment_Group_Member__c>();
+            List<Lead> leadsAssignedToday = new List<Lead>();
+
+            if(!string.isBlank(assignmentGroupName)){
+                agmList = [Select Id, Assignment_Id__c,Max_Lead_Per_Day__c,Group_Member__c From Assignment_Group_Member__c where Assignment_Group__r.name  = : assignmentGroupName];
+                if(!agmList.isEmpty()){
+                    for(Assignment_Group_Member__c agm : agmList){
+                        mapofAllocatedIdByMaxLeadCap.put(string.valueOf(agm.Assignment_Id__c), string.valueOf(agm.Max_Lead_Per_Day__c));
+                        mapofAllocatedIdByOwnerId.put(string.valueOf(agm.Assignment_Id__c), string.valueOf(agm.Group_Member__c));
+                    }
+                    if(!mapofAllocatedIdByOwnerId.isEmpty()){
+
+                         List<AggregateResult> results = [SELECT OwnerId, COUNT(Id) leadCount FROM Lead WHERE Lead_Assigned_Date__c = today and OwnerId in : mapofAllocatedIdByOwnerId.values() GROUP BY OwnerId];
+                        
+                        for (AggregateResult result : results) {
+                            Id ownerId = (Id) result.get('OwnerId');
+                            Integer leadCount = (Integer) result.get('leadCount');
+                            mapofOwnerIdByTodaysLeadAssignedCount.put(string.valueOf(ownerId), string.valueOf(leadCount));
+                        }
+                    }
+                }
+            }
+        } catch (Exception e){
+            system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
+            HandleBusinessException.captureError('BuildMaps', 'makeQNameToLastAssignedQmemberRRid', e, null);
+        }
+    }
+
     /* Condition map end*/
     public static boolean CheckBusinessHours(){
         try{
@@ -58,7 +93,7 @@ public without Sharing class BuildMaps{
             return null;
         }
     }
-
+    
     public static void validateUserCapacity(String groupName, set<String> leadIdList){
         try{
             system.debug('groupName::' + groupName);
