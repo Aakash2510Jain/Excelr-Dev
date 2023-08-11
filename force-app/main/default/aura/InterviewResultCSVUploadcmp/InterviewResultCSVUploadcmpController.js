@@ -2,6 +2,7 @@
     
     onchange: function(component, event, helper) 
     {
+        debugger;
      	event.stopPropagation();
         event.preventDefault();
      	//var files=event.dataTransfer.files;

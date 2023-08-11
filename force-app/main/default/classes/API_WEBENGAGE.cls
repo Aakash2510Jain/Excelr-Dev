@@ -6,7 +6,7 @@ public class API_WEBENGAGE implements Database.Batchable<sObject>, Database.Allo
         String dateValue = System.Label.WebEngageDate;
         Date dateVal = Date.parse(dateValue);
         Date todayDate = system.today(); // 01/07/2023 
-        return Database.getQueryLocator([SELECT Id, Name,LastName,Course__c,Email, Alternate_Email__c,Phone,Alternate_Phone__c FROM Lead where Pushed_to_Webengage__c = false and CreatedDate >: dateVal]);
+        return Database.getQueryLocator([SELECT Id, Name,LastName,Course__c,Email, Alternate_Email__c,Phone,Alternate_Phone__c,Status,LID__c FROM Lead where Pushed_to_Webengage__c = false and CreatedDate >: dateVal]);
     }
     
     public void execute(Database.BatchableContext bc, List<Lead> leadList) {
@@ -30,7 +30,7 @@ public class API_WEBENGAGE implements Database.Batchable<sObject>, Database.Allo
             system.debug('leadList[i].LastName--->'+leadList[i].LastName);
             jsonGenerator.writeStartObject();
             jsonGenerator.writeStringField('firstName', leadList[i].LastName);
-            string email = leadList[i].Email != null ? leadList[i].Email : leadList[i].alternate_Email__c != null ?leadList[i].alternate_Email__c : 'noEmail';
+            string email = leadList[i].Email != null ? leadList[i].Email : leadList[i].alternate_Email__c != null ?leadList[i].alternate_Email__c : 'NA';
             jsonGenerator.writeStringField('email', email);
             string phone = leadList[i].Phone != null ? leadList[i].Phone : leadList[i].Alternate_Phone__c != null ?leadList[i].Alternate_Phone__c : String.valueOf((Datetime.now()).getTime());
             jsonGenerator.writeStringField('userId', phone);
@@ -39,6 +39,13 @@ public class API_WEBENGAGE implements Database.Batchable<sObject>, Database.Allo
             jsonGenerator.writeStartObject();
             string course = leadList[i].Course__c != null ? leadList[i].Course__c : 'NA';
             jsonGenerator.writeStringField('Course', course);
+            jsonGenerator.writeStringField('Id', leadList[i].Id);
+            jsonGenerator.writeStringField('lead_status', leadList[i].Status);
+            string AlternatePhone = leadList[i].Alternate_Phone__c != null ? leadList[i].Alternate_Phone__c : 'NA';
+            jsonGenerator.writeStringField('AlternatePhone', AlternatePhone);
+            string AlternateEmail = leadList[i].Alternate_Email__c != null ? leadList[i].Alternate_Email__c : 'NA';
+            jsonGenerator.writeStringField('AlternateEmail', AlternateEmail);
+            jsonGenerator.writeStringField('lead_id', leadList[i].LID__c);
             jsonGenerator.writeEndObject();
             jsonGenerator.writeEndObject();
         }

@@ -1,4 +1,4 @@
-@RestResource(urlMapping = '/LMSPostBulkRegistration')
+@RestResource(urlMapping = '/bulk_leadcreate')
 global with sharing class API_LMSPostBulkRegistration{
     @HttpPost
     global static void PostLMS_BulkLeadRegistration(){
@@ -15,9 +15,9 @@ global with sharing class API_LMSPostBulkRegistration{
                 if (LeadWrap.LeadsTobeCreated.size() > 0 && LeadWrap.LeadsTobeCreated != null){
                     Schema.SobjectField fToken = Lead.Fields.LMS_StudentId__c;
                     Database.upsertresult[] Leadresult = Database.upsert (LeadWrap.LeadsTobeCreated, fToken, false);
-                    Map<ID, Lead> Leadmap = new Map<ID, Lead>(LeadWrap.LeadsTobeCreated);
+                    //Map<ID, Lead> Leadmap = new Map<ID, Lead>(LeadWrap.LeadsTobeCreated);
 
-                    System.debug('Leadmap =====> ' + Leadmap);
+                    //System.debug('Leadmap =====> ' + Leadmap);
                     Integer i = 0;
 
                     for (Database.upsertresult result : Leadresult){
@@ -28,7 +28,11 @@ global with sharing class API_LMSPostBulkRegistration{
                                 RestContext.response.responseBody = Blob.valueOf('{"Status": "SUCCESS","Message": "All Lead details have been Captured Successfully"');
                                 Map<string, Object> LeadCreatedMap = (Map<string, Object>)((LeadWrap.leadmap).get((LeadWrap.LeadsTobeCreated)[i].LMS_StudentId__c));
                                 if (LeadCreatedMap.containskey('product_interested_in')) {
-                                    List<String> ProdExtIdList = (List<String>)(LeadCreatedMap).get('product_interested_in');
+                                    List<Object> ProdExtIdObjectList = (List<Object>)(LeadCreatedMap).get('product_interested_in');
+                                    List<String> ProdExtIdList = new List<String>();
+                                    for (Object Obj : ProdExtIdObjectList) {
+                                        ProdExtIdList.add(String.valueOf(Obj));                                        
+                                    }
                                     
                                     if (ProdExtIdList.size() >0) {
                                         for (String str : ProdExtIdList) {
@@ -40,13 +44,15 @@ global with sharing class API_LMSPostBulkRegistration{
                                     }
                                 }
                             } else{
-                                RestContext.response.responseBody = Blob.valueOf('{"Status": "SUCCESS","Message": "All Lead details have been Updated Successfully"');
+                                RestContext.response.responseBody = Blob.valueOf('{"Status": "SUCCESS","Message": "All Lead details have been Updated Successfully"}');
 
                             }
                         } else{
 
+                            Database.Error error = result.getErrors()[0];
                             APIResponseWrapper APIResWrap = new APIResponseWrapper();
-                            APIResWrap.message = 'Couldn\'t process this lead due to error';
+                            APIResWrap.message = String.valueOf(error);
+                            //APIResWrap.message = 'Couldn\'t process this lead due to error';
                             APIResWrap.ref = String.valueOf((LeadWrap.LeadsTobeCreated)[i].LMS_StudentId__c);
                             APIResWrapperList.add(APIResWrap);
                         }
@@ -59,15 +65,29 @@ global with sharing class API_LMSPostBulkRegistration{
                     Database.upsertresult[] Leadresult = Database.upsert (ProdInterestedList, false);
 
                 }
+                if (!APIResWrapperList.isEmpty() && APIResWrapperList.size() >0 ) {
+                    String ErrorresponseBodyForLead = JSON.serialize(APIResWrapperList);
+                    String ErrorresonseBOdy = '{"Status": "ERROR","Message": ' + ErrorresponseBodyForLead + '}';
+                    RestContext.response.responseBody = Blob.valueOf(ErrorresonseBOdy);
+                    RestContext.response.statusCode = 400;
+                    
+                }
                 // RestContext.response.responseBody = Blob.valueOf('{"Status": "SUCCESS","Message": "All Lead details have been Captured Successfully","ref_id": "vfsvfsv228"}');
                 // RestContext.response.statusCode = 200;
             } else{
-                String ErrorresponseBodyForLead = JSON.serialize(APIResWrapperList);
-                String ErrorresonseBOdy = '{"Status": "SUCCESS","Message": ' + ErrorresponseBodyForLead;
+                String ErrorresonseBOdy = '{"Status": "Error","Message": "JSON Body is empty. Please send data in JSON Body!"}';
                 RestContext.response.responseBody = Blob.valueOf(ErrorresonseBOdy);
                 RestContext.response.statusCode = 400;
+                /*
+                String ErrorresponseBodyForLead = JSON.serialize(APIResWrapperList);
+                String ErrorresonseBOdy = '{"Status": "ERROR","Message": ' + ErrorresponseBodyForLead;
+                RestContext.response.responseBody = Blob.valueOf(ErrorresonseBOdy);
+                RestContext.response.statusCode = 400;*/
             }
         } catch (Exception e){
+            //RestContext.response.responseBody = Blob.valueOf(String.valueOf(e.getMessage()));
+            RestContext.response.responseBody = Blob.valueOf('{"Status": "ERROR","Message":"" }');
+            RestContext.response.statusCode = 400;
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
             HandleBusinessException.captureError('API_LMSPostBulkRegistration', 'PostLMS_BulkLeadRegistration', e, null);
 
@@ -100,10 +120,15 @@ global with sharing class API_LMSPostBulkRegistration{
                     }
 
                     if (leadmap.containsKey('product_interested_in')){
-                        List<String> ProdExtIdList = (List<String>)leadmap.get('product_interested_in');
-                        System.debug('ProdExtIdList ====> ' + ProdExtIdList);
+                        //Map<string, Object> leadmap = (Map<string, Object>)leadmap.get('product_interested_in');
+                        List<Object> ProdExtIdObjectList = (List<Object>)(leadmap.get('product_interested_in'));
+                        System.debug('ProdExtIdObjectList ====> ' + ProdExtIdObjectList);
+                        List<String> ProdExtIdList = new List<String>();
+                        for (Object obj : ProdExtIdObjectList) {
+                            ProdExtIdList.add(String.valueOf(obj));
+                        }
                         StudentIdWithCousreList.put(String.valueOf(leadmap.get('student_id')), ProdExtIdList);
-                        for (String str : ProdExtIdList){
+                        for (string str : ProdExtIdList){
                             CourseIds.add(str);
 
                         }
@@ -131,6 +156,9 @@ global with sharing class API_LMSPostBulkRegistration{
                 if (leadmap.containskey('name')){
                     LeadToBeCreated.LastName = String.valueOf(leadmap.get('name'));
                 }
+                if (leadmap.containskey('name')){
+                    LeadToBeCreated.Company = String.valueOf(leadmap.get('name'));
+                }
                 if (leadmap.containskey('email')){
                     LeadToBeCreated.email = String.valueOf(leadmap.get('email'));
                 }
@@ -153,6 +181,7 @@ global with sharing class API_LMSPostBulkRegistration{
             }
         }
         LeadWrap.LeadsTobeCreated = LeadlistTobeCreated;
+        System.debug('LeadWrap ===> ' + LeadWrap);
         return LeadWrap;
     }
 

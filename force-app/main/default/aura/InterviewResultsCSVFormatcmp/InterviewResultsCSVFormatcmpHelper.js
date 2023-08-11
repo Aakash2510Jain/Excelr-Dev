@@ -11,7 +11,7 @@
 
         // in the keys valirable store fields API Names as a key 
         // this labels use in CSV file header  
-        keys = ['Student Id','Application Id','Aptitude Result','GD Result'];
+        keys = ['Student Id','Application Id','Aptitude Marks','Aptitude Result','GD Result'];
         
         csvStringResult = '';
         csvStringResult += keys.join(columnDivider);

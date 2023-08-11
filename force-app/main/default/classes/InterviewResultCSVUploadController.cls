@@ -13,7 +13,7 @@ public class InterviewResultCSVUploadController {
         Map<String, Placement_Application__c> intApplicationMap 	= new Map<String, Placement_Application__c>();
         List<Placement_Application__c> intApplicationList		    = new List<Placement_Application__c>();
         
-        intApplicationList = [Select Id, Name, Aptitude_Result__c, GD_Result__c,Opportunity__c, Contact__c, Contact__r.Internal_Student_Id__c, Contact__r.LMS_Student_Id__c 
+        intApplicationList = [Select Id, Name, Aptitude_Result__c, Aptitude_Marks__c, GD_Result__c,Opportunity__c, Contact__c, Contact__r.Internal_Student_Id__c, Contact__r.LMS_Student_Id__c 
                               from Placement_Application__c where Opportunity__c =: recordId];
         
         List<Id> internalStudentIds = new List<Id>();
@@ -58,8 +58,11 @@ public class InterviewResultCSVUploadController {
                                     throw new CustomException('Application Id is mandatory');
                                 }  
                             }
-                            else if(fields.get(l) == 'Aptitude Result'){
+                            else if(fields.get(l) == 'Aptitude Marks'){
                                 obj.put(apiNameByLabelName.get(fields.get(l)),decimal.valueOf(value));
+                            }
+                            else if(fields.get(l) == 'Aptitude Result'){
+                                obj.put(apiNameByLabelName.get(fields.get(l)),value);
                             }
                             else if(fields.get(l) == 'GD Result'){
                                 obj.put(apiNameByLabelName.get(fields.get(l)),value);  

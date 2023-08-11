@@ -1,47 +1,116 @@
-global without sharing class RazorpayPaymentHandler {
+/*Author : Isha Raaz */
+
+
+public without sharing class placementApplicationController {
+    public placementApplicationController() {
+
+    }
     
-    global static String sendPaymentLink(String recordId){ 
-        
-        if(!String.isBlank(recordId)){
+    @AuraEnabled(cacheable=true)
+    public static List<Placement_Application__c> getAllApplications(string oppId){
+        system.debug('oppId  -- > ' + oppId);
+        List<Placement_Application__c> placementApplicationList = new List<Placement_Application__c>();
+        try{
+            placementApplicationList = [SELECT Id, Contact__c, Aptitude_Marks__c, Aptitude_Result__c, GD_Result__c, Personal_Interview_Result__c, Remarks__c FROM Placement_Application__c WHERE Opportunity__c	=: oppId AND Placement_Paid_Service_Status__c = 'Interested'];
+            system.debug('placementApplicationList  -- > ' + placementApplicationList);
+        }
+        catch(Exception e){
+            system.debug('getAllApplications Method Error -- ' + e.getMessage());
+            system.debug('AT LINE NO -- ' + e.getLineNumber());
+        }
+        return placementApplicationList;
+    }
+    
+    @AuraEnabled
+    public static string submitAllStudentApplications(List<Id> contactIdList){
+        system.debug('contactIdList  -- > ' + contactIdList);
+        string result = '';
+        try{
+            List<Contact> conList = [SELECT Id, Name, AccountId, Account.Name FROM Contact WHERE Id IN: contactIdList];
+            List<Opportunity> oppListToBeInserted = new List<Opportunity>();
+            for(Contact con : conList){
+                Opportunity opp = new Opportunity();
+                opp.Name = con.Account.Name + '-Opportunity';
+                opp.StageName = 'New';
+                opp.CloseDate = system.today();
+                opp.AccountId = con.AccountId;
+                oppListToBeInserted.add(opp);
+            }
+            Database.insert(oppListToBeInserted,true);
+            
+            set<Id> oppIdSet = new set<Id>();
+            for(Opportunity opp : oppListToBeInserted){
+                oppIdSet.add(opp.Id);
+            }
+            system.debug('oppIdSet -- ' + oppIdSet);
+            result = 'Success';            
+        }
+        catch(Exception e){
+            system.debug('getAllApplications Method Error -- ' + e.getMessage());
+            system.debug('AT LINE NO -- ' + e.getLineNumber());
+            result = e.getMessage();
+        }
+        return result;
+    }
+    
+
+    public static String sendEmailToAllContacts(List<Id> listOfOppIds){
+        try{
+            system.debug('listOfOppIds ==> '+listOfOppIds);
+
+            BatchToSendRazorPayPaymentLink batchClass = new BatchToSendRazorPayPaymentLink(listOfOppIds);
+            Database.executeBatch(batchClass,1);
+
+            return 'SUCCESS';
+        }catch(Exception e){
+            system.debug('Error Message ==> '+e.getMessage()+e.getLineNumber());
+            return e.getMessage()+e.getLineNumber();
+        }
+    }
+
+
+    /* SEND RAZOR PAY PAYMENT LINK METHOD */
+
+    public static String sendPaymentLink(List<Id> listOfOpportunityIds){ 
+        system.debug('Inside Payment Link !!');
+        if(!listOfOpportunityIds.isEmpty()){
            
-            Opportunity opp = [Select Id,Name,Amount,Email__c,Phone__c,AccountId,Account.Email__c,Account.Name,Account.Phone From Opportunity Where Id=:recordId];
-            
-            String email;
-            String contact;
-            String name;
-            Decimal amount;
-            
-            if(opp.AccountId==null){
-                return 'Account is not tagged';
+            List<Opportunity> oppList = [Select Id,Name,Amount,Email__c,Phone__c,AccountId,Account.Email__c,Account.Name,Account.Phone From Opportunity Where Id IN :listOfOpportunityIds];
+            system.debug('oppList ==> '+oppList);
+
+            List<RazorpayRequestJSON> razorpayRequestList = new List<RazorpayRequestJSON>();
+
+            for(Opportunity opp : oppList){
+                if(opp.AccountId==null){
+                    return 'Account is not tagged';
+                }
+                
+                if(String.isEmpty(opp.Email__c)){
+                    return 'Account email is empty';
+                }
+                
+                if(String.isEmpty(opp.Phone__c)){
+                    return 'Account phone is empty';
+                }
+                
+                if(opp.Amount == null){
+                    return 'Amount is empty';
+                }
             }
-            
-            if(String.isEmpty(opp.Email__c)){
-                return 'Account email is empty';
-            }
-            
-            if(String.isEmpty(opp.Phone__c)){
-                return 'Account phone is empty';
-            }
-            
-            if(opp.Amount == null){
-                return 'Amount is empty';
-            }
-            
-            
-            email = opp.Email__c;
-            contact = opp.Phone__c;
-            name = opp.Account.Name;
-            amount = opp.Amount*100;
             
             try {
-                RazorpayRequestJSON razorpayRequestJSON = new RazorpayRequestJSON();
+                for (Opportunity opp : oppList){
+                    RazorpayRequestJSON razorpayRequestJSON = new RazorpayRequestJSON();
                 
-                razorpayRequestJSON.amount = amount;
-                razorpayRequestJSON.first_min_partial_amount = amount;
-                razorpayRequestJSON.setCustomer(name,contact,email);
-                razorpayRequestJSON.setNotes(recordId,opp.Id);
+                    razorpayRequestJSON.amount = opp.Amount;
+                    razorpayRequestJSON.first_min_partial_amount = opp.Amount;
+                    razorpayRequestJSON.setCustomer(opp.Name,opp.Phone__c,opp.Email__c);
+                    razorpayRequestJSON.setNotes(opp.Id,opp.Id);
+                    razorpayRequestList.add(razorpayRequestJSON);
+                }
+                system.debug('razorpayRequestList ==> '+razorpayRequestList);
                 
-                String body = JSON.serialize(razorpayRequestJSON);
+                String body = JSON.serialize(razorpayRequestList);
                 body = body.replace('currencyType','currency');
                 
                 System.debug('Body---'+body);
@@ -55,9 +124,14 @@ global without sharing class RazorpayPaymentHandler {
                 req.setBody(body);
                 
                 HTTPResponse res = http.send(req);
-                Map<String,Object> jsonBody = (Map<String,Object>) Json.deserializeUntyped(res.getBody());
+                if (res.getStatusCode() == 200 || res.getStatusCode() == 201) {
+                    Map<String,Object> jsonBody = (Map<String,Object>) Json.deserializeUntyped(res.getBody());
                 
-                System.debug('RESPPPP'+jsonBody);
+                    System.debug('RESPPPP'+jsonBody);
+                }
+                else {
+                    system.debug('res ====> ' + res);
+                }
                 
                 return 'Success';     
             }
@@ -74,7 +148,7 @@ global without sharing class RazorpayPaymentHandler {
     
     
     
-    global static String initateRazorpayPament(String recId, long expirydateString){
+    public static String initateRazorpayPament(String recId, long expirydateString){
 
         System.debug(' expirydateString ===> ' + expirydateString);
         try{
@@ -141,7 +215,7 @@ global without sharing class RazorpayPaymentHandler {
     
     
     @future(callout=true)
-    global static void razorpayPaymentHandler(String recId, String name,String contact, String email, Decimal amount,String objName, string invrecID, Long expirydateString){
+    public static void razorpayPaymentHandler(String recId, String name,String contact, String email, Decimal amount,String objName, string invrecID, Long expirydateString){
         System.debug(' expirydateString ===> ' + expirydateString);
         try {
             

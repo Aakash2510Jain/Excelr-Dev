@@ -25,6 +25,8 @@ public without Sharing class BuildMaps{
 
     public static void mapsForUserCapacity(string assignmentGroupName){
         try{
+            system.debug('assignmentGroupName--->'+assignmentGroupName);
+                
             List<Assignment_Group_Member__c> agmList = new List<Assignment_Group_Member__c>();
             List<Lead> leadsAssignedToday = new List<Lead>();
 

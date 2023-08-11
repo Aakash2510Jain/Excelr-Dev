@@ -92,7 +92,7 @@
         component.set("v.showError",true);
         var action = component.get("c.processData");
         var recId = component.get("v.recordId");
-        var fieldsList=['Student Id','Application Id','Aptitude Result','GD Result'];
+        var fieldsList=['Student Id','Application Id','Aptitude Marks','Aptitude Result','GD Result'];
         var extraData = component.get("v.fileContentData");
         var allTextLines = extraData.split(/\r\n|\n/);
         var dataRows=allTextLines.length;
@@ -100,7 +100,7 @@
         var fieldsList = headers;
        
         action.setParams({ fileData : component.get("v.fileContentData"),
-                          sobjectName:'Interview_Application__c', //Any object
+                          sobjectName:'Placement_Application__c', //Any object
                           fields:fieldsList,
                           recordId:recId});
         action.setCallback(this, function(response) {

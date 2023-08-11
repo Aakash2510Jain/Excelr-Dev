@@ -22,18 +22,16 @@ public without sharing class RoundRobinLeadAssignment{
             Map<String, Integer> qNameAndMemberIdTORoundRobinIDMaP = new Map<String, Integer>();
             Map<String, Integer> qNameToLastAssignedQmemberRRid = new Map<String, Integer>();
             Map<String, String> QnameAndRRidToMemberIDMap = new Map<String, String>();
-
-            // Map1 -> allocated Id By Max lead -> mapofAllocatedIdByMaxLeadCap
-            // Map2 -> OwnerId By Today's Lead  -> mapofOwnerIdByTodaysLeadAssignedCount
-            // Map3 -> Allocated Id By OwnerId  -> mapofAllocatedIdByOwnerId
-
-            BuildMaps.mapsForUserCapacity(courseName);
-
+            // Map1 -> allocated Id By Max lead
+            // Map2 -> OwnerId By Today's Lead
+            // Map3 -> Allocated Id By OwnerId 
+            
             Assignment_Group__c ag = [select id,Name,Last_Allocated_RRid__c,(select id from Assignment_Group_Members__r) from Assignment_Group__c where name =: courseName for update];
             integer lastRRIdFinal = 0;
             if(ag.Assignment_Group_Members__r.size() != ag.Last_Allocated_RRid__c){
                 lastRRIdFinal = Integer.valueOf(ag.Last_Allocated_RRid__c);//2
             }
+            System.debug('lastRRIdFinal before while ===> ' + lastRRIdFinal);
             /*continueFlag = true
              * While(continueFlag){
              * 		Today'sLead withrespectto LRRID        maxleadperday
@@ -47,13 +45,19 @@ public without sharing class RoundRobinLeadAssignment{
                 
             Boolean continueFlag = true;
             While(continueFlag){
-                if(BuildMaps.mapofOwnerIdByTodaysLeadAssignedCount.get(BuildMaps.mapofAllocatedIdByOwnerId.get(string.valueOf(lastRRIdFinal + 1))) < BuildMaps.mapofAllocatedIdByMaxLeadCap.get(string.valueOf(lastRRIdFinal +1))){
+                if(BuildMaps.mapofOwnerIdByTodaysLeadAssignedCount.get(BuildMaps.mapofAllocatedIdByOwnerId.get(string.valueOf(lastRRIdFinal + 1))) <= BuildMaps.mapofAllocatedIdByMaxLeadCap.get(string.valueOf(lastRRIdFinal +1))){
                     lastRRIdFinal = lastRRIdFinal + 1;
                     continueFlag = false;
 				}else{
 					lastRRIdFinal = lastRRIdFinal + 1;
+                    if(lastRRIdFinal > ag.Assignment_Group_Members__r.size()){
+                        continueFlag = false;
+                        lastRRIdFinal = 0;
+
+                    }
 				}
             }
+            System.debug('lastRRIdFinal before while ===> ' + lastRRIdFinal);
 
             Assignment_Group_Member__c agmTemp= [select id,Group_Member__c from Assignment_Group_Member__c where Assignment_Id__c =: lastRRIdFinal and Assignment_Group__c =:ag.Id];
             system.debug('agmTemp::'+agmTemp);
@@ -85,7 +89,7 @@ public without sharing class RoundRobinLeadAssignment{
                         Integer qMemberSize = 1;
                         While (QueueNameToQmemberIdList != null && qMemberSize != null && QueueNameToQmemberIdList.get(qName) != null && isAssigned == false && qMemberSize <= QueueNameToQmemberIdList.get(qName).size()){
                             Assignee = QueueNameToQmemberIdList.get(qName)[0];
-                            Integer currentRRid, LastRRid;
+                            Integer currentRRid, LastRRid = lastRRIdFinal;
                             String QnameAndRRid, qMemberID;
                             if (qNameToLastAssignedQmemberRRid.get(qName) != null)
                                 LastRRid = qNameToLastAssignedQmemberRRid.get(qName);
