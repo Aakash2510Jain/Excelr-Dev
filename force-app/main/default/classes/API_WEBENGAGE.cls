@@ -6,7 +6,7 @@ public class API_WEBENGAGE implements Database.Batchable<sObject>, Database.Allo
         String dateValue = System.Label.WebEngageDate;
         Date dateVal = Date.parse(dateValue);
         Date todayDate = system.today(); // 01/07/2023 
-        return Database.getQueryLocator([SELECT Id, Name,LastName,Course__c,Email, Alternate_Email__c,Phone,Alternate_Phone__c,Status,LID__c FROM Lead where Pushed_to_Webengage__c = false and CreatedDate >: dateVal]);
+        return Database.getQueryLocator([SELECT Id, Name,LastName,Course__c,Email, Alternate_Email__c,Phone,Alternate_Phone__c,Status,LID__c FROM Lead where id = '00QN000000BD7BgMAL']);
     }
     
     public void execute(Database.BatchableContext bc, List<Lead> leadList) {
@@ -58,7 +58,8 @@ public class API_WEBENGAGE implements Database.Batchable<sObject>, Database.Allo
         System.debug(jsonString);
         
         request.setBody(jsonString);
-        HttpResponse response = http.send(request);
+        HttpResponse response =  http.send(request);// http.send(request);
+        //HttpResponse response = new HttpResponse();// http.send(request);
         
         if (response.getStatusCode() != 201) {
             System.debug('The status code returned was not expected: ' +

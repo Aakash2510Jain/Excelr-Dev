@@ -106,25 +106,73 @@
     </head>
     
     <script>
-    
-    var app = angular.module('student_App', []);
-    app.controller('student_Ctrl', function($scope) {
-        debugger;
-        var campId = '{!$CurrentPage.parameters.cid}';
-        $scope.studentDetails={"FirstName": "", "LastName": ""};
-        $scope.description = "";
-        var campid = '{!getCampaignId}';
-        $scope.saveContact = function(){
+        var app = angular.module('student_App',[]);
+        app.controller('student_Ctrl',function($scope){
             debugger;
-            ECAP_StudentsFormController.saveFormDetails( $scope.studentDetails, $scope.description, campid, function(result,event){
-                if(event.status && result){
+            var campId = '{!$CurrentPage.parameters.cid}';
+            $scope.studentDetails={"FirstName": "", "LastName": ""};
+            $scope.description = "";
+            var campid = '{!getCampaignId}';
+            $scope.saveContact = function(){
+                debugger;
+                if ($scope.studentDetails.FirstName == "") {
+                    swal(
+                        '',
+                        'Please Enter First Name',
+                        'error'
+                    );
+                    // $("#txtFirstName").addClass('border-theme');
+                    return;
+                }
+                if ($scope.studentDetails.LastName == "") {
+                    swal(
+                        '',
+                        'Please Enter Last Name',
+                        'error'
+                    );
+                    // $("#txtLastName").addClass('border-theme');
+                    return;
+                }
+
+                if ($scope.studentDetails.Email == "" || $scope.studentDetails.Email == undefined) {
+                    swal(
+                        '',
+                        'Please Enter your Email',
+                        'error'
+                    );
+                    // $("#txtEmail").addClass('border-theme');
+                    return;
+                }else if($scope.valid($scope.studentDetails.Email)){
+                    swal(
+                        'info',
+                        'Check Your Registered Email!',
+                        'info'
+                    );
+                    // $("#txtEmail").addClass('border-theme');
+                    return;
+                }
+                ECAP_StudentsFormController.saveFormDetails($scope.studentDetails, $scope.description, campid,function(result,event){
+                    if(event.status && result){
                     alert ('Submitted');
                     window.location.replace('https://www.excelr.com/');
                 }
-                $scope.$apply();   
-            })
-        }
-        
+                $scope.$apply();
+                }) 
+            }
+
+            $scope.valid = function(value){
+                if(value!=undefined){
+                        var x=value;
+                        var atpos = x.indexOf("@");
+                        var dotpos = x.lastIndexOf(".");
+                    if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length) {
+                        
+                        return true;
+                    }
+                    return false;
+                }
+            }
+        })        
     </script>
     
     <body ng-app="student_App" ng-controller="student_Ctrl">
@@ -183,8 +231,8 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-12">
-                                                <input type="submit" value="Save Details" class="btn btn-primary rounded-0 py-2 px-4" ng-click ="saveContact()"/>
-                                            <span class="submitting"></span>
+                                            <button class="btn btn-primary rounded-0 py-2 px-4" id="btnSubmit" ng-click="saveContact()" type="submit">Save Details</button>
+                                            
                                         </div>
                                     </div>
                                 </form>

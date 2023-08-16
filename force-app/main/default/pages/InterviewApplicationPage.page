@@ -114,11 +114,10 @@
     <script>
         var app = angular.module('interview_app', []);
         app.controller('interview_ctrl', function($scope) {
-            var opportunityId = '006N000000KcOxAIAV';
-             $scope.collegeList = [];
+            $scope.collegeList = [];
             $scope.selectedName = 'None';
             
-            // var opportunityId = '{!$CurrentPage.parameters.oid}';
+            var opportunityId = '{!$CurrentPage.parameters.oid}';
             $scope.studentDet = {FirstName:"",LastName:"",Email: ""};
 
             $scope.saveStudentDetails = function(){
@@ -293,7 +292,7 @@
                 </div>
             </div>
 
-                <div style="overflow: hidden;">
+                <div style="overflow: hidden;" class="d-flex justify-content-center jsutify-items-center">
                     <div class="d-flex justify-content-center">
                         <apex:image url="{!$Resource.SignUpImage}" />
                     </div>

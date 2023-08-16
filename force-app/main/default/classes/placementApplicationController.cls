@@ -22,27 +22,27 @@ public without sharing class placementApplicationController {
     }
     
     @AuraEnabled
-    public static string submitAllStudentApplications(List<Id> contactIdList){
+    public static string submitAllStudentApplications(List<Id> contactIdList, string programId){
         system.debug('contactIdList  -- > ' + contactIdList);
         string result = '';
         try{
+            Program__c prgm = [SELECT Id FROM Program__c WHERE Id =: programId];
             List<Contact> conList = [SELECT Id, Name, AccountId, Account.Name FROM Contact WHERE Id IN: contactIdList];
-            List<Opportunity> oppListToBeInserted = new List<Opportunity>();
+            List<Lead> ldListToBeInserted = new List<Lead>();
             for(Contact con : conList){
-                Opportunity opp = new Opportunity();
-                opp.Name = con.Account.Name + '-Opportunity';
-                opp.StageName = 'New';
-                opp.CloseDate = system.today();
-                opp.AccountId = con.AccountId;
-                oppListToBeInserted.add(opp);
+                Lead ld = new Lead();
+                ld.FirstName = con.Account.Name;
+                ld.LastName = '-Opportunity';
+                ld.Status = 'New';
+                ldListToBeInserted.add(ld);
             }
-            Database.insert(oppListToBeInserted,true);
+            Database.insert(ldListToBeInserted,true);
             
-            set<Id> oppIdSet = new set<Id>();
-            for(Opportunity opp : oppListToBeInserted){
-                oppIdSet.add(opp.Id);
+            set<Id> ldIdSet = new set<Id>();
+            for(Lead ld : ldListToBeInserted){
+                ldIdSet.add(ld.Id);
             }
-            system.debug('oppIdSet -- ' + oppIdSet);
+            system.debug('ldIdSet -- ' + ldIdSet);
             result = 'Success';            
         }
         catch(Exception e){

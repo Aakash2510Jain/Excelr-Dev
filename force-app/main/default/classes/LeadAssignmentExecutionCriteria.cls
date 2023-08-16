@@ -33,8 +33,10 @@ public without sharing class LeadAssignmentExecutionCriteria {
             string queueId = [SELECT Id, Type FROM Group WHERE Type = 'Queue' AND Name = 'Excelr Default Queue' limit 1].Id;
             list<Default_Assignment_Group__mdt> defaultGroupName = [select id,Group_Name__c from Default_Assignment_Group__mdt];
             List<Execution_Criteria__c> AvailableCriterias = [SELECT Enabled__c,Evaluation_Expression_For_Execution__c,Id,Name ,(SELECT Execution_Criteria__c,serial__c,Field_Name__c,Field_Type__c,Matching_Type__c,Matching_Value__c,Related_Object__c,Scorecard_Execution_Criteria_Name__c,Scorecard__c,Sequence__c FROM Execution_Criteria_Entry__r WHERE Execution_Criteria__c != null ORDER BY Sequence__c ASC)FROM Execution_Criteria__c where Enabled__c = true];
+            string leadAssignmentQuery = [Select Id,Query__c From LeadAssignmentQuery__mdt].Query__c;
             
-            list<lead> queueLeads = [SELECT Address,AD_Set_Id__c,AD_Set_Name__c,Assignment_Group__c,
+            list<lead> queueLeads = database.query(leadAssignmentQuery);
+                /*[SELECT Address,AD_Set_Id__c,AD_Set_Name__c,Assignment_Group__c,
                                      Branch__c,Capture_NBFC_Partner__c,Capture_Tenure__c,Capture_Upfront_payment__c,
                                      CID_of_Referer__c,City,City__c,Comments__c,Company,Confidence_Level__c
                                      ,ConvertedAccountId,ConvertedContactId,ConvertedDate,ConvertedOpportunityId,Country,Country__c,
@@ -57,8 +59,8 @@ public without sharing class LeadAssignmentExecutionCriteria {
                                      UTM_Experiment__c,UTM_Location__c,UTM_Medium__c,UTM_Term__c,UTM_Type__c,UTM_Variety__c,Visitor_ID__c,Website,
                                      Whatsapp_Opt_in__c,Why_This_Course__c,Year_of_Experience__c 
                                      FROM Lead 
-                                     where ownerId =: queueId and Is_Lead_Assigned_to_User__c = false And To_Be_Deleted__c = false order by CreatedDate DESC limit 1];
-
+                                     where ownerId =: queueId and Is_Lead_Assigned_to_User__c = false And To_Be_Deleted__c = false order by CreatedDate DESC limit 10];
+*/
             System.debug('queueLeads ==> ' + queueLeads);
             if(!queueLeads.isEmpty()){
                 newLeadListTemp.addAll(queueLeads);

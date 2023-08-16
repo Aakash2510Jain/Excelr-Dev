@@ -41,6 +41,7 @@ public without Sharing class BuildMaps{
 
                          List<AggregateResult> results = [SELECT OwnerId, COUNT(Id) leadCount FROM Lead WHERE Lead_Assigned_Date__c = today and OwnerId in : mapofAllocatedIdByOwnerId.values() GROUP BY OwnerId];
                         
+                         System.debug('results =====> ' + results);
                         for (AggregateResult result : results) {
                             Id ownerId = (Id) result.get('OwnerId');
                             Integer leadCount = (Integer) result.get('leadCount');
@@ -48,6 +49,7 @@ public without Sharing class BuildMaps{
                         }
                     }
                 }
+                System.debug('mapofOwnerIdByTodaysLeadAssignedCount ======> ' + mapofOwnerIdByTodaysLeadAssignedCount);
             }
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());

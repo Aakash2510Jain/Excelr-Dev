@@ -42,19 +42,28 @@ public without sharing class RoundRobinLeadAssignment{
 					lastRRIdFinal = lastRRIdFinal + 1;
 				}
             } */           
-                
+            BuildMaps.mapsForUserCapacity(courseName);
+            System.debug('BuildMaps.mapofOwnerIdByTodaysLeadAssignedCount  ===> ' + BuildMaps.mapofOwnerIdByTodaysLeadAssignedCount);
             Boolean continueFlag = true;
             While(continueFlag){
-                if(BuildMaps.mapofOwnerIdByTodaysLeadAssignedCount.get(BuildMaps.mapofAllocatedIdByOwnerId.get(string.valueOf(lastRRIdFinal + 1))) <= BuildMaps.mapofAllocatedIdByMaxLeadCap.get(string.valueOf(lastRRIdFinal +1))){
-                    lastRRIdFinal = lastRRIdFinal + 1;
+                lastRRIdFinal = lastRRIdFinal + 1;
+                if(BuildMaps.mapofOwnerIdByTodaysLeadAssignedCount.get(BuildMaps.mapofAllocatedIdByOwnerId.get(string.valueOf(lastRRIdFinal))) <= BuildMaps.mapofAllocatedIdByMaxLeadCap.get(string.valueOf(lastRRIdFinal))){
+                    //lastRRIdFinal = lastRRIdFinal + 1;
                     continueFlag = false;
-				}else{
-					lastRRIdFinal = lastRRIdFinal + 1;
-                    if(lastRRIdFinal > ag.Assignment_Group_Members__r.size()){
-                        continueFlag = false;
-                        lastRRIdFinal = 0;
+                    // if(lastRRIdFinal > ag.Assignment_Group_Members__r.size()){
+                    //     continueFlag = false;
+                    //     lastRRIdFinal = 0;
+                    // }
+                    
+				}else if(lastRRIdFinal == ag.Assignment_Group_Members__r.size()){
+					//lastRRIdFinal = lastRRIdFinal + 1;
+                    continueFlag = false;
+                    //if(lastRRIdFinal > ag.Assignment_Group_Members__r.size()){
+                    //     continueFlag = false;
+                    //     lastRRIdFinal = 0;
 
-                    }
+                    // }
+                    return;
 				}
             }
             System.debug('lastRRIdFinal before while ===> ' + lastRRIdFinal);
