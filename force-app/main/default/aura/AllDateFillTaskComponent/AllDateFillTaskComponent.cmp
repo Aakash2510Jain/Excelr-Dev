@@ -1,0 +1,72 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" 
+                access="global" controller="DynamicTaskComponentHelper">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="prgrm" type="Program__c" default="{'sobjectType':'Program__c','Aptitude_Test_Date_Time__c': '','GD_Date_Time__c': '','Personal_Interview_Date_Time__c': ''}"/>
+    <aura:attribute name="prgrmId" type="string"/>
+    <aura:attribute name="showComponent" type="string"/>  
+    <aura:attribute name="status" type="string"/>   
+    <aura:html tag="style">
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around–medium {
+        padding: 0rem !important;
+        }
+        .slds-modal__content{
+        overflow-x:hidden !important;
+        height:unset !important;
+        max-height:unset !important;
+        width:100%;
+        max-width: 110rem !important;
+        }
+        
+    </aura:html> 
+    
+    <div class="slds-modal__content slds-p-around--x-small  slds-size_1-of-1 slds-is-relative slds-scrollable">
+        <lightning:card>
+            <aura:set attribute="title">
+                <lightning:icon iconName="standard:customer_portal_users" size="small"/>
+                Program Details
+            </aura:set>
+          
+            <div class="role" style="width:100%;">
+                <div class="card" style="width:100%;">
+                    <div class="card-body" style="width:100%;">
+                        <div class="slds-grid slds-wrap slds-align_absolute-center">
+                            
+                        <!--    <lightning-layout multiple-rows>
+                                  <lightning-layout-item size="12">
+                                          <p><b>Aptitude Date Time</b></p> <lightning:input type="datetime" name="aptidt" label="Aptitude Date Time"  variant="label-hidden"  value="{!v.prgrm.Aptitude_Test_Date_Time__c}"/>
+                                </lightning-layout-item>
+                            </lightning-layout>  -->
+                            
+                         
+                            <div class="form-group" > 
+                           <p><b>Aptitude Date Time</b></p> <lightning:input type="datetime" name="aptidt" label="Aptitude Date Time"  variant="label-hidden"  value="{!v.prgrm.Aptitude_Test_Date_Time__c}"/>
+                            </div>
+                            <div class="form-group">
+                              <p><b>GD Date Time</b></p><lightning:input type="datetime" name="gddt" label="GD Date Time"  variant="label-hidden" value="{!v.prgrm.GD_Date_Time__c}"/>
+                            </div>
+                            <div class="form-group">
+                               <p><b>PI Date Time</b></p><lightning:input type="datetime" name="pidt" label="PI Date Time"  variant="label-hidden"  value="{!v.prgrm.Personal_Interview_Date_Time__c}"/>
+                            </div>
+                              
+                        </div>
+                    </div>
+                </div>
+            </div>
+          
+        </lightning:card>  
+    </div> 
+    <aura:if isTrue="{!v.status !='Completed'}">
+        <div class="slds-size_1-of-1">
+              <hr/>
+            <div class="slds-align_absolute-center">   
+                <ui:button class="slds-button slds-float_left  slds-button_Destructive" label="Cancel"
+                           press="{!c.hideQuickAction}" />
+                <ui:button class="slds-button slds-button--brand" label="Save" press="{!c.handleSave}" />
+            </div>
+        </div>  
+    </aura:if>
+</aura:component>

@@ -13,18 +13,18 @@
                     </header>
                 </div>
                 <div class="slds-card__body slds-card__body_inner">
-                    <div class="slds-grid slds-gutters" style="display: flex;align-items: center;">
+                    <div class="slds-grid slds-gutters" style="display: flex;">
                         <div class="slds-col slds-size_2-of-3" style="display: flex;">
-                            <div class=" slds-col" style="display: inline-block;">
-                                <img alt="Person name" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" title="Person name" style="width:100px;height:100px;border-radius: 50%;" />
+                            <div class="slds-size_1-of-3" style="display: inline-block;">
+                                <img alt="Person name" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" title="Person name" style="width:100px;height:100px;border-radius: 50%;margin-left:10px;" />
                                 <template if:true={result}>
-                                    <h1 style="font-size: x-large;font-weight: 200;margin-top: 20px; margin-left: -30px; text-align: center;">{result.user.Name}</h1>
+                                    <h4 style="font-size: x-large;font-weight: 200;margin-top: 1px; color:#F48000;"><b>{result.user.Name}</b></h4>
+                                    <h3 style="font-weight: 200; margin-left: 6px;"><b>Senior Counsellor</b></h3>
+                                    <h2 style="font-weight: 130; margin-left: 11px;"><b>Miles Education</b></h2>
                                 </template>        
                             </div>
-                            <div class="slds-col" style="margin-top:3%; padding-left: 2%;font-size: 27px; font-weight: 500; color: rgb(80, 80, 80);">
-                                <h2>Hi,</h2>
-                                <h2>Welcome to my calendar.</h2>
-                                <h2>Choose any mentioned demo.</h2>
+                            <div class="slds-size_2-of-3" style="margin-top:3%; padding-left: 2%;font-size: 25px; font-weight: 500; color: rgb(80, 80, 80);">
+                                Hello, Book with <h2><b>Aakash Jain</b></h2>
                             </div>
                         </div>
                         <div class="vl"></div>
@@ -32,7 +32,7 @@
                             <template if:true={result}>
                                 <div>
                                     <template for:each={result.events} for:item="event">
-                                        <div style="cursor: pointer;" class="evcard grid-item" key={event.Id} data-id={event.Id} onclick={eventClicked}>
+                                        <div style="cursor: pointer;background-color: #2974c4; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;" class="evcard grid-item" key={event.Id} data-id={event.Id} onclick={eventClicked}>
                                             {event.Name}
                                         </div>
                                         <!-- <div onclick={eventClicked} class="eventcard" key={event.Id} data-id={event.Id} style="cursor: pointer;width: 100%; padding: 2%;margin-bottom: 2%; margin-right: 20px; border-radius: 5px;">

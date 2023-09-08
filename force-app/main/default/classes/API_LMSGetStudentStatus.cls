@@ -5,6 +5,8 @@
 @RestResource(urlMapping = '/get_student_status')
 global with sharing class API_LMSGetStudentStatus{
     
+    global static List<String> listOfRecordIds = New List<String>();
+
     @HttpGet
     global static void fetchLMSStudentStatus(){
         
@@ -42,6 +44,12 @@ global with sharing class API_LMSGetStudentStatus{
                 RestContext.response.responseBody = Blob.valueOf(JSON.serialize(new IntegrationWrapper.APIResponseWrapper('Error', 'No Ids Found!!')));
                 res.statusCode = 400;
             }
+
+            String requestString = req.requestURI + '?' + req.requestURI.substring(req.requestURI.indexOf('?')+1);
+            String responseBody = res.responseBody.toString();
+            Integer statusCode = res.statusCode;
+            HttpUtility.getInstance().createServiceLogger(requestString, responseBody, '/get_student_status', 'GET', statusCode, System.now(), System.now(),null);
+            
         } 
         catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
@@ -130,7 +138,8 @@ global with sharing class API_LMSGetStudentStatus{
             }
             else{  */
             //}
-            
+
+           
             response = '{ "status":"success","message": ' + JSON.serialize(sendAllDetails) + '}';
             return response;                       
         }

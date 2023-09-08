@@ -28,7 +28,9 @@ global without sharing class API_LMSUpdateStudentStatus {
                 //return ErrorresonseBOdy;
             }
             //RestContext.response.responseBody = Blob.valueOf('{"status": "SUCCESS","message": "All Student Status have been Updated Successfully"}');
-            //return '{"Status": "SUCCESS","Message": "All Student Status have been Updated Successfully"}';      
+            //return '{"Status": "SUCCESS","Message": "All Student Status have been Updated Successfully"}';
+            
+            
         } 
         else {
             String ErrorresonseBOdy = '{"Status": "Error","Message": "JSON Body is empty. Please send data in JSON Body!"}';
@@ -330,6 +332,7 @@ global without sharing class API_LMSUpdateStudentStatus {
                     responseWrapperList.add(errorResWrapper);
                 }
                 return JSON.serialize(responseWrapperList);
+                
 
             } else {
 
@@ -351,12 +354,15 @@ global without sharing class API_LMSUpdateStudentStatus {
              // Return the error response wrappers
              return JSON.serialize(responseWrapperList);   
         } 
+
+        
         // return JSON.serialize(responseWrapperList);   
 
     }catch (Exception e) {
             System.debug('ERROR MSG === > ' + e.getMessage());
             System.debug('AT LINE NUMBER === > ' + e.getLineNumber());
             return e.getMessage();
+            
         }
     }
     

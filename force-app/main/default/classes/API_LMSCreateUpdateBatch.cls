@@ -95,6 +95,8 @@ global with sharing class API_LMSCreateUpdateBatch{
                                             }
                                         }
                                     }
+
+
                                     //}
                                     //}
                                     ProdBatchList.add(ProdBatch);
@@ -211,6 +213,10 @@ global with sharing class API_LMSCreateUpdateBatch{
 
                     }
                 }
+                String responseBody = RestContext.response.responseBody.toString();
+                Integer statusCode = RestContext.response.statusCode;
+                HttpUtility.getInstance().createServiceLogger(requestString, responseBody, '/bulk_leadcreate', 'POST', statusCode, System.now(), System.now(),null);
+
 
                 RestContext.response.responseBody = Blob.valueOf('{"status": "SUCCESS","message": "Batch Created Successfully"}');
                 RestContext.response.statusCode = 200;

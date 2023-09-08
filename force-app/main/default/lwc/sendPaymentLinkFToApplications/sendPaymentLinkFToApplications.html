@@ -1,37 +1,425 @@
 <template>
-    <br/><div class="slds-border_bottom" style="padding-left:10px;">
-         <p class="rcorners1" style="text-align:center; font-size:24px;"><b>Placement Applications</b></p><br/>
-    </div><br/><br/>
-    <div class="slds-grid slds-gutters mainComponent slds-grid_vertical slds-m-horizontal_xxx-small">
-        <div class="slds-col">
-        <template lwc:if={applicationData}>
-            <lightning-datatable
-                data-id="table"
-                key-field="Id"
-                data={applicationData}
-                columns={columns}
-                selected-rows = {allSelectedRows}
-                onrowselection={handleRowSelection}
-            >
-            </lightning-datatable>
-            <br/>
-            <div>
-                <div class="slds-float_right" style="color:skyblue;">
-                    <lightning-button label="Previous" icon-name="utility:chevronleft" onclick={previousHandler}> </lightning-button>&nbsp;&nbsp;
-                    Page {page} of {totalPage}&nbsp;&nbsp;&nbsp;
-                    <lightning-button label="Next" icon-name="utility:chevronright" icon-position="right" onclick={nextHandler}> </lightning-button>
+    <div style="height:1000px;">
+        <br/><div class="slds-border_bottom" style="padding-left:10px;">
+                <p class="rcorners1" style="text-align:center; font-size:18px;">Drive Result</p>
+        </div><br/>
+
+        <template if:true={showSpinner}>
+            <div class="slds-align_absolute-center">
+                    <div class="exampleHolder">
+                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
                 </div>
+            </div>
+        </template>  
+
+        <template if:false={showSpinner}>
+            <div class="slds-grid slds-gutters mainComponent slds-grid_vertical slds-m-horizontal_xxx-small">
+                <lightning-tabset>
+                    <lightning-tab label="Brand Ambassador">
+                        <template if:true={showBAMsg}>
+                            <div class="slds-align_absolute-center">
+                                {msg}
+                            </div>
+                        </template>
+                        <template if:false={showBAMsg}>
+                            <div class="slds-scrollable_x table-container">
+                                <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                                    <thead class="grid-container">
+                                        <tr class="slds-line-height_reset">
+                                            <!-- <th class="" scope="col">
+                                                <div class="slds-truncate">
+                                                    <lightning-input onchange={handleAllSelected} type="checkbox" data-key="firstTabAllCheckbox"></lightning-input>
+                                                </div>
+                                            </th> -->
+                                            <th>Student Id</th>
+                                            <th>Student Name</th>
+                                            <th>Student Email</th>
+                                            <th>Student Phone</th>
+                                            <th>Aptitude Marks</th>
+                                            <th>Aptitude Result</th>
+                                            <th>GD Result</th>
+                                            <th>Personal Interview Result</th>
+                                            <th>Discount</th>
+                                            <!-- <th>Remarks</th> -->
+                                            <th>Related Opportunities</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template for:each={clearedApplicationData} for:item="appRec" for:index="index">
+                                            <tr key={appRec.applicationId}>
+                                                <!-- <th scope="col">
+                                                    <div>
+                                                        <lightning-input type="checkbox" data-id={appRec.applicationId} data-app-id={appRec.applicationId} checked={appRec.check} data-status={appRec.status}
+                                                            data-key="firstTabCheckbox" onchange={handleCheckboxSelect}>
+                                                        </lightning-input>                                                
+                                                    </div>
+                                                </th> -->
+                                                <th>{appRec.studLMSId}</th>
+                                                <th>{appRec.studName}</th>
+                                                <th>{appRec.studEmail}</th>
+                                                <th>{appRec.studPhone}</th>
+                                                <th>{appRec.aptiMarks}</th>
+                                                <th class={appRec.aptiColor}> 
+                                                    {appRec.aptiResult} 
+                                                </th>
+                                                <th class={appRec.gdColor}>
+                                                    {appRec.gdResult}
+                                                </th>
+                                                <th class={appRec.piColor}> 
+                                                    {appRec.piResult}
+                                                </th>
+                                                <th>100%</th>
+                                                 <!-- <th>
+                                                    <lightning-button-icon icon-name="utility:settings"  alternative-text="Settings" title="Settings"></lightning-button-icon>                                     
+                                                    {appRec.remarks}
+                                                </th>  -->    
+                                                <th>
+                                                    <template for:each={appRec.relatedOpps} for:item="opp">
+                                                        <div key={opp.oppId}>
+                                                            <template if:true={opp.oppId}>
+                                                                <a onclick={handleOpportunityClick} data-oppid={opp.oppId} class="custom-link">
+                                                                    {opp.oppName}
+                                                                </a>
+                                                            </template>
+                                                        </div>
+                                                    </template>
+                                                </th>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div><br/>
+                            
+                            <div class="slds-float_right" style="color:skyblue;">
+                                <lightning-button   label="Previous" icon-name="utility:chevronleft" onclick={baPreviousHandler}> </lightning-button>&nbsp;&nbsp;
+                                Page {baPage} of {totalBAPage}&nbsp;&nbsp;&nbsp;
+                                <lightning-button label="Next" icon-name="utility:chevronright" icon-position="right" onclick={baNextHandler}> </lightning-button>
+                            </div><br/><br/>
+
+                            <!-- <div class="slds-m-top_small slds-m-bottom_medium slds-border_top"><br/>
+                                <div class="slds-align_absolute-center">
+                                    <lightning-button variant="brand" label="Create Opportunity" title="Primary action" onclick={doCreateOpportunity} disabled={handleOppButton}></lightning-button> &nbsp;&nbsp;
+                                    <lightning-button variant="neutral" label="Cancel" title="Primary action" onclick={handleCancel}></lightning-button>
+                                </div>
+                            </div> -->
+                        </template>
+                    </lightning-tab>
+
+                    <lightning-tab label="PI Failed" title="2nd tab extended title">
+                        <template if:true={showPIFailedMsg}>
+                            <div class="slds-align_absolute-center">
+                                {msg}
+                            </div>
+                        </template>
+                        <template if:false={showPIFailedMsg}>
+                            <div class="slds-scrollable_x table-container">
+                                <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                                    <thead class="grid-container">
+                                        <tr class="slds-line-height_reset">
+                                            <!-- <th class="" scope="col">
+                                                <div class="slds-truncate">
+                                                    <lightning-input onchange={handleAllPIFailedSelected} type="checkbox" data-key="secondTabAllCheckbox"></lightning-input>
+                                                </div>
+                                            </th> -->
+                                            <th>Student Id</th>
+                                            <th>Student Name</th>
+                                            <th>Student Email</th>
+                                            <th>Student Phone</th>
+                                            <th>Aptitude Marks</th>
+                                            <th>Aptitude Result</th>
+                                            <th>GD Result</th>
+                                            <th>Personal Interview Result</th>
+                                            <!-- <th>Status</th>
+                                            <th>Discount&nbsp;&nbsp;</th>
+                                            <th>Remarks&nbsp;&nbsp;</th> -->
+                                            <th>Related Opportunities</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                            <!--  value={appRec.Name}  name={appRec.applicationId} -->
+                                            <template for:each={piFailedApplicationData} for:item="appRec" for:index="index">
+                                                <tr key={appRec.applicationId}>
+                                                    <!-- <th scope="col">
+                                                        <div>
+                                                            <lightning-input type="checkbox" data-discount={appRec.discount} data-remarks={appRec.remarks} data-id={appRec.applicationId} data-app-id={appRec.applicationId} checked={appRec.check} data-status={appRec.status}
+                                                                data-key="secondTabCheckbox" onchange={handlePIFailedCheckboxSelect}>
+                                                            </lightning-input>                                                
+                                                        </div>
+                                                    </th> -->
+                                                    <th>{appRec.studLMSId}</th>
+                                                    <th>{appRec.studName}</th>
+                                                    <th>{appRec.studEmail}</th>
+                                                    <th>{appRec.studPhone}</th>
+                                                    <th>{appRec.aptiMarks}</th>
+                                                    <th class={appRec.aptiColor}> 
+                                                        {appRec.aptiResult} 
+                                                    </th>
+                                                    <th class={appRec.gdColor}>
+                                                        {appRec.gdResult}
+                                                    </th>
+                                                    <th class={appRec.piColor}> 
+                                                        {appRec.piResult}
+                                                    </th> 
+                                                    <!-- <th>
+                                                        <lightning-combobox data-id={appRec.applicationId} name="piFailedStatus" variant="label-hidden" placeholder="--None--" onchange={handleChange} 
+                                                        value={appRec.status} options={StatusPicklistValues.data.values}  disabled={appRec.disableCombobox}> 
+                                                        </lightning-combobox>  
+                                                    </th>
+                                                    <th>
+                                                        <lightning-input name="piFailedDiscount" data-id={appRec.applicationId} type="number" min="0" max="100" variant="label-hidden" value={appRec.discount} formatter="percent-fixed" 
+                                                        disabled={appRec.disableCombobox} onchange={handleChange}>
+                                                        </lightning-input>
+                                                    </th>
+                                                    <th>
+                                                        <lightning-input name="piFailedRemark" data-id={appRec.applicationId} type="text" value={appRec.remarks} onchange={handleChange} variant="label-hidden" disabled={appRec.disableCombobox}> </lightning-input>
+                                                    </th> -->
+                                                    <th>
+                                                        <template for:each={appRec.relatedOpps} for:item="opp">
+                                                            <div key={opp.oppId}>
+                                                                <template if:true={opp.oppId}>
+                                                                    <a onclick={handleOpportunityClick} data-oppid={opp.oppId} class="custom-link">
+                                                                        {opp.oppName}
+                                                                    </a>
+                                                                </template>
+                                                            </div>
+                                                        </template>
+                                                    </th>
+                                                </tr>
+                                            </template>
+                                    </tbody>
+                                </table>
+                            </div><br/>
+                            
+                            <div class="slds-float_right" style="color:skyblue;">
+                                <lightning-button   label="Previous" icon-name="utility:chevronleft" onclick={piFailedPreviousHandler}> </lightning-button>&nbsp;&nbsp;
+                                Page {piFailedPage} of {totalPiFailedPage}&nbsp;&nbsp;&nbsp;
+                                <lightning-button label="Next" icon-name="utility:chevronright" icon-position="right" onclick={piFailedNextHandler}> </lightning-button>
+                            </div><br/><br/>
+
+                            <!-- <div class="slds-m-top_small slds-m-bottom_medium slds-border_top"><br/>
+                                <div class="slds-align_absolute-center">
+                                    <lightning-button variant="brand" label="Create Opportunity" title="Primary action" onclick={doCreatePIFailedOpportunity} disabled={handlePIFailedButton}></lightning-button> &nbsp;&nbsp;
+                                    <lightning-button variant="neutral" label="Cancel" title="Primary action" onclick={handleCancel}></lightning-button>
+                                </div>
+                            </div> -->
+                        </template>
+                    </lightning-tab>
+                    
+                    <lightning-tab label="Attended but not cleared" title="2nd tab extended title">
+                        <template if:true={showPartialMsg}>
+                            <div class="slds-align_absolute-center">
+                                {msg}
+                            </div>
+                        </template>
+                        <template if:false={showPartialMsg}>    
+                            <div class="slds-scrollable_x table-container">
+                                <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                                    <thead class="grid-container">
+                                        <tr class="slds-line-height_reset">
+                                            <!-- <th class="" scope="col">
+                                                <div class="slds-truncate">
+                                                    <lightning-input onchange={handleAllPartialSelected} type="checkbox" data-key="thirdTabAllCheckbox"></lightning-input>
+                                                </div>
+                                            </th> -->
+                                            <th>Student Id</th>
+                                            <th>Student Name</th>
+                                            <th>Student Email</th>
+                                            <th>Student Phone</th>
+                                            <th>Aptitude Marks</th>
+                                            <th>Aptitude Result</th>
+                                            <th>GD Result</th>
+                                            <th>Personal Interview Result</th>
+                                            <!-- <th>Status</th>
+                                            <th>Remarks&nbsp;&nbsp;</th> -->
+                                            <th>Related Leads</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                            <!-- value={appRec.Name}  name={appRec.applicationId} -->
+                                            <template for:each={partialClearedApplicationData} for:item="appRec" for:index="index">
+                                                <tr key={appRec.applicationId}>
+                                                    <!-- <th scope="col">
+                                                        <div>
+                                                            <lightning-input type="checkbox" data-remarks={appRec.remarks} data-id={appRec.applicationId} data-app-id={appRec.applicationId} checked={appRec.check} data-status={appRec.status}
+                                                                data-key="thirdTabCheckbox" onchange={handlePartialCheckboxSelect}>
+                                                            </lightning-input>                                                
+                                                        </div>
+                                                    </th> -->
+                                                    <th>{appRec.studLMSId}</th>
+                                                    <th>{appRec.studName}</th>
+                                                    <th>{appRec.studEmail}</th>
+                                                    <th>{appRec.studPhone}</th>
+                                                    <th>{appRec.aptiMarks}</th>
+                                                    <th class={appRec.aptiColor}> 
+                                                        {appRec.aptiResult} 
+                                                    </th>
+                                                    <th class={appRec.gdColor}>
+                                                        {appRec.gdResult}
+                                                    </th>
+                                                    <th class={appRec.piColor}> 
+                                                        {appRec.piResult}
+                                                    </th>   
+                                                    <!-- <th>
+                                                        <lightning-combobox data-id={appRec.applicationId} name="partialStatus" variant="label-hidden" placeholder="--None--" onchange={handleChange} 
+                                                        value={appRec.status} options={StatusPicklistValues.data.values}  disabled={appRec.disableCombobox}> 
+                                                        </lightning-combobox>  
+                                                    </th>
+                                                    <!- <th>
+                                                        <lightning-input name="partialDiscount" data-id={appRec.applicationId} type="number" min="0" max="100" variant="label-hidden" value={appRec.discount} formatter="percent-fixed" 
+                                                        disabled={appRec.disableCombobox} onchange={handleChange}>
+                                                        </lightning-input>
+                                                    </th> ->
+                                                    <th>
+                                                        <lightning-input name="partialRemark" data-id={appRec.applicationId} type="text" value={appRec.remarks} onchange={handleChange} variant="label-hidden" disabled={appRec.disableCombobox}> </lightning-input>
+                                                    </th> -->
+                                                    <th>
+                                                        <template for:each={appRec.relatedLeads} for:item="ld">
+                                                            <div key={ld.ldId}>
+                                                                <template if:true={ld.ldId}>
+                                                                    <a onclick={handleLeadClick} data-ld-id={ld.ldId} class="custom-link">
+                                                                        {ld.ldName}
+                                                                    </a>
+                                                                </template>
+                                                            </div>
+                                                        </template>
+                                                    </th>
+                                                </tr>
+                                            </template>
+                                    </tbody>
+                                </table>
+                            </div><br/>
+                            
+                            <div class="slds-float_right" style="color:skyblue;">
+                                <lightning-button   label="Previous" icon-name="utility:chevronleft" onclick={partialPreviousHandler}> </lightning-button>&nbsp;&nbsp;
+                                Page {partialPage} of {totalPartialPage}&nbsp;&nbsp;&nbsp;
+                                <lightning-button label="Next" icon-name="utility:chevronright" icon-position="right" onclick={partialNextHandler}> </lightning-button>
+                            </div><br/><br/>
+
+                            <!-- <div class="slds-m-top_small slds-m-bottom_medium slds-border_top"><br/>
+                                <div class="slds-align_absolute-center">
+                                    <lightning-button variant="brand" label="Create Lead" title="Primary action" onclick={doCreatePartialLead} disabled={handlePartialButton}></lightning-button> &nbsp;&nbsp;
+                                    <lightning-button variant="neutral" label="Cancel" title="Primary action" onclick={handleCancel}></lightning-button>
+                                </div>
+                            </div> -->
+                        </template>
+                    </lightning-tab>
+
+                    <lightning-tab label="Not Attended Candidates">
+                        <template if:true={showNAMsg}>
+                            <div class="slds-align_absolute-center">
+                                {msg}
+                            </div>
+                        </template>
+                        <template if:false={showNAMsg}>
+                            <div class="slds-scrollable_x table-container">
+                                <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                                    <thead class="grid-container">
+                                        <tr class="slds-line-height_reset">
+                                            <!-- <th class="" scope="col">
+                                                <div class="slds-truncate">
+                                                    <lightning-input onchange={handleAllNASelected} type="checkbox" data-key="fourthTabAllCheckbox"></lightning-input>
+                                                </div>
+                                            </th> -->
+                                            <th>Student Id</th>
+                                            <th>Student Name</th>
+                                            <th>Student Email</th>
+                                            <th>Student Phone</th>
+                                            <th>Aptitude Marks</th>
+                                            <th>Aptitude Result</th>
+                                            <th>GD Result</th>
+                                            <th>Personal Interview Result</th>
+                                            <!-- <th>Status</th>
+                                            <th>Remarks&nbsp;&nbsp;</th> -->
+                                            <th>Related Leads</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                            <!-- value={appRec.Name}  name={appRec.applicationId} -->
+                                            <template for:each={nonAttendedApplications} for:item="appRec" for:index="index">
+                                                <tr key={appRec.applicationId}>
+                                                    <!-- <th scope="col">
+                                                        <div>
+                                                            <lightning-input type="checkbox" data-index={index}  data-remarks={appRec.remarks} data-id={appRec.applicationId} data-app-id={appRec.applicationId} checked={appRec.check} data-status={appRec.status}
+                                                                data-key="fourthTabCheckbox" onchange={handleNACheckboxSelect}>
+                                                            </lightning-input>                                                
+                                                        </div>
+                                                    </th> -->
+                                                    <th>{appRec.studLMSId}</th>
+                                                    <th>{appRec.studName}</th>
+                                                    <th>{appRec.studEmail}</th>
+                                                    <th>{appRec.studPhone}</th>
+                                                    <th>{appRec.aptiMarks}</th>
+                                                    <th class={appRec.aptiColor}> 
+                                                        {appRec.aptiResult} 
+                                                    </th>
+                                                    <th class={appRec.gdColor}>
+                                                        {appRec.gdResult}
+                                                    </th>
+                                                    <th class={appRec.piColor}> 
+                                                        {appRec.piResult}
+                                                    </th>  
+                                                    <!-- <th>
+                                                        <lightning-combobox data-id={appRec.applicationId} name="naStatus" variant="label-hidden" placeholder="--None--" onchange={handleChange} 
+                                                        value={appRec.status} options={StatusPicklistValues.data.values}  disabled={appRec.disableCombobox}> 
+                                                        </lightning-combobox>  
+                                                    </th>
+                                                    <th>
+                                                        <lightning-input name="naRemark" data-id={appRec.applicationId} type="text" value={appRec.remarks} onchange={handleChange} variant="label-hidden" disabled={appRec.disableCombobox}> </lightning-input>
+                                                    </th> -->
+                                                    <th>
+                                                        <template for:each={appRec.relatedLeads} for:item="ld">
+                                                            <div key={ld.ldId}>
+                                                                <template if:true={ld.ldId}>
+                                                                    <a onclick={handleLeadClick} data-ld-id={ld.ldId} class="custom-link">
+                                                                        {ld.ldName}
+                                                                    </a>
+                                                                </template>
+                                                            </div>
+                                                        </template>
+                                                    </th>
+                                                </tr>
+                                            </template>
+                                    </tbody>
+                                </table>
+                            </div><br/>
+                            
+                                <div class="slds-float_right" style="color:skyblue;">
+                                    <lightning-button   label="Previous" icon-name="utility:chevronleft" onclick={naPreviousHandler}> </lightning-button>&nbsp;&nbsp;
+                                    Page {naPage} of {totalNAPage}&nbsp;&nbsp;&nbsp;
+                                    <lightning-button label="Next" icon-name="utility:chevronright" icon-position="right" onclick={naNextHandler}> </lightning-button>
+                                </div><br/><br/>
+                            
+                            <!-- <div class="slds-m-top_small slds-m-bottom_medium slds-border_top"><br/>
+                                <div class="slds-align_absolute-center">
+                                    <lightning-button variant="brand" label="Create Lead" title="Primary action" onclick={doCreateLead} disabled={handleNAButton}></lightning-button> &nbsp;&nbsp;
+                                    <lightning-button variant="neutral" label="Cancel" title="Primary action" onclick={handleCancel}></lightning-button>
+                                </div>
+                            </div> -->
+                        </template>
+                    </lightning-tab>
+                    
+                </lightning-tabset>
+
+            <!-- <template lwc:if={applicationData}>
+                <lightning-datatable
+                    data-id="table"
+                    key-field="Id"
+                    data={applicationData}
+                    columns={columns}
+                    selected-rows = {allSelectedRows}
+                    onrowselection={handleRowSelection}
+                >
+                </lightning-datatable>
+                <br/>
+                <div>
+                    <div class="slds-float_right" style="color:skyblue;">
+                        <lightning-button label="Previous" icon-name="utility:chevronleft" onclick={previousHandler}> </lightning-button>&nbsp;&nbsp;
+                        Page {page} of {totalPage}&nbsp;&nbsp;&nbsp;
+                        <lightning-button label="Next" icon-name="utility:chevronright" icon-position="right" onclick={nextHandler}> </lightning-button>
+                    </div>
+                </div>
+            </template> -->
             </div>
         </template>
     </div>
-    </div>
-
-    
-    <div class="slds-m-top_small slds-m-bottom_medium slds-border_top"><br/>
-        <div class="slds-align_absolute-center">
-            <lightning-button variant="success" label="Send Link" title="Primary action" onclick={handleSubmit} disabled={getMainButton}></lightning-button> &nbsp;&nbsp;
-            <lightning-button variant="neutral" label="Cancel" title="Primary action" onclick={handleCancel}></lightning-button>
-        </div>
-    </div>
-
 </template>

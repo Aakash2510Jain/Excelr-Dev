@@ -3,6 +3,7 @@ import Id from '@salesforce/user/Id';
 import getCalendarsUserInfo from "@salesforce/apex/CalenderController.getCalendarsUserInfo";
 import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import BANNER from '@salesforce/resourceUrl/schedules';
 
 export default class CalendlyMe extends LightningElement {
     userId = Id;
@@ -14,6 +15,7 @@ export default class CalendlyMe extends LightningElement {
     @track showCreateEvent = false;
     @track initials = '';
 
+    @track demo_banner = BANNER;
 
     @wire(getCalendarsUserInfo,{userId:Id})
     wiredResponse(result){

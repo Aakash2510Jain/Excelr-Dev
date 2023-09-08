@@ -253,7 +253,7 @@ public without sharing class placementApplicationController {
             System.debug('invrecID-->'+invrecID);
 
             if (PaymentUrl != null && invrecID != null ) {
-                Utility.SendPaymentLinkToISM( invrecID, PaymentUrl);
+                //Utility.SendPaymentLinkToISM( invrecID, PaymentUrl);
                 Receipt__c receiptRec = [Select Id,Payment_Link__c From Receipt__c where Type__c = 'RazorPay' and Receipt_Status__c = 'Link Sent' limit 1];
                 receiptRec.Payment_Link__c = PaymentUrl;
                 update receiptRec;

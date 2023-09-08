@@ -1,0 +1,4 @@
+<aura:component controller="DynamicTaskComponentHelper" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <div>{!v.body}</div>
+</aura:component>

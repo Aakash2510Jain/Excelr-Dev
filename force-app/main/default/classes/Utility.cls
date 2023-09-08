@@ -1,4 +1,50 @@
 public without sharing class Utility{
+    
+    public static void sendRegistrationEmail(Id contactId, string programName, string collegeName, Datetime prgStartDateTime, String shippingCountry, String shippingCity, String shippingState, String shippingStreet, String shippingPostalcode){
+        Contact conRec = [SELECT Id, FirstName, Email FROM Contact WHERE Id =: contactId];
+        Id orgWideEmailAddressId = [SELECT Id FROM OrgWideEmailAddress WHERE Address = 'anjali.singh@utilitarianlab.com'].Id;
+        String htmlBody = 'Dear ' + conRec.FirstName + ', ';
+       // htmlBody += ' <br> <br> Congratulations! We are pleased to inform you that your registration for the ' + programName + ' at ' + collegeName +''+prgStartDateTime +' has been successfully completed.<br>We are excited to have you join us!';
+      // htmlBody += ' <br> <br> Congratulations! We are pleased to inform you that your registration for the ' + programName + ' at ' + collegeName +', '+prgStartDateTime +' '+shippingCountry + ', '+shippingCity  +' ,'+shippingState +', '+ shippingStreet +', '+shippingPostalcode +''  +' has been successfully completed.<br>We are excited to have you join us!';
+        if(programName != null && collegeName!= null && prgStartDateTime != null &&  shippingCountry != null &&  shippingCity != null &&  shippingState != null && shippingStreet != null &&  shippingPostalcode != null ) {
+        htmlBody += ' <br> <br> Congratulations! We are pleased to inform you that your registration for the ' + programName + ' at ' + collegeName +', '+prgStartDateTime.addMinutes(330) +' '+shippingCountry + ', '+shippingCity  +' ,'+shippingState +', '+ shippingStreet +', '+shippingPostalcode +''  +' has been successfully completed.<br>We are excited to have you join us!';
+        htmlBody += '<br> <br>If you have any further questions or need assistance before the start of the ' + programName + ', feel free to reach out to us at 8002122121.<br>We\'re here to help ensure your experience is seamless and enjoyable.';
+        htmlBody += '<br>Thanks & Regards';
+        htmlBody += '<br> Excelr Team';
+        }else{
+          htmlBody += ' <br> <br> Congratulations! We are pleased to inform you that your registration for the ' + programName + ' at ' + collegeName +''+prgStartDateTime.addMinutes(330) +' has been successfully completed.<br>We are excited to have you join us!';
+        htmlBody += '<br> <br>If you have any further questions or need assistance before the start of the ' + programName + ', feel free to reach out to us at 8002122121.<br>We\'re here to help ensure your experience is seamless and enjoyable.';
+        htmlBody += '<br>Thanks & Regards';
+        htmlBody += '<br> Excelr Team';
+
+        }
+        
+        Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+        email.setOrgWideEmailAddressId(orgWideEmailAddressId);
+        email.setToAddresses(new list<string>{conRec.Email});
+        email.setSubject('Confirmation of Successful Registration for ' + programName);
+        email.setHtmlBody(htmlBody);
+        Messaging.sendEmail(new List<Messaging.Email> {email});
+    }
+
+    public static void sendRegistrationEmail1(Id contactId, string programName, string collegeName){
+        Contact conRec = [SELECT Id, FirstName, Email FROM Contact WHERE Id =: contactId];
+        Id orgWideEmailAddressId = [SELECT Id FROM OrgWideEmailAddress WHERE Address = 'anjali.singh@utilitarianlab.com'].Id;
+        String htmlBody = 'Dear ' + conRec.FirstName + ', ';
+       // htmlBody += ' <br> <br> Congratulations! We are pleased to inform you that your registration for the ' + programName + ' at ' + collegeName +''+prgStartDateTime +' has been successfully completed.<br>We are excited to have you join us!';
+      // htmlBody += ' <br> <br> Congratulations! We are pleased to inform you that your registration for the ' + programName + ' at ' + collegeName +', '+prgStartDateTime +' '+shippingCountry + ', '+shippingCity  +' ,'+shippingState +', '+ shippingStreet +', '+shippingPostalcode +''  +' has been successfully completed.<br>We are excited to have you join us!';
+        htmlBody += ' <br> <br> Congratulations! We are pleased to inform you that your registration for the ' + programName + ' at ' + collegeName  +' has been successfully completed.<br>We are excited to have you join us!';
+        htmlBody += '<br> <br>If you have any further questions or need assistance before the start of the ' + programName + ', feel free to reach out to us at 8002122121.<br>We\'re here to help ensure your experience is seamless and enjoyable.';
+        htmlBody += '<br>Thanks & Regards';
+        htmlBody += '<br> Excelr Team';
+        Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+        email.setOrgWideEmailAddressId(orgWideEmailAddressId);
+        email.setToAddresses(new list<string>{conRec.Email});
+        email.setSubject('Confirmation of Successful Registration for ' + programName);
+        email.setHtmlBody(htmlBody);
+        Messaging.sendEmail(new List<Messaging.Email> {email});
+    }
+    
     public static List<String> getPicklistValues(String ObjectApi_name, String Field_name){
         
         List<String> lstPickvals = new List<String>();

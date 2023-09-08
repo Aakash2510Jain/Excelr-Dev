@@ -1,6 +1,7 @@
 import { api, LightningElement, track, wire } from 'lwc';
 import EXCELR_LOGO from '@salesforce/resourceUrl/ExcelRLogo';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { CloseActionScreenEvent } from 'lightning/actions';
 import getLead from '@salesforce/apex/walkInLeadLWCcontroller.getLead';
 import getApplication from '@salesforce/apex/walkInLeadLWCcontroller.getApplication';
 import EmailIsm from '@salesforce/apex/walkInLeadLWCcontroller.EmailIsm';
@@ -592,6 +593,26 @@ export default class WaklInLead extends LightningElement {
 
     createTaskRec() {
         debugger;
+        if(this.taskTobeCreated.Subject == undefined || this.taskTobeCreated.Subject == ''){
+            alert('Subject is empty, Please enter Subject !');
+            return;
+        }
+        if(this.taskTobeCreated.Priority == undefined || this.taskTobeCreated.Priority == ''){
+            alert('Priority is empty, Please enter Priority !');
+            return;
+        }
+        if(this.taskTobeCreated.Status == undefined || this.taskTobeCreated.Status == ''){
+            alert('Status is empty, Please enter Status !');
+            return;
+        }
+        if(this.taskTobeCreated.ActivityDate == undefined || this.taskTobeCreated.ActivityDate == ''){
+            alert('Due Date is empty, Please enter Due Date !');
+            return;
+        }
+        if(this.taskTobeCreated.Followup_Date_Time__c == undefined || this.taskTobeCreated.Followup_Date_Time__c == ''){
+            alert('Followup Datetime is empty, Please enter Followup Datetime !');
+            return;
+        }
         if ((this.CaptureOwnerId != null && this.CaptureOwnerId != undefined && this.CaptureOwnerId != '') && (this.recordId != null && this.recordId != undefined && this.recordId != '')) {
             createTask({ assignto: this.CaptureOwnerId, RecordId: this.recordId, TaskRecord: this.taskTobeCreated })
 
@@ -1247,5 +1268,18 @@ export default class WaklInLead extends LightningElement {
 
 
     // }
+
+    showNotification(title,message,variant){
+        const evt = new ShowToastEvent({
+            title: title,
+            message: message,
+            variant: variant
+        });
+        this.dispatchEvent(evt);
+    }
+
+    closeAction(){
+        this.dispatchEvent(new CloseActionScreenEvent());
+    }
 
 }

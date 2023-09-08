@@ -409,8 +409,22 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
             // tsk.Call_Start_Date_Time__c = Datetime.valueof((TaskIdWithObject.get(str)).get('callTime'));
             // tsk.Call_End_Date_Time__c = (Datetime.valueof((TaskIdWithObject.get(str)).get('callTime'))).addSeconds((Integer) (TaskIdWithObject.get(str)).get('duration'));
             String formatted = (String) (TaskIdWithObject.get(str)).get('callTime');
-            tsk.Call_Start_Date_Time__c = Datetime.valueof(formatted);
-            tsk.Call_End_Date_Time__c = (Datetime.valueof(formatted)).addSeconds(Integer.valueof((TaskIdWithObject.get(str)).get('duration')));
+            if(formatted.contains(',')){
+                String formattedDate = formatted.replace(',', '');
+                tsk.Call_Start_Date_Time__c = Datetime.valueof(formattedDate);
+            }
+            else {
+                tsk.Call_Start_Date_Time__c = Datetime.valueof(formatted);
+            }
+            //tsk.Call_Start_Date_Time__c = Datetime.valueof(formatted);
+            if(formatted.contains(',')){
+                String formattedDate = formatted.replace(',', '');
+                tsk.Call_End_Date_Time__c = (Datetime.valueof(formattedDate)).addSeconds(Integer.valueof((TaskIdWithObject.get(str)).get('duration')));
+            }
+            else {
+                tsk.Call_End_Date_Time__c = (Datetime.valueof(formatted)).addSeconds(Integer.valueof((TaskIdWithObject.get(str)).get('duration')));
+            }
+            //tsk.Call_End_Date_Time__c = (Datetime.valueof(formatted)).addSeconds(Integer.valueof((TaskIdWithObject.get(str)).get('duration')));
             return tsk;
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
@@ -434,8 +448,23 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
             tsk.CallDurationInSeconds = Integer.valueof((TaskIdWithObject.get(str)).get('duration'));
 
             String formatted = (String) (TaskIdWithObject.get(str)).get('callTime');
-            tsk.Call_Start_Date_Time__c = Datetime.valueof(formatted);
-            tsk.Call_End_Date_Time__c = (Datetime.valueof(formatted)).addSeconds(Integer.valueof((TaskIdWithObject.get(str)).get('duration')));
+            //tsk.Call_Start_Date_Time__c = Datetime.valueof(formatted);
+            //tsk.Call_End_Date_Time__c = (Datetime.valueof(formatted)).addSeconds(Integer.valueof((TaskIdWithObject.get(str)).get('duration')));
+            if(formatted.contains(',')){
+                String formattedDate = formatted.replace(',', '');
+                tsk.Call_Start_Date_Time__c = Datetime.valueof(formattedDate);
+            }
+            else {
+                tsk.Call_Start_Date_Time__c = Datetime.valueof(formatted);
+            }
+            //tsk.Call_Start_Date_Time__c = Datetime.valueof(formatted);
+            if(formatted.contains(',')){
+                String formattedDate = formatted.replace(',', '');
+                tsk.Call_End_Date_Time__c = (Datetime.valueof(formattedDate)).addSeconds(Integer.valueof((TaskIdWithObject.get(str)).get('duration')));
+            }
+            else {
+                tsk.Call_End_Date_Time__c = (Datetime.valueof(formatted)).addSeconds(Integer.valueof((TaskIdWithObject.get(str)).get('duration')));
+            }
             Return tsk;
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
@@ -488,8 +517,23 @@ public without sharing class Queueable_CallyzerWebhook implements Queueable{
             tsk.Call_Type__c = (String) (TaskIdWithObject.get(str)).get('callType');
             tsk.CallDurationInSeconds = Integer.valueof((TaskIdWithObject.get(str)).get('duration'));
             String formatted = (String) (TaskIdWithObject.get(str)).get('callTime');
-            tsk.Call_Start_Date_Time__c = Datetime.valueof(formatted);
-            tsk.Call_End_Date_Time__c = (Datetime.valueof(formatted)).addSeconds(Integer.valueof((TaskIdWithObject.get(str)).get('duration')));
+            //tsk.Call_Start_Date_Time__c = Datetime.valueof(formatted);
+            //tsk.Call_End_Date_Time__c = (Datetime.valueof(formatted)).addSeconds(Integer.valueof((TaskIdWithObject.get(str)).get('duration')));
+            if(formatted.contains(',')){
+                String formattedDate = formatted.replace(',', '');
+                tsk.Call_Start_Date_Time__c = Datetime.valueof(formattedDate);
+            }
+            else {
+                tsk.Call_Start_Date_Time__c = Datetime.valueof(formatted);
+            }
+            //tsk.Call_Start_Date_Time__c = Datetime.valueof(formatted);
+            if(formatted.contains(',')){
+                String formattedDate = formatted.replace(',', '');
+                tsk.Call_End_Date_Time__c = (Datetime.valueof(formattedDate)).addSeconds(Integer.valueof((TaskIdWithObject.get(str)).get('duration')));
+            }
+            else {
+                tsk.Call_End_Date_Time__c = (Datetime.valueof(formatted)).addSeconds(Integer.valueof((TaskIdWithObject.get(str)).get('duration')));
+            }
             return tsk;
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());

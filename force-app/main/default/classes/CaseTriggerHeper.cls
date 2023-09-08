@@ -48,7 +48,14 @@ public without sharing class CaseTriggerHeper {
             Utility.ApprovalWrapper approvalBHWrapper = Utility.getUserBHMap();
             Utility.ApprovalWrapper approvalAppWrapper = Utility.getParentUserMap();
             
+            set<Id> caseIdSet = new set<Id>();
+            
             for(Case csRec : newCaseList){
+                
+                if(oldCaseMap.get(csRec.Id).Status != csRec.Status && csRec.Status != null && !String.isBlank(csRec.Status)){
+                    caseIdSet.add(csRec.Id);
+                }
+                
                 if(underApprovalCaseSet.contains(csRec.Id)) {
                     csRec.addError(Constants.UNDER_APPROVAL_PROCESS_ERR_MSG); 
                     continue;
@@ -195,12 +202,21 @@ public without sharing class CaseTriggerHeper {
                 } */
             }
             
+            system.debug('caseIdSet -- ' + caseIdSet);
+            if(caseIdSet.size()>0){
+                //callStatusUpdateAPI(caseIdSet);
+            }
             
         }
         catch(Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
             HandleBusinessException.captureError('CaseTriggerHeper', 'onAfterUpdate', e, null);
         }
+    }
+    
+    @future(callout=true)
+    public static void callStatusUpdateAPI(set<Id> caseIdSet){
+        LMS_ApiCallouts.doInvoiceStatusUpdate(caseIdSet);
     }
     
     private static void sendEmail(String emailBody, List <String> toAddresses, List <String> toCcAddresses, String subject){

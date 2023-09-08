@@ -112,13 +112,65 @@
     </head>
 
     <script>
-        var app = angular.module('interview_app', []);
+    angular.module('number', [])
+            .directive('number', function () {
+                return {
+                    require: 'ngModel',
+                    restrict: 'A',
+                    link: function (scope, element, attrs, ctrl) {
+                        ctrl.$parsers.push(function (input) {
+                            if (input == undefined) return ''
+                            var inputNumber = input.toString().replace(/[^0-9]/g, '');
+                            if (inputNumber != input) {
+                                ctrl.$setViewValue(inputNumber);
+                                ctrl.$render();
+                            }
+                            return inputNumber;
+                        });
+                    }
+                };
+        });
+
+        var app = angular.module('interview_app', ['number']);
         app.controller('interview_ctrl', function($scope) {
             $scope.collegeList = [];
             $scope.selectedName = 'None';
+            $scope.showMsg = false;
+            $scope.showCampDateError = false;
+            $scope.today = new Date();
             
             var opportunityId = '{!$CurrentPage.parameters.oid}';
             $scope.studentDet = {FirstName:"",LastName:"",Email: ""};
+
+            $scope.getProgramDate = function(){
+                debugger;
+                InterviewApplicationController.getProgramDate(opportunityId,function(result,event){
+                    debugger;
+                    if(event.status && result){
+                        debugger;
+                        $scope.programRecord = result;
+                        if($scope.programRecord.Program_Start_Date_Time__c != null && $scope.programRecord.Program_Start_Date_Time__c < $scope.today){
+                            $scope.showCampDateError = true;
+                        }
+                        $scope.$apply();
+                    }
+                })
+            }
+            $scope.getProgramDate();
+
+
+            $scope.getAccountDetails = function(){
+                debugger;
+                InterviewApplicationController.getAccountDetails(opportunityId,function(result,event){
+                    debugger;
+                    if(event.status && result){
+                        debugger;
+                        $scope.accountName = result;
+                        $scope.$apply();
+                    }
+                })
+            }
+            $scope.getAccountDetails();
 
             $scope.saveStudentDetails = function(){
                 debugger;
@@ -180,6 +232,7 @@
                                 'Registration Form Submitted Successfully!',
                                 'success'
                             );
+                            $scope.showMsg = true;
                         }
                             
                         $scope.contactDetails = result;
@@ -227,7 +280,23 @@
 
 
     <body ng-app="interview_app" ng-controller="interview_ctrl" style="background-color: white;">
-        <div class="login">
+
+        <div ng-show="showCampDateError" style="margin-top:15%;">
+            <div class="card" style="margin-top: 5%; margin-left: 15%; margin-right: 15%; background-color:black;">
+                <div class="d-flex justify-content-center mt-5">
+                    <apex:image url="{!$Resource.ExcelRLogo}" alt="EXCELR" styleClass="brand-logo" style="height:70px;"/>
+                </div>
+                <div class="card-body mt-3">
+                    <h3 style="color: yellowGreen; text-align:center;">The registration window is closed.....</h3>
+                    <br/>
+                    <!-- <h4 style="text-align: center;color: yellowgreen;">Email has been sent to your registered email Id, Kindly check !!</h4> -->
+                    
+                </div>
+            </div>
+        </div>
+
+
+        <div class="login" ng-hide="showMsg || showCampDateError">
             <div class="login-left">
                 <div class="login-form register">
                     <div class="d-flex justify-content-center">
@@ -247,32 +316,34 @@
                                 <input type="text" class="form-control" id="txtEmail" ng-model="studentDet.Email" ng-focus="removeClass('txtEmail')" placeholder="Email Address"/>
                             </div>
                             <div class="mb-3">
-                                <input type="text" class="form-control" id="txtPhone" ng-model="studentDet.Phone" ng-focus="removeClass('txtLastName')" placeholder="Phone"/>
+                                <input type="text" class="form-control" id="txtPhone" number="studentDet.Phone" ng-model="studentDet.Phone" ng-focus="removeClass('txtPhone')" placeholder="Phone"/>
                             </div>
                             <div class="mb-3">
-                                <input type="text" class="form-control" id="txtStreet" ng-model="studentDet.MailingStreet" ng-focus="removeClass('txtLastName')" placeholder="Street"/>
+                                <input type="text" class="form-control" id="txtStreet" ng-model="studentDet.MailingStreet" ng-focus="removeClass('txtStreet')" placeholder="Street"/>
                             </div>
                             <div class="mb-3">
-                                <input type="text" class="form-control" id="txtCity" ng-model="studentDet.MailingCity" ng-focus="removeClass('txtLastName')" placeholder="City"/>
+                                <input type="text" class="form-control" id="txtCity" ng-model="studentDet.MailingCity" ng-focus="removeClass('txtCity')" placeholder="City"/>
                             </div>
                             <div class="mb-3">
-                                <input type="text" class="form-control" id="txtState" ng-model="studentDet.MailingState" ng-focus="removeClass('txtLastName')" placeholder="State"/>
+                                <input type="text" class="form-control" id="txtState" ng-model="studentDet.MailingState" ng-focus="removeClass('txtState')" placeholder="State"/>
                             </div>
                             <div class="mb-3">
-                                <input type="text" class="form-control" id="txtCountry" ng-model="studentDet.MailingCountry" ng-focus="removeClass('txtLastName')" placeholder="Country"/>
+                                <input type="text" class="form-control" id="txtCountry" ng-model="studentDet.MailingCountry" ng-focus="removeClass('txtCountry')" placeholder="Country"/>
                             </div>
                             <div class="mb-3">
-                                <input type="text" class="form-control" id="txtPin" ng-model="studentDet.MailingPostalCode" ng-focus="removeClass('txtLastName')" placeholder="Pin Code"/>
+                                <input type="text" class="form-control" id="txtPin" ng-model="studentDet.MailingPostalCode" ng-focus="removeClass('txtPin')" placeholder="Pin Code"/>
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="accName" ng-model="accountName" ng-focus="removeClass('accName')" ng-disabled="true"/>
                             </div>
                            
                           
-                       <div class="mb-3">
+                       <!-- <div class="mb-3">
                            <select class="form-control" aria-label="Default select example" ng-model="selectedName" >
-                              <!-- <option value="none" ng-selected="true">--None--</option> -->
                                 <option  value="Default" ng-selected="true">Select College</option>
                                <option ng-repeat="college in collegeList" value="none" ng-selected="true" >{{college.Name}}</option>
                            </select>
-                        </div>
+                        </div> -->
                             
                         </div>
                         <!--collegeList PickList-->               
@@ -294,7 +365,23 @@
 
                 <div style="overflow: hidden;" class="d-flex justify-content-center jsutify-items-center">
                     <div class="d-flex justify-content-center">
-                        <apex:image url="{!$Resource.SignUpImage}" />
+                        <apex:image url="{!$Resource.SignUpImage}"/>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div ng-show="showMsg">
+                <div class="card" style="margin-top: 5%; margin-left: 15%; margin-right: 15%; background-color:black;">
+                    <div class="d-flex justify-content-center mt-5">
+                        <apex:image url="{!$Resource.ExcelRLogo}" alt="EXCELR" styleClass="brand-logo" style="height:70px;"/>
+                    </div>
+                    <div class="card-body mt-3">
+                        <h3 style="color: yellowgreen; text-align:center;">Your personal details have been submitted successfully....</h3>
+                        <br/>
+                        <h4 style="text-align: center;color: yellowgreen;">Email has been sent to your registered email Id, Kindly check !!</h4>
+                        
                     </div>
                 </div>
             </div>

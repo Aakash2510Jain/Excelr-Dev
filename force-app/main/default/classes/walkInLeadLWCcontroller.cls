@@ -336,9 +336,12 @@ public without sharing class walkInLeadLWCcontroller{
             EmailTemplate et = [Select id, Name, Body, HtmlValue
                                 from EmailTemplate
                                 where name = 'Notify ISM'];
+        Id orgWideEmailAddressId = [SELECT Id FROM OrgWideEmailAddress WHERE Address = 'aakash.jain@utilitarianlab.com'].Id;
+        system.debug('orgWideEmailAddressId ======> '+orgWideEmailAddressId);
 
             if (leadList != null && leadList[0].Owner.email != null){
                 Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+                mail.setOrgWideEmailAddressId(orgWideEmailAddressId);
                 String[] toAddresses = new String[]{ ownerMail };
                 mail.setSubject('Lead assignment ');
                 mail.setPlainTextBody('Lead has been assign to you..!');

@@ -52,6 +52,11 @@ global with sharing class API_LMSCreateCourse{
                 RestContext.response.responseBody = Blob.valueOf(ErrorresonseBOdy);
                 RestContext.response.statusCode = 400;
             }
+
+            String responseBody = RestContext.response.responseBody.toString();
+            Integer statusCode = RestContext.response.statusCode;
+            HttpUtility.getInstance().createServiceLogger(requestString, responseBody, '/sync_course', 'POST', statusCode, System.now(), System.now(),null);
+
         } catch (Exception e){
             String ErrorresponseBodyForBatch = JSON.serialize(E.getMessage());
             String ErrorresonseBOdy = '{"status": "ERROR","message": ' + ErrorresponseBodyForBatch;
@@ -90,12 +95,16 @@ global with sharing class API_LMSCreateCourse{
                     if (ProdMap.containskey('is_active')){
                         NewProduct.IsActive = Boolean.valueOf(ProdMap.get('is_active'));
                     }
+                    if (ProdMap.containskey('category')){
+                        NewProduct.Category__c = String.valueOf(ProdMap.get('category'));
+                    }
                     /*if (ProdMap.containskey('type') && ProdMap.get('type') != null){
                         NewProduct.Type__c = String.valueOf(ProdMap.get('type'));
                     }
                     if (ProdMap.containskey('price') && ProdMap.get('price') != null){
                         NewProduct.Price__c = Integer.valueOf(ProdMap.get('price'));
                     }*/
+
                     if (ProdMap.containskey('lms_course_id') && ProdMap.get('lms_course_id') != null){
                         NewProduct.LMS_ExternalId__c = String.valueOf(ProdMap.get('lms_course_id'));
                     }

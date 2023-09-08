@@ -1,12 +1,12 @@
 public without sharing class LeadTriggerHandler{
     static LeadTriggerHandler handlerInstance;
-
+    
     public static LeadTriggerHandler getInstance(){
         if (handlerInstance == null)
             handlerInstance = new LeadTriggerHandler();
         return handlerInstance;
     }
-
+    
     public void beforeInsert(List<Lead> leadList){
         try{
             List<String> emailList = new List<String>();
@@ -16,24 +16,24 @@ public without sharing class LeadTriggerHandler{
             List<Lead> duplicateExistingLeadList = new List<Lead>();
             List<Opportunity> OpportunityExistingList = new List<opportunity>();
             List<Lead> duplicateConvertedLeadList = new List<Lead>();
-
+            
             Map<string, Lead> existingLeadByEmail = new Map<string, Lead>();
             Map<string, Lead> existingLeadByAlternateEmail = new Map<string, Lead>();
             Map<string, Lead> existingLeadByPhone = new Map<string, Lead>();
             Map<string, Lead> existingLeadByAlternatePhone = new Map<string, Lead>();
-
+            
             Map<string, Lead> convertedLeadByEmail = new Map<string, Lead>();
             Map<string, Lead> convertedLeadByAlternateEmail = new Map<string, Lead>();
             Map<string, Lead> convertedLeadByPhone = new Map<string, Lead>();
             Map<string, Lead> convertedLeadByAlternatePhone = new Map<string, Lead>();
-
+            
             // =======================================Opportunity Maps =========================================
             Map<string, Opportunity> ExistingOppByEmail = new Map<string, Opportunity>();
             Map<string, Opportunity> ExistingOppByAlternateEmail = new Map<string, Opportunity>();
             Map<string, Opportunity> ExistingOppByPhone = new Map<string, Opportunity>();
             Map<string, Opportunity> ExistingOppByAlternatePhone = new Map<string, Opportunity>();
-
-
+            
+            
             List<opportunity> opportunityListToInsert = new List<Opportunity>();
             List<Lead> leadListToInsert = new List<Lead>();
             List<Application__c> applicationListToInsert = new List<Application__C>();
@@ -48,22 +48,23 @@ public without sharing class LeadTriggerHandler{
             map<String, Lead> NewLeadAlternateEmailwithLead = new map<String, Lead>();
             map<String, Lead> NewLeadPhonewithLead = new map<String, Lead>();
             map<String, Lead> NewLeadAlternatePhonewithLead = new map<String, Lead>();
-
+            
             for (Lead ld : leadList){
                 system.debug('ld.OwnerId--->' + ld.OwnerId);
                 ld.Next_follow_up_date_time__c = system.now().addHours(2);
                 if (ld.Enter_UTM_Link__c != null && ld.Lead_Generation_Method__c != null && (ld.Lead_Generation_Method__c == 'Chat Form' || ld.Lead_Generation_Method__c == 'Generic Form')){
                     Utility.UTMLinkParams(ld);
                 }
-
+                
                 //handle necessary fields
-                if (!string.isEmpty(ld.FirstName) && !string.isBlank(ld.LastName)){
+                system.debug('ld.RecordTypeId ==> '+ld.RecordTypeId);
+                if (!string.isEmpty(ld.FirstName) && !string.isBlank(ld.LastName) && ld.RecordTypeId != '012N0000003t1cfIAA'){
                     ld.Company = ld.FirstName + ' ' + ld.LastName;
                 }
-                if (string.isEmpty(ld.FirstName) && !string.isBlank(ld.LastName)){
+                if (string.isEmpty(ld.FirstName) && !string.isBlank(ld.LastName) && ld.RecordTypeId != '012N0000003t1cfIAA'){
                     ld.Company = ld.LastName;
                 }
-
+                
                 if (string.isEmpty(ld.City__c) || string.isBlank(ld.City__c)){
                     ld.City__c = 'NA';
                 }
@@ -103,9 +104,9 @@ public without sharing class LeadTriggerHandler{
                         ld.Quality_of_Lead__c = 'TLM';
                     }
                 }
-
+                
                 system.debug('ld.OwnerId--->' + ld.OwnerId);
-
+                
                 if (ld.Email != null){
                     emailList.add(ld.Email);
                     NewLeadEmailwithLead.put(ld.email, ld);
@@ -132,14 +133,14 @@ public without sharing class LeadTriggerHandler{
             string queryStringForNonConvertedLead = 'select DeadDateTime__c,CreatedDate, Id, Email, status, course__c, CID__c,Customers__c,OwnerId,Alternate_Phone__c,Phone,Alternate_Email__c From Lead';
             String queryStringForConvertedLead = 'select DeadDateTime__c,CreatedDate, Id, Email, status, course__c,CID__c,ConvertedAccountId, Customers__c,LID__c,OwnerId,Alternate_Phone__c,Phone,Alternate_Email__c From Lead ';
             String queryStringforOpportunityLead = 'SELECT  ClosedLostDateTime__c, AccountId,LID__c, Customers__c, CreatedDate,OwnerId,Alternate_Email__c,Alternate_Phone__c,Course__c,Email__c,Id,Lead_Gen_Path__c,Loan_Amount__c,Name,Phone__c,StageName FROM Opportunity';
-
+            
             String whereClauses = '( ';
             String whereClausesForOpp = '( ';
-
+            
             if (!emailList.isEmpty()){
                 System.debug(' string.isBlank(whereClauses) ====> ' + string.isBlank(whereClauses));
                 whereClauses = whereClauses + '( Email IN : emailList  OR Alternate_Email__c IN: emailList) ';
-
+                
                 whereClausesForOpp = whereClausesForOpp + '( Email__c IN : emailList ) ';
             }
             if (!alternateEmailList.isEmpty()){
@@ -149,7 +150,7 @@ public without sharing class LeadTriggerHandler{
                 else
                     whereClauses = whereClauses + ' (Alternate_Email__c IN : alternateEmailList OR Email IN: alternateEmailList) ';
                 //whereClauses.add(' AND Alternate_Email__c IN : alternateEmailSet');
-
+                
                 if (!string.isBlank(whereClausesForOpp) && whereClausesForOpp.length() > 2){
                     whereClausesForOpp = whereClausesForOpp + 'OR ( Alternate_Email__c IN : alternateEmailList OR Email__c IN: alternateEmailList ) ';
                 } else{
@@ -163,7 +164,7 @@ public without sharing class LeadTriggerHandler{
                 else
                     whereClauses = whereClauses + ' (Phone LIKE : phoneList OR Phone LIKE : alternatePhoneList) ';
                 //whereClauses.add('AND (Phone IN : phoneSet');
-
+                
                 if (!string.isBlank(whereClausesForOpp) && whereClausesForOpp.length() > 2){
                     whereClausesForOpp = whereClausesForOpp + ' OR ( Phone__c LIKE : phoneList OR Phone__c LIKE : alternatePhoneList) ';
                 } else{
@@ -177,15 +178,15 @@ public without sharing class LeadTriggerHandler{
                 else
                     whereClauses = whereClauses + ' (Alternate_Phone__c LIKE : alternatePhoneList OR Alternate_Phone__c LIKE: phoneList) ';
                 //whereClauses.add('Alternate_Phone__c IN : alternatePhoneSet');
-
+                
                 if (!string.isBlank(whereClausesForOpp) && whereClausesForOpp.length() > 2){
                     whereClausesForOpp = whereClausesForOpp + ' OR ( Alternate_Phone__c LIKE : alternatePhoneList OR Alternate_Phone__c LIKE: phoneList) ';
-
+                    
                 } else{
                     whereClausesForOpp = whereClausesForOpp + ' ( Alternate_Phone__c LIKE : alternatePhoneList OR Alternate_Phone__c LIKE: phoneList) ';
                 }
             }
-
+            
             system.debug('whereClauses' + whereClauses);
             system.debug('whereClauses' + whereClauses.length());
             if (whereClauses.length() > 2){
@@ -201,11 +202,11 @@ public without sharing class LeadTriggerHandler{
                 System.debug('queryStringforOpportunityLead ===> ' + queryStringforOpportunityLead);
                 OpportunityExistingList = Database.query(queryStringforOpportunityLead);
             }
-
+            
             System.debug('queryStringForNonConvertedLead ====> ' + queryStringForNonConvertedLead);
             System.debug('queryStringForConvertedLead =====> ' + queryStringForConvertedLead);
             System.debug('OpportunityExistingList ====> ' + OpportunityExistingList);
-
+            
             if (!duplicateExistingLeadList.isEmpty()){
                 for (Lead leadrec : duplicateExistingLeadList){
                     if (!string.isEmpty(leadrec.Email)){
@@ -254,7 +255,7 @@ public without sharing class LeadTriggerHandler{
                     }
                 }
             }
-
+            
             if (!OpportunityExistingList.isEmpty()){
                 for (Opportunity opp : OpportunityExistingList){
                     if (!string.isEmpty(opp.Email__c)){
@@ -277,25 +278,25 @@ public without sharing class LeadTriggerHandler{
                             ExistingOppByAlternatePhone.put(opp.Alternate_Phone__c, opp);
                         }
                     }
-
+                    
                 }
-
+                
             }
-
+            
             System.debug('existingLeadByEmail ====> ' + existingLeadByEmail);
             System.debug('existingLeadByAlternateEmail ====> ' + existingLeadByAlternateEmail);
             System.debug('existingLeadByPhone ====> ' + existingLeadByPhone);
             System.debug('existingLeadByAlternatePhone ====> ' + existingLeadByAlternatePhone);
-
-
+            
+            
             System.debug('convertedLeadByEmail ====> ' + convertedLeadByEmail);
             System.debug('convertedLeadByAlternateEmail ====> ' + convertedLeadByAlternateEmail);
             System.debug('convertedLeadByPhone ====> ' + convertedLeadByPhone);
             System.debug('convertedLeadByAlternatePhone ====> ' + convertedLeadByAlternatePhone);
-
+            
             for (Lead leadRec : leadList){
                 system.debug('leadRec---->' + leadRec);
-
+                
                 Utility.ApplicationtaskWrapper ApptaskWrap = new Utility.ApplicationtaskWrapper();
                 DateTime Currentdate = System.now();
                 Long currentdatetimeMilisec = System.now().getTime();
@@ -307,7 +308,7 @@ public without sharing class LeadTriggerHandler{
                     Opportunity opp = new Opportunity();
                     string LID = '';
                     String CustomerId = '';
-
+                    
                     if (ExistingOppByEmail.containsKey(leadRec.Email)){
                         if (ExistingOppByEmail.get(leadRec.Email).Stagename != Constants.OPP_STAGENAME_CLOSE_LOST){
                             //
@@ -317,7 +318,7 @@ public without sharing class LeadTriggerHandler{
                             LID = ExistingOppByEmail.get(leadRec.Email).LID__c;
                             CustomerId = ExistingOppByEmail.get(leadRec.Email).Customers__c;
                             course = leadRec.Course__c;
-
+                            
                         } else if (ExistingOppByEmail.get(leadRec.Email).Stagename == Constants.OPP_STAGENAME_CLOSE_LOST){
                             //transferring Lost opp to Umesh
                             Opportunity updatedopp = new Opportunity();
@@ -331,7 +332,7 @@ public without sharing class LeadTriggerHandler{
                                 leadRec.Is_Lead_Assigned_to_User__c = true;
                                 leadRec.Customers__c = ExistingOppByEmail.get(leadRec.Email).Customers__c;
                                 leadRec.Next_follow_up_date_time__c = system.now().addHours(2);
-
+                                
                             } else if (((currentdatetimeMilisec - (ExistingOppByEmail.get(leadRec.Email).ClosedLostDateTime__c).getTime()) / (60000 * 60 * 24)) > 30){
                                 // Assign Lead via RR
                                 leadRec.ownerId = constants.queueId;
@@ -357,7 +358,7 @@ public without sharing class LeadTriggerHandler{
                                 leadRec.Is_Lead_Assigned_to_User__c = true;
                                 leadRec.Customers__c = ExistingOppByAlternateEmail.get(leadRec.Alternate_Email__c).Customers__c;
                                 leadRec.Next_follow_up_date_time__c = system.now().addHours(2);
-
+                                
                             } else if (((currentdatetimeMilisec - (ExistingOppByAlternateEmail.get(leadRec.Alternate_Email__c).ClosedLostDateTime__c).getTime()) / (60000 * 60 * 24)) > 30){
                                 leadRec.ownerId = constants.queueId;
                                 
@@ -384,11 +385,11 @@ public without sharing class LeadTriggerHandler{
                                 leadRec.Is_Lead_Assigned_to_User__c = true;
                                 leadRec.Customers__c = ExistingOppByPhone.get(leadRec.Phone).Customers__c;
                                 leadRec.Next_follow_up_date_time__c = system.now().addHours(2);
-
+                                
                             } else if (((currentdatetimeMilisec - (ExistingOppByPhone.get(leadRec.Phone).ClosedLostDateTime__c).getTime()) / (60000 * 60 * 24)) > 30){
                                 leadRec.ownerId = constants.queueId;
                             }
-
+                            
                         }
                     }
                     else if (ExistingOppByAlternatePhone.containsKey(leadRec.Alternate_Phone__c)){
@@ -412,7 +413,7 @@ public without sharing class LeadTriggerHandler{
                                 leadRec.Customers__c = ExistingOppByAlternatePhone.get(leadRec.Alternate_Phone__c).Customers__c;
                                 //leadRec.Is_User_Assigned__c == 'Assigned';
                                 leadRec.Next_follow_up_date_time__c = system.now().addHours(2);
-
+                                
                             } else if (((currentdatetimeMilisec - (ExistingOppByAlternatePhone.get(leadRec.Alternate_Phone__c).ClosedLostDateTime__c).getTime()) / (60000 * 60 * 24)) > 30){
                                 leadRec.ownerId = constants.queueId;
                                 // Opportunity updatedopp = new Opportunity();
@@ -422,7 +423,7 @@ public without sharing class LeadTriggerHandler{
                             }
                         }
                     }
-
+                    
                     if (AccountId != null){
                         //Opportunity opportunityRec = new Opportunity(Name = course, AccountId = accountId, CloseDate = Date.today().addDays(2), StageName = 'Proposal', LID__c = LID, Customers__c = CustomerId);
                     }
@@ -434,24 +435,24 @@ public without sharing class LeadTriggerHandler{
                         if (ApptaskWrap.TaskRec != null){
                             taskListToInsert.add(ApptaskWrap.TaskRec);
                         }
-
+                        
                     }
-
-
+                    
+                    
                 } 
                 else{
                     system.debug('Non-Converted Lead doesnot exist');
                     system.debug('duplicateExistingLeadList--->' + duplicateExistingLeadList);
                     
                     if (!duplicateExistingLeadList.isEmpty()){
-
+                        
                         //Long currentdatetimeMilisec = System.now().getTime();
                         system.debug('existingLeadByEmail.ContainsKey(leadRec.Email)-->' + existingLeadByEmail.ContainsKey(leadRec.Email));
                         system.debug('existingLeadByAlternateEmail.ContainsKey(leadRec.Alternate_Email__c)--->' + existingLeadByAlternateEmail.ContainsKey(leadRec.Alternate_Email__c));
                         system.debug('existingLeadByPhone.ContainsKey(leadRec.Phone)--->' + existingLeadByPhone.ContainsKey(leadRec.Phone));
                         system.debug('existingLeadByPhone.ContainsKey(leadRec.Alternate_Phone__c)--->' + existingLeadByPhone.ContainsKey(leadRec.Alternate_Phone__c));
-
-
+                        
+                        
                         if (existingLeadByEmail.ContainsKey(leadRec.Email)){
                             if ((existingLeadByEmail.get(leadRec.Email).status == 'Dead' || existingLeadByEmail.get(leadRec.Email).Status == 'Junk')){
                                 system.debug('dead or junk and course is same');
@@ -489,12 +490,12 @@ public without sharing class LeadTriggerHandler{
                                 applicationListToInsert.add(Utility.returnApplicationInstance(NewLeadEmailwithLead.get(leadRec.Email), existingLeadByEmail.get(leadRec.Email)));
                             }
                         } else if (existingLeadByAlternateEmail.ContainsKey(leadRec.Alternate_Email__c)){
-
+                            
                             if ((existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).status == 'Dead' || existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Status == 'Junk')){
                                 system.debug('dead or junk and course is same');
                                 system.debug('Create new Lead');
                                 leadRec.Customers__c = existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Customers__c;
-
+                                
                                 Lead leadtoBeupdated = new Lead();
                                 leadtoBeupdated.id = existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Id;
                                 leadtoBeupdated.OwnerId = Constants.UmeshUserId;
@@ -502,7 +503,7 @@ public without sharing class LeadTriggerHandler{
                                 //system.debug('existingLeadByEmail.get(leadRec.Alternate_Email__c).DeadDateTime__c--->'+existingLeadByEmail.get(leadRec.Alternate_Email__c).DeadDateTime__c);
                                 if(existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).DeadDateTime__c != null){
                                     //system.debug('existingLeadByEmail.get(leadRec.Alternate_Email__c).Id--->'+existingLeadByEmail.get(leadRec.Alternate_Email__c).Id);
-
+                                    
                                     Lead leadRecToUpdate = new Lead();
                                     leadRecToUpdate.Id = existingLeadByAlternateEmail.get(leadRec.Alternate_Email__c).Id;
                                     leadRecToUpdate.OwnerId = Constants.UmeshUserId;
@@ -532,12 +533,12 @@ public without sharing class LeadTriggerHandler{
                                 system.debug('dead or junk and course is same');
                                 system.debug('Create new Lead');
                                 leadRec.Customers__c = existingLeadByPhone.get(leadRec.Phone).Customers__c;
-
+                                
                                 Lead leadtoBeupdated = new Lead();
                                 leadtoBeupdated.id = existingLeadByPhone.get(leadRec.Phone).Id;
                                 leadtoBeupdated.OwnerId = Constants.UmeshUserId;
                                 LeadListTObeUpdated.add(leadtoBeupdated);
-								
+                                
                                 //system.debug('existingLeadByEmail.get(leadRec.Phone).DeadDateTime__c--->'+existingLeadByEmail.get(leadRec.Phone).DeadDateTime__c);
                                 if(existingLeadByPhone.get(leadRec.Phone).DeadDateTime__c != null){
                                     //system.debug('existingLeadByEmail.get(leadRec.Phone).Id--->'+existingLeadByEmail.get(leadRec.Phone).Id);
@@ -572,7 +573,7 @@ public without sharing class LeadTriggerHandler{
                                 system.debug('dead or junk and course is same');
                                 system.debug('Create new Lead');
                                 leadRec.Customers__c = existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Customers__c;
-
+                                
                                 Lead leadtoBeupdated = new Lead();
                                 leadtoBeupdated.id = existingLeadByAlternatePhone.get(leadRec.Alternate_Phone__c).Id;
                                 leadtoBeupdated.OwnerId = Constants.UmeshUserId;
@@ -612,13 +613,13 @@ public without sharing class LeadTriggerHandler{
                         //applicationListToInsert.add(Utility.returnApplicationInstance(accountId, course));
                     }
                 }
-
+                
                 System.debug('leadRec.Email ====> ' + leadRec.Email);
                 System.debug('leadRec.Alternate_Email__c ====> ' + leadRec.Alternate_Email__c);
                 System.debug('leadRec.Phone ====> ' + leadRec.Phone);
                 System.debug('leadRec.Alternate_Phone__c ====> ' + leadRec.Alternate_Phone__c);
-
-
+                
+                
                 if (leadRec.LeadSource == 'Reference' || leadRec.Lead_Gen_Path__c == 'Reference'){
                     leadRec.Is_Lead_Assigned_to_User__c = true;
                     leadRec.Next_follow_up_date_time__c = system.now().addHours(2);
@@ -631,7 +632,7 @@ public without sharing class LeadTriggerHandler{
                     leadRec.Is_Lead_Assigned_to_User__c = true;
                     leadRec.Next_follow_up_date_time__c = system.now().addHours(2);
                 } else if (leadRec.To_Be_Deleted__c == true){
-
+                    
                 } else if(leadRec.Is_Lead_Assigned_to_User__c == false){
                     leadRec.Is_Lead_Assigned_to_User__c = false;
                     leadRec.OwnerId = constants.queueId;
@@ -672,12 +673,12 @@ public without sharing class LeadTriggerHandler{
             HandleBusinessException.captureError('LeadTriggerHandler', 'Before Lead Insert', e, null);
         }
     }
-
+    
     public void afterInsert(List<Lead> leadList){
         List<Application__c> applicationtobeinserted = new List<Application__c>();
         try{
             set<String> leadIds = new set<String>();
-
+            
             for (Lead ld : leadList){
                 //Application__c LeadApp = Utility.createApplicationInstance(ld.Id, ld.Course__c, null);
                 Application__c LeadApp = Utility.createApplicationInstanceForLead(ld, null);
@@ -692,12 +693,13 @@ public without sharing class LeadTriggerHandler{
             if (!leadIds.isEmpty()){
                 DeleteDuplicateLeads.deleteLeads();
             }
-        } catch (Exception e){
+        } 
+        catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
             HandleBusinessException.captureError('LeadTriggerHandler', 'After Lead Insert', e, null);
         }
     }
-
+    
     public void beforeUpdate(Map<Id, Lead> newLeadMap, Map<Id, Lead> oldLeadMap){
         try{
             system.debug('Before Update');
@@ -725,7 +727,7 @@ public without sharing class LeadTriggerHandler{
                 if(ld.Phone != null && ld.Phone != oldLeadMap.get(ld.Id).Phone){
                     ld.Phone_to_be_Mapped__c = ld.Phone;
                 }
-               
+                
                 if ((ld.LeadSource != oldLeadMap.get(ld.Id).LeadSource || ld.UTM_Medium__c != oldLeadMap.get(ld.Id).UTM_Medium__c) && ld.LeadSource != null && ld.UTM_Medium__c != null){
                     if ((ld.LeadSource == 'Reference' && ld.UTM_Medium__c == 'NA' && ld.Lead_Gen_Path__c == 'NA') || (ld.LeadSource == 'Walkin' && ld.UTM_Medium__c == 'NA' && ld.Lead_Gen_Path__c == 'NA') || (ld.LeadSource == 'LMS References' && ld.UTM_Medium__c == 'NA' && ld.Lead_Gen_Path__c == 'NA') || (ld.LeadSource == 'GoogleAds' && ld.UTM_Medium__c == 'Search') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'GoogleOrganic') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'GoogleLocal') || (ld.LeadSource == 'BingAds' && ld.UTM_Medium__c == 'Search') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'BingOrganic') || (ld.LeadSource == 'SEO' && ld.UTM_Medium__c == 'BingLocal') || (ld.LeadSource == 'NA' && ld.UTM_Medium__c == 'Direct')){
                         system.debug('PLM');
@@ -741,6 +743,7 @@ public without sharing class LeadTriggerHandler{
                 if (ld.Profession__c != null && ld.Profession__c != oldLeadMap.get(ld.Id).Profession__c){
                     addValidationForProfilling(ld, oldLeadMap);
                 }
+                addValidationForProfilling(ld, oldLeadMap);
                 if (ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Open' && (ld.status == 'ATC' || ld.status == 'Request a Call Back' || ld.status == 'In Conversation' || ld.status == 'Dead' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && (ld.Email_Conversation_Done__c == false && ld.Telephonic_Conversation__c == false)){
                     ld.status.addError('Email or Telephonic conversation is required to proceed');
                 } else if (ld.status != oldLeadMap.get(ld.Id).status && oldLeadMap.get(ld.Id).status == 'Open' && (ld.status == 'In Conversation' || ld.status == 'On Hold' || ld.status == 'Deferred' || ld.status == 'Promote') && ld.Profession__c == null){
@@ -783,16 +786,16 @@ public without sharing class LeadTriggerHandler{
                     ld.Profession__c.addError('Profession cannot be Empty!!');
                 }
                 if (ld.Qualification__c != oldLeadMap.get(ld.Id).Qualification__c && ld.Qualification__c == null){
-                    ld.Qualification__c.addError('Qualification cannot be Empty!!');
+                   // ld.Qualification__c.addError('Qualification cannot be Empty!!');
                 }
                 if (ld.Branch__c != oldLeadMap.get(ld.Id).Branch__c && ld.Branch__c == null){
-                    ld.Branch__c.addError('Branch cannot be Empty!!');
+                   // ld.Branch__c.addError('Branch cannot be Empty!!');
                 }
                 if (ld.Specialization__c != oldLeadMap.get(ld.Id).Specialization__c && ld.Specialization__c == null){
-                    ld.Specialization__c.addError('Specialization cannot be Empty!!');
+                    //ld.Specialization__c.addError('Specialization cannot be Empty!!');
                 }
                 if (ld.Year_of_Graduation__c != oldLeadMap.get(ld.Id).Year_of_Graduation__c && ld.Year_of_Graduation__c == null){
-                    ld.Year_of_Graduation__c.addError('Year of Graduation cannot be Empty!!');
+                   // ld.Year_of_Graduation__c.addError('Year of Graduation cannot be Empty!!');
                 }
                 if (ld.Why_This_Course__c != oldLeadMap.get(ld.Id).Why_This_Course__c && ld.Why_This_Course__c == null){
                     ld.Why_This_Course__c.addError('Why This Course cannot be Empty!!');
@@ -812,7 +815,7 @@ public without sharing class LeadTriggerHandler{
                 if (ld.Relevant_Experience__c != oldLeadMap.get(ld.Id).Relevant_Experience__c && ld.Relevant_Experience__c == null){
                     ld.Relevant_Experience__c.addError('Relevant Experience cannot be Empty!!');
                 }
-
+                
                 if (ld.status != oldLeadMap.get(ld.Id).status && (ld.Status == 'On Hold')){
                     dateTime currentDateTime = system.now();
                     dateTime postOneMonth = system.now().addMonths(1);
@@ -848,14 +851,14 @@ public without sharing class LeadTriggerHandler{
                     if (!emailSet.isEmpty()){
                         duplicateLeadsByEmail = [Select Id, Email, Alternate_Email__c
                                                  From Lead
-                                                 Where (Email In:emailSet or Alternate_Email__c In:emailSet) and Id !=: ld.Id limit 1];
+                                                 Where (Email In:emailSet or Alternate_Email__c In:emailSet) and Id !=: ld.Id and IsConverted = false limit 1];
                         duplicateOpportunitysByEmail = [Select Id,Email__c,Alternate_Email__c from Opportunity where (Email__c In:emailSet or Alternate_Email__c In:emailSet) and Id !=: ld.Id limit 1];
                         
                         system.debug('duplicateLeadsByEmail-->' + duplicateLeadsByEmail);
                         if (!duplicateLeadsByEmail.isEmpty()){
                             ld.Alternate_Email__c.addError('Other Leads exists with Same Email');
                         }
-                         if (!duplicateOpportunitysByEmail.isEmpty()){
+                        if (!duplicateOpportunitysByEmail.isEmpty()){
                             ld.Alternate_Email__c.addError('Other Opportunity exists with Same Email');
                         }
                     }
@@ -865,7 +868,7 @@ public without sharing class LeadTriggerHandler{
                     if (!emailSet.isEmpty()){
                         duplicateLeadsByEmail = [Select Id, Email, Alternate_Email__c
                                                  From Lead
-                                                 Where (Email In:emailSet or Alternate_Email__c In:emailSet ) and Id !=: ld.Id
+                                                 Where (Email In:emailSet or Alternate_Email__c In:emailSet ) and Id !=: ld.Id and IsConverted = false
                                                  limit 1];
                         duplicateOpportunitysByEmail = [Select Id,Email__c,Alternate_Email__c from Opportunity where (Email__c In:emailSet or Alternate_Email__c In:emailSet ) and Id !=: ld.Id limit 1];
                         
@@ -873,13 +876,13 @@ public without sharing class LeadTriggerHandler{
                         if (!duplicateLeadsByEmail.isEmpty()){
                             ld.Email.addError('Other Leads exists with Same Email');
                         }
-                         if (!duplicateOpportunitysByEmail.isEmpty()){
+                        if (!duplicateOpportunitysByEmail.isEmpty()){
                             ld.Email.addError('Other Opportunity exists with Same Email');
                         }
                     }
                 }
                 if (ld.Alternate_Phone__c != oldLeadMap.get(ld.Id).Alternate_Phone__c && ld.Alternate_Phone__c != null ){
-
+                    
                     PhoneSet.add('%' + (ld.Alternate_Phone__c).replaceAll('\\+', ''));
                     system.debug('PhoneSet-->' + PhoneSet);
                     if (!PhoneSet.isEmpty()){
@@ -897,7 +900,7 @@ public without sharing class LeadTriggerHandler{
                     }
                 }
                 if (ld.Phone != oldLeadMap.get(ld.Id).Phone && ld.Phone != null ){
-
+                    
                     PhoneSet.add('%' + (ld.Phone).replaceAll('\\+', ''));
                     system.debug('PhoneSet-->' + PhoneSet);
                     if (!PhoneSet.isEmpty()){
@@ -908,7 +911,7 @@ public without sharing class LeadTriggerHandler{
                         duplicateOpportunityByPhone = [Select Id,Phone__c,Alternate_Phone__c From Opportunity where (Phone__c Like:PhoneSet or Alternate_Phone__c Like:PhoneSet ) and Id !=: ld.Id limit 1];
                         if (!duplicateLeadsByPhone.isEmpty()){
                             system.debug('duplicateLeadsByPhone-->'+duplicateLeadsByPhone);
-                                
+                            
                             ld.Phone.addError('Other Leads exists with Same Phone No.');
                         }
                         if (!duplicateOpportunityByPhone.isEmpty()){
@@ -963,7 +966,7 @@ public without sharing class LeadTriggerHandler{
                     }
                     if ((ld.status == Constants.LEAD_STATUS_ATC || ld.status == Constants.LEAD_STATUS_DEAD || ld.status == Constants.LEAD_STATUS_JUNK || ld.status == Constants.LEAD_STATUS_OPEN ||  ld.status == Constants.LEAD_STATUS_PROMOTE)) {
                         string errormessage = 'you cannot park Lead From ' + oldLeadMap.get(ld.Id).status + ' to ' + ld.status;
-                       // ld.Next_follow_up_date_time__c.addError(errormessage);
+                        // ld.Next_follow_up_date_time__c.addError(errormessage);
                     }
                     
                 }
@@ -980,14 +983,14 @@ public without sharing class LeadTriggerHandler{
                     ld.status.addError(errormessage);
                 }
             }
-
-
+            
+            
         } catch (Exception e){
             system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
             HandleBusinessException.captureError('LeadTriggerHandler', 'Before Lead Update', e, null);
         }
     }
-
+    
     public void afterUpdate(Map<Id, Lead> newLeadMap, Map<Id, Lead> oldLeadMap){
         try{
             
@@ -996,21 +999,29 @@ public without sharing class LeadTriggerHandler{
             HandleBusinessException.captureError('LeadTriggerHandler', 'After Lead Update', e, null);
         }
     }
-
+    
     public void addValidationForProfilling(Lead ld, Map<id, Lead> oldLeadMap){
-        if (ld.Profession__c == 'Student'){
-            if (ld.Year_of_Graduation__c == null){
-                ld.Year_of_Graduation__c.addError('Year of Graduation can not be Empty');
-            }
+        if((ld.Qualification__c != oldLeadMap.get(ld.Id).Qualification__c || ld.Qualification__c != null) && (ld.Qualification__c == 'Btech' || ld.Qualification__c == 'MBA')){
             if (ld.Branch__c == null){
                 ld.Branch__c.addError('Branch can not be Empty');
+            }
+        }
+        if (ld.Profession__c == 'Student'){
+            if (ld.Year_of_Graduation__c == null ){
+                if(ld.Qualification__c != '10th' && ld.Qualification__c != '12th'){
+                    ld.Year_of_Graduation__c.addError('Year of Graduation can not be Empty');
+                }
+            }
+            if (ld.Branch__c == null){
+               // ld.Branch__c.addError('Branch can not be Empty');
             }
             if (ld.Qualification__c == null){
                 ld.Qualification__c.addError('Qualification can not be Empty');
             }
+            
         } else if (ld.Profession__c == 'Working Professional'){
             if (ld.Relevant_Experience__c == null){
-                ld.Relevant_Experience__c.addError('Relevant Experience can not be Empty');
+                //ld.Relevant_Experience__c.addError('Relevant Experience can not be Empty');
             }
             if (ld.Current_Domain__c == null){
                 ld.Current_Domain__c.addError('Current Domain can not be Empty');
@@ -1024,23 +1035,21 @@ public without sharing class LeadTriggerHandler{
             if (ld.Organisation__c == null){
                 ld.Organisation__c.addError('Organisation can not be Empty');
             }
-            if (ld.Year_of_Graduation__c == null){
-                ld.Year_of_Graduation__c.addError('Year of Graduation can not be Empty');
-            }
+           
             if (ld.Branch__c == null){
-                ld.Branch__c.addError('Branch can not be Empty');
+               // ld.Branch__c.addError('Branch can not be Empty');
             }
             if (ld.Qualification__c == null){
                 ld.Qualification__c.addError('Qualification can not be Empty');
             }
         }
     }
-
+    
     public class ApplicationtaskWrapper{
         public Application__c app{ get; set; }
-
+        
         public Task TaskRec{ get; set; }
-
+        
     }
-
+    
 }

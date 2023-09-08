@@ -22,50 +22,58 @@ public without sharing class RoundRobinLeadAssignment{
             Map<String, Integer> qNameAndMemberIdTORoundRobinIDMaP = new Map<String, Integer>();
             Map<String, Integer> qNameToLastAssignedQmemberRRid = new Map<String, Integer>();
             Map<String, String> QnameAndRRidToMemberIDMap = new Map<String, String>();
-            // Map1 -> allocated Id By Max lead
-            // Map2 -> OwnerId By Today's Lead
-            // Map3 -> Allocated Id By OwnerId 
+          
             
             Assignment_Group__c ag = [select id,Name,Last_Allocated_RRid__c,(select id from Assignment_Group_Members__r) from Assignment_Group__c where name =: courseName for update];
             integer lastRRIdFinal = 0;
+             
             if(ag.Assignment_Group_Members__r.size() != ag.Last_Allocated_RRid__c){
                 lastRRIdFinal = Integer.valueOf(ag.Last_Allocated_RRid__c);//2
             }
             System.debug('lastRRIdFinal before while ===> ' + lastRRIdFinal);
-            /*continueFlag = true
-             * While(continueFlag){
-             * 		Today'sLead withrespectto LRRID        maxleadperday
-                if(Map2.get(Map3.get(lastRRIdFinal + 1)) < Map1.get(lastRRIdFinal +1)){
-                    lastRRIdFinal = lastRRIdFinal + 1;
-                    continueFlag = false;
-				}else{
-					lastRRIdFinal = lastRRIdFinal + 1;
-				}
-            } */           
+            
             BuildMaps.mapsForUserCapacity(courseName);
             System.debug('BuildMaps.mapofOwnerIdByTodaysLeadAssignedCount  ===> ' + BuildMaps.mapofOwnerIdByTodaysLeadAssignedCount);
             Boolean continueFlag = true;
+            integer RR_Iteration = 0;
             While(continueFlag){
-                lastRRIdFinal = lastRRIdFinal + 1;
-                if(BuildMaps.mapofOwnerIdByTodaysLeadAssignedCount.get(BuildMaps.mapofAllocatedIdByOwnerId.get(string.valueOf(lastRRIdFinal))) <= BuildMaps.mapofAllocatedIdByMaxLeadCap.get(string.valueOf(lastRRIdFinal))){
-                    //lastRRIdFinal = lastRRIdFinal + 1;
-                    continueFlag = false;
-                    // if(lastRRIdFinal > ag.Assignment_Group_Members__r.size()){
-                    //     continueFlag = false;
-                    //     lastRRIdFinal = 0;
-                    // }
-                    
-				}else if(lastRRIdFinal == ag.Assignment_Group_Members__r.size()){
-					//lastRRIdFinal = lastRRIdFinal + 1;
-                    continueFlag = false;
-                    //if(lastRRIdFinal > ag.Assignment_Group_Members__r.size()){
-                    //     continueFlag = false;
-                    //     lastRRIdFinal = 0;
-
-                    // }
+                system.debug('continueFlag-->'+continueFlag);
+                system.debug('RR_Iteration-->'+RR_Iteration);  
+                system.debug('lastRRIdFinal-->'+lastRRIdFinal);  
+                
+                RR_Iteration = RR_Iteration + 1;
+                if(RR_Iteration <= ag.Assignment_Group_Members__r.size()){
+                   system.debug('Inside If');
+                    lastRRIdFinal = lastRRIdFinal + 1;
+                    if(lastRRIdFinal > ag.Assignment_Group_Members__r.size()){
+                        system.debug('inside reintializing rrid to 1');
+                        lastRRIdFinal = 1;
+                    }
+                    system.debug('BuildMaps.mapofOwnerIdByTodaysLeadAssignedCount.get(BuildMaps.mapofAllocatedIdByOwnerId.get(string.valueOf(lastRRIdFinal)))-->'+BuildMaps.mapofOwnerIdByTodaysLeadAssignedCount.get(BuildMaps.mapofAllocatedIdByOwnerId.get(string.valueOf(lastRRIdFinal))));
+                    system.debug('BuildMaps.mapofAllocatedIdByMaxLeadCap.get(string.valueOf(lastRRIdFinal))--->'+BuildMaps.mapofAllocatedIdByMaxLeadCap.get(string.valueOf(lastRRIdFinal)));
+                    if(BuildMaps.mapofOwnerIdByTodaysLeadAssignedCount.get(BuildMaps.mapofAllocatedIdByOwnerId.get(string.valueOf(lastRRIdFinal))) == null ){
+                        continueFlag = false;
+                    }
+                    else if(integer.valueOf(BuildMaps.mapofOwnerIdByTodaysLeadAssignedCount.get(BuildMaps.mapofAllocatedIdByOwnerId.get(string.valueOf(lastRRIdFinal)))) < integer.valueOf(BuildMaps.mapofAllocatedIdByMaxLeadCap.get(string.valueOf(lastRRIdFinal)))){
+                        system.debug('check max cap');
+                        continueFlag = false;
+                    } 
+                }else{
+                    system.debug('Return');
                     return;
-				}
+                }
             }
+                /*if(lastRRIdFinal > ag.Assignment_Group_Members__r.size()){
+//lastRRIdFinal = lastRRIdFinal + 1;
+continueFlag = false;
+//if(lastRRIdFinal > ag.Assignment_Group_Members__r.size()){
+//     continueFlag = false;
+//     lastRRIdFinal = 0;
+
+// }
+return;
+}*/
+            
             System.debug('lastRRIdFinal before while ===> ' + lastRRIdFinal);
 
             Assignment_Group_Member__c agmTemp= [select id,Group_Member__c from Assignment_Group_Member__c where Assignment_Id__c =: lastRRIdFinal and Assignment_Group__c =:ag.Id];

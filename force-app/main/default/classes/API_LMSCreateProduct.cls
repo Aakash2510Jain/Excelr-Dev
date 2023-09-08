@@ -8,6 +8,8 @@ global with sharing class API_LMSCreateProduct{
         Map<String, String> courseIdByProdBundleId = new Map<String, String>();
         Map<String, List<String>> mapOfPBIdProudctIdset = new Map<String, List<String>>();
 
+        List<Id> insertedRecordIds = new List<Id>();
+
         List<Child_Product__c> ChildProductRecords = new List<Child_Product__c>();
 
         try{
@@ -71,6 +73,7 @@ global with sharing class API_LMSCreateProduct{
 
                         for (Database.SaveResult sr : srList){
                             if (sr.isSuccess()){
+                                insertedRecordIds.add(sr.getId());
                                 // Operation was successful, so get the ID of the record that was processed
                                 System.debug('Successfully inserted account. Account ID: ' + sr.getId());
                             } else{
@@ -82,6 +85,8 @@ global with sharing class API_LMSCreateProduct{
                                 }
                             }
                         }
+
+                       
                     }
                     
 
@@ -123,6 +128,12 @@ global with sharing class API_LMSCreateProduct{
                         RestContext.response.statusCode = 400;
                     }
                 }
+                
+                String responseBody = RestContext.response.responseBody.toString();
+                Integer statusCode = RestContext.response.statusCode;
+                System.debug('insertedRecordIds------->'+insertedRecordIds);
+                HttpUtility.getInstance().createServiceLogger(requestString, responseBody, '/sync_product', 'POST', statusCode, System.now(), System.now(),insertedRecordIds);
+
             } catch (Exception e){
                 system.debug('ERROR :: ' + e.getMessage() + 'AT LINE NUMBER :: ' + e.getLineNumber());
                 HandleBusinessException.captureError('API_LMSUpdateStudentStatus', 'PostLMS_UpdateStudentStatus', e, null);

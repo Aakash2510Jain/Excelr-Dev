@@ -5,7 +5,7 @@ trigger TriggerOnUser on User (After insert,After Update) {
     if (triggerConfig != null && triggerConfig.Trigger_Status__c){
         UserTriggerHandler handlerInstance = UserTriggerHandler.getInstance();
         
-        if(Trigger.isInsert && Trigger.isAfter){
+        if((Trigger.isInsert || trigger.isUpdate)&& Trigger.isAfter){
             UserTriggerHandler.CreateAvailibility(Trigger.newMap);
         }
         if(Trigger.isUpdate && Trigger.isAfter){

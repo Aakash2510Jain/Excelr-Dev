@@ -182,11 +182,15 @@ public without sharing class EmailIUtility{
                                                 where name = 'Error Template'];
             String Email = 'aakash.jain@utilitarianLab.com';
             String Email2 = 'mukesh.chawla@utilitarianLab.com';
+            String Email3 = 'anjali.singh@utilitarianlab.com';
+            String Email4 = 'himanshu.tripathi@utilitarianLab.com';
             List<Messaging.SingleEmailMessage> mails = new List<Messaging.SingleEmailMessage>();
             Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
             List<String> recipients = new List<String>();
             recipients.add(Email);
             recipients.add(Email2);
+            recipients.add(Email3);
+            recipients.add(Email4);
             System.debug('recipients ====> ' + recipients);
             mail.setToAddresses(recipients);
             mail.setReplyTo('Excelr@info.com');

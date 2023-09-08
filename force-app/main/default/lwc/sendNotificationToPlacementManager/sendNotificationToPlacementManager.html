@@ -1,0 +1,57 @@
+<template>
+    <lightning-card>
+        <div class="slds-m-around_medium">
+            <div class="slds-align_absolute-center" style="font-size:16px;">
+                <b>Drive Result - {ProgramName}</b>
+            </div><br/>
+            <template if:true={placementApplications}>
+                <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                    <thead>
+                        <tr>
+                            <th>Contact Name</th>
+                            <th>Email</th>
+                            <th>Aptitude Marks</th>
+                            <th>Aptitude Result</th>
+                            <th>GD Result</th>
+                            <th>PI Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={placementApplications} for:item="app">
+                            <tr key={app.Id}>
+                                <td>{app.Contact__r.Name}</td>
+                                <td>{app.Contact__r.Email}</td>
+                                <td>{app.Aptitude_Marks__c}</td>
+                                <td class={app.aptiColor}> 
+                                    {app.Aptitude_Result__c}
+                                </td>
+                                <td class={app.gdColor}>
+                                    {app.GD_Result__c}                                     
+                                </td>
+                                <td class={app.piColor}> 
+                                    {app.Personal_Interview_Result__c} 
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={placementApplications}>
+                <!-- No placement applications found. -->
+            </template>
+            <br/>
+            <div class="slds-float_right" style="color:skyblue;">
+                <lightning-button   label="Previous" icon-name="utility:chevronleft" onclick={previousHandler}> </lightning-button>&nbsp;&nbsp;
+                Page {page} of {totalPage}&nbsp;&nbsp;&nbsp;
+                <lightning-button label="Next" icon-name="utility:chevronright" icon-position="right" onclick={nextHandler}> </lightning-button>
+            </div><br/><br/>
+        </div> 
+                            
+        <div class="slds-m-around_medium">
+            <div class="slds-align_absolute-center">
+                <lightning-button label="Send" variant="brand" onclick={handleSendClick}></lightning-button>&nbsp;&nbsp;
+                <lightning-button label="Cancel" variant="neutral" onclick={closeModal}></lightning-button>
+            </div>
+        </div>
+    </lightning-card>
+</template>

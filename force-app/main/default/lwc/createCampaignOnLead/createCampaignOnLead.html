@@ -1,0 +1,64 @@
+<template>
+     <lightning-quick-action-panel header="Create Campaign" >
+        <lightning-layout  multiple-rows >
+            
+            <lightning-layout-item size="12" padding="around-small">
+                Campaign Name
+                <lightning-input type="text"  name="campName" variant="label-hidden" required onchange={changeHandler}></lightning-input>        
+           </lightning-layout-item><br/>
+
+            <lightning-layout-item size="3" padding="around-small">
+                 Start Date Time
+                 <lightning-input type="date"  name="sdt" variant="label-hidden" required onchange={changeHandler}></lightning-input>        
+            </lightning-layout-item> 
+           
+            <lightning-layout-item size="3" padding="around-small">
+                <br/>
+                <lightning-input type="time" name="sdtTime" variant="label-hidden" required onchange={changeHandler}></lightning-input>
+            </lightning-layout-item>
+           
+            <lightning-layout-item size="3" padding="around-small">
+                 End Date Time
+                 <lightning-input type="date" name="edt" variant="label-hidden" required onchange={changeHandler}></lightning-input>        
+            </lightning-layout-item> 
+           
+            <lightning-layout-item size="3" padding="around-small">
+                <br/>
+                <lightning-input type="time" name="edtTime" variant="label-hidden" required onchange={changeHandler}></lightning-input>
+            </lightning-layout-item>
+           
+             <lightning-layout-item size="6" padding="around-small">
+                Stake Holders Emails
+                <lightning-input type="text" name="she" variant="label-hidden" onchange={changeHandler}></lightning-input>
+            </lightning-layout-item>
+
+
+          <!--  <lightning-layout-item size="6" padding="around-small">
+                Name
+                <lightning-input type="text" name="nm" required variant="label-hidden" onchange={changeHandler}></lightning-input>
+            </lightning-layout-item> 
+      
+            <lightning-layout-item size="6" padding="around-small">
+                Start Date Time
+                <lightning-input type="datetime" name="sdt" variant="label-hidden" required onchange={changeHandler}></lightning-input>
+            </lightning-layout-item>
+
+            <lightning-layout-item size="6" padding="around-small">
+                Stake Holders Emails
+                <lightning-input type="text" name="she" variant="label-hidden" onchange={changeHandler}></lightning-input>
+            </lightning-layout-item>
+
+            <lightning-layout-item size="6" padding="around-small">
+                End Date Time
+                <lightning-input type="datetime" name="edt" variant="label-hidden" onchange={changeHandler} ></lightning-input>
+            </lightning-layout-item>  -->
+
+
+        </lightning-layout>
+    
+     <div slot="footer">
+            <lightning-button   variant="neutral"  label="Cancel" onclick={closeModal}></lightning-button>
+            <lightning-button   variant="brand"    label="Save" class="slds-m-left_x-small" onclick={onSave}></lightning-button>
+        </div>
+ </lightning-quick-action-panel>
+</template>

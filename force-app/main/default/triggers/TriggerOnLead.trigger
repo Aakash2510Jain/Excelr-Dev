@@ -13,10 +13,10 @@ trigger TriggerOnLead on Lead (before insert, After Insert, Before Update, After
             handlerInstance.afterInsert(Trigger.new);
             system.debug('leadList--->'+Trigger.new);
             
-           /* if(!test.isRunningTest()){
-                API_WEBENGAGE batchInstancetoSendData = new API_WEBENGAGE();
-                database.executeBatch(batchInstancetoSendData, 20);    
-            }*/
+            /* if(!test.isRunningTest()){
+API_WEBENGAGE batchInstancetoSendData = new API_WEBENGAGE();
+database.executeBatch(batchInstancetoSendData, 20);    
+}*/
         }
         
         if (trigger.isUpdate && trigger.isBefore){

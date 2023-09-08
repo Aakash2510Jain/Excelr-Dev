@@ -1,0 +1,32 @@
+<aura:component controller ="InterviewResultsCSVFormatController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>  
+    <aura:attribute name="uploadCSVFileFormat" type="Upload_Interview_Results__mdt"/>
+    <aura:attribute name="pApplist" type="Placement_Application__c[]"/>
+    
+    <div class="slds-border_bottom" style="text-align:center; font-size:18px;">Download Template</div>
+    <div class="slds-grid slds-gutters">
+        
+        <div class="slds-col"><br/><br/>
+            <span>
+                <!-- <div class="slds-text-body_large slds-align_absolute-center slds-text-color_black">Download the interview result file format.</div><br/> -->
+                <div class="slds-text-body_small slds-text-color_error">- Aptitude Marks will accpet number out of 100.</div>
+                <div class="slds-text-body_small slds-text-color_error">- Aptitude Result will accpet Pass, Fail (Picklist) value.</div>
+                <div class="slds-text-body_small slds-text-color_error">- GD Result will accpet Pass, Fail (Picklist) value.</div>
+                <div class="slds-text-body_small slds-text-color_error">- PI Result will accpet Pass, Fail (Picklist) value.</div>
+            </span>
+        </div>
+        <div class="slds-col slds-size_2of-2"><br/>
+            <div style="width:100%;padding: 25px">
+                <div style="float:right">
+                    <lightning:button iconName="utility:download" 
+                                      iconPosition="left" 
+                                      label="Download Format" 
+                                      onclick="{!c.downloadFormat}" 
+                                      class="slds-button slds-button_brand"/>        
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</aura:component>

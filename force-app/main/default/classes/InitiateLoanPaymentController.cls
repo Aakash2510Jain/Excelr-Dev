@@ -10,6 +10,7 @@ public class InitiateLoanPaymentController {
         NBFCPartnerList = [Select Interest_Rate__c,NBFC_Name__c,GST_on_Subvention__c,Processing_Fee__c,Tenure__c From NBFC__c order by NBFC_Name__c ASC];
         downPaymentTypeList = [Select Name From Down_Payment_Type__c where isActive__c = true order by name Asc];
         opportunityWrapper opportunityWrapperInstance = new opportunityWrapper(oppRecordToBeReturned,NBFCPartnerList, downPaymentTypeList);
+        system.debug('opportunityWrapperInstance--->'+opportunityWrapperInstance);
         
         return opportunityWrapperInstance;
     }
@@ -34,8 +35,18 @@ public class InitiateLoanPaymentController {
             }
             Opportunity oppRec = new Opportunity();
             oppRec.Id = opportunityId;
-            oppRec.Payment_Status__c = 'In Progress';	
+            oppRec.Payment_Status__c = 'In Progress';	//
+            //Changing  from you
+              oppRec.Seek_Loan__c =  'Yes';
+              oppRec.Upfront_Amount__c =  decimal.valueOf(downPayment) ;
+              oppRec.Loan_Amount__c =  decimal.valueOf(loanAmount);
+             oppRec.Payment_Type__c = 'Partial Loan';
+              oppRec.Payment_Mode__c =  downPaymentType;
+              oppRec.NBFCPartner__c = loanPartner;
+              oppRec.Loan_Tenure__c = decimal.valueOf(loanTenure);
             update oppRec;
+            
+            system.debug('oppRec------>'+oppRec);
 
             Invoice__c invRec = new Invoice__c();
             invRec.Opportunity__c = opportunityId;
@@ -114,8 +125,11 @@ public class InitiateLoanPaymentController {
         system.debug('ContentType--->'+ContentType);
         system.debug('isLoanAttachment--->'+isLoanAttachment);
         String DownPaymentReceiptId = '';
-        
-        String loanReceiptId = [select Id from receipt__c where Invoice__c =: invoiceId and type__c = 'Loan'].Id;
+           String loanReceiptId ;
+        if(invoiceId !=null){        
+      loanReceiptId = [select Id from receipt__c where Invoice__c =: invoiceId and type__c = 'Loan'].Id;
+        system.debug('loanReceiptId---->'+loanReceiptId);
+        }
         if(isLoanAttachment == 'no')
             DownPaymentReceiptId = [select Id from receipt__c where Invoice__c =: invoiceId and type__c != 'Loan'].Id;
         try{

@@ -102,17 +102,60 @@
             font-weight: bold;
             font-size: 12px;
             color: #000; }
+
+            .border-theme{
+                border:solid 1px #ff0000 !important;
+            }
         </style>
     </head>
     
     <script>
-        var app = angular.module('student_App',[]);
+
+        angular.module('number', [])
+            .directive('number', function () {
+                return {
+                    require: 'ngModel',
+                    restrict: 'A',
+                    link: function (scope, element, attrs, ctrl) {
+                        ctrl.$parsers.push(function (input) {
+                            if (input == undefined) return ''
+                            var inputNumber = input.toString().replace(/[^0-9]/g, '');
+                            if (inputNumber != input) {
+                                ctrl.$setViewValue(inputNumber);
+                                ctrl.$render();
+                            }
+                            return inputNumber;
+                        });
+                    }
+                };
+        });
+        var app = angular.module('student_App',['number']);
         app.controller('student_Ctrl',function($scope){
             debugger;
             var campId = '{!$CurrentPage.parameters.cid}';
             $scope.studentDetails={"FirstName": "", "LastName": ""};
             $scope.description = "";
+            $scope.showMsg = false;
+            $scope.showCampDateError = false;
+            $scope.today = new Date();
             var campid = '{!getCampaignId}';
+
+            $scope.getCampaignDate = function(){
+                debugger;
+                ECAP_StudentsFormController.getCampaignDate(campId,function(result,event){
+                    debugger;
+                    if(event.status && result){
+                        debugger;
+                        $scope.campaignRecord = result;
+                        if($scope.campaignRecord.StartDate != null && $scope.campaignRecord.StartDate < $scope.today){
+                            $scope.showCampDateError = true;
+                        }
+                        $scope.$apply();
+                    }
+                })
+            }
+            $scope.getCampaignDate();
+
             $scope.saveContact = function(){
                 debugger;
                 if ($scope.studentDetails.FirstName == "") {
@@ -121,7 +164,7 @@
                         'Please Enter First Name',
                         'error'
                     );
-                    // $("#txtFirstName").addClass('border-theme');
+                    $("#firstname").addClass('border-theme');
                     return;
                 }
                 if ($scope.studentDetails.LastName == "") {
@@ -130,7 +173,7 @@
                         'Please Enter Last Name',
                         'error'
                     );
-                    // $("#txtLastName").addClass('border-theme');
+                    $("#lastname").addClass('border-theme');
                     return;
                 }
 
@@ -140,7 +183,7 @@
                         'Please Enter your Email',
                         'error'
                     );
-                    // $("#txtEmail").addClass('border-theme');
+                    $("#email").addClass('border-theme');
                     return;
                 }else if($scope.valid($scope.studentDetails.Email)){
                     swal(
@@ -148,18 +191,32 @@
                         'Check Your Registered Email!',
                         'info'
                     );
-                    // $("#txtEmail").addClass('border-theme');
+                    $("#email").addClass('border-theme');
                     return;
                 }
                 ECAP_StudentsFormController.saveFormDetails($scope.studentDetails, $scope.description, campid,function(result,event){
-                    if(event.status && result){
-                    alert ('Submitted');
-                    window.location.replace('https://www.excelr.com/');
-                }
-                $scope.$apply();
+                    if(event.status && result != ''){
+                        if(result == 'existing'){
+                            swal('error', 'Email already exists.', 'error' );
+                            $("#email").addClass('border-theme');
+                            return; 
+                        }
+                        else{
+                            swal( 'success', 'Registration Form Submitted Successfully!', 'success');
+                            $scope.showMsg = true;
+                            //alert ('Submitted');
+                            //window.location.replace('https://www.excelr.com/');
+                        }
+                    }
+                    $scope.$apply();
                 }) 
             }
 
+            $scope.removeClass=function(controlid){
+                debugger;
+                $("#"+controlid+"").removeClass('border-theme');
+            }
+            
             $scope.valid = function(value){
                 if(value!=undefined){
                         var x=value;
@@ -176,11 +233,34 @@
     </script>
     
     <body ng-app="student_App" ng-controller="student_Ctrl">
-        <div class="content">
+
+
+        <div ng-show="showCampDateError" style="margin-top:15%;">
+            <div class="card" style="margin-top: 5%; margin-left: 15%; margin-right: 15%; background-color:black;">
+                <div class="d-flex justify-content-center mt-5">
+                    <apex:image url="{!$Resource.ExcelRLogo}" alt="EXCELR" styleClass="brand-logo" style="height:70px;"/>
+                </div>
+                <div class="card-body mt-3">
+                    <h3 style="color: yellowGreen; text-align:center;">The registration window is closed.....</h3>
+                    <br/>
+                    <!-- <h4 style="text-align: center;color: yellowgreen;">Email has been sent to your registered email Id, Kindly check !!</h4> -->
+                    
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="content" ng-hide="showCampDateError">
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-md-10">
-                        <div class="row justify-content-center">
+                        
+                        <div class="row justify-content-center" ng-hide ="showMsg">
+                            <div class="d-flex justify-content-center mb-5">
+                                <apex:image url="{!$Resource.ExcelRLogo}" alt="EXCELR" styleClass="brand-logo" style="height:70px;"/>
+                            </div>
                             <div class="col-md-6">
                                 <h3 class="heading mb-4">Let's talk about everything!</h3>
                                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptas debitis, fugit natus?</p>
@@ -190,59 +270,80 @@
                                 <form class="mb-5" method="post" id="contactForm" name="contactForm">
                                     <div class="row">
                                         <div class="col-md-12 form-group">
-                                            <input type="text" class="form-control" name="name" id="name" placeholder="First Name" ng-model="studentDetails.FirstName" />
+                                            <input type="text" class="form-control" name="firstname" id="firstname" ng-focus="removeClass('firstname')" placeholder="First Name" ng-model="studentDetails.FirstName" />
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12 form-group">
-                                            <input type="text" class="form-control" name="name" id="name" placeholder="Last Name" ng-model="studentDetails.LastName"/>
+                                            <input type="text" class="form-control" name="lastname" id="lastname" ng-focus="removeClass('lastname')" placeholder="Last Name" ng-model="studentDetails.LastName"/>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12 form-group">
-                                            <input type="text" class="form-control" name="email" id="email" placeholder="Email" ng-model="studentDetails.Email"/>
+                                            <input type="text" class="form-control" name="email" id="email" ng-focus="removeClass('email')" placeholder="Email" ng-model="studentDetails.Email"/>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12 form-group">
-                                            <input type="text" class="form-control" name="subject" id="subject" placeholder="Phone" ng-model="studentDetails.Phone"/>
+                                            <input type="text" class="form-control" name="phone" number="studentDetails.Phone" id="phone" placeholder="Phone" ng-model="studentDetails.Phone"/>
+                                        </div>
+                                    </div>
+                                     <div class="row">
+                                        <div class="col-md-12 form-group">
+                                            <input type="text" class="form-control" name="street" id="street" placeholder="Street" ng-model="studentDetails.Street" />
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 form-group">
-                                            <input type="text" class="form-control" name="subject" id="subject" placeholder="City" ng-model="studentDetails.MailingCity"/>
+                                            <input type="text" class="form-control" name="city" id="city" placeholder="City" ng-model="studentDetails.City"/>
                                         </div>
                                         <div class="col-md-6 form-group">
-                                            <input type="text" class="form-control" name="subject" id="subject" placeholder="State" ng-model="studentDetails.MailingState"/>
+                                            <input type="text" class="form-control" name="state" id="state" placeholder="State" ng-model="studentDetails.State"/>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 form-group">
-                                            <input type="text" class="form-control" name="subject" id="subject" placeholder="Country" ng-model="studentDetails.MailingCountry"/>
+                                            <input type="text" class="form-control" name="country" id="country" placeholder="Country" ng-model="studentDetails.Country"/>
                                         </div>
                                         <div class="col-md-6 form-group">
-                                            <input type="text" class="form-control" name="subject" id="subject" placeholder="Postal Code" ng-model="studentDetails.MailingPostalCode"/>
+                                            <input type="text" class="form-control" name="pincode" id="pincode" placeholder="Postal Code" ng-model="studentDetails.PostalCode"/>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12 form-group">
-                                            <textarea class="form-control" name="message" id="message" cols="30" rows="7" placeholder="Description" ng-model="description"></textarea>
+                                            <textarea class="form-control" name="description" id="description" cols="30" rows="7" placeholder="Description" ng-model="description"></textarea>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-12">
                                             <button class="btn btn-primary rounded-0 py-2 px-4" id="btnSubmit" ng-click="saveContact()" type="submit">Save Details</button>
-                                            
                                         </div>
                                     </div>
                                 </form>
-                                <div id="form-message-warning mt-4"></div>
-                                <div id="form-message-success">
-                                    Your message was sent, thank you!
-                                </div>
                             </div>
                         </div>
+                        
+                        <!-- <div ng-show="showMsg">
+                            <div>
+                                Your message was sent, thank you!
+                            </div>
+                        </div> -->
+                        
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div ng-show="showMsg">
+            <div class="card" style="margin-top: 5%; margin-left: 15%; margin-right: 15%; background-color:black;">
+                <div class="d-flex justify-content-center mt-5">
+                    <apex:image url="{!$Resource.ExcelRLogo}" alt="EXCELR" styleClass="brand-logo" style="height:70px;"/>
+                </div>
+                <div class="card-body mt-3">
+                    <h3 style="color: yellowgreen; text-align:center;">Your personal details have been submitted successfully....</h3>
+                    <br/>
+                    <h4 style="text-align: center;color: yellowgreen;">Email has been sent to your registered email Id, Kindly check !!</h4>
+                    
                 </div>
             </div>
         </div>

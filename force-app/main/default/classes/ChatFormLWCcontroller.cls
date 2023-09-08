@@ -305,11 +305,11 @@ public without sharing class ChatFormLWCcontroller{
     }
 
     @auraEnabled
-    Public Static string EmailIsm(String LiD, String ownerMail){
+    public Static string EmailIsm(String LiD, String ownerMail){
+        try{
         System.debug('LiD =========> ' + LiD);
         System.debug('ownerMail =======> ' + ownerMail);
         string message = '';
-        try{
             List<Lead> leadList = new List<Lead>();
             leadList = [SELECT Name, Owner.email
                        FROM Lead
@@ -319,9 +319,13 @@ public without sharing class ChatFormLWCcontroller{
             EmailTemplate et = [Select id, Name, Body, HtmlValue
                                 from EmailTemplate
                                 where name = 'Notify ISM'];
+                                system.debug('try block -------');
+        Id orgWideEmailAddressId = [SELECT Id FROM OrgWideEmailAddress WHERE Address = 'aakash.jain@utilitarianlab.com'].Id;
+        system.debug('orgWideEmailAddressId ======> '+orgWideEmailAddressId);
 
             if (leadList != null && leadList[0].Owner.email != null){
                 Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+                mail.setOrgWideEmailAddressId(orgWideEmailAddressId);
                 String[] toAddresses = new String[]{ ownerMail };
                 mail.setSubject('Lead assignment ');
                 mail.setPlainTextBody('Lead has been assign to you..!');

@@ -21,10 +21,4 @@ public without sharing class ContactTriggerHandler {
         }
     }
     
-    @future(callout = true)
-    public static void registerStudentCallout(Id contactId) {
-        system.debug('contactId -- ' + contactId);
-        LMS_ApiCallouts.doRegistration(contactId);
-    }
-    
 }

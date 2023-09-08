@@ -90,9 +90,9 @@
         debugger
         
         component.set("v.showError",true);
-        var action = component.get("c.processData");
+        var action = component.get("c.uploadAptiResult"); // apex method name
         var recId = component.get("v.recordId");
-        var fieldsList=['Student Id','Application Id','Aptitude Marks','Aptitude Result','GD Result'];
+        var fieldsList=['Application_Id','Student_Email','Apti_Marks','Apti_Result'];
         var extraData = component.get("v.fileContentData");
         var allTextLines = extraData.split(/\r\n|\n/);
         var dataRows=allTextLines.length;

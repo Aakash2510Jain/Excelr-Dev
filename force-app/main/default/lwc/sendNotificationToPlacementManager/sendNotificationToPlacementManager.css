@@ -1,0 +1,13 @@
+.dummy{
+	background-color : black;
+}
+
+.greenClass {
+    color: #0fd033;
+    font-weight: bold;
+}
+
+.redClass {
+    color: #f61111;
+    font-weight: bold;
+}

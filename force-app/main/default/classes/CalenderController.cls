@@ -99,7 +99,7 @@ public without sharing class CalenderController {
             bookedSlot.Date__c = av.Date__c;
 
             insert bookedSlot;
-
+            system.debug('bookedSlot--->'+bookedSlot);
            GMeetAPIHandler.generateMeetLink_V2(bookedSlot.Id);
             return 'Success';
 

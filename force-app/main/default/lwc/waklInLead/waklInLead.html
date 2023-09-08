@@ -687,10 +687,10 @@
                             options={StatusList} onchange={TaskCreationHandler} required="true"></lightning-combobox>
 
                         <lightning-input type="date" name="Duedate" label="Due date" value={DuedateValue}
-                            onchange={TaskCreationHandler}></lightning-input>
+                            onchange={TaskCreationHandler} required="true"></lightning-input>
 
                         <lightning-input type="datetime" name="Followupdatetime" label="Followup Date/time "
-                            value={followupValue} onchange={TaskCreationHandler}></lightning-input>
+                            value={followupValue} onchange={TaskCreationHandler} required="true"></lightning-input>
 
                         <lightning-textarea label="Comments" name="Comments" value={comValue}
                             onchange={TaskCreationHandler}>

@@ -84,6 +84,12 @@ global with sharing class API_LMSPostBulkRegistration{
                 RestContext.response.responseBody = Blob.valueOf(ErrorresonseBOdy);
                 RestContext.response.statusCode = 400;*/
             }
+
+            String responseBody = RestContext.response.responseBody.toString();
+            Integer statusCode = RestContext.response.statusCode;
+            HttpUtility.getInstance().createServiceLogger(requestString, responseBody, '/bulk_leadcreate', 'POST', statusCode, System.now(), System.now(),null);
+
+
         } catch (Exception e){
             //RestContext.response.responseBody = Blob.valueOf(String.valueOf(e.getMessage()));
             RestContext.response.responseBody = Blob.valueOf('{"Status": "ERROR","Message":"" }');

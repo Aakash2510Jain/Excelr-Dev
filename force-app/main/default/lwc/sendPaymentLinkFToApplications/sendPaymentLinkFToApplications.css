@@ -3,5 +3,21 @@
 }
 .slds-modal__container{
     max-width: 80rem !important;
-    width: 80% !important;
+    width: 100% !important;
+}
+.exampleHolder{
+    position: relative;
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+}
+
+.greenClass {
+    font-weight: bold;
+    color: #18c40e;
+}
+
+.redClass {
+    font-weight: bold;
+    color: #f61111;
 }

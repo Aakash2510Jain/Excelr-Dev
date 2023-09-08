@@ -1,0 +1,59 @@
+<template>
+	<div if:true={productData}>
+		<div class="slds-modal__header"
+			style="margin-top:15px; background-color: #0070d2; padding: 10px; border-top-left-radius: 0.25rem; border-top-right-radius: 0.25rem;">
+			<h2 style="font-weight: 500; font-size: 24px; color: white" id="modal-heading-01">Product Details</h2>
+		</div>
+		<div style="margin-top: 20px;">
+			<div class="slds-grid slds-wrap">
+				<div class="slds-col slds-size_6-of-12">
+					<table class="slds-table ">
+						<tbody>
+							<tr>
+								<th style="font-size: 20px; font-weight: 500; border: 1px solid #d8dde6;"
+									class="slds-cell-wrap">Product Name:</th>
+							</tr>
+							<tr>
+								<th style="font-size: 20px; font-weight: 500; border: 1px solid #d8dde6;"
+									class="slds-cell-wrap">Product Code:</th>
+							</tr>
+							<tr>
+								<th style="font-size: 20px; font-weight: 500; border: 1px solid #d8dde6;"
+									class="slds-cell-wrap">Price Book:</th>
+							</tr>
+							<tr>
+								<th style="font-size: 20px; font-weight: 500; border: 1px solid #d8dde6; padding: 6px;"
+									class="slds-cell-wrap">Unit Price:</th>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="slds-col slds-size_6-of-12">
+					<table class="slds-table">
+						<tbody>
+							<tr>
+								<td style="font-size: 20px; border: 1px solid #d8dde6;">{productData.productName}</td>
+							</tr>
+							<tr>
+								<td style="font-size: 20px; border: 1px solid #d8dde6;">{productData.productCode}</td>
+							</tr>
+							<tr>
+								<td style="font-size: 20px; border: 1px solid #d8dde6;">{productData.pricebookName}	</td>
+							</tr>
+							<tr>
+								<td style="font-size: 20px; border: 1px solid #d8dde6;"
+									class="slds-align_absolute-center">
+									<input type="number" step="0.01" value={productData.unitPrice} onchange={handleUnitPriceChange} style="border: none;height:100%; width: 100%;"></input>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="slds-modal__footer">
+			<button class="slds-button slds-button_neutral" onclick={handleCancel}>Cancel</button>
+			<button class="slds-button slds-button_brand" onclick={handleProductSaveClick}>Save</button>
+		</div>
+	</div>
+</template>
