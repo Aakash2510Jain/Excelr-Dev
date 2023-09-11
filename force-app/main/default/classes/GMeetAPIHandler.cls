@@ -69,12 +69,13 @@ public without sharing class GMeetAPIHandler {
             req.setTimeout(60 * 1000);
             HttpResponse resp = http.send(req);
             
-            System.debug('Response----'+resp.getBody());
+            System.debug('Response---->>'+resp.getBody());
             
             if(resp.getStatusCode()==200||resp.getStatusCode()==201){
                 Map<String, Object> m = (Map<String, Object>)JSON.deserializeUntyped(resp.getBody());
                 if (m.get('hangoutLink') != null) {
                      bs.URL__c = m.get('hangoutLink').toString();
+                    system.debug(' bs.URL__c ------>'+ bs.URL__c);
                 }
             }
             

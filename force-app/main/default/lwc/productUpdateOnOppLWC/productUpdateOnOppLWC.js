@@ -3,8 +3,9 @@ import OpportunityRec from '@salesforce/apex/ProductUpdateOnOppApexController.Ge
 import { getObjectInfo } from 'lightning/uiObjectInfoApi';
 import { getPicklistValues } from 'lightning/uiObjectInfoApi';
 import PRODUCT_OBJECT from '@salesforce/schema/Product2';
-import TYPE_FIELD from '@salesforce/schema/Product2.Type__c';
-import MODE_FIELD from '@salesforce/schema/Product2.Mode__c';
+// import TYPE_FIELD from '@salesforce/schema/Product2.Type__c';
+// import MODE_FIELD from '@salesforce/schema/Product2.Mode__c';
+import getallPicklistvlaues from '@salesforce/apex/ProductUpdateOnOppApexController.getallPicklistvlaues';
 import fetchCities from '@salesforce/apex/ProductUpdateOnOppApexController.fetchCities';
 import ProdList from '@salesforce/apex/ProductUpdateOnOppApexController.ProdList';
 import InsertOppLineItem from '@salesforce/apex/ProductUpdateOnOppApexController.InsertOppLineItem';
@@ -47,6 +48,45 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
             console.log('error--',error);
         }
     }
+
+
+    @track TYPE_FIELD = [];
+    @track MODE_FIELD = [];
+
+    @wire(getallPicklistvlaues)
+    wiredResponsePicklist({ data, error }) {
+        debugger;
+        if (data) {
+            if (data.pickValByFieldWrapper.TYPE_FIELDVal.length > 0) {
+
+                let tempTYPE_FIELDsarr = [];
+                for (let i = 0; i < data.pickValByFieldWrapper.TYPE_FIELDVal.length; i++) {
+                    tempTYPE_FIELDsarr.push({ label: data.pickValByFieldWrapper.TYPE_FIELDVal[i], value: data.pickValByFieldWrapper.TYPE_FIELDVal[i] });
+                }
+
+                this.TYPE_FIELD = tempTYPE_FIELDsarr;
+                this.TYPE_FIELD.sort((a, b) => (a.label > b.label) ? 1 : -1);
+                console.log('TYPE_FIELD--', this.TYPE_FIELD);
+
+            }
+
+            if (data.pickValByFieldWrapper.MODE_FIELDVal.length > 0) {
+                let tempMODE_FIELDarr = [];
+                for (let i = 0; i < data.pickValByFieldWrapper.MODE_FIELDVal.length; i++) {
+                    tempMODE_FIELDarr.push({ label: data.pickValByFieldWrapper.MODE_FIELDVal[i], value: data.pickValByFieldWrapper.MODE_FIELDVal[i] });
+                }
+
+                this.MODE_FIELD = tempMODE_FIELDarr;
+                this.MODE_FIELD.sort((a, b) => (a.label > b.label) ? 1 : -1);
+                console.log('MODE_FIELD--', this.MODE_FIELD);
+
+            }
+
+        }
+        else if (error) {
+            console.log('error=', error);
+        }
+    }
     
     //Here Getting All The Courses
     @track AllCourses=[];
@@ -83,32 +123,32 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
 
     //All Type From Product
 
-    @track TypePicklistvalue=[];
+    // @track TypePicklistvalue=[];
 
-    @wire(getObjectInfo, {objectApiName:PRODUCT_OBJECT})
-    objectInfo
+    // @wire(getObjectInfo, {objectApiName:PRODUCT_OBJECT})
+    // objectInfo
 
-    @wire(getPicklistValues, { recordTypeId:'$objectInfo.data.defaultRecordTypeId', fieldApiName:TYPE_FIELD})
-    wiredPicklistValuesType({data,error}){
-        debugger;
-       if(data){
-          console.log('data=',data);
-          console.log('dataValues=',data.values);
-          let arr=[];
-          for(let i=0;i<data.values.length;i++){
-             arr.push({label:data.values[i].label,value:data.values[i].value});
-          }
-          this.TypePicklistvalue=arr;
-          console.log('Picklistvalue=',this.TypePicklistvalue);
-       }
-       else {
-           console.log('error=',error)
-       }
-    }
+    // @wire(getPicklistValues, { recordTypeId:'$objectInfo.data.defaultRecordTypeId', fieldApiName:TYPE_FIELD})
+    // wiredPicklistValuesType({data,error}){
+    //     debugger;
+    //    if(data){
+    //       console.log('data=',data);
+    //       console.log('dataValues=',data.values);
+    //       let arr=[];
+    //       for(let i=0;i<data.values.length;i++){
+    //          arr.push({label:data.values[i].label,value:data.values[i].value});
+    //       }
+    //       this.TypePicklistvalue=arr;
+    //       console.log('Picklistvalue=',this.TypePicklistvalue);
+    //    }
+    //    else {
+    //        console.log('error=',error)
+    //    }
+    // }
 
-    get Typeoptions(){
-        return this.TypePicklistvalue;
-     }
+    // get Typeoptions(){
+    //     return this.TypePicklistvalue;
+    //  }
 
      @track ShowModeAndCourse=false;
      @track ShowMode=true;
@@ -138,23 +178,24 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
     @track Modevalue;
 
     //All Mode From Product
-    @wire(getPicklistValues, { recordTypeId:'$objectInfo.data.defaultRecordTypeId', fieldApiName:MODE_FIELD})
-    wiredPicklistValuesMode({data,error}){
-        debugger;
-       if(data){
-          console.log('data=',data);
-          console.log('dataValues=',data.values);
-          let arr=[];
-          for(let i=0;i<data.values.length;i++){
-             arr.push({label:data.values[i].label,value:data.values[i].value});
-          }
-          this.ModePicklistvalue=arr;
-          console.log('ModePicklistvalue=',this.ModePicklistvalue);
-       }
-       else {
-           console.log('error=',error)
-       }
-    }
+
+    // @wire(getPicklistValues, { recordTypeId:'$objectInfo.data.defaultRecordTypeId', fieldApiName:MODE_FIELD})
+    // wiredPicklistValuesMode({data,error}){
+    //     debugger;
+    //    if(data){
+    //       console.log('data=',data);
+    //       console.log('dataValues=',data.values);
+    //       let arr=[];
+    //       for(let i=0;i<data.values.length;i++){
+    //          arr.push({label:data.values[i].label,value:data.values[i].value});
+    //       }
+    //       this.ModePicklistvalue=arr;
+    //       console.log('ModePicklistvalue=',this.ModePicklistvalue);
+    //    }
+    //    else {
+    //        console.log('error=',error)
+    //    }
+    // }
 
     get Modeoptions(){
         return this.ModePicklistvalue;
@@ -1102,6 +1143,14 @@ export default class ProductUpdateOnOppLWC extends NavigationMixin(LightningElem
 
       handleChange(event){
         debugger;
+        var name = event.target.name;
+        if(name == 'Select Course'){
+            this.Coursevalue = event.target.value;
+        }else if(name == 'Select Mode'){
+            this.Modevalue = event.target.value;
+        }
+
+        
         let index = event.target.dataset.id;
             let fieldName = event.target.name;
             let value = event.target.value;

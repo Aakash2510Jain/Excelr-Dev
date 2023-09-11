@@ -90,7 +90,17 @@ public without sharing class ManualpaymentController{
             string receiptIdToreturn = '';
             
             Opportunity opportunityRecord = [Select Id,(Select Id From Invoices__r order By CreatedDate DESC limit 1) From Opportunity where Id=:oppId];
-            
+             
+             // changes 
+             opportunityRecord.Payment_Type__c = 'Manual Payment';  // paymentType;
+             opportunityRecord.Payment_Status__c = 'Realized';
+             opportunityRecord.Payment_Mode__c = paymentType ;
+             opportunityRecord.Payment_Initiated_Date_Time__c =  System.now();
+             opportunityRecord.Payment_Initiated__c = true;
+             opportunityRecord.Upfront_Amount__c = Decimal.valueOf(upfrontAmount) ;
+             opportunityRecord.Due_Amount__c = Decimal.valueOf(dueAmount);
+             update opportunityRecord;
+
             if(opportunityRecord.Invoices__r.isEmpty()){
                 Invoice__c invRec = new Invoice__c();
                 invRec.Opportunity__c = oppId;

@@ -654,6 +654,12 @@ export default class WaklInLead extends LightningElement {
     @track showtaskModal = false;
     newTaskBTN() {
         debugger;
+        this.taskTobeCreated.Subject = '',
+        this.taskTobeCreated.Priority = '',
+        this.taskTobeCreated.Status = '',
+        this.taskTobeCreated.ActivityDate = '',
+        this.taskTobeCreated.Followup_Date_Time__c = '',
+        this.taskTobeCreated.Description = '',
         this.showtaskModal = true;
     }
 

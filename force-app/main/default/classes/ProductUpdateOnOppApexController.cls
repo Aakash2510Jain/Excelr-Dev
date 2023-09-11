@@ -209,4 +209,52 @@ public with sharing class ProductUpdateOnOppApexController{
         }
     }
 
+    @AuraEnabled(cacheable = true)
+    public static List<String> getPicklistValues(String ObjectApi_name, String Field_name){
+
+        List<String> lstPickvals = new List<String>();
+        Schema.SObjectType targetType = Schema.getGlobalDescribe().get(ObjectApi_name);
+        Sobject Object_name = targetType.newSObject();
+        Schema.sObjectType sobject_type = Object_name.getSObjectType();
+        Schema.DescribeSObjectResult sobject_describe = sobject_type.getDescribe();
+        Map<String, Schema.SObjectField> field_map = sobject_describe.fields.getMap();
+        List<Schema.PicklistEntry> pick_list_values = field_map.get(Field_name).getDescribe().getPickListValues();
+
+        for (Schema.PicklistEntry a : pick_list_values){
+
+            lstPickvals.add(String.ValueOf(a.getLabel()).trim());
+        }
+        return lstPickvals;
+    }
+
+    @AuraEnabled(cacheable = true)
+    public static PicklistWrapperWrapper getallPicklistvlaues(){
+
+        Map<String, List<String>> pickValByField = new Map<String, List<String>>();
+
+        Map<String, Map<String, List<String>>> AllformsMap = new Map<String, Map<String, List<String>>>();
+
+        PicklistWrapperWrapper picklistwrap = new PicklistWrapperWrapper();
+
+
+        // ======================================== Lead Related Picklist Values ========================================
+
+        pickValByField.put('TYPE_FIELDVal', getPicklistValues('Product2', 'Type__c'));
+        pickValByField.put('MODE_FIELDVal', getPicklistValues('Product2', 'Mode__c'));
+
+        picklistwrap.AllformsMapwrapper = AllformsMap;
+        picklistwrap.pickValByFieldWrapper = pickValByField;
+        System.debug('AllformsMap ====> ' + AllformsMap);
+
+        System.debug('pickValByField ======> ' + pickValByField);
+        return picklistwrap;
+    }
+
+    public class PicklistWrapperWrapper{
+        @AuraEnabled
+        public Map<String, List<String>> pickValByFieldWrapper{get;set;}
+        @AuraEnabled
+        public Map<String, Map<String, List<String>>> AllformsMapwrapper{get;set;}
+    }
+
 }

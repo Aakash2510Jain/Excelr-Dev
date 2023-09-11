@@ -44,6 +44,7 @@ public class InitiateLoanPaymentController {
               oppRec.Payment_Mode__c =  downPaymentType;
               oppRec.NBFCPartner__c = loanPartner;
               oppRec.Loan_Tenure__c = decimal.valueOf(loanTenure);
+            oppRec.Payment_Initiated_Date_Time__c = System.Today();
             update oppRec;
             
             system.debug('oppRec------>'+oppRec);

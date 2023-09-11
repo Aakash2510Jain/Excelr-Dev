@@ -107,6 +107,7 @@ public without sharing class PaymentOnOpportunityApexController{
 
     @AuraEnabled
     Public Static string UpdateOPPforFullPayment(string recordId, Decimal Amount, String paymentType, String PaymentOptiontype, date LinkexpiryDate){
+        system.debug('UpdateOPPforFullPayment---->');
         System.debug('recordId ===> ' + recordId);
         System.debug('Amount ===> ' + Amount);
         System.debug('paymentType ===> ' + paymentType);
@@ -122,17 +123,24 @@ public without sharing class PaymentOnOpportunityApexController{
         Long longUnixTimeStamp = Long.valueOf(strUnixTimeStamp);
         System.debug('DateTIme conversion of unixtimestamp ==>' + DateTime.newInstance(longUnixTimeStamp));
         string invoiceRecId;
-        Time myTime = Time.newInstance(11, 0, 0, 0); // 11:00 AM
+        Time myTime = Time.newInstance(11, 0, 0, 0);    // 11:00 AM
 
         try{
+            system.debug('try block--->');
             Opportunity OppRec = new Opportunity();
             OppRec.Id = recordId;
             OppRec.Payment_Mode__c = paymentType;
             OppRec.Payment_Type__c = PaymentOptiontype;
             OppRec.Upfront_Amount__c = Amount;
+            OppRec.Payment_Initiated__c = true;
+            OppRec.Payment_Initiated_Date_Time__c = system.now();
+            OppRec.Payment_Status__c ='Initiated';
+         // OppRec.Payment_Captured__c = true;
             update OppRec;
+            System.debug('OppRec---->'+OppRec);
 
             if (recordId != null){
+                System.debug('Recordid is not null');
                 List<Invoice__c> invoiceRecList = [Select Id, Do_Not_Send_Invoice__c, Status__c, LeadInvoice__c, LeadInvoice__r.Owner.UserRoleId, Lead_ManagerId__c, Opportunity__c, Opportunity__r.Owner.UserRoleId, Amount__c, LeadInvoice__r.Owner.Name, LeadInvoice__r.Owner.Email, Opportunity__r.Owner.Email, Opportunity__r.Owner.Name, Payment_Type__c, Realized_Amount__c, Due_Amount__c
                                                From Invoice__c
                                                Where Opportunity__c = :recordId
@@ -210,7 +218,7 @@ public without sharing class PaymentOnOpportunityApexController{
 
     @AuraEnabled
     Public Static string UpdateOPPforPartialPayment(string recordId, Decimal Amount, Decimal PendingAmount, String paymentType, String PaymentOptiontype, Date nextPaymentDueDate, date LinkexpiryDate){
-
+        System.debug('UpdateOPPforPartialPayment--->');
         System.debug('LinkexpiryDate ====> ' + LinkexpiryDate);
         System.debug('recordId ====> ' + recordId);
         System.debug('Amount ====> ' + Amount);
@@ -232,20 +240,26 @@ public without sharing class PaymentOnOpportunityApexController{
 
             Opportunity OppRec = new Opportunity();
             OppRec.Id = recordId;
-            //OppRec.Payment_Mode__c = paymentType;
+            OppRec.Payment_Mode__c = paymentType;
             OppRec.Payment_Type__c = 'Partial Payment';
             //OppRec.Loan_Amount__c = null;
             OppRec.Seek_Loan__c = 'No';
             OppRec.Payment_Status__c = 'Initiated';
             OppRec.Payment_Initiated_Date_Time__c = system.now();
-            //OppRec.Payment_Initiated__c = true;
+            OppRec.Payment_Initiated__c = true;
+            OppRec.Upfront_Amount__c = Amount;
+            OppRec.Due_Amount__c = PendingAmount;
+             //  OppRec.Payment_Captured__c = true;
+               //OppRec.Payment_Initiated__c = true;
 
 
             update OppRec;
+            System.debug('OppRec created---->'+OppRec);
 
             Time myTime = Time.newInstance(11, 0, 0, 0); // 11:00 AM
 
             if (recordId != null){
+                system.debug('RecordId is not Null');
                 List<Invoice__c> invoiceRecList = [Select Id, Do_Not_Send_Invoice__c, Status__c, LeadInvoice__c, LeadInvoice__r.Owner.UserRoleId, Lead_ManagerId__c, Opportunity__c, Opportunity__r.Owner.UserRoleId, Amount__c, LeadInvoice__r.Owner.Name, LeadInvoice__r.Owner.Email, Opportunity__r.Owner.Email, Opportunity__r.Owner.Name, Payment_Type__c, Realized_Amount__c, Due_Amount__c
                                                From Invoice__c
                                                Where Opportunity__c = :recordId

@@ -28,11 +28,11 @@
             <div class="slds-var-m-left_large slds-var-m-right_large">
 
                 <lightning-combobox name="Select Type" label="Select Type" value={Typevalue} placeholder="Select Type"
-                    options={Typeoptions} onchange={handleChangeType}></lightning-combobox>
+                    options={TYPE_FIELD} onchange={handleChangeType}></lightning-combobox>
 
                 <template if:true={ShowMode}>
                     <lightning-combobox name="Select Mode" label="Select Mode" value={Modevalue}
-                        placeholder="Select Mode" options={Modeoptions}
+                        placeholder="Select Mode" options={MODE_FIELD}
                         onchange={handleChangeMode}></lightning-combobox>
                 </template>
 
@@ -59,7 +59,7 @@
                                     <td style="padding:7px;">
                                         <lightning-combobox name="Select Mode" label="Select Mode"
                                             value={item.newModevalue} data-id={item.id} placeholder="Select Mode"
-                                            options={Modeoptions} onchange={handleChange}></lightning-combobox>
+                                            options={MODE_FIELD} onchange={handleChange}></lightning-combobox>
                                     </td>
                                     <td style="padding:7px;">
                                         <br />
